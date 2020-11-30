@@ -8,7 +8,8 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo
 // However for other cases we want to totally disable type info when sending a message to Telegram
 @JsonTypeInfo(use = JsonTypeInfo.Id.MINIMAL_CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@class")
 @JsonSubTypes(
-    JsonSubTypes.Type(value = InlineQueryResult::class)
+    JsonSubTypes.Type(value = InlineQueryResultArticle::class),
+    JsonSubTypes.Type(value = InlineQueryResultCachedSticker::class)
 )
 sealed class InlineQueryResult
 
@@ -25,4 +26,13 @@ data class InlineQueryResultArticle(
     val thumbHeight: Long? = null
 ) : InlineQueryResult() {
     val type = "article"
+}
+
+data class InlineQueryResultCachedSticker(
+    val id: String,
+    val stickerFileId: String,
+    val inputMessageContent: InputMessageContent? = null,
+    // TODO replyMarkup
+) : InlineQueryResult() {
+    val type = "sticker"
 }
