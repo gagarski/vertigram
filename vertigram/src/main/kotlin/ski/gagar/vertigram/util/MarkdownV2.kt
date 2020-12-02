@@ -9,7 +9,7 @@ fun String.escapeUrl() =
     this.replace("""([)\\])""".toRegex(), """\\$1""")
 
 fun String.escapeCode() =
-    this.replace("""([`\\])""".toRegex(), """\\$1""")
+    this.replace("""([`\\.])""".toRegex(), """\\$1""")
 
 @DslMarker
 annotation class MdV2TagMarker
