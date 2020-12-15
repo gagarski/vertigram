@@ -8,12 +8,14 @@ import io.vertx.core.json.JsonObject
 import io.vertx.kotlin.coroutines.CoroutineVerticle
 import io.vertx.kotlin.coroutines.awaitResult
 import io.vertx.kotlin.coroutines.dispatcher
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import org.slf4j.Logger
 
 fun <T> Vertx.runSuspend(block: suspend Vertx.() -> T): Unit =
     run {
-        GlobalScope.launch(dispatcher()) {
+        GlobalScope.launch(dispatcherWithEx) {
             block()
         }
     }
@@ -24,7 +26,7 @@ suspend fun Vertx.sleep(millis: Long): Unit = awaitResult { h ->
 
 fun CoroutineVerticle.setTimerCoro(millis: Long, handler: suspend (timerId: Long) -> Unit) =
     this.vertx.setTimer(millis) { timerId ->
-        launch(this.vertx.dispatcher()) {
+        launch(this.vertx.dispatcherWithEx(this.logger)) {
             handler(timerId)
         }
     }
@@ -66,7 +68,7 @@ fun WorkerExecutor.withVertx(vertx: Vertx) = WorkerExecutorWithVertx(this,vertx)
 suspend fun <T> WorkerExecutorWithVertx.executeBlockingAwaitUnwrapPromise(blocking: suspend () -> T): T =
     awaitResult {
         executeBlocking({ promise ->
-            GlobalScope.launch(vertx.dispatcher()) {
+            GlobalScope.launch(vertx.dispatcherWithEx) {
                 try {
                     promise.complete(blocking())
                 } catch (e: Throwable) {
@@ -79,3 +81,16 @@ suspend fun <T> WorkerExecutorWithVertx.executeBlockingAwaitUnwrapPromise(blocki
 
 fun DeploymentOptions.setTypedConfig(obj: Any): DeploymentOptions =
     setConfig(JsonObject.mapFrom(obj))
+
+fun Vertx.dispatcherWithEx(logger: Logger) =
+    dispatcher() + CoroutineExceptionHandler { _, ex ->
+        logger.error("Unhandled exception", ex)
+    }
+
+val Vertx.dispatcherWithEx
+    get() = dispatcherWithEx(globalLogger)
+
+
+fun Vertx.logExceptions(logger: Logger = globalLogger) = exceptionHandler {
+    logger.error("Unhandled exception", it)
+}

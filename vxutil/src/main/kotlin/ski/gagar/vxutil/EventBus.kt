@@ -3,7 +3,7 @@ package ski.gagar.vxutil
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 import com.fasterxml.jackson.databind.JavaType
-import io.vertx.core.AbstractVerticle
+import io.vertx.core.Verticle
 import io.vertx.core.eventbus.DeliveryOptions
 import io.vertx.core.eventbus.EventBus
 import io.vertx.core.eventbus.Message
@@ -107,7 +107,7 @@ internal inline fun <reified Result> Message<JsonObject?>.replyWithSuccess(
     else
         reply(JsonObject.mapFrom(Reply.success(res)), options)
 
-inline fun <reified Request, reified Result> AbstractVerticle.jsonConsumer(
+inline fun <reified Request, reified Result> Verticle.jsonConsumer(
     address: String,
     replyOptions: DeliveryOptions = DeliveryOptions(),
     requestJavaType: JavaType = TYPE_FACTORY.constructType(Request::class.java),
@@ -131,7 +131,7 @@ inline fun <reified Request, reified Result>
     requestJavaType: JavaType = TYPE_FACTORY.constructType(Request::class.java),
     crossinline function: suspend (Request) -> Result
 ) : MessageConsumer<JsonObject> = vertx.eventBus().consumer(address) { msg ->
-    launch(vertx.dispatcher()) {
+    launch(vertx.dispatcherWithEx(logger)) {
         val req: Request =
             msg.body().mapTo(requestJavaType)
         val res = try {
