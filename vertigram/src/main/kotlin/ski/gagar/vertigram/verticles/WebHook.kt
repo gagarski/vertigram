@@ -2,6 +2,8 @@ package ski.gagar.vertigram.verticles
 
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.handler.BodyHandler
+import io.vertx.ext.web.handler.LoggerFormat
+import io.vertx.ext.web.handler.LoggerHandler
 import io.vertx.kotlin.coroutines.CoroutineVerticle
 import ski.gagar.vxutil.logger
 import ski.gagar.vertigram.client.Telegram
@@ -17,7 +19,7 @@ import ski.gagar.vxutil.mapTo
 import ski.gagar.vxutil.publishJson
 import ski.gagar.vxutil.retrying
 import ski.gagar.vxutil.sleep
-import ski.gagar.vxutil.web.LoggerHandler
+import ski.gagar.vxutil.web.RealIpFormatter
 import java.util.*
 
 class WebHook : CoroutineVerticle() {
@@ -38,11 +40,10 @@ class WebHook : CoroutineVerticle() {
         logger.info("Staring web server...")
         val server = vertx.createHttpServer()
         val router = Router.router(vertx)
-        router.route().handler(LoggerHandler(
-            trustedNetworks =
-                typedConfig.webHook.proxy?.trustedNetworks?.map { IpNetworkAddress(it) }?.toSet() ?: setOf(),
-            trustDomainSockets = typedConfig.webHook.proxy?.trustDomainSockets ?: false
-        ))
+        router.route().handler(LoggerHandler.create(LoggerFormat.CUSTOM).customFormatter(
+            RealIpFormatter(
+                trustedNetworks = typedConfig.webHook.proxy?.trustedNetworks?.map { IpNetworkAddress(it) }?.toSet() ?: setOf(),
+                trustDomainSockets = typedConfig.webHook.proxy?.trustDomainSockets ?: false)))
         router.route().handler(BodyHandler.create())
 
         router.post("${typedConfig.webHook.base}/${secret}").handler { context ->

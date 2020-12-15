@@ -14,7 +14,7 @@
         <java.version>14</java.version>
         <kotlin.version>1.4.10</kotlin.version>
         <kotlinx.coroutines.version>1.3.9</kotlinx.coroutines.version>
-        <vertx.version>3.9.2</vertx.version>
+        <vertx.version>4.0.0</vertx.version>
         <jaxb.version>2.3.0</jaxb.version>
         <reflections.version>0.9.12</reflections.version>
         <commons-lang.version>3.11</commons-lang.version>
