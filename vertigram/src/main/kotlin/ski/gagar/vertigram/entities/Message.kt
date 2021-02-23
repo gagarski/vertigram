@@ -22,7 +22,7 @@ data class Message(
     val captionEntities: List<MessageEntity>? = null,
     val audio: Audio? = null,
     val document: Document? = null,
-    val anumation: Animation? = null,
+    val animation: Animation? = null,
     val game: Game? = null,
     val photo: List<PhotoSize>? = null,
     val sticker: Sticker? = null,
