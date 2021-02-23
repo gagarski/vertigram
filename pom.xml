@@ -4,7 +4,7 @@
 
     <groupId>ski.gagar</groupId>
     <artifactId>vertigram-bom</artifactId>
-    <version>0.1.1</version>
+    <version>0.1.2-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <properties>
@@ -27,7 +27,7 @@
     </properties>
     <scm>
         <developerConnection>scm:git:git@github.com:gagarski/vertigram.git</developerConnection>
-        <tag>v0.1.1</tag>
+        <tag>v0.0.3</tag>
     </scm>
     <dependencyManagement>
         <dependencies>
