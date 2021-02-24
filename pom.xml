@@ -7,6 +7,32 @@
     <version>0.1.2-SNAPSHOT</version>
     <packaging>pom</packaging>
 
+    <name>Vertigram BOM</name>
+    <description>A BOM for Vertigram-based projects</description>
+    <url>https://github.com/gagarski/vertigram</url>
+
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <scm>
+        <connection>scm:git:git@github.com:gagarski/vertigram.git</connection>
+        <developerConnection>scm:git:git@github.com:gagarski/vertigram.git</developerConnection>
+        <url>https://github.com/gagarski/vertigram</url>
+        <tag>HEAD</tag>
+    </scm>
+
+    <developers>
+        <developer>
+            <name>Kirill Gagarski</name>
+            <email>kirill.gagarski@gmail.com</email>
+        </developer>
+    </developers>
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <compiler-plugin.version>3.8.1</compiler-plugin.version>
@@ -24,11 +50,9 @@
         <jackson.module.jdk8.version>2.11.3</jackson.module.jdk8.version>
         <slf4j.version>1.7.30</slf4j.version>
         <logback.version>1.2.3</logback.version>
+        <dokka.version>1.4.20</dokka.version>
     </properties>
-    <scm>
-        <developerConnection>scm:git:git@github.com:gagarski/vertigram.git</developerConnection>
-        <tag>v0.0.3</tag>
-    </scm>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -199,11 +223,12 @@
                     </executions>
                 </plugin>
                 <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-source-plugin</artifactId>
+                    <version>3.2.0</version>
                     <executions>
                         <execution>
                             <id>attach-sources</id>
-                            <phase>verify</phase>
                             <goals>
                                 <goal>jar</goal>
                             </goals>
@@ -211,35 +236,106 @@
                     </executions>
                 </plugin>
                 <plugin>
+                    <groupId>org.jetbrains.dokka</groupId>
+                    <artifactId>dokka-maven-plugin</artifactId>
+                    <version>${dokka.version}</version>
+                    <executions>
+                        <execution>
+                            <phase>package</phase>
+                            <goals>
+                                <goal>javadocJar</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <dokkaPlugins>
+                            <plugin>
+                                <groupId>org.jetbrains.dokka</groupId>
+                                <artifactId>kotlin-as-java-plugin</artifactId>
+                                <version>${dokka.version}</version>
+                            </plugin>
+                        </dokkaPlugins>
+                    </configuration>
+                </plugin>
+                <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-release-plugin</artifactId>
                     <version>3.0.0-M1</version>
                     <configuration>
                         <tagNameFormat>v@{project.version}</tagNameFormat>
+                        <arguments>-Dgpg.passphrase=${gpg.passphrase} -Dgpg.keyname=${gpg.keyname}</arguments>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <version>3.0.0-M1</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.sonatype.plugins</groupId>
+                    <artifactId>nexus-staging-maven-plugin</artifactId>
+                    <version>1.6.7</version>
+                    <extensions>true</extensions>
+                    <configuration>
+                        <serverId>ossrh</serverId>
+                        <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                        <autoReleaseAfterClose>true</autoReleaseAfterClose>
                     </configuration>
                 </plugin>
             </plugins>
         </pluginManagement>
     </build>
-    <repositories>
-        <repository>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-            <id>bintray-gagar-vertigram</id>
-            <name>gagar-vertigram</name>
-            <url>https://dl.bintray.com/gagar/vertigram</url>
-        </repository>
-    </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>jcenter</id>
+            <name>JCenter</name>
+            <url>https://jcenter.bintray.com/</url>
+        </pluginRepository>
+    </pluginRepositories>
+
     <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
         <repository>
-            <id>bintray-gagar-vertigram</id>
-            <name>gagar-vertigram</name>
-            <url>https://api.bintray.com/maven/gagar/vertigram/${artifactId}/;publish=1</url>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/
+            </url>
         </repository>
     </distributionManagement>
     <modules>
         <module>vertigram</module>
         <module>vxutil</module>
     </modules>
+    <profiles>
+        <profile>
+            <id>release-sign-artifacts</id>
+            <activation>
+                <property>
+                    <name>performRelease</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>1.6</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

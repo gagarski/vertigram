@@ -11,6 +11,9 @@
 
     <artifactId>vertigram</artifactId>
 
+    <name>Vertigram</name>
+    <description>Telegram tools for Vert.x</description>
+
     <properties>
         <kotlin.version>1.4.10</kotlin.version>
     </properties>
@@ -122,6 +125,14 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.jetbrains.dokka</groupId>
+                <artifactId>dokka-maven-plugin</artifactId>
             </plugin>
         </plugins>
     </build>

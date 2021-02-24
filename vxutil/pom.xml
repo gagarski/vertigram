@@ -11,6 +11,10 @@
 
     <artifactId>vxutil</artifactId>
 
+    <name>Vxutil</name>
+    <description>Core Vert.x utils for Vertigram</description>
+
+
     <properties>
         <kotlin.version>1.4.10</kotlin.version>
     </properties>
@@ -112,6 +116,14 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.jetbrains.dokka</groupId>
+                <artifactId>dokka-maven-plugin</artifactId>
             </plugin>
         </plugins>
     </build>
