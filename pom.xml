@@ -236,26 +236,21 @@
                     </executions>
                 </plugin>
                 <plugin>
-                    <groupId>org.jetbrains.dokka</groupId>
-                    <artifactId>dokka-maven-plugin</artifactId>
-                    <version>${dokka.version}</version>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
                     <executions>
                         <execution>
+                            <id>empty-javadoc-jar</id>
                             <phase>package</phase>
                             <goals>
-                                <goal>javadocJar</goal>
+                                <goal>jar</goal>
                             </goals>
+                            <configuration>
+                                <classifier>javadoc</classifier>
+                                <classesDirectory>${basedir}/javadoc</classesDirectory>
+                            </configuration>
                         </execution>
                     </executions>
-                    <configuration>
-                        <dokkaPlugins>
-                            <plugin>
-                                <groupId>org.jetbrains.dokka</groupId>
-                                <artifactId>kotlin-as-java-plugin</artifactId>
-                                <version>${dokka.version}</version>
-                            </plugin>
-                        </dokkaPlugins>
-                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -263,7 +258,7 @@
                     <version>3.0.0-M1</version>
                     <configuration>
                         <tagNameFormat>v@{project.version}</tagNameFormat>
-                        <arguments>-Dgpg.passphrase=${gpg.passphrase} -Dgpg.keyname=${gpg.keyname}</arguments>
+                        <arguments>-Dgpg.passphrase=${gpg.passphrase} -Dgpg.keyname=${gpg.keyname} -DperformRelease=true</arguments>
                     </configuration>
                 </plugin>
                 <plugin>
@@ -311,7 +306,35 @@
             </plugin>
         </plugins>
     </build>
-
+    <profiles>
+        <profile>
+            <id>release-sign-artifacts</id>
+            <activation>
+                <property>
+                    <name>performRelease</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>1.6</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
     <pluginRepositories>
         <pluginRepository>
             <id>jcenter</id>
