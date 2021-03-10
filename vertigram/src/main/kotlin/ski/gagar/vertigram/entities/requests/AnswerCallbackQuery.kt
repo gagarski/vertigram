@@ -1,7 +1,5 @@
 package ski.gagar.vertigram.entities.requests
 
-import ski.gagar.vertigram.entities.InlineQueryResult
-
 data class AnswerCallbackQuery(
     val callbackQueryId: String,
     val text: String? = null,

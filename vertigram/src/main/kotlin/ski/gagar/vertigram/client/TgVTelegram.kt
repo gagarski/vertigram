@@ -3,16 +3,15 @@ package ski.gagar.vertigram.client
 import com.fasterxml.jackson.databind.JavaType
 import io.vertx.core.Vertx
 import io.vertx.core.eventbus.DeliveryOptions
-import io.vertx.core.file.AsyncFile
 import ski.gagar.vertigram.entities.Update
 import ski.gagar.vertigram.entities.requests.GetUpdates
 import ski.gagar.vertigram.entities.requests.TgCallable
 import ski.gagar.vertigram.util.TypeHints
 import ski.gagar.vertigram.util.getOrAssert
-import ski.gagar.vxutil.requestJsonAwait
 import ski.gagar.vertigram.verticles.TelegramVerticle
 import ski.gagar.vxutil.ReplyException
 import ski.gagar.vxutil.ignore
+import ski.gagar.vxutil.requestJsonAwait
 
 
 class TgVTelegram(

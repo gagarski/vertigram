@@ -3,6 +3,7 @@ package ski.gagar.vxutil
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 import com.fasterxml.jackson.databind.JavaType
+import com.fasterxml.jackson.databind.type.TypeFactory
 import io.vertx.core.Verticle
 import io.vertx.core.eventbus.DeliveryOptions
 import io.vertx.core.eventbus.EventBus
@@ -11,9 +12,8 @@ import io.vertx.core.eventbus.MessageConsumer
 import io.vertx.core.impl.NoStackTraceThrowable
 import io.vertx.core.json.JsonObject
 import io.vertx.core.json.jackson.DatabindCodec
-import io.vertx.kotlin.core.eventbus.requestAwait
 import io.vertx.kotlin.coroutines.CoroutineVerticle
-import io.vertx.kotlin.coroutines.dispatcher
+import io.vertx.kotlin.coroutines.await
 import kotlinx.coroutines.launch
 
 interface DoNotSuppressError
@@ -49,7 +49,7 @@ val DEBUG by lazy {
     System.getProperty("ski.gagar.vxutil.debug", "false") == "true"
 }
 
-val TYPE_FACTORY = DatabindCodec.mapper().typeFactory
+val TYPE_FACTORY: TypeFactory = DatabindCodec.mapper().typeFactory
 
 suspend inline fun <Argument, reified Result> EventBus.requestJsonAwait(
     address: String,
@@ -58,7 +58,7 @@ suspend inline fun <Argument, reified Result> EventBus.requestJsonAwait(
     options: DeliveryOptions = DeliveryOptions()
 ): Result {
     val reply: Reply<Result> =
-        requestAwait<JsonObject>(address, JsonObject.mapFrom(value), options)
+        request<JsonObject>(address, JsonObject.mapFrom(value), options).await()
             .body()
             .mapTo(TYPE_FACTORY.constructParametricType(Reply::class.java, resultJavaType))
 

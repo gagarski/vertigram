@@ -3,7 +3,6 @@ package ski.gagar.vertigram.entities.requests
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.vertx.ext.web.multipart.MultipartForm
 import ski.gagar.vertigram.entities.Message
-import ski.gagar.vertigram.entities.ParseMode
 import ski.gagar.vertigram.entities.ReplyMarkup
 import ski.gagar.vxutil.attributeIfNotNull
 import ski.gagar.vxutil.attributeIfTrue

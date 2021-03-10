@@ -2,7 +2,6 @@ package ski.gagar.vertigram.client
 
 import com.fasterxml.jackson.databind.JavaType
 import io.vertx.core.Vertx
-import io.vertx.core.file.AsyncFile
 import io.vertx.core.net.ProxyOptions
 import ski.gagar.vertigram.client.impl.TelegramImpl
 import ski.gagar.vertigram.client.impl.TelegramImplOptions

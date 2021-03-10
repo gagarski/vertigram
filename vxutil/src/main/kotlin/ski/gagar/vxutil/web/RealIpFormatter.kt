@@ -1,17 +1,11 @@
 package ski.gagar.vxutil.web
 
-import io.vertx.core.http.HttpMethod
 import io.vertx.core.http.HttpServerRequest
 import io.vertx.core.http.HttpVersion
-import io.vertx.ext.web.RoutingContext
-import io.vertx.ext.web.handler.LoggerFormat
-import io.vertx.ext.web.handler.LoggerHandler
 import io.vertx.ext.web.impl.Utils
 import ski.gagar.vxutil.ip.IpAddress
 import ski.gagar.vxutil.ip.IpNetworkAddress
 import ski.gagar.vxutil.logger
-import java.lang.AssertionError
-import java.lang.IllegalArgumentException
 
 // TODO simplify it
 class RealIpFormatter(private val immediate: Boolean = false,

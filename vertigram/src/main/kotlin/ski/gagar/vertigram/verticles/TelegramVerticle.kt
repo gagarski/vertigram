@@ -65,7 +65,7 @@ class TelegramVerticle : CoroutineVerticle() {
 
     private suspend fun handleGetUpdates(msg: GetUpdates) = tg.getUpdates(limit = msg.limit, offset = msg.offset)
 
-    private suspend fun handleLongPollTimeout(msg: GetLongPollTimeout) = typedConfig.tgOptions.longPollTimeout
+    private fun handleLongPollTimeout(msg: GetLongPollTimeout) = typedConfig.tgOptions.longPollTimeout
 
     private suspend fun handleDownloadFile(msg: DownloadFile) = tg.downloadFile(msg.path, msg.outputPath)
 

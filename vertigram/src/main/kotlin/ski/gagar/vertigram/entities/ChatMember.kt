@@ -1,6 +1,5 @@
 package ski.gagar.vertigram.entities
 
-import com.fasterxml.jackson.annotation.JsonIgnore
 import ski.gagar.vertigram.util.TgEnumName
 import java.time.Instant
 

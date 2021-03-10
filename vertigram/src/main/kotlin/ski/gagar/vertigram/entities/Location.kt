@@ -1,6 +1,6 @@
 package ski.gagar.vertigram.entities
 
 data class Location(
-    val longtitude: Double,
+    val longitude: Double,
     val latitude: Double
 )

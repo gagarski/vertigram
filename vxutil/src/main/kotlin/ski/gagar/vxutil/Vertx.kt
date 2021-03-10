@@ -91,6 +91,6 @@ val Vertx.dispatcherWithEx
     get() = dispatcherWithEx(globalLogger)
 
 
-fun Vertx.logExceptions(logger: Logger = globalLogger) = exceptionHandler {
+fun Vertx.logExceptions(logger: Logger = globalLogger): Vertx = exceptionHandler {
     logger.error("Unhandled exception", it)
 }

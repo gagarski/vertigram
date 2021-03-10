@@ -93,11 +93,6 @@ private val <T: TgCallable<*>> Class<T>.tgMethodName: String
 internal object TypeHints {
     val callables = getTgCallables()
 
-    val doNotGenerateInTgVerticle =
-        getTgCallables()
-            .filter { it.getAnnotation(DoNotGenerateInTgVerticle::class.java) != null }
-            .toSet()
-
     val methodNames = callables.map {
         it to it.tgMethodName
     }.toMap()
@@ -113,7 +108,7 @@ internal object TypeHints {
     }.toMap()
 
     object Json {
-        val callables = TypeHints.callables.filter {
+        private val callables = TypeHints.callables.filter {
             JsonTgCallable::class.java.isAssignableFrom(it)
         }
 
@@ -128,7 +123,7 @@ internal object TypeHints {
     }
 
     object Multipart {
-        val callables = TypeHints.callables.filter {
+        private val callables = TypeHints.callables.filter {
             MultipartTgCallable::class.java.isAssignableFrom(it)
         }
 

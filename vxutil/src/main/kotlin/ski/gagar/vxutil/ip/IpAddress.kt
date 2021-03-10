@@ -117,7 +117,7 @@ class IpV6Address(bytes: List<Int>) : IpAddress {
                 "Address should be $ADDR_LENGTH bytes, $bytesBefore found"
             }
 
-            val bytesAfter = parts.getOrNull(1)?.let { parsePart(it) } ?: listOf<Int>()
+            val bytesAfter = parts.getOrNull(1)?.let { parsePart(it) } ?: listOf()
 
             return IpV6Address((
                     bytesBefore.asSequence() +
@@ -206,13 +206,13 @@ class IpNetworkAddress(val ip: IpAddress, val mask: IpAddress) {
         const val DELIMITER = "/"
 
         operator fun invoke(str: String): IpNetworkAddress {
-            val splitted = str.split(DELIMITER)
+            val split = str.split(DELIMITER)
 
-            require(splitted.size == 2) {
+            require(split.size == 2) {
                 "Network mask should have format \"addr/mask\""
             }
 
-            val (ipStr, maskStr) = splitted
+            val (ipStr, maskStr) = split
 
             val ip = IpAddress(ipStr)
 

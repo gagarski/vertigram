@@ -10,20 +10,14 @@ import io.vertx.ext.web.client.WebClient
 import io.vertx.ext.web.client.WebClientOptions
 import io.vertx.ext.web.codec.BodyCodec
 import io.vertx.ext.web.multipart.MultipartForm
-import io.vertx.kotlin.core.file.deleteAwait
-import io.vertx.kotlin.core.file.openAwait
-import io.vertx.kotlin.ext.web.client.sendAwait
-import io.vertx.kotlin.ext.web.client.sendMultipartFormAwait
-import ski.gagar.vxutil.logger
+import io.vertx.kotlin.coroutines.await
 import ski.gagar.vertigram.entities.Wrapper
 import ski.gagar.vertigram.entities.requests.JsonTgCallable
 import ski.gagar.vertigram.entities.requests.MultipartTgCallable
 import ski.gagar.vertigram.entities.requests.TgCallable
-import ski.gagar.vertigram.util.TELEGRAM_JSON_MAPPER
 import ski.gagar.vertigram.util.*
-import ski.gagar.vertigram.util.TypeHints
-import ski.gagar.vertigram.util.getOrAssert
 import ski.gagar.vxutil.bodyAsJson
+import ski.gagar.vxutil.logger
 import ski.gagar.vxutil.sendJsonAwait
 import ski.gagar.vxutil.uncheckedCast
 
@@ -101,7 +95,7 @@ internal class TelegramImpl(
         upload: Boolean = true
     ): Pair<Int, Any?> {
         logger.trace("Calling $method with $form (form/multipart)")
-        val resp = client(method, longPoll, upload).sendMultipartFormAwait(form)
+        val resp = client(method, longPoll, upload).sendMultipartForm(form).await()
         return resp.statusCode() to resp.bodyAsJson<Any>(type, mapper).also {
             logger.trace("Received response $it")
         }
@@ -191,13 +185,14 @@ internal class TelegramImpl(
             is MultipartTgCallable<T> -> callMultipart(type, callable)
         }
 
-    suspend fun downloadFile(path: String, outputPath: String): Unit {
-        val f = fs.openAwait(outputPath, OpenOptions().apply {
+    suspend fun downloadFile(path: String, outputPath: String) {
+        val f = fs.open(outputPath, OpenOptions().apply {
             isTruncateExisting = true
-        })
-        val resp = downloadClient.getAbs("${options.tgBase}/file/bot$token/${path}").`as`(BodyCodec.pipe(f)).sendAwait()
+        }).await()
+        val resp =
+            downloadClient.getAbs("${options.tgBase}/file/bot$token/${path}").`as`(BodyCodec.pipe(f)).send().await()
         if (resp.statusCode() != 200) {
-            fs.deleteAwait(outputPath)
+            fs.delete(outputPath).await()
             // TODO try to get a response from file and parse it
             throw TelegramDownloadException(resp.statusCode())
         }

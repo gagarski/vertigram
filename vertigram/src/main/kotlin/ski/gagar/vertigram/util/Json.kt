@@ -12,7 +12,6 @@ import com.fasterxml.jackson.databind.introspect.JacksonAnnotationIntrospector
 import com.fasterxml.jackson.databind.introspect.NopAnnotationIntrospector
 import com.fasterxml.jackson.databind.module.SimpleDeserializers
 import com.fasterxml.jackson.databind.module.SimpleSerializers
-import com.fasterxml.jackson.databind.util.ClassUtil
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import java.time.Instant
 
@@ -75,8 +74,9 @@ class TelegramAnnotationIntrospector : NopAnnotationIntrospector() {
         enumValues: Array<out Enum<*>>,
         names: Array<String>
     ): Array<String> {
-        val expl = mutableMapOf<String, String>()
-        for (f in ClassUtil.getDeclaredFields(enumType)) {
+        val explicit = mutableMapOf<String, String>()
+        enumType ?: return arrayOf()
+        for (f in enumType.declaredFields) {
             if (!f.isEnumConstant) {
                 continue
             }
@@ -85,13 +85,13 @@ class TelegramAnnotationIntrospector : NopAnnotationIntrospector() {
             if (n.isEmpty()) {
                 continue
             }
-            expl[f.name] = n
+            explicit[f.name] = n
         }
         // and then stitch them together if and as necessary
         for (i in enumValues.indices) {
             val defName = enumValues[i].name
-            val explValue: String = expl[defName] ?: continue
-            names[i] = explValue
+            val explicitValue: String = explicit[defName] ?: continue
+            names[i] = explicitValue
         }
         return names
     }

@@ -23,14 +23,14 @@ abstract class MdV2Element {
     }.toString()
 }
 
-class Text(val value: String): MdV2Element() {
+class Text(private val value: String): MdV2Element() {
     override fun render(builder: StringBuilder) {
         builder.append(value.escapeText())
     }
 }
 
 
-class Raw(val value: String): MdV2Element() {
+class Raw(private val value: String): MdV2Element() {
     override fun render(builder: StringBuilder) {
         builder.append(value)
     }
@@ -47,7 +47,7 @@ private val User.fullName: String?
 abstract class MdV2ElementWithChildren : MdV2Element() {
     private val children: MutableList<MdV2Element> = mutableListOf()
 
-    protected fun <T : MdV2Element> initTag(tag: T, init: T.() -> Unit = {}): T {
+    private fun <T : MdV2Element> initTag(tag: T, init: T.() -> Unit = {}): T {
         tag.init()
         children.add(tag)
         return tag
@@ -105,17 +105,14 @@ abstract class MdV2ElementWithChildren : MdV2Element() {
         public override fun pre(code: String, language: String?) = this@MdV2ElementWithChildren.pre(code, language)
     }
 
-    public fun unsafe() = Unsafe()
+    fun unsafe() = Unsafe()
 }
 
 abstract class WrappedMdV2ElementWithChildren : MdV2ElementWithChildren() {
-    private val children: MutableList<MdV2Element> = mutableListOf()
-
-
     abstract fun renderPrefix(builder: StringBuilder)
     open fun renderPostfix(builder: StringBuilder) = renderPrefix(builder)
 
-    open override fun render(builder: StringBuilder) {
+    override fun render(builder: StringBuilder) {
         renderPrefix(builder)
         renderChildren(builder)
         renderPostfix(builder)
@@ -175,7 +172,7 @@ class Strikethrough : WrappedMdV2ElementWithChildren() {
     public override fun user(user: User) = super.user(user)
 }
 
-class Link(val href: String) : MdV2ElementWithChildren() {
+class Link(private val href: String) : MdV2ElementWithChildren() {
     override fun render(builder: StringBuilder) {
         builder.append("[")
         renderChildren(builder)
