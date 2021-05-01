@@ -3,7 +3,7 @@ package ski.gagar.vertigram.util
 import ski.gagar.vertigram.entities.User
 
 fun String.escapeText() =
-    this.replace("""([_*\[\]()~`>#+\-=|{}.!])""".toRegex(), """\\$1""")
+    this.replace("""([_*\[\]()~`>#+\-=|{}.!\\])""".toRegex(), """\\$1""")
 
 fun String.escapeUrl() =
     this.replace("""([)\\])""".toRegex(), """\\$1""")
