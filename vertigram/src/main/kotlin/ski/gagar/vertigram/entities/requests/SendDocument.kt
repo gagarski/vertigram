@@ -2,6 +2,7 @@ package ski.gagar.vertigram.entities.requests
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.vertx.ext.web.multipart.MultipartForm
+import ski.gagar.vertigram.annotations.TgMethod
 import ski.gagar.vertigram.entities.Message
 import ski.gagar.vertigram.entities.ParseMode
 import ski.gagar.vertigram.entities.ReplyMarkup
@@ -10,7 +11,7 @@ import ski.gagar.vxutil.binaryFileUploadIfNotNull
 import ski.gagar.vxutil.jsonAttributeIfNotNull
 import java.io.File
 
-
+@TgMethod
 data class SendDocument(
     val chatId: Long,
     val document: String,
@@ -21,6 +22,7 @@ data class SendDocument(
     val replyToMessageId: Long? = null
 ) : JsonTgCallable<Message>()
 
+@TgMethod
 data class SendDocumentMultipart(
     val chatId: Long,
     val document: File,

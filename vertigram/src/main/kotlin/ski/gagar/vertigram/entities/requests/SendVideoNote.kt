@@ -2,6 +2,7 @@ package ski.gagar.vertigram.entities.requests
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.vertx.ext.web.multipart.MultipartForm
+import ski.gagar.vertigram.annotations.TgMethod
 import ski.gagar.vertigram.entities.Message
 import ski.gagar.vertigram.entities.ReplyMarkup
 import ski.gagar.vxutil.attributeIfNotNull
@@ -10,6 +11,7 @@ import ski.gagar.vxutil.binaryFileUploadIfNotNull
 import ski.gagar.vxutil.jsonAttributeIfNotNull
 import java.io.File
 
+@TgMethod
 data class SendVideoNote(
     val chatId: Long,
     val videoNote: String,
@@ -21,6 +23,7 @@ data class SendVideoNote(
     val replyMarkup: ReplyMarkup? = null
 ) : JsonTgCallable<Message>()
 
+@TgMethod(type = TgMethod.MULTIPART)
 data class SendVideoNoteMultipart(
     val chatId: Long,
     val videoNote: File,

@@ -1,8 +1,9 @@
 package ski.gagar.vertigram.entities.requests
 
+import ski.gagar.vertigram.annotations.TgMethod
 import ski.gagar.vertigram.util.TgEnumName
 
-
+@TgMethod
 data class SendChatAction(
     val chatId: Long,
     val action: ChatAction

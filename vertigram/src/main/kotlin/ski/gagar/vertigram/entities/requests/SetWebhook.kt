@@ -1,5 +1,6 @@
 package ski.gagar.vertigram.entities.requests
 
+import ski.gagar.vertigram.annotations.TgMethod
 import ski.gagar.vertigram.util.TgEnumName
 
 enum class UpdateType {
@@ -26,6 +27,7 @@ enum class UpdateType {
 
 }
 
+@TgMethod
 data class SetWebhook(
     val url: String,
     val maxConnections: Int? = null,

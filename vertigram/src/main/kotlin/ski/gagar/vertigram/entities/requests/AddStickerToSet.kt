@@ -2,12 +2,14 @@ package ski.gagar.vertigram.entities.requests
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.vertx.ext.web.multipart.MultipartForm
+import ski.gagar.vertigram.annotations.TgMethod
 import ski.gagar.vertigram.entities.MaskPosition
 import ski.gagar.vxutil.attributeIfNotNull
 import ski.gagar.vxutil.binaryFileUploadIfNotNull
 import ski.gagar.vxutil.jsonAttributeIfNotNull
 import java.io.File
 
+@TgMethod
 data class AddStickerToSet(
     val userId: Long,
     val name: String,
@@ -17,6 +19,7 @@ data class AddStickerToSet(
     val maskPosition: MaskPosition? = null
 ) : JsonTgCallable<Boolean>()
 
+@TgMethod(type = TgMethod.MULTIPART)
 data class AddStickerToSetMultipart(
     val userId: Long,
     val name: String,

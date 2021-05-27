@@ -1,7 +1,9 @@
 package ski.gagar.vertigram.entities.requests
 
+import ski.gagar.vertigram.annotations.TgMethod
 import ski.gagar.vertigram.entities.InlineQueryResult
 
+@TgMethod
 data class AnswerInlineQuery(
     val inlineQueryId: String,
     val results: List<InlineQueryResult>,

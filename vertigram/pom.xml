@@ -14,10 +14,6 @@
     <name>Vertigram</name>
     <description>Telegram tools for Vert.x</description>
 
-    <properties>
-        <kotlin.version>1.4.10</kotlin.version>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>com.fasterxml.jackson.module</groupId>
@@ -109,7 +105,16 @@
             <artifactId>vxutil</artifactId>
             <version>0.2.6-SNAPSHOT</version>
         </dependency>
+        <dependency>
+            <groupId>ski.gagar</groupId>
+            <artifactId>vertigram-annotations</artifactId>
+            <version>0.2.6-SNAPSHOT</version>
+        </dependency>
     </dependencies>
+
+    <properties>
+        <kapt.use.worker.api>false</kapt.use.worker.api>
+    </properties>
 
     <build>
         <sourceDirectory>src/main/kotlin</sourceDirectory>
@@ -117,10 +122,49 @@
             <plugin>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>kapt</id>
+                        <goals>
+                            <goal>kapt</goal>
+                        </goals>
+                        <configuration>
+                            <sourceDirs>
+                                <sourceDir>src/main/kotlin</sourceDir>
+                            </sourceDirs>
+                            <annotationProcessorPaths>
+                                <annotationProcessorPath>
+                                    <groupId>ski.gagar</groupId>
+                                    <artifactId>vertigram-codegen</artifactId>
+                                    <version>${project.version}</version> <!-- Maybe not a very good thing to do -->
+                                </annotationProcessorPath>
+                            </annotationProcessorPaths>
+                            <annotationProcessors>
+                                <processor>ski.gagar.vertigram.codegen.VertigramClientGenerator</processor>
+                            </annotationProcessors>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>compile</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                        <configuration>
+                            <sourceDirs>
+                                <sourceDir>${project.basedir}/src/main/kotlin</sourceDir>
+                            </sourceDirs>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>17</source>
+                    <target>17</target>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

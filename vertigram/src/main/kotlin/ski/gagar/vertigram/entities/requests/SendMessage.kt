@@ -1,9 +1,11 @@
 package ski.gagar.vertigram.entities.requests
 
+import ski.gagar.vertigram.annotations.TgMethod
 import ski.gagar.vertigram.entities.Message
 import ski.gagar.vertigram.entities.ParseMode
 import ski.gagar.vertigram.entities.ReplyMarkup
 
+@TgMethod
 data class SendMessage(
     val chatId: Long,
     val text: String,

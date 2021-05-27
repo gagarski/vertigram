@@ -1,8 +1,10 @@
 package ski.gagar.vertigram.entities.requests
 
+import ski.gagar.vertigram.annotations.TgMethod
 import ski.gagar.vertigram.entities.Message
 import ski.gagar.vertigram.entities.ReplyMarkup
 
+@TgMethod
 data class SendDice(
     val chatId: Long,
     val emoji: String = CUBE_EMOJI,
