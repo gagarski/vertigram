@@ -5,7 +5,7 @@
     <parent>
         <groupId>ski.gagar</groupId>
         <artifactId>vertigram-bom</artifactId>
-        <version>0.2.9-SNAPSHOT</version>
+        <version>0.2.9</version>
         <relativePath>../</relativePath>
     </parent>
 
@@ -82,7 +82,7 @@
         <dependency>
             <groupId>ski.gagar</groupId>
             <artifactId>vxutil</artifactId>
-            <version>0.2.9-SNAPSHOT</version>
+            <version>0.2.9</version>
         </dependency>
     </dependencies>
 
