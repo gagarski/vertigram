@@ -14,10 +14,6 @@
     <name>Vertigram</name>
     <description>Telegram tools for Vert.x</description>
 
-    <properties>
-        <kotlin.version>1.4.10</kotlin.version>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>com.fasterxml.jackson.module</groupId>
