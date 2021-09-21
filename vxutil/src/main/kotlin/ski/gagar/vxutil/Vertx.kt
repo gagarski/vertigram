@@ -11,11 +11,12 @@ import io.vertx.kotlin.coroutines.dispatcher
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import org.slf4j.Logger
 
 fun <T> Vertx.runSuspend(block: suspend Vertx.() -> T): Unit =
-    run {
-        GlobalScope.launch(dispatcherWithEx) {
+    runBlocking {
+        launch(dispatcherWithEx) {
             block()
         }
     }
@@ -68,11 +69,13 @@ fun WorkerExecutor.withVertx(vertx: Vertx) = WorkerExecutorWithVertx(this,vertx)
 suspend fun <T> WorkerExecutorWithVertx.executeBlockingAwaitUnwrapPromise(blocking: suspend () -> T): T =
     awaitResult {
         executeBlocking({ promise ->
-            GlobalScope.launch(vertx.dispatcherWithEx) {
-                try {
-                    promise.complete(blocking())
-                } catch (e: Throwable) {
-                    promise.fail(e)
+            runBlocking {
+                launch(vertx.dispatcherWithEx) {
+                    try {
+                        promise.complete(blocking())
+                    } catch (e: Throwable) {
+                        promise.fail(e)
+                    }
                 }
             }
         }, it)
