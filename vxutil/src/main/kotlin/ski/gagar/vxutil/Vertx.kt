@@ -8,14 +8,12 @@ import io.vertx.core.json.JsonObject
 import io.vertx.kotlin.coroutines.CoroutineVerticle
 import io.vertx.kotlin.coroutines.awaitResult
 import io.vertx.kotlin.coroutines.dispatcher
-import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
 import org.slf4j.Logger
+import java.util.concurrent.CompletableFuture
 
-fun <T> Vertx.runSuspend(block: suspend Vertx.() -> T): Unit =
-    runBlocking {
+fun <T> Vertx.runBlocking(block: suspend Vertx.() -> T): Unit =
+    kotlinx.coroutines.runBlocking {
         launch(dispatcherWithEx) {
             block()
         }
@@ -62,23 +60,17 @@ suspend fun <T> CoroutineVerticle.retrying(
     block: suspend () -> T
 ): T = vertx.retrying(shouldStop, coolDown, block)
 
-data class WorkerExecutorWithVertx(val executor: WorkerExecutor, val vertx: Vertx) : WorkerExecutor by executor
 
-fun WorkerExecutor.withVertx(vertx: Vertx) = WorkerExecutorWithVertx(this,vertx)
-
-suspend fun <T> WorkerExecutorWithVertx.executeBlockingAwaitUnwrapPromise(blocking: suspend () -> T): T =
-    awaitResult {
-        executeBlocking({ promise ->
-            runBlocking {
-                launch(vertx.dispatcherWithEx) {
-                    try {
-                        promise.complete(blocking())
-                    } catch (e: Throwable) {
-                        promise.fail(e)
-                    }
-                }
+suspend fun <T> WorkerExecutor.executeBlockingSuspend(blocking: suspend () -> T): Future<T> =
+    executeBlocking { promise ->
+        // We do not use vertx.dispatcher here. Instead we go with thread-confined dispatcher fopr runBlocking
+        runBlocking {
+            try {
+                promise.complete(blocking())
+            } catch (e: Throwable) {
+                promise.fail(e)
             }
-        }, it)
+        }
     }
 
 

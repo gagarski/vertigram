@@ -131,7 +131,7 @@ inline fun <reified Request, reified Result>
     requestJavaType: JavaType = TYPE_FACTORY.constructType(Request::class.java),
     crossinline function: suspend (Request) -> Result
 ) : MessageConsumer<JsonObject> = vertx.eventBus().consumer(address) { msg ->
-    launch(vertx.dispatcherWithEx(logger)) {
+    launch {
         val req: Request =
             msg.body().mapTo(requestJavaType)
         val res = try {
