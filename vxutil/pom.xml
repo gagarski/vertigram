@@ -5,7 +5,7 @@
     <parent>
         <groupId>ski.gagar</groupId>
         <artifactId>vertigram-bom</artifactId>
-        <version>0.2.12-SNAPSHOT</version>
+        <version>0.2.12</version>
         <relativePath>../</relativePath>
     </parent>
 
