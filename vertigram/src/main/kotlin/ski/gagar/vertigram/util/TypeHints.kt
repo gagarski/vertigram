@@ -53,7 +53,7 @@ private val <T: TgCallable<*>> Class<T>.responseType: JavaType
                 .uncheckedCast<GenericDeclaration>()
                 .typeParameters
                 .zip(type.actualTypeArguments)
-                .map { (k, v) ->
+                .associate { (k, v) ->
                     val vInst =
                         when (v) {
                             is TypeVariable<*> -> {
@@ -68,7 +68,6 @@ private val <T: TgCallable<*>> Class<T>.responseType: JavaType
                         }
                     k to vInst
                 }
-                .toMap()
             current = rawType.uncheckedCastOrNull<Class<*>>()
         }
 
@@ -93,9 +92,9 @@ private val <T: TgCallable<*>> Class<T>.tgMethodName: String
 internal object TypeHints {
     val callables = getTgCallables()
 
-    val methodNames = callables.map {
-        it to it.tgMethodName
-    }.toMap()
+    val methodNames = callables.associateWith {
+        it.tgMethodName
+    }
 
     val doNotGenerateInTgVerticleMethodNames =
         methodNames
@@ -103,22 +102,22 @@ internal object TypeHints {
             .values
             .toSet()
 
-    val returnTypesByClass = callables.map {
-        it to it.responseType
-    }.toMap()
+    val returnTypesByClass = callables.associateWith {
+        it.responseType
+    }
 
     object Json {
         private val callables = TypeHints.callables.filter {
             JsonTgCallable::class.java.isAssignableFrom(it)
         }
 
-        val requestTypesByMethodName = callables.map {
+        val requestTypesByMethodName = callables.associate {
             it.tgMethodName to TYPE_FACTORY.constructType(it)
-        }.toMap()
+        }
 
-        val returnTypesByMethodName = callables.map {
+        val returnTypesByMethodName = callables.associate {
             it.tgMethodName to it.responseType
-        }.toMap()
+        }
 
     }
 
@@ -127,13 +126,13 @@ internal object TypeHints {
             MultipartTgCallable::class.java.isAssignableFrom(it)
         }
 
-        val requestTypesByMethodName = callables.map {
+        val requestTypesByMethodName = callables.associate {
             it.tgMethodName to TYPE_FACTORY.constructType(it)
-        }.toMap()
+        }
 
-        val returnTypesByMethodName = callables.map {
+        val returnTypesByMethodName = callables.associate {
             it.tgMethodName to it.responseType
-        }.toMap()
+        }
 
     }
 

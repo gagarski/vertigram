@@ -22,7 +22,7 @@ enum class UpdateType {
     @TgEnumName("pre_checkout_query")
     PRE_CHECKOUT_QUERY;
 
-    override fun toString(): String = super.toString().toLowerCase()
+    override fun toString(): String = super.toString().lowercase()
 
 }
 

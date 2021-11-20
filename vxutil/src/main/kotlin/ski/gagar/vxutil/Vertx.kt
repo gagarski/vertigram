@@ -8,15 +8,16 @@ import io.vertx.kotlin.coroutines.dispatcher
 import kotlinx.coroutines.*
 import org.slf4j.Logger
 import kotlin.coroutines.CoroutineContext
+import kotlin.system.exitProcess
 
-fun <T> Vertx.runBlocking(block: suspend Vertx.() -> T): Unit {
+fun <T> Vertx.runBlocking(block: suspend Vertx.() -> T) {
     try {
         runBlocking(dispatcher()) {
             block()
         }
     } catch (t: Throwable) {
         globalLogger.error("", t)
-        System.exit(-1)
+        exitProcess(-1)
     }
 }
 
@@ -65,7 +66,7 @@ suspend fun <T> CoroutineVerticle.retrying(
 
 suspend fun <T> WorkerExecutor.executeBlockingSuspend(blocking: suspend () -> T): Future<T> =
     executeBlocking { promise ->
-        // We do not use vertx.dispatcher here. Instead we go with thread-confined dispatcher fopr runBlocking
+        // We do not use vertx.dispatcher here. Instead, we go with thread-confined dispatcher for runBlocking
         runBlocking {
             try {
                 promise.complete(blocking())

@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo
 
 
 // Type filed here is quite fine with Jackson polymorphism.
-// However for other cases we want to totally disable type info when sending a message to Telegram
+// However, for other cases we want to totally disable type info when sending a message to Telegram
 @JsonTypeInfo(use = JsonTypeInfo.Id.MINIMAL_CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@class")
 @JsonSubTypes(
     JsonSubTypes.Type(value = InlineQueryResultArticle::class),

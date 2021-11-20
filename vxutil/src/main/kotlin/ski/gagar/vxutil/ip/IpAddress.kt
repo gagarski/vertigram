@@ -169,7 +169,7 @@ class IpNetworkAddress(val ip: IpAddress, val mask: IpAddress) {
         }
     }
     val version: Int = ip.version
-    val maskInt: Int
+    private val maskInt: Int
         get() {
             val bigInt = mask.toBigInteger()
             val bits = ip.bytes.size * 8

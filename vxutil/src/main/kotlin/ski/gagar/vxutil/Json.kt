@@ -39,10 +39,4 @@ inline fun <reified T> JsonObject.mapTo(mapper: ObjectMapper = DatabindCodec.map
     mapper.convertValue(this.map, mapper.typeFactory.constructType(T::class.java))
 
 fun <T> JsonObject.mapTo(type: JavaType, mapper: ObjectMapper = DatabindCodec.mapper()): T =
-    try {
-        mapper.convertValue<T>(this.map, type)
-    } catch (t: Throwable) {
-        logger.error("${this.map}")
-        logger.error("${type}")
-        throw t
-    }
+    mapper.convertValue(this.map, type)

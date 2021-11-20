@@ -40,7 +40,7 @@ private val User.fullName: String?
         val firstName = this.firstName ?: ""
         val lastName = this.lastName ?: ""
         val fullName = "$firstName $lastName".trim()
-        return if (fullName.isBlank()) return null else fullName
+        return fullName.ifBlank { null }
     }
 
 
