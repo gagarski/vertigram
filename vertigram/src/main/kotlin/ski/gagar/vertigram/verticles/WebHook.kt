@@ -4,8 +4,6 @@ import io.vertx.ext.web.Router
 import io.vertx.ext.web.handler.BodyHandler
 import io.vertx.ext.web.handler.LoggerFormat
 import io.vertx.ext.web.handler.LoggerHandler
-import io.vertx.kotlin.coroutines.CoroutineVerticle
-import ski.gagar.vxutil.logger
 import ski.gagar.vertigram.client.Telegram
 import ski.gagar.vertigram.client.TgVTelegram
 import ski.gagar.vertigram.config.WebHookConfig
@@ -14,15 +12,12 @@ import ski.gagar.vertigram.entities.requests.DeleteWebhook
 import ski.gagar.vertigram.entities.requests.SetWebhook
 import ski.gagar.vertigram.util.TELEGRAM_JSON_MAPPER
 import ski.gagar.vertigram.messages.UpdateList
+import ski.gagar.vxutil.*
 import ski.gagar.vxutil.ip.IpNetworkAddress
-import ski.gagar.vxutil.mapTo
-import ski.gagar.vxutil.publishJson
-import ski.gagar.vxutil.retrying
-import ski.gagar.vxutil.sleep
 import ski.gagar.vxutil.web.RealIpFormatter
 import java.util.*
 
-class WebHook : CoroutineVerticle() {
+class WebHook : ErrorLoggingCoroutineVerticle() {
     private val secret = UUID.randomUUID()
     private val typedConfig by lazy {
         config.mapTo<Config>()

@@ -135,7 +135,7 @@ object UnixTimestampModule : Module() {
 val TELEGRAM_JSON_MAPPER: ObjectMapper =
     ObjectMapper() // default mapper
         .setAnnotationIntrospector(NoTypeInfoAnnotationIntrospector()) // disabling type info
-        .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE) // snake case
+        .setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE) // snake case
         .setSerializationInclusion(JsonInclude.Include.NON_NULL) // ignoring null
         .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false) // ignoring unknown properties
         .registerModule(KotlinModule()) // Kotlin!

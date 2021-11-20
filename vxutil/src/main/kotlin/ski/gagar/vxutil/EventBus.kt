@@ -9,7 +9,6 @@ import io.vertx.core.eventbus.DeliveryOptions
 import io.vertx.core.eventbus.EventBus
 import io.vertx.core.eventbus.Message
 import io.vertx.core.eventbus.MessageConsumer
-import io.vertx.core.impl.NoStackTraceThrowable
 import io.vertx.core.json.JsonObject
 import io.vertx.core.json.jackson.DatabindCodec
 import io.vertx.kotlin.coroutines.CoroutineVerticle
@@ -17,6 +16,15 @@ import io.vertx.kotlin.coroutines.await
 import kotlinx.coroutines.launch
 
 interface DoNotSuppressError
+
+open class NoStackTraceThrowable(msg: String) : io.vertx.core.impl.NoStackTraceThrowable(msg) {
+    override fun initCause(cause: Throwable?): Throwable {
+        if (this.cause == null && cause == null) {
+            return this
+        }
+        return super.initCause(cause)
+    }
+}
 
 class ReplyException(msg: String?, override val cause: Throwable) : Exception(msg, cause)
 class InternalServerError(msg: String) : NoStackTraceThrowable(msg)

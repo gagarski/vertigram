@@ -1,19 +1,14 @@
 package ski.gagar.vertigram.verticles
 
-import io.vertx.kotlin.coroutines.CoroutineVerticle
 import kotlinx.coroutines.launch
-import ski.gagar.vxutil.logger
 import ski.gagar.vertigram.client.Telegram
 import ski.gagar.vertigram.client.TgVTelegram
 import ski.gagar.vertigram.entities.requests.DeleteWebhook
 import ski.gagar.vertigram.messages.UpdateList
-import ski.gagar.vxutil.mapTo
-import ski.gagar.vxutil.publishJson
-import ski.gagar.vxutil.retrying
-import ski.gagar.vxutil.sleep
+import ski.gagar.vxutil.*
 import java.time.Instant
 
-class LongPoller: CoroutineVerticle() {
+class LongPoller: ErrorLoggingCoroutineVerticle() {
     private val typedConfig by lazy {
         config.mapTo<Config>()
     }

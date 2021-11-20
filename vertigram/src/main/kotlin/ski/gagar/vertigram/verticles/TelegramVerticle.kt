@@ -1,6 +1,5 @@
 package ski.gagar.vertigram.verticles
 
-import io.vertx.kotlin.coroutines.CoroutineVerticle
 import ski.gagar.vertigram.client.DirectTelegram
 import ski.gagar.vertigram.entities.requests.GetUpdates
 import ski.gagar.vertigram.entities.requests.JsonTgCallable
@@ -8,13 +7,14 @@ import ski.gagar.vertigram.entities.requests.MultipartTgCallable
 import ski.gagar.vertigram.entities.requests.TgCallable
 import ski.gagar.vertigram.util.TypeHints
 import ski.gagar.vertigram.util.getOrAssert
+import ski.gagar.vxutil.ErrorLoggingCoroutineVerticle
 import ski.gagar.vxutil.mapTo
 import ski.gagar.vxutil.suspendJsonConsumer
 
 @Suppress("DEPRECATION")
 private typealias RawGetUpdates = GetUpdates
 
-class TelegramVerticle : CoroutineVerticle() {
+class TelegramVerticle : ErrorLoggingCoroutineVerticle() {
     private val typedConfig by lazy {
         config.mapTo<Config>()
     }

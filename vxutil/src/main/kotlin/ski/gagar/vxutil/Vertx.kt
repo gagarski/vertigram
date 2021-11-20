@@ -1,23 +1,25 @@
 package ski.gagar.vxutil
 
-import io.vertx.core.DeploymentOptions
-import io.vertx.core.Future
-import io.vertx.core.Vertx
-import io.vertx.core.WorkerExecutor
+import io.vertx.core.*
 import io.vertx.core.json.JsonObject
 import io.vertx.kotlin.coroutines.CoroutineVerticle
 import io.vertx.kotlin.coroutines.awaitResult
 import io.vertx.kotlin.coroutines.dispatcher
 import kotlinx.coroutines.*
 import org.slf4j.Logger
-import java.util.concurrent.CompletableFuture
+import kotlin.coroutines.CoroutineContext
 
-fun <T> Vertx.runBlocking(block: suspend Vertx.() -> T): Unit =
-    kotlinx.coroutines.runBlocking {
-        launch(dispatcherWithEx) {
+fun <T> Vertx.runBlocking(block: suspend Vertx.() -> T): Unit {
+    try {
+        runBlocking(dispatcher()) {
             block()
         }
+    } catch (t: Throwable) {
+        globalLogger.error("", t)
+        System.exit(-1)
     }
+}
+
 
 suspend fun Vertx.sleep(millis: Long): Unit = awaitResult { h ->
     this.setTimer(millis) { h.handle(Future.succeededFuture()) }
@@ -25,7 +27,7 @@ suspend fun Vertx.sleep(millis: Long): Unit = awaitResult { h ->
 
 fun CoroutineVerticle.setTimerCoro(millis: Long, handler: suspend (timerId: Long) -> Unit) =
     this.vertx.setTimer(millis) { timerId ->
-        launch(this.vertx.dispatcherWithEx(this.logger)) {
+        launch {
             handler(timerId)
         }
     }
@@ -77,15 +79,21 @@ suspend fun <T> WorkerExecutor.executeBlockingSuspend(blocking: suspend () -> T)
 fun DeploymentOptions.setTypedConfig(obj: Any): DeploymentOptions =
     setConfig(JsonObject.mapFrom(obj))
 
-fun Vertx.dispatcherWithEx(logger: Logger) =
-    dispatcher() + CoroutineExceptionHandler { _, ex ->
-        logger.error("Unhandled exception", ex)
+
+abstract class ErrorLoggingCoroutineVerticle : io.vertx.kotlin.coroutines.CoroutineVerticle() {
+    private lateinit var context: Context
+    override val coroutineContext: CoroutineContext by lazy {
+        context.dispatcher() + SupervisorJob() + CoroutineExceptionHandler { _, ex ->
+            logger.error("Unhandled exception", ex)
+        }
     }
 
-val Vertx.dispatcherWithEx
-    get() = dispatcherWithEx(globalLogger)
+    override fun init(vertx: Vertx, context: Context) {
+        super.init(vertx, context)
+        this.context = context
+    }
+}
 
-
-fun Vertx.logExceptions(logger: Logger = globalLogger): Vertx = exceptionHandler {
+fun Vertx.logUnhandledExceptions(logger: Logger = globalLogger): Vertx = exceptionHandler {
     logger.error("Unhandled exception", it)
 }
