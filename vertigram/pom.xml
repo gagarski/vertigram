@@ -3,16 +3,37 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>ski.gagar</groupId>
-        <artifactId>vertigram-bom</artifactId>
+        <groupId>ski.gagar.vxutil</groupId>
+        <artifactId>vxutil-bom-internal</artifactId>
         <version>0.2.15-SNAPSHOT</version>
-        <relativePath>../</relativePath>
+        <relativePath>../vxutil-bom-internal</relativePath>
     </parent>
 
     <artifactId>vertigram</artifactId>
 
     <name>Vertigram</name>
     <description>Telegram tools for Vert.x</description>
+
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>Kirill Gagarski</name>
+            <email>kirill.gagarski@gmail.com</email>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git:git@github.com:gagarski/vertigram.git</connection>
+        <developerConnection>scm:git:git@github.com:gagarski/vertigram.git</developerConnection>
+        <url>https://github.com/gagarski/vertigram</url>
+    </scm>
 
     <dependencies>
         <dependency>
@@ -86,8 +107,8 @@
             <artifactId>reflections</artifactId>
         </dependency>
         <dependency>
-            <groupId>ski.gagar</groupId>
-            <artifactId>vxutil</artifactId>
+            <groupId>ski.gagar.vxutil</groupId>
+            <artifactId>vxutil-core</artifactId>
             <version>0.2.15-SNAPSHOT</version>
         </dependency>
     </dependencies>

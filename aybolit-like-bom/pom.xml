@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>vxutil-parent</artifactId>
+        <groupId>ski.gagar.vxutil</groupId>
+        <version>0.2.15-SNAPSHOT</version>
+        <relativePath>../vxutil-parent</relativePath>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>ski.gagar</groupId>
+    <artifactId>aybolit-like-bom</artifactId>
+    <packaging>pom</packaging>
+
+    <name>Aybolit-like BOM</name>
+    <description>A BOM for aybolit-like bots</description>
+
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>Kirill Gagarski</name>
+            <email>kirill.gagarski@gmail.com</email>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git:git@github.com:gagarski/vertigram.git</connection>
+        <developerConnection>scm:git:git@github.com:gagarski/vertigram.git</developerConnection>
+        <url>https://github.com/gagarski/vertigram</url>
+    </scm>
+
+    <properties>
+        <psqldriver.version>42.3.1</psqldriver.version>
+        <hikari.version>5.0.0</hikari.version>
+        <flyway.version>8.0.5</flyway.version>
+        <jooq.version>3.15.4</jooq.version>
+        <janino.version>3.1.6</janino.version>
+        <args4j.version>2.33</args4j.version>
+        <guava.version>31.0.1-jre</guava.version>
+
+        <exec.main-class/>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>${guava.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>args4j</groupId>
+                <artifactId>args4j</artifactId>
+                <version>${args4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.codehaus.janino</groupId>
+                <artifactId>janino</artifactId>
+                <version>${janino.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ski.gagar.vxutil</groupId>
+                <artifactId>vxutil-core</artifactId>
+                <version>0.2.15-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>ski.gagar.vxutil</groupId>
+                <artifactId>vxutil-jooq</artifactId>
+                <version>0.2.15-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>ski.gagar.vxutil</groupId>
+                <artifactId>vertigram</artifactId>
+                <version>0.2.15-SNAPSHOT</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>properties-maven-plugin</artifactId>
+                    <version>1.0.0</version>
+                    <executions>
+                        <execution>
+                            <phase>initialize</phase>
+                            <goals>
+                                <goal>read-project-properties</goal>
+                            </goals>
+                            <configuration>
+                                <files>
+                                    <file>${project.basedir}/db.properties</file>
+                                </files>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-shade-plugin</artifactId>
+                    <version>2.3</version>
+                    <executions>
+                        <execution>
+                            <phase>package</phase>
+                            <goals>
+                                <goal>shade</goal>
+                            </goals>
+                            <configuration>
+                                <filters>
+                                    <filter>
+                                        <artifact>*:*:*:*</artifact>
+                                        <excludes>
+                                            <exclude>META-INF/*.SF</exclude>
+                                            <exclude>META-INF/*.DSA</exclude>
+                                            <exclude>META-INF/*.RSA</exclude>
+                                        </excludes>
+                                    </filter>
+                                </filters>
+                                <transformers>
+                                    <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                        <manifestEntries>
+                                            <Main-Class>
+                                                ${exec.main-class}
+                                            </Main-Class>
+                                        </manifestEntries>
+                                    </transformer>
+                                    <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                                        <resource>
+                                            META-INF/services/io.vertx.core.spi.VerticleFactory
+                                        </resource>
+                                    </transformer>
+                                </transformers>
+                                <artifactSet />
+                                <outputFile>
+                                    ${project.build.directory}/${project.artifactId}-${project.version}-fat.jar
+                                </outputFile>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+</project>
