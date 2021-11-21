@@ -15,6 +15,7 @@
 
     <name>Vxutil jOOQ</name>
     <description>Utilities for Vert.x + jOOQ</description>
+    <url>https://github.com/gagarski/vxutil</url>
 
     <licenses>
         <license>

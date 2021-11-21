@@ -11,6 +11,7 @@
 
     <name>Vxutil Dependencies</name>
     <description>POM with dependencies for Vxutil</description>
+    <url>https://github.com/gagarski/vxutil</url>
 
     <licenses>
         <license>
@@ -27,6 +28,11 @@
         </developer>
     </developers>
 
+    <scm>
+        <connection>scm:git:git@github.com:gagarski/vxutil.git</connection>
+        <developerConnection>scm:git:git@github.com:gagarski/vxutil.git</developerConnection>
+        <url>https://github.com/gagarski/vxutil</url>
+    </scm>
 
     <properties>
         <kotlin.stdlib.version>1.6.0</kotlin.stdlib.version>

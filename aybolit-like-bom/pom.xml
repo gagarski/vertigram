@@ -16,6 +16,7 @@
 
     <name>Aybolit-like BOM</name>
     <description>A BOM for aybolit-like bots</description>
+    <url>https://github.com/gagarski/vxutil</url>
 
     <licenses>
         <license>
@@ -33,9 +34,9 @@
     </developers>
 
     <scm>
-        <connection>scm:git:git@github.com:gagarski/vertigram.git</connection>
-        <developerConnection>scm:git:git@github.com:gagarski/vertigram.git</developerConnection>
-        <url>https://github.com/gagarski/vertigram</url>
+        <connection>scm:git:git@github.com:gagarski/vxutil.git</connection>
+        <developerConnection>scm:git:git@github.com:gagarski/vxutil.git</developerConnection>
+        <url>https://github.com/gagarski/vxutil</url>
     </scm>
 
     <properties>

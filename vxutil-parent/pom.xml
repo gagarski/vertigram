@@ -12,6 +12,7 @@
 
     <name>Vxutil parent </name>
     <description>Parent POM for Vxutil to be used by external projects</description>
+    <url>https://github.com/gagarski/vxutil</url>
 
     <licenses>
         <license>
