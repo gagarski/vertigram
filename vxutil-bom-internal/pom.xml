@@ -35,6 +35,13 @@
     </scm>
 
     <properties>
+        <gpg.plugin.version>3.0.1</gpg.plugin.version>
+        <source.plugin.version>3.2.0</source.plugin.version>
+        <release.plugin.version>3.0.0-M1</release.plugin.version>
+        <deploy.plugin.version>3.0.0-M1</deploy.plugin.version>
+        <build-helper.plugin.version>3.0.0</build-helper.plugin.version>
+        <nexus-staging.plugin.version>1.6.8</nexus-staging.plugin.version>
+
         <kotlin.stdlib.version>1.6.0</kotlin.stdlib.version>
         <kotlinx.coroutines.version>1.5.2</kotlinx.coroutines.version>
         <vertx.version>4.2.1</vertx.version>
@@ -268,7 +275,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-source-plugin</artifactId>
-                    <version>3.2.0</version>
+                    <version>${source.plugin.version}</version>
                     <executions>
                         <execution>
                             <id>attach-sources</id>
@@ -281,7 +288,7 @@
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>build-helper-maven-plugin</artifactId>
-                    <version>3.0.0</version>
+                    <version>${build-helper.plugin.version}</version>
                     <executions>
                         <execution>
                             <phase>generate-sources</phase>
@@ -316,16 +323,16 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-release-plugin</artifactId>
-                    <version>3.0.0-M1</version>
+                    <version>${release.plugin.version}</version>
                     <configuration>
                         <tagNameFormat>v@{project.version}</tagNameFormat>
-                        <arguments>-Dgpg.passphrase=${gpg.passphrase} -Dgpg.keyname=${gpg.keyname} -DperformRelease=true</arguments>
+                        <arguments>-Dgpg.passphrase=${gpg.passphrase} -Dgpg.keyname=${gpg.keyname}</arguments>
                     </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-deploy-plugin</artifactId>
-                    <version>3.0.0-M1</version>
+                    <version>${deploy.plugin.version}</version>
                     <configuration>
                         <skip>true</skip>
                     </configuration>
@@ -333,7 +340,7 @@
                 <plugin>
                     <groupId>org.sonatype.plugins</groupId>
                     <artifactId>nexus-staging-maven-plugin</artifactId>
-                    <version>1.6.8</version>
+                    <version>${nexus-staging.plugin.version}</version>
                     <extensions>true</extensions>
                     <configuration>
                         <serverId>ossrh</serverId>
@@ -353,7 +360,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-gpg-plugin</artifactId>
-                    <version>1.6</version>
+                    <version>${gpg.plugin.version}</version>
                     <executions>
                         <execution>
                             <id>sign-artifacts</id>
