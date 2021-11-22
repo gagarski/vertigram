@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>vxutil-parent-base</artifactId>
         <groupId>ski.gagar.vxutil</groupId>
-        <version>0.2.15-SNAPSHOT</version>
+        <version>0.3.0</version>
         <relativePath>../vxutil-parent-base</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -26,7 +24,7 @@
         <args4j.version>2.33</args4j.version>
         <guava.version>31.0.1-jre</guava.version>
 
-        <exec.main-class/>
+        <exec.main-class />
     </properties>
 
     <dependencyManagement>
@@ -49,17 +47,17 @@
             <dependency>
                 <groupId>ski.gagar.vxutil</groupId>
                 <artifactId>vxutil-core</artifactId>
-                <version>0.2.15-SNAPSHOT</version>
+                <version>0.3.0</version>
             </dependency>
             <dependency>
                 <groupId>ski.gagar.vxutil</groupId>
                 <artifactId>vxutil-jooq</artifactId>
-                <version>0.2.15-SNAPSHOT</version>
+                <version>0.3.0</version>
             </dependency>
             <dependency>
                 <groupId>ski.gagar.vxutil</groupId>
                 <artifactId>vertigram</artifactId>
-                <version>0.2.15-SNAPSHOT</version>
+                <version>0.3.0</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
