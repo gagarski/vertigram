@@ -3,7 +3,7 @@
     <parent>
         <artifactId>vxutil-parent-base</artifactId>
         <groupId>ski.gagar.vxutil</groupId>
-        <version>0.3.0</version>
+        <version>0.3.1-SNAPSHOT</version>
         <relativePath>../vxutil-parent-base</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -47,17 +47,17 @@
             <dependency>
                 <groupId>ski.gagar.vxutil</groupId>
                 <artifactId>vxutil-core</artifactId>
-                <version>0.3.0</version>
+                <version>0.3.1-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>ski.gagar.vxutil</groupId>
                 <artifactId>vxutil-jooq</artifactId>
-                <version>0.3.0</version>
+                <version>0.3.1-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>ski.gagar.vxutil</groupId>
                 <artifactId>vertigram</artifactId>
-                <version>0.3.0</version>
+                <version>0.3.1-SNAPSHOT</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
