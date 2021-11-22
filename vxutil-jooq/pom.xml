@@ -15,22 +15,6 @@
 
     <name>Vxutil jOOQ</name>
     <description>Utilities for Vert.x + jOOQ</description>
-    <url>https://github.com/gagarski/vxutil</url>
-
-    <licenses>
-        <license>
-            <name>Apache License, Version 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
-
-    <developers>
-        <developer>
-            <name>Kirill Gagarski</name>
-            <email>kirill.gagarski@gmail.com</email>
-        </developer>
-    </developers>
 
     <dependencies>
         <dependency>
@@ -104,5 +88,4 @@
             <artifactId>vxutil-core</artifactId>
         </dependency>
     </dependencies>
-
 </project>

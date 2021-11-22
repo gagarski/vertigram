@@ -13,28 +13,6 @@
 
     <name>Vxutil Core</name>
     <description>Core Vert.x utils</description>
-    <url>https://github.com/gagarski/vxutil</url>
-
-    <licenses>
-        <license>
-            <name>Apache License, Version 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
-
-    <developers>
-        <developer>
-            <name>Kirill Gagarski</name>
-            <email>kirill.gagarski@gmail.com</email>
-        </developer>
-    </developers>
-
-    <scm>
-        <connection>scm:git:git@github.com:gagarski/vxutil.git</connection>
-        <developerConnection>scm:git:git@github.com:gagarski/vxutil.git</developerConnection>
-        <url>https://github.com/gagarski/vxutil</url>
-    </scm>
 
     <dependencies>
         <dependency>
@@ -116,25 +94,4 @@
             <artifactId>commons-lang3</artifactId>
         </dependency>
     </dependencies>
-
-    <build>
-        <sourceDirectory>src/main/kotlin</sourceDirectory>
-        <plugins>
-            <plugin>
-                <groupId>org.jetbrains.kotlin</groupId>
-                <artifactId>kotlin-maven-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <artifactId>maven-compiler-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-gpg-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </build>
 </project>
