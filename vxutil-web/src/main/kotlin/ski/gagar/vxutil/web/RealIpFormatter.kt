@@ -2,16 +2,18 @@ package ski.gagar.vxutil.web
 
 import io.vertx.core.http.HttpServerRequest
 import io.vertx.core.http.HttpVersion
+import io.vertx.ext.web.RoutingContext
+import io.vertx.ext.web.handler.LoggerFormat
+import io.vertx.ext.web.handler.LoggerFormatter
+import io.vertx.ext.web.handler.LoggerHandler
 import io.vertx.ext.web.impl.Utils
-import ski.gagar.vxutil.ip.IpAddress
-import ski.gagar.vxutil.ip.IpNetworkAddress
 import ski.gagar.vxutil.logger
 
 // TODO simplify it
 class RealIpFormatter(private val immediate: Boolean = false,
                       private val trustedNetworks: Set<IpNetworkAddress> = setOf(),
                       private val trustDomainSockets: Boolean = false) :
-    java.util.function.Function<HttpServerRequest, String> {
+    LoggerFormatter {
 
     private val String?.shouldBeTrusted: Boolean
         get() {
@@ -44,7 +46,8 @@ class RealIpFormatter(private val immediate: Boolean = false,
                 host()
         }
 
-    override fun apply(request: HttpServerRequest): String {
+    override fun format(context: RoutingContext, ms: Long): String {
+        val request: HttpServerRequest = context.request()
         var contentLength: Long = 0
         contentLength = if (immediate) {
             request.headers()["content-length"]?.toLongOrNull() ?: 0
@@ -78,3 +81,9 @@ class RealIpFormatter(private val immediate: Boolean = false,
         const val X_FORWARDED_FOR = "X-Forwarded-For"
     }
 }
+
+fun RealIpLoggerHandler(immediate: Boolean = false,
+                        trustedNetworks: Set<IpNetworkAddress> = setOf(),
+                        trustDomainSockets: Boolean = false) =
+    LoggerHandler.create(immediate, LoggerFormat.CUSTOM)
+        .customFormatter(RealIpFormatter(immediate, trustedNetworks, trustDomainSockets))

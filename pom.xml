@@ -39,12 +39,15 @@
   </scm>
 
     <modules>
-        <module>vertigram</module>
-        <module>vxutil-core</module>
-        <module>vxutil-jooq</module>
         <module>vxutil-bom-internal</module>
         <module>vxutil-parent-base</module>
         <module>vxutil-parent</module>
+
+        <module>vxutil-core</module>
+        <module>vxutil-jooq</module>
+        <module>vxutil-web</module>
+        <module>vertigram</module>
+
         <module>aybolit-like-bom</module>
     </modules>
 </project>

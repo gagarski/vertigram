@@ -1,4 +1,4 @@
-package ski.gagar.vxutil
+package ski.gagar.vxutil.web
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.netty.handler.codec.http.HttpHeaderValues

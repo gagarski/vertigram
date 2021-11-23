@@ -5,10 +5,10 @@ import io.vertx.ext.web.multipart.MultipartForm
 import ski.gagar.vertigram.entities.Message
 import ski.gagar.vertigram.entities.ParseMode
 import ski.gagar.vertigram.entities.ReplyMarkup
-import ski.gagar.vxutil.attributeIfNotNull
-import ski.gagar.vxutil.attributeIfTrue
-import ski.gagar.vxutil.binaryFileUploadIfNotNull
-import ski.gagar.vxutil.jsonAttributeIfNotNull
+import ski.gagar.vxutil.web.attributeIfNotNull
+import ski.gagar.vxutil.web.attributeIfTrue
+import ski.gagar.vxutil.web.binaryFileUploadIfNotNull
+import ski.gagar.vxutil.web.jsonAttributeIfNotNull
 import java.io.File
 
 

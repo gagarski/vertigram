@@ -13,8 +13,9 @@ import ski.gagar.vertigram.entities.requests.SetWebhook
 import ski.gagar.vertigram.util.TELEGRAM_JSON_MAPPER
 import ski.gagar.vertigram.messages.UpdateList
 import ski.gagar.vxutil.*
-import ski.gagar.vxutil.ip.IpNetworkAddress
 import ski.gagar.vxutil.web.RealIpFormatter
+import ski.gagar.vxutil.web.RealIpLoggerHandler
+import ski.gagar.vxutil.web.ip.IpNetworkAddress
 import java.util.*
 
 class WebHook : ErrorLoggingCoroutineVerticle() {
@@ -32,13 +33,12 @@ class WebHook : ErrorLoggingCoroutineVerticle() {
             tg.call(DeleteWebhook)
         }
 
-        logger.info("Staring web server...")
+        logger.info("Staring ski.gagar.vxutil.web server...")
         val server = vertx.createHttpServer()
         val router = Router.router(vertx)
-        router.route().handler(LoggerHandler.create(LoggerFormat.CUSTOM).customFormatter(
-            RealIpFormatter(
-                trustedNetworks = typedConfig.webHook.proxy?.trustedNetworks?.map { IpNetworkAddress(it) }?.toSet() ?: setOf(),
-                trustDomainSockets = typedConfig.webHook.proxy?.trustDomainSockets ?: false)))
+        router.route().handler(RealIpLoggerHandler(
+            trustedNetworks = typedConfig.webHook.proxy?.trustedNetworks?.map { IpNetworkAddress(it) }?.toSet() ?: setOf(),
+            trustDomainSockets = typedConfig.webHook.proxy?.trustDomainSockets ?: false))
         router.route().handler(BodyHandler.create())
 
         router.post("${typedConfig.webHook.base}/${secret}").handler { context ->

@@ -16,10 +16,10 @@ import ski.gagar.vertigram.entities.requests.JsonTgCallable
 import ski.gagar.vertigram.entities.requests.MultipartTgCallable
 import ski.gagar.vertigram.entities.requests.TgCallable
 import ski.gagar.vertigram.util.*
-import ski.gagar.vxutil.bodyAsJson
 import ski.gagar.vxutil.logger
-import ski.gagar.vxutil.sendJsonAwait
 import ski.gagar.vxutil.uncheckedCast
+import ski.gagar.vxutil.web.bodyAsJson
+import ski.gagar.vxutil.web.sendJsonAwait
 
 internal data class TelegramImplOptions(
     val tgBase: String = "https://api.telegram.org",

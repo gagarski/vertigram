@@ -1,4 +1,4 @@
-package ski.gagar.vxutil.ip
+package ski.gagar.vxutil.web
 
 import java.lang.IllegalArgumentException
 import java.math.BigInteger

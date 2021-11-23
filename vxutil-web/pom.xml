@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <groupId>ski.gagar.vxutil</groupId>
         <artifactId>vxutil-bom-internal</artifactId>
@@ -9,10 +9,17 @@
         <relativePath>../vxutil-bom-internal</relativePath>
     </parent>
 
-    <artifactId>vertigram</artifactId>
+    <modelVersion>4.0.0</modelVersion>
 
-    <name>Vertigram</name>
-    <description>Telegram tools for Vert.x</description>
+    <artifactId>vxutil-web</artifactId>
+
+    <name>Vxutil Core</name>
+    <description>Vert.x ski.gagar.vxutil.web utils</description>
+
+    <properties>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+    </properties>
 
     <dependencies>
         <dependency>
@@ -86,22 +93,10 @@
             <artifactId>logback-classic</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.reflections</groupId>
-            <artifactId>reflections</artifactId>
-        </dependency>
-        <dependency>
             <groupId>ski.gagar.vxutil</groupId>
             <artifactId>vxutil-core</artifactId>
             <version>0.3.1-SNAPSHOT</version>
         </dependency>
-        <dependency>
-            <groupId>ski.gagar.vxutil</groupId>
-            <artifactId>vxutil-web</artifactId>
-            <version>0.3.1-SNAPSHOT</version>
-        </dependency>
     </dependencies>
+
 </project>

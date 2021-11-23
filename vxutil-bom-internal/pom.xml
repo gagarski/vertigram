@@ -208,6 +208,11 @@
             <artifactId>vertigram</artifactId>
             <version>0.3.1-SNAPSHOT</version>
         </dependency>
+        <dependency>
+            <groupId>ski.gagar.vxutil</groupId>
+            <artifactId>vxutil-ski.gagar.vxutil.web</artifactId>
+            <version>0.3.1-SNAPSHOT</version>
+        </dependency>
     </dependencies>
     </dependencyManagement>
 

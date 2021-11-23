@@ -17,14 +17,8 @@ fun <T> decodeValue(str: String, type: JavaType, mapper: ObjectMapper = Databind
 
 }
 
-@PublishedApi
-internal fun <T> jsonDecoder(type: JavaType, mapper: ObjectMapper = DatabindCodec.mapper()): (Buffer) -> T {
+fun <T> jsonDecoder(type: JavaType, mapper: ObjectMapper = DatabindCodec.mapper()): (Buffer) -> T {
     return { buff -> decodeValue(buff.toString(), type, mapper) }
-}
-
-fun <R> HttpResponse<Buffer>.bodyAsJson(type: JavaType, mapper: ObjectMapper = DatabindCodec.mapper()): R? {
-    val b = bodyAsBuffer()
-    return if (b != null) jsonDecoder<R>(type, mapper)(b) else null
 }
 
 fun jsonObjectMapFrom(obj: Any?, mapper: ObjectMapper = DatabindCodec.mapper()) =
