@@ -3,8 +3,6 @@ package ski.gagar.vxutil.jooq
 import com.zaxxer.hikari.HikariDataSource
 import io.vertx.core.Vertx
 import io.vertx.core.shareddata.Shareable
-import java.lang.IllegalArgumentException
-import java.lang.IllegalStateException
 import javax.sql.DataSource
 
 data class ShareableHolder<T>(val data: T) : Shareable

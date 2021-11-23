@@ -9,8 +9,8 @@ import ski.gagar.vertigram.entities.requests.TgCallable
 import ski.gagar.vertigram.util.TypeHints
 import ski.gagar.vertigram.util.getOrAssert
 import ski.gagar.vertigram.verticles.TelegramVerticle
-import ski.gagar.vxutil.jackson.ReplyException
 import ski.gagar.vxutil.ignore
+import ski.gagar.vxutil.jackson.ReplyException
 import ski.gagar.vxutil.jackson.requestJsonAwait
 
 

@@ -1,6 +1,5 @@
 package ski.gagar.vxutil.web
 
-import java.lang.IllegalArgumentException
 import java.math.BigInteger
 
 private const val BITS_IN_OCTET = 8

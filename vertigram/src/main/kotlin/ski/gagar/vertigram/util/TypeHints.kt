@@ -9,7 +9,11 @@ import ski.gagar.vertigram.entities.requests.MultipartTgCallable
 import ski.gagar.vertigram.entities.requests.TgCallable
 import ski.gagar.vxutil.uncheckedCast
 import ski.gagar.vxutil.uncheckedCastOrNull
-import java.lang.reflect.*
+import java.lang.reflect.GenericDeclaration
+import java.lang.reflect.Modifier
+import java.lang.reflect.ParameterizedType
+import java.lang.reflect.Type
+import java.lang.reflect.TypeVariable
 
 
 private const val MULTIPART = "Multipart"

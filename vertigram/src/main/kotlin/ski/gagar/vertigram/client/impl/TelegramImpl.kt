@@ -15,7 +15,11 @@ import ski.gagar.vertigram.entities.Wrapper
 import ski.gagar.vertigram.entities.requests.JsonTgCallable
 import ski.gagar.vertigram.entities.requests.MultipartTgCallable
 import ski.gagar.vertigram.entities.requests.TgCallable
-import ski.gagar.vertigram.util.*
+import ski.gagar.vertigram.util.TELEGRAM_JSON_MAPPER
+import ski.gagar.vertigram.util.TelegramCallException
+import ski.gagar.vertigram.util.TelegramDownloadException
+import ski.gagar.vertigram.util.TypeHints
+import ski.gagar.vertigram.util.getOrAssert
 import ski.gagar.vxutil.logger
 import ski.gagar.vxutil.uncheckedCast
 import ski.gagar.vxutil.web.bodyAsJson

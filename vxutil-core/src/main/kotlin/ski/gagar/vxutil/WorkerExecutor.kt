@@ -4,7 +4,12 @@ import io.vertx.core.Handler
 import io.vertx.core.Vertx
 import io.vertx.core.WorkerExecutor
 import kotlinx.coroutines.asCoroutineDispatcher
-import java.util.concurrent.*
+import java.util.concurrent.AbstractExecutorService
+import java.util.concurrent.Callable
+import java.util.concurrent.Delayed
+import java.util.concurrent.ScheduledExecutorService
+import java.util.concurrent.ScheduledFuture
+import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicReference
 
 class WorkerExecutorServiceError(msg: String) : Error(msg)

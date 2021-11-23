@@ -1,6 +1,5 @@
 package ski.gagar.vertigram.entities
 
-
 data class LoginUrl(
     val url: String,
     val forwardText: String? = null,

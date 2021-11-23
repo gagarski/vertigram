@@ -3,9 +3,9 @@ package ski.gagar.vertigram.client
 import com.fasterxml.jackson.databind.JavaType
 import com.fasterxml.jackson.databind.type.TypeFactory
 import ski.gagar.vertigram.entities.Update
+import ski.gagar.vertigram.entities.requests.GetFile
 import ski.gagar.vertigram.entities.requests.TgCallable
 import ski.gagar.vertigram.util.TELEGRAM_JSON_MAPPER
-import ski.gagar.vertigram.entities.requests.GetFile
 import ski.gagar.vertigram.util.TelegramNoFilePathException
 import ski.gagar.vertigram.util.TypeHints
 import ski.gagar.vertigram.util.getOrAssert
