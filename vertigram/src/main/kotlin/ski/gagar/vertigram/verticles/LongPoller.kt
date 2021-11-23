@@ -6,6 +6,8 @@ import ski.gagar.vertigram.client.TgVTelegram
 import ski.gagar.vertigram.entities.requests.DeleteWebhook
 import ski.gagar.vertigram.messages.UpdateList
 import ski.gagar.vxutil.*
+import ski.gagar.vxutil.jackson.mapTo
+import ski.gagar.vxutil.jackson.publishJson
 import java.time.Instant
 
 class LongPoller: ErrorLoggingCoroutineVerticle() {

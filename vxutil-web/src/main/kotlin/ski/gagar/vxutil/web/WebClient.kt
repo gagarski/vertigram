@@ -7,8 +7,8 @@ import io.vertx.core.json.jackson.DatabindCodec
 import io.vertx.ext.web.client.HttpRequest
 import io.vertx.ext.web.client.HttpResponse
 import io.vertx.kotlin.coroutines.awaitResult
-import ski.gagar.vxutil.jsonDecoder
-import ski.gagar.vxutil.jsonObjectMapFrom
+import ski.gagar.vxutil.jackson.jsonDecoder
+import ski.gagar.vxutil.jackson.jsonObjectMapFrom
 
 suspend fun <T, U> HttpRequest<T>.sendJsonAwait(obj: U, mapper: ObjectMapper) =
     awaitResult<HttpResponse<T>> { sendJsonObject(

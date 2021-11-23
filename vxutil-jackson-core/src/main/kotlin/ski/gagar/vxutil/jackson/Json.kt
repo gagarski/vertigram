@@ -1,4 +1,4 @@
-package ski.gagar.vxutil
+package ski.gagar.vxutil.jackson
 
 import com.fasterxml.jackson.databind.JavaType
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -6,7 +6,7 @@ import io.vertx.core.buffer.Buffer
 import io.vertx.core.json.DecodeException
 import io.vertx.core.json.JsonObject
 import io.vertx.core.json.jackson.DatabindCodec
-import io.vertx.ext.web.client.HttpResponse
+import ski.gagar.vxutil.uncheckedCast
 
 fun <T> decodeValue(str: String, type: JavaType, mapper: ObjectMapper = DatabindCodec.mapper()): T {
     try {

@@ -1,4 +1,4 @@
-package ski.gagar.vxutil
+package ski.gagar.vxutil.jackson
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonTypeInfo

@@ -1,7 +1,8 @@
 package ski.gagar.vertigram.util
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
-import ski.gagar.vxutil.DoNotSuppressError
+import ski.gagar.vxutil.jackson.DoNotSuppressError
+
 
 @JsonIgnoreProperties("message")
 abstract class TelegramException(str: String) : Exception(str), DoNotSuppressError

@@ -2,8 +2,6 @@ package ski.gagar.vertigram.verticles
 
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.handler.BodyHandler
-import io.vertx.ext.web.handler.LoggerFormat
-import io.vertx.ext.web.handler.LoggerHandler
 import ski.gagar.vertigram.client.Telegram
 import ski.gagar.vertigram.client.TgVTelegram
 import ski.gagar.vertigram.config.WebHookConfig
@@ -13,9 +11,10 @@ import ski.gagar.vertigram.entities.requests.SetWebhook
 import ski.gagar.vertigram.util.TELEGRAM_JSON_MAPPER
 import ski.gagar.vertigram.messages.UpdateList
 import ski.gagar.vxutil.*
-import ski.gagar.vxutil.web.RealIpFormatter
+import ski.gagar.vxutil.jackson.mapTo
+import ski.gagar.vxutil.jackson.publishJson
+import ski.gagar.vxutil.web.IpNetworkAddress
 import ski.gagar.vxutil.web.RealIpLoggerHandler
-import ski.gagar.vxutil.web.ip.IpNetworkAddress
 import java.util.*
 
 class WebHook : ErrorLoggingCoroutineVerticle() {

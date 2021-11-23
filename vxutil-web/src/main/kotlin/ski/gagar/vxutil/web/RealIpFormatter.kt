@@ -48,8 +48,7 @@ class RealIpFormatter(private val immediate: Boolean = false,
 
     override fun format(context: RoutingContext, ms: Long): String {
         val request: HttpServerRequest = context.request()
-        var contentLength: Long = 0
-        contentLength = if (immediate) {
+        val contentLength = if (immediate) {
             request.headers()["content-length"]?.toLongOrNull() ?: 0
         } else {
             request.response().bytesWritten()

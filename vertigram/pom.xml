@@ -100,8 +100,11 @@
         </dependency>
         <dependency>
             <groupId>ski.gagar.vxutil</groupId>
+            <artifactId>vxutil-jackson</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ski.gagar.vxutil</groupId>
             <artifactId>vxutil-web</artifactId>
-            <version>0.3.1-SNAPSHOT</version>
         </dependency>
     </dependencies>
 </project>

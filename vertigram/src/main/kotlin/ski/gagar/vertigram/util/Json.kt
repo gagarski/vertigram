@@ -134,10 +134,10 @@ object UnixTimestampModule : Module() {
 
 val TELEGRAM_JSON_MAPPER: ObjectMapper =
     ObjectMapper() // default mapper
-        .setAnnotationIntrospector(NoTypeInfoAnnotationIntrospector()) // disabling type info
-        .setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE) // snake case
-        .setSerializationInclusion(JsonInclude.Include.NON_NULL) // ignoring null
-        .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false) // ignoring unknown properties
+        .setAnnotationIntrospector(NoTypeInfoAnnotationIntrospector())
+        .setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE)
+        .setSerializationInclusion(JsonInclude.Include.NON_NULL)
+        .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
         .registerModule(KotlinModule()) // Kotlin!
         .registerModule(TelegramModule)
         .registerModule(UnixTimestampModule)

@@ -8,8 +8,9 @@ import ski.gagar.vertigram.entities.requests.TgCallable
 import ski.gagar.vertigram.util.TypeHints
 import ski.gagar.vertigram.util.getOrAssert
 import ski.gagar.vxutil.ErrorLoggingCoroutineVerticle
-import ski.gagar.vxutil.mapTo
-import ski.gagar.vxutil.suspendJsonConsumer
+import ski.gagar.vxutil.jackson.mapTo
+import ski.gagar.vxutil.jackson.suspendJsonConsumer
+import ski.gagar.vxutil.use
 
 @Suppress("DEPRECATION")
 private typealias RawGetUpdates = GetUpdates
@@ -65,7 +66,7 @@ class TelegramVerticle : ErrorLoggingCoroutineVerticle() {
 
     private suspend fun handleGetUpdates(msg: GetUpdates) = tg.getUpdates(limit = msg.limit, offset = msg.offset)
 
-    private fun handleLongPollTimeout(msg: GetLongPollTimeout) = typedConfig.tgOptions.longPollTimeout
+    private fun handleLongPollTimeout(msg: GetLongPollTimeout) = typedConfig.tgOptions.longPollTimeout.also { use(msg) }
 
     private suspend fun handleDownloadFile(msg: DownloadFile) = tg.downloadFile(msg.path, msg.outputPath)
 

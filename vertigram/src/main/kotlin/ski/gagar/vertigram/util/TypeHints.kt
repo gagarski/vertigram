@@ -3,7 +3,7 @@ package ski.gagar.vertigram.util
 import com.fasterxml.jackson.databind.JavaType
 import org.apache.commons.lang3.StringUtils
 import org.reflections.Reflections
-import org.reflections.scanners.SubTypesScanner
+import org.reflections.scanners.Scanners
 import ski.gagar.vertigram.entities.requests.JsonTgCallable
 import ski.gagar.vertigram.entities.requests.MultipartTgCallable
 import ski.gagar.vertigram.entities.requests.TgCallable
@@ -75,7 +75,7 @@ private val <T: TgCallable<*>> Class<T>.responseType: JavaType
 }
 
 private fun getTgCallables() =
-    Reflections("ski.gagar.vertigram.entities.requests", SubTypesScanner())
+    Reflections("ski.gagar.vertigram.entities.requests", Scanners.SubTypes)
         .getSubTypesOf(TgCallable::class.java)
         .asSequence()
         .filter { !Modifier.isAbstract(it.modifiers) }

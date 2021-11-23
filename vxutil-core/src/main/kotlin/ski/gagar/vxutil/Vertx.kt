@@ -1,6 +1,9 @@
 package ski.gagar.vxutil
 
-import io.vertx.core.*
+import io.vertx.core.Context
+import io.vertx.core.DeploymentOptions
+import io.vertx.core.Future
+import io.vertx.core.Vertx
 import io.vertx.core.json.JsonObject
 import io.vertx.kotlin.coroutines.CoroutineVerticle
 import io.vertx.kotlin.coroutines.awaitResult
@@ -62,20 +65,6 @@ suspend fun <T> CoroutineVerticle.retrying(
     coolDown: suspend (Int) -> Unit = { this.sleep(5000) },
     block: suspend () -> T
 ): T = vertx.retrying(shouldStop, coolDown, block)
-
-
-suspend fun <T> WorkerExecutor.executeBlockingSuspend(blocking: suspend () -> T): Future<T> =
-    executeBlocking { promise ->
-        // We do not use vertx.dispatcher here. Instead, we go with thread-confined dispatcher for runBlocking
-        runBlocking {
-            try {
-                promise.complete(blocking())
-            } catch (e: Throwable) {
-                promise.fail(e)
-            }
-        }
-    }
-
 
 fun DeploymentOptions.setTypedConfig(obj: Any): DeploymentOptions =
     setConfig(JsonObject.mapFrom(obj))
