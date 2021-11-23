@@ -84,10 +84,6 @@
             <artifactId>slf4j-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-        </dependency>
-        <dependency>
             <groupId>ski.gagar.vxutil</groupId>
             <artifactId>vxutil-core</artifactId>
         </dependency>

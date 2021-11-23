@@ -48,7 +48,7 @@
         <module>vxutil-jackson</module>
         <module>vxutil-jooq</module>
         <module>vxutil-web</module>
-        <module>vertigram</module>
+        <module>vxutil-vertigram</module>
 
         <module>aybolit-like-bom</module>
     </modules>
