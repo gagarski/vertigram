@@ -25,6 +25,8 @@ enum class EntityType {
     PRE,
     @TgEnumName("text_link")
     TEXT_LINK,
+    @TgEnumName("spoiler")
+    SPOILER,
     @TgEnumName("mention")
     MENTION,
     @TgEnumName("text_mention")
