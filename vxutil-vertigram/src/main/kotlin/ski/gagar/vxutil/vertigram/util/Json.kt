@@ -143,6 +143,7 @@ val TELEGRAM_JSON_MAPPER: ObjectMapper =
     ObjectMapper() // default mapper
         .setAnnotationIntrospector(NoTypeInfoAnnotationIntrospector())
         .setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE)
+        .enable(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES)
         .setSerializationInclusion(JsonInclude.Include.NON_NULL)
         .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
         .registerModule(KotlinModule()) // Kotlin!

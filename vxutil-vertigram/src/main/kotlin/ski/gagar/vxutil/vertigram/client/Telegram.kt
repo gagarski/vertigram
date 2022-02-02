@@ -2,6 +2,7 @@ package ski.gagar.vxutil.vertigram.client
 
 import com.fasterxml.jackson.databind.JavaType
 import com.fasterxml.jackson.databind.type.TypeFactory
+import ski.gagar.vxutil.vertigram.entities.ParsedUpdate
 import ski.gagar.vxutil.vertigram.entities.Update
 import ski.gagar.vxutil.vertigram.entities.requests.GetFile
 import ski.gagar.vxutil.vertigram.entities.requests.TgCallable

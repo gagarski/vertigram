@@ -3,10 +3,13 @@ package ski.gagar.vxutil.vertigram.client
 import com.fasterxml.jackson.databind.JavaType
 import io.vertx.core.Vertx
 import io.vertx.core.net.ProxyOptions
+import ski.gagar.vxutil.logger
 import ski.gagar.vxutil.vertigram.client.impl.TelegramImpl
 import ski.gagar.vxutil.vertigram.client.impl.TelegramImplOptions
+import ski.gagar.vxutil.vertigram.entities.MalformedUpdate
+import ski.gagar.vxutil.vertigram.entities.ParsedUpdate
 import ski.gagar.vxutil.vertigram.entities.Update
-import ski.gagar.vxutil.vertigram.entities.requests.GetUpdates
+import ski.gagar.vxutil.vertigram.entities.requests.GetUpdatesRaw
 import ski.gagar.vxutil.vertigram.entities.requests.TgCallable
 import java.io.Closeable
 
@@ -39,12 +42,19 @@ class DirectTelegram(
     @Suppress("DEPRECATION")
     override suspend fun getUpdates(offset: Long?, limit: Long?): List<Update> =
         impl.call(
-            typeFactory.constructParametricType(List::class.java, Update::class.java), GetUpdates(
+            typeFactory.constructParametricType(List::class.java, Map::class.java), GetUpdatesRaw(
                 offset = offset,
                 limit = limit,
                 timeout = options.getUpdatesTimeoutParamMs / 1000
             ), longPoll = true
-        )
+        ).mapNotNull { raw ->
+            try {
+                impl.mapper.convertValue(raw, ParsedUpdate::class.java)
+            } catch (e: IllegalArgumentException) {
+                // If this one throws, we give up
+                impl.mapper.convertValue(raw, MalformedUpdate::class.java)
+            }
+        }
 
     override suspend fun downloadFile(path: String, outputPath: String) {
         impl.downloadFile(path, outputPath)

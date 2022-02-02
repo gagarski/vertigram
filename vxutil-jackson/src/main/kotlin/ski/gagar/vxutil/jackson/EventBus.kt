@@ -30,6 +30,11 @@ class ReplyException(msg: String?, override val cause: Throwable) : Exception(ms
 class InternalServerError(msg: String) : NoStackTraceThrowable(msg)
 
 @PublishedApi
+internal data class RequestWrapper<T>(
+    val request: T
+)
+
+@PublishedApi
 internal data class Reply<T>(
     val result: T?,
 
@@ -66,7 +71,7 @@ suspend inline fun <Argument, reified Result> EventBus.requestJsonAwait(
     options: DeliveryOptions = DeliveryOptions()
 ): Result {
     val reply: Reply<Result> =
-        request<JsonObject>(address, JsonObject.mapFrom(value), options).await()
+        request<JsonObject>(address, JsonObject.mapFrom(RequestWrapper(value)), options).await()
             .body()
             .mapTo(TYPE_FACTORY.constructParametricType(Reply::class.java, resultJavaType))
 
@@ -80,7 +85,7 @@ suspend inline fun <Argument, reified Result> EventBus.requestJsonAwait(
 fun <Request> EventBus.publishJson(address: String,
                                    value: Request,
                                    options: DeliveryOptions = DeliveryOptions()): EventBus =
-    publish(address, JsonObject.mapFrom(value), options)
+    publish(address, JsonObject.mapFrom(RequestWrapper(value)), options)
 
 fun Message<JsonObject?>.replyWithThrowable(t: Throwable, options: DeliveryOptions = DeliveryOptions()) =
     reply(
@@ -121,10 +126,10 @@ inline fun <reified Request, reified Result> Verticle.jsonConsumer(
     requestJavaType: JavaType = TYPE_FACTORY.constructType(Request::class.java),
     crossinline function: (Request) -> Result
 ) : MessageConsumer<JsonObject> = vertx.eventBus().consumer(address) { msg ->
-    val req: Request =
-        msg.body().mapTo(requestJavaType)
+    val reqW: RequestWrapper<Request> =
+        msg.body().mapTo(TYPE_FACTORY.constructParametricType(RequestWrapper::class.java, requestJavaType))
     val res = try {
-        function(req)
+        function(reqW.request)
     } catch (t: Throwable) {
         msg.replyWithThrowable(t, replyOptions)
         throw t
@@ -140,10 +145,10 @@ inline fun <reified Request, reified Result>
     crossinline function: suspend (Request) -> Result
 ) : MessageConsumer<JsonObject> = vertx.eventBus().consumer(address) { msg ->
     launch {
-        val req: Request =
-            msg.body().mapTo(requestJavaType)
+        val reqW: RequestWrapper<Request> =
+            msg.body().mapTo(TYPE_FACTORY.constructParametricType(RequestWrapper::class.java, requestJavaType))
         val res = try {
-            function(req)
+            function(reqW.request)
         } catch (t: Throwable) {
             msg.replyWithThrowable(t, replyOptions)
             throw t

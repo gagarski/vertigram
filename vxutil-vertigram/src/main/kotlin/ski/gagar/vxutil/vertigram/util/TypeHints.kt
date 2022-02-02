@@ -27,7 +27,6 @@ private fun String.dropSuffix(suffix: String) =
 
 private val <T: TgCallable<*>> Class<T>.responseType: JavaType
     get() {
-
         if (typeParameters.isNotEmpty())
             throw IllegalArgumentException("$this should not have type parameters")
 

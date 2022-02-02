@@ -1,14 +1,15 @@
 package ski.gagar.vxutil.vertigram.verticles
 
+import com.fasterxml.jackson.databind.JsonMappingException
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.handler.BodyHandler
 import ski.gagar.vxutil.vertigram.client.Telegram
 import ski.gagar.vxutil.vertigram.client.TgVTelegram
 import ski.gagar.vxutil.vertigram.config.WebHookConfig
-import ski.gagar.vxutil.vertigram.entities.Update
+import ski.gagar.vxutil.vertigram.entities.ParsedUpdate
 import ski.gagar.vxutil.vertigram.entities.requests.DeleteWebhook
 import ski.gagar.vxutil.vertigram.entities.requests.SetWebhook
-import ski.gagar.vxutil.vertigram.messages.UpdateList
+import ski.gagar.vxutil.vertigram.messages.UpdateListW
 import ski.gagar.vxutil.vertigram.util.TELEGRAM_JSON_MAPPER
 import ski.gagar.vxutil.ErrorLoggingCoroutineVerticle
 import ski.gagar.vxutil.jackson.mapTo
@@ -16,6 +17,8 @@ import ski.gagar.vxutil.jackson.publishJson
 import ski.gagar.vxutil.logger
 import ski.gagar.vxutil.retrying
 import ski.gagar.vxutil.sleep
+import ski.gagar.vxutil.vertigram.entities.ParsedUpdateList
+import ski.gagar.vxutil.vertigram.entities.UpdateList
 import ski.gagar.vxutil.web.IpNetworkAddress
 import ski.gagar.vxutil.web.RealIpLoggerHandler
 import java.util.*
@@ -44,12 +47,26 @@ class WebHook : ErrorLoggingCoroutineVerticle() {
         router.route().handler(BodyHandler.create())
 
         router.post("${typedConfig.webHook.base}/${secret}").handler { context ->
-            val req = context.bodyAsJson.mapTo(Update::class.java,
-                TELEGRAM_JSON_MAPPER
-            )
+            logger.error("${context.bodyAsJson}")
+            val json = context.bodyAsJson
+            val req = try {
+                json.mapTo(
+                    ParsedUpdate::class.java,
+                    TELEGRAM_JSON_MAPPER
+                )
+            } catch (ex: JsonMappingException) {
+                logger.error("Malformed update from Telegram $json, skipping it", ex)
+                // It's ugly to send successful response back to Telegram.
+                // But otherwise (either when returning 40x or 50x codes) Telegram will retry these requests
+                // First, it's unclear when will it give up (docs say "after a reasonable amount of attempts")
+                // Second, returning 400 or 500 blocks other updates (at least from same chat) unless Telegram gives up,
+                // or we return 200.
+                context.response().end()
+                return@handler
+            }
             logger.trace("Received update $req")
             logger.trace("Publishing $req")
-            vertx.eventBus().publishJson(typedConfig.updatePublishingAddress, UpdateList(req))
+            vertx.eventBus().publishJson(typedConfig.updatePublishingAddress, ParsedUpdateList(listOf(req)))
             context.response().end()
         }
 
