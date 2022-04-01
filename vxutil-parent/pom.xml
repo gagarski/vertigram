@@ -5,12 +5,12 @@
     <parent>
         <groupId>ski.gagar.vxutil</groupId>
         <artifactId>vxutil-parent-base</artifactId>
-        <version>0.5.1</version>
+        <version>0.5.2-SNAPSHOT</version>
         <relativePath>../vxutil-parent-base</relativePath>
     </parent>
 
     <artifactId>vxutil-parent</artifactId>
-    <version>0.5.1</version>
+    <version>0.5.2-SNAPSHOT</version>
     <packaging>pom</packaging>
 
 
