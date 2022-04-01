@@ -1,6 +1,5 @@
 package ski.gagar.vxutil.vertigram.verticles
 
-import com.fasterxml.jackson.databind.JsonMappingException
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.handler.BodyHandler
 import ski.gagar.vxutil.ErrorLoggingCoroutineVerticle
@@ -52,7 +51,7 @@ class WebHook : ErrorLoggingCoroutineVerticle() {
                     ParsedUpdate::class.java,
                     TELEGRAM_JSON_MAPPER
                 )
-            } catch (ex: JsonMappingException) {
+            } catch (ex: Exception) {
                 logger.error("Malformed update from Telegram $json, skipping it", ex)
                 // It's ugly to send successful response back to Telegram.
                 // But otherwise (either when returning 40x or 50x codes) Telegram will retry these requests
