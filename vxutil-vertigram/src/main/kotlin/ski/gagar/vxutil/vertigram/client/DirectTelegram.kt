@@ -3,14 +3,13 @@ package ski.gagar.vxutil.vertigram.client
 import com.fasterxml.jackson.databind.JavaType
 import io.vertx.core.Vertx
 import io.vertx.core.net.ProxyOptions
-import ski.gagar.vxutil.logger
 import ski.gagar.vxutil.vertigram.client.impl.TelegramImpl
 import ski.gagar.vxutil.vertigram.client.impl.TelegramImplOptions
-import ski.gagar.vxutil.vertigram.entities.MalformedUpdate
-import ski.gagar.vxutil.vertigram.entities.ParsedUpdate
-import ski.gagar.vxutil.vertigram.entities.Update
-import ski.gagar.vxutil.vertigram.entities.requests.GetUpdatesRaw
-import ski.gagar.vxutil.vertigram.entities.requests.TgCallable
+import ski.gagar.vxutil.vertigram.types.MalformedUpdate
+import ski.gagar.vxutil.vertigram.types.ParsedUpdate
+import ski.gagar.vxutil.vertigram.types.Update
+import ski.gagar.vxutil.vertigram.methods.GetUpdatesRaw
+import ski.gagar.vxutil.vertigram.methods.TgCallable
 import java.io.Closeable
 
 private const val LONG_POLL_DEFAULT_GAP: Long = 5000L
@@ -42,7 +41,8 @@ class DirectTelegram(
     @Suppress("DEPRECATION")
     override suspend fun getUpdates(offset: Long?, limit: Long?): List<Update> =
         impl.call(
-            typeFactory.constructParametricType(List::class.java, Map::class.java), GetUpdatesRaw(
+            typeFactory.constructParametricType(List::class.java, Map::class.java),
+            GetUpdatesRaw(
                 offset = offset,
                 limit = limit,
                 timeout = options.getUpdatesTimeoutParamMs / 1000

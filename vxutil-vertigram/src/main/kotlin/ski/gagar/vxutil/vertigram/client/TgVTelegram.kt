@@ -6,9 +6,9 @@ import io.vertx.core.eventbus.DeliveryOptions
 import ski.gagar.vxutil.ignore
 import ski.gagar.vxutil.jackson.ReplyException
 import ski.gagar.vxutil.jackson.requestJsonAwait
-import ski.gagar.vxutil.vertigram.entities.Update
-import ski.gagar.vxutil.vertigram.entities.requests.GetUpdates
-import ski.gagar.vxutil.vertigram.entities.requests.TgCallable
+import ski.gagar.vxutil.vertigram.types.Update
+import ski.gagar.vxutil.vertigram.methods.GetUpdates
+import ski.gagar.vxutil.vertigram.methods.TgCallable
 import ski.gagar.vxutil.vertigram.util.TypeHints
 import ski.gagar.vxutil.vertigram.util.getOrAssert
 import ski.gagar.vxutil.vertigram.verticles.TelegramVerticle

@@ -11,10 +11,10 @@ import io.vertx.ext.web.client.WebClientOptions
 import io.vertx.ext.web.codec.BodyCodec
 import io.vertx.ext.web.multipart.MultipartForm
 import io.vertx.kotlin.coroutines.await
-import ski.gagar.vxutil.vertigram.entities.Wrapper
-import ski.gagar.vxutil.vertigram.entities.requests.JsonTgCallable
-import ski.gagar.vxutil.vertigram.entities.requests.MultipartTgCallable
-import ski.gagar.vxutil.vertigram.entities.requests.TgCallable
+import ski.gagar.vxutil.vertigram.types.Wrapper
+import ski.gagar.vxutil.vertigram.methods.JsonTgCallable
+import ski.gagar.vxutil.vertigram.methods.MultipartTgCallable
+import ski.gagar.vxutil.vertigram.methods.TgCallable
 import ski.gagar.vxutil.vertigram.util.TELEGRAM_JSON_MAPPER
 import ski.gagar.vxutil.vertigram.util.TelegramCallException
 import ski.gagar.vxutil.vertigram.util.TelegramDownloadException

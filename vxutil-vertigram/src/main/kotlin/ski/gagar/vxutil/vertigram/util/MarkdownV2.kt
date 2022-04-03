@@ -1,6 +1,6 @@
 package ski.gagar.vxutil.vertigram.util
 
-import ski.gagar.vxutil.vertigram.entities.User
+import ski.gagar.vxutil.vertigram.types.User
 
 fun String.escapeText() =
     this.replace("""([_*\[\]()~`>#+\-=|{}.!\\])""".toRegex(), """\\$1""")
@@ -47,7 +47,7 @@ private val User.fullName: String?
 abstract class MdV2ElementWithChildren : MdV2Element() {
     private val children: MutableList<MdV2Element> = mutableListOf()
 
-    private fun <T : MdV2Element> initTag(tag: T, init: T.() -> Unit = {}): T {
+    protected fun <T : MdV2Element> initTag(tag: T, init: T.() -> Unit = {}): T {
         tag.init()
         children.add(tag)
         return tag
@@ -83,6 +83,7 @@ abstract class MdV2ElementWithChildren : MdV2Element() {
     }
     protected open fun code(code: String) = initTag(Code(code))
     protected open fun pre(code: String, language: String? = null) = initTag(Pre(code, language))
+    protected open fun spoiler(init: Spoiler.() -> Unit) = initTag(Spoiler(), init)
 
     inner class Unsafe: MdV2ElementWithChildren() {
         override fun render(builder: StringBuilder) {
@@ -103,6 +104,7 @@ abstract class MdV2ElementWithChildren : MdV2Element() {
         public override fun userSoft(user: User) = this@MdV2ElementWithChildren.userSoft(user)
         public override fun code(code: String) = this@MdV2ElementWithChildren.code(code)
         public override fun pre(code: String, language: String?) = this@MdV2ElementWithChildren.pre(code, language)
+        public override fun spoiler(init: Spoiler.() -> Unit) = this@MdV2ElementWithChildren.spoiler(init)
     }
 
     fun unsafe() = Unsafe()
@@ -131,11 +133,23 @@ class Bold : WrappedMdV2ElementWithChildren() {
     public override fun a(href: String, init: Link.() -> Unit) = super.a(href, init)
     public override fun user(user: User, text: String) = super.user(user, text)
     public override fun user(user: User) = super.user(user)
+    public override fun spoiler(init: Spoiler.() -> Unit) = super.spoiler(init)
 }
 
-class Italic : WrappedMdV2ElementWithChildren() {
+class Italic(
+    // See notes here: https://core.telegram.org/bots/api#markdownv2-style
+    // We could be more smart here and add extra char only when italic is the last part of underline
+    private val insideUnderline: Boolean = false
+) : WrappedMdV2ElementWithChildren() {
     override fun renderPrefix(builder: StringBuilder) {
         builder.append("_")
+    }
+
+    override fun renderPostfix(builder: StringBuilder) {
+        builder.append("_")
+        if (insideUnderline) {
+            builder.append("\r")
+        }
     }
 
     public override fun b(init: Bold.() -> Unit) = super.b(init)
@@ -144,19 +158,21 @@ class Italic : WrappedMdV2ElementWithChildren() {
     public override fun a(href: String, init: Link.() -> Unit) = super.a(href, init)
     public override fun user(user: User, text: String) = super.user(user, text)
     public override fun user(user: User) = super.user(user)
+    public override fun spoiler(init: Spoiler.() -> Unit) = super.spoiler(init)
 }
 
-class Underline : WrappedMdV2ElementWithChildren() {
+class Underline() : WrappedMdV2ElementWithChildren() {
     override fun renderPrefix(builder: StringBuilder) {
         builder.append("__")
     }
 
     public override fun b(init: Bold.() -> Unit) = super.b(init)
-    public override fun i(init: Italic.() -> Unit) = super.i(init)
+    public override fun i(init: Italic.() -> Unit) = initTag(Italic(true), init)
     public override fun s(init: Strikethrough.() -> Unit) = super.s(init)
     public override fun a(href: String, init: Link.() -> Unit) = super.a(href, init)
     public override fun user(user: User, text: String) = super.user(user, text)
     public override fun user(user: User) = super.user(user)
+    public override fun spoiler(init: Spoiler.() -> Unit) = super.spoiler(init)
 }
 
 class Strikethrough : WrappedMdV2ElementWithChildren() {
@@ -170,6 +186,7 @@ class Strikethrough : WrappedMdV2ElementWithChildren() {
     public override fun a(href: String, init: Link.() -> Unit) = super.a(href, init)
     public override fun user(user: User, text: String) = super.user(user, text)
     public override fun user(user: User) = super.user(user)
+    public override fun spoiler(init: Spoiler.() -> Unit) = super.spoiler(init)
 }
 
 class Link(private val href: String) : MdV2ElementWithChildren() {
@@ -184,6 +201,7 @@ class Link(private val href: String) : MdV2ElementWithChildren() {
     public override fun i(init: Italic.() -> Unit) = super.i(init)
     public override fun u(init: Underline.() -> Unit) = super.u(init)
     public override fun s(init: Strikethrough.() -> Unit) = super.s(init)
+    public override fun spoiler(init: Spoiler.() -> Unit) = super.spoiler(init)
 
 }
 
@@ -207,6 +225,21 @@ class Pre(private val code: String, private val language: String? = null) : MdV2
 
 }
 
+class Spoiler : WrappedMdV2ElementWithChildren() {
+    override fun renderPrefix(builder: StringBuilder) {
+        builder.append("||")
+    }
+
+    public override fun b(init: Bold.() -> Unit) = super.b(init)
+    public override fun i(init: Italic.() -> Unit) = super.i(init)
+    public override fun u(init: Underline.() -> Unit) = super.u(init)
+    public override fun s(init: Strikethrough.() -> Unit) = super.s(init)
+    public override fun a(href: String, init: Link.() -> Unit) = super.a(href, init)
+    public override fun user(user: User, text: String) = super.user(user, text)
+    public override fun user(user: User) = super.user(user)
+}
+
+
 class Markdown : MdV2ElementWithChildren() {
     public override fun b(init: Bold.() -> Unit) = super.b(init)
     public override fun i(init: Italic.() -> Unit) = super.i(init)
@@ -218,6 +251,7 @@ class Markdown : MdV2ElementWithChildren() {
     public override fun userSoft(user: User) = super.userSoft(user)
     public override fun code(code: String) = super.code(code)
     public override fun pre(code: String, language: String?) = super.pre(code, language)
+    public override fun spoiler(init: Spoiler.() -> Unit) = super.spoiler(init)
 
     override fun render(builder: StringBuilder) {
         renderChildren(builder)

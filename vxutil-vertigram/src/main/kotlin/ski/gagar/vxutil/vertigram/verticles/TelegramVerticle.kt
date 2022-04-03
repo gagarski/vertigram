@@ -1,17 +1,17 @@
 package ski.gagar.vxutil.vertigram.verticles
 
 import ski.gagar.vxutil.vertigram.client.DirectTelegram
-import ski.gagar.vxutil.vertigram.entities.requests.GetUpdates
-import ski.gagar.vxutil.vertigram.entities.requests.JsonTgCallable
-import ski.gagar.vxutil.vertigram.entities.requests.MultipartTgCallable
-import ski.gagar.vxutil.vertigram.entities.requests.TgCallable
+import ski.gagar.vxutil.vertigram.methods.GetUpdates
+import ski.gagar.vxutil.vertigram.methods.JsonTgCallable
+import ski.gagar.vxutil.vertigram.methods.MultipartTgCallable
+import ski.gagar.vxutil.vertigram.methods.TgCallable
 import ski.gagar.vxutil.vertigram.util.TypeHints
 import ski.gagar.vxutil.vertigram.util.getOrAssert
 import ski.gagar.vxutil.ErrorLoggingCoroutineVerticle
 import ski.gagar.vxutil.jackson.mapTo
 import ski.gagar.vxutil.jackson.suspendJsonConsumer
 import ski.gagar.vxutil.use
-import ski.gagar.vxutil.vertigram.entities.UpdateList
+import ski.gagar.vxutil.vertigram.types.UpdateList
 
 @Suppress("DEPRECATION")
 private typealias RawGetUpdates = GetUpdates

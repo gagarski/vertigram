@@ -1,6 +1,6 @@
 package ski.gagar.vxutil.vertigram.util
 
-import ski.gagar.vxutil.vertigram.entities.User
+import ski.gagar.vxutil.vertigram.types.User
 
 private const val UNKNOWN = "Кто-то"
 
