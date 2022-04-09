@@ -1,22 +1,22 @@
 package ski.gagar.vxutil.vertigram.types
 
-import ski.gagar.vxutil.vertigram.util.TgEnumName
+import com.fasterxml.jackson.annotation.JsonProperty
 
 /**
  * Available values for [ChatMember.status]
  */
 enum class ChatMemberStatus {
-    @TgEnumName(OWNER_STR)
+    @JsonProperty(OWNER_STR)
     OWNER,
-    @TgEnumName(ADMINISTRATOR_STR)
+    @JsonProperty(ADMINISTRATOR_STR)
     ADMINISTRATOR,
-    @TgEnumName(MEMBER_STR)
+    @JsonProperty(MEMBER_STR)
     MEMBER,
-    @TgEnumName(RESTRICTED_STR)
+    @JsonProperty(RESTRICTED_STR)
     RESTRICTED,
-    @TgEnumName(LEFT_STR)
+    @JsonProperty(LEFT_STR)
     LEFT,
-    @TgEnumName(BANNED_STR)
+    @JsonProperty(BANNED_STR)
     BANNED;
 
     companion object {

@@ -1,11 +1,13 @@
 package ski.gagar.vxutil.vertigram.types
 
+import ski.gagar.vxutil.vertigram.types.attachments.Attachment
+
 /**
  * Telegram type InputMediaVideo.
  */
 data class InputMediaVideo(
-    val media: String,
-    val thumb: String,
+    override val media: Attachment,
+    override val thumb: Attachment? = null,
     val caption: String? = null,
     val parseMode: ParseMode? = null,
     val captionEntities: List<MessageEntity>? = null,
@@ -15,6 +17,7 @@ data class InputMediaVideo(
     val supportsStreaming: Boolean = false
 ) : InputMedia() {
     override val type: InputMediaType = InputMediaType.VIDEO
+    override fun instantiate(media: Attachment, thumb: Attachment?) = copy(media = media, thumb = thumb)
 }
 
 val InputMediaVideo.captionEntitiesInstantiated: List<InstantiatedEntity>

@@ -5,8 +5,9 @@ package ski.gagar.vxutil.vertigram.types
  */
 data class ChatMemberOwner(
     override val user: User,
+    @get:JvmName("getIsAnonymous")
     val isAnonymous: Boolean,
-    val customTitle: String
+    val customTitle: String? = null
 ) : ChatMember() {
     override val status: ChatMemberStatus = ChatMemberStatus.OWNER
     override val isMember: Boolean = true

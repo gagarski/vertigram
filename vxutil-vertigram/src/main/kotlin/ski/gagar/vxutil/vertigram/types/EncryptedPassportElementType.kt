@@ -1,36 +1,36 @@
 package ski.gagar.vxutil.vertigram.types
 
-import ski.gagar.vxutil.vertigram.util.TgEnumName
+import com.fasterxml.jackson.annotation.JsonProperty
 
 /**
  * Available values for [EncryptedPassportElement.type]
  */
 enum class EncryptedPassportElementType {
-    @TgEnumName(PERSONAL_DETAILS_STR)
+    @JsonProperty(PERSONAL_DETAILS_STR)
     PERSONAL_DETAILS,
-    @TgEnumName(PASSPORT_STR)
+    @JsonProperty(PASSPORT_STR)
     PASSPORT,
-    @TgEnumName(DRIVER_LICENSE_STR)
+    @JsonProperty(DRIVER_LICENSE_STR)
     DRIVER_LICENSE,
-    @TgEnumName(IDENTITY_CARD_STR)
+    @JsonProperty(IDENTITY_CARD_STR)
     IDENTITY_CARD,
-    @TgEnumName(INTERNAL_PASSPORT_STR)
+    @JsonProperty(INTERNAL_PASSPORT_STR)
     INTERNAL_PASSPORT,
-    @TgEnumName(ADDRESS_STR)
+    @JsonProperty(ADDRESS_STR)
     ADDRESS,
-    @TgEnumName(UTILITY_BILL_STR)
+    @JsonProperty(UTILITY_BILL_STR)
     UTILITY_BILL,
-    @TgEnumName(BANK_STATEMENT_STR)
+    @JsonProperty(BANK_STATEMENT_STR)
     BANK_STATEMENT,
-    @TgEnumName(RENTAL_AGREEMENT_STR)
+    @JsonProperty(RENTAL_AGREEMENT_STR)
     RENTAL_AGREEMENT,
-    @TgEnumName(PASSPORT_REGISTRATION_STR)
+    @JsonProperty(PASSPORT_REGISTRATION_STR)
     PASSPORT_REGISTRATION,
-    @TgEnumName(TEMPORARY_REGISTRATION_STR)
+    @JsonProperty(TEMPORARY_REGISTRATION_STR)
     TEMPORARY_REGISTRATION,
-    @TgEnumName(PHONE_NUMBER_STR)
+    @JsonProperty(PHONE_NUMBER_STR)
     PHONE_NUMBER,
-    @TgEnumName(EMAIL_STR)
+    @JsonProperty(EMAIL_STR)
     EMAIL;
 
     companion object {

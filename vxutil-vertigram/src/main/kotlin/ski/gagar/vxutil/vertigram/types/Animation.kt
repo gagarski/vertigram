@@ -1,7 +1,7 @@
 package ski.gagar.vxutil.vertigram.types
 
 /**
- * Telegram type Animation.
+ * Telegram type [Animation](https://core.telegram.org/bots/api#animation).
  */
 data class Animation(
     val fileId: String,

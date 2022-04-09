@@ -1,33 +1,36 @@
 package ski.gagar.vxutil.vertigram.methods
 
-import ski.gagar.vxutil.vertigram.util.TgEnumName
+import com.fasterxml.jackson.annotation.JsonProperty
+import ski.gagar.vxutil.vertigram.types.ChatId
 
 
 data class SendChatAction(
-    val chatId: Long,
+    val chatId: ChatId,
     val action: ChatAction
 ) : JsonTgCallable<Boolean>()
 
 
 enum class ChatAction {
-    @TgEnumName("typing")
+    @JsonProperty("typing")
     TYPING,
-    @TgEnumName("upload_photo")
+    @JsonProperty("upload_photo")
     UPLOAD_PHOTO,
-    @TgEnumName("record_video")
+    @JsonProperty("record_video")
     RECORD_VIDEO,
-    @TgEnumName("upload_video")
+    @JsonProperty("upload_video")
     UPLOAD_VIDEO,
-    @TgEnumName("record_audio")
-    RECORD_AUDIO,
-    @TgEnumName("upload_audio")
-    UPLOAD_AUDIO,
-    @TgEnumName("upload_document")
+    @JsonProperty("record_voice")
+    RECORD_VOICE,
+    @JsonProperty("upload_voice")
+    UPLOAD_VOICE,
+    @JsonProperty("upload_document")
     UPLOAD_DOCUMENT,
-    @TgEnumName("find_location")
+    @JsonProperty("choose_sticker")
+    CHOOSE_STICKER,
+    @JsonProperty("find_location")
     FIND_LOCATION,
-    @TgEnumName("record_video_note")
+    @JsonProperty("record_video_note")
     RECORD_VIDEO_NOTE,
-    @TgEnumName("upload_video_note")
+    @JsonProperty("upload_video_note")
     UPLOAD_VIDEO_NOTE
 }

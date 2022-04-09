@@ -1,36 +1,36 @@
 package ski.gagar.vxutil.vertigram.types
 
-import ski.gagar.vxutil.vertigram.util.TgEnumName
+import com.fasterxml.jackson.annotation.JsonProperty
 
 /**
  * Available values for [InlineQueryResult.type]
  */
 enum class InlineQueryResultType {
-    @TgEnumName(ARTICLE_STR)
+    @JsonProperty(ARTICLE_STR)
     ARTICLE,
-    @TgEnumName(PHOTO_STR)
+    @JsonProperty(PHOTO_STR)
     PHOTO,
-    @TgEnumName(GIF_STR)
+    @JsonProperty(GIF_STR)
     GIF,
-    @TgEnumName(MPEG4_GIF_STR)
+    @JsonProperty(MPEG4_GIF_STR)
     MPEG4_GIF,
-    @TgEnumName(VIDEO_STR)
+    @JsonProperty(VIDEO_STR)
     VIDEO,
-    @TgEnumName(AUDIO_STR)
+    @JsonProperty(AUDIO_STR)
     AUDIO,
-    @TgEnumName(VOICE_STR)
+    @JsonProperty(VOICE_STR)
     VOICE,
-    @TgEnumName(DOCUMENT_STR)
+    @JsonProperty(DOCUMENT_STR)
     DOCUMENT,
-    @TgEnumName(LOCATION_STR)
+    @JsonProperty(LOCATION_STR)
     LOCATION,
-    @TgEnumName(VENUE_STR)
+    @JsonProperty(VENUE_STR)
     VENUE,
-    @TgEnumName(CONTACT_STR)
+    @JsonProperty(CONTACT_STR)
     CONTACT,
-    @TgEnumName(GAME_STR)
+    @JsonProperty(GAME_STR)
     GAME,
-    @TgEnumName(STICKER_STR)
+    @JsonProperty(STICKER_STR)
     STICKER;
 
     companion object {

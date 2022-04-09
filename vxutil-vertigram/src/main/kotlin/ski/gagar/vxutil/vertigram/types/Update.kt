@@ -2,7 +2,9 @@ package ski.gagar.vxutil.vertigram.types
 
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
+import ski.gagar.vxutil.vertigram.util.TgIgnoreTypeInfo
 
+@TgIgnoreTypeInfo
 @JsonTypeInfo(use = JsonTypeInfo.Id.MINIMAL_CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@class")
 @JsonSubTypes(
     JsonSubTypes.Type(value = ParsedUpdate::class),

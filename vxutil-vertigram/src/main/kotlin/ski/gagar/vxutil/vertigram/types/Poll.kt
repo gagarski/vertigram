@@ -1,6 +1,6 @@
 package ski.gagar.vxutil.vertigram.types
 
-import ski.gagar.vxutil.vertigram.util.TgEnumName
+import com.fasterxml.jackson.annotation.JsonProperty
 import java.time.Instant
 
 /**
@@ -24,9 +24,9 @@ data class PollAnswer(
  * Available values for [Poll.type]
  */
 enum class PollType{
-    @TgEnumName("regular")
+    @JsonProperty("regular")
     REGULAR,
-    @TgEnumName("quiz")
+    @JsonProperty("quiz")
     QUIZ
 }
 

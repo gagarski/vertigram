@@ -2,10 +2,12 @@ package ski.gagar.vxutil.vertigram.types
 
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
+import ski.gagar.vxutil.vertigram.util.TgIgnoreTypeInfo
 
 /**
  * Telegram type InlineQueryResult.
  */
+@TgIgnoreTypeInfo
 @JsonTypeInfo(use = JsonTypeInfo.Id.MINIMAL_CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@class")
 // We use @class here because type field does not properly distinguish sub-types (cached vs non-cached.
 @JsonSubTypes(

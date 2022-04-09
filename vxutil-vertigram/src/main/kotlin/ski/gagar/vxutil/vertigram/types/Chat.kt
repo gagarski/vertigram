@@ -1,18 +1,18 @@
 package ski.gagar.vxutil.vertigram.types
 
-import ski.gagar.vxutil.vertigram.util.TgEnumName
+import com.fasterxml.jackson.annotation.JsonProperty
 
 /**
  * Available values for [InlineQuery.chatType] and [Chat.type]
  */
 enum class ChatType(val group: Boolean) {
-    @TgEnumName("private")
+    @JsonProperty("private")
     PRIVATE(false),
-    @TgEnumName("group")
+    @JsonProperty("group")
     GROUP(true),
-    @TgEnumName("supergroup")
+    @JsonProperty("supergroup")
     SUPERGROUP(true),
-    @TgEnumName("channel")
+    @JsonProperty("channel")
     CHANNEL(false)
 }
 

@@ -4,10 +4,10 @@ package ski.gagar.vxutil.vertigram.types
  * Telegram type Location.
  */
 data class Location(
-    val longitude: Double,
     val latitude: Double,
+    val longitude: Double,
     val horizontalAccuracy: Double? = null,
-    val livePeriod: Long? = null,
-    val heading: Long? = null,
-    val proximityAlertRadius: Long? = null,
+    val livePeriod: Int? = null,
+    val heading: Int? = null,
+    val proximityAlertRadius: Int? = null,
 )

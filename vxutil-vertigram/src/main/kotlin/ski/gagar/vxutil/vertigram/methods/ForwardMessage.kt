@@ -1,10 +1,15 @@
 package ski.gagar.vxutil.vertigram.methods
 
+import ski.gagar.vxutil.vertigram.types.ChatId
 import ski.gagar.vxutil.vertigram.types.Message
 
+/**
+ * Telegram method forwardMessage
+ */
 data class ForwardMessage(
-    val chatId: Long,
-    val fromChatId: Long,
-    val disableNotification: Boolean = false, // Optional by specification. By default, sent as false
-    val messageId: Long
+    val chatId: ChatId,
+    val fromChatId: ChatId,
+    val messageId: Long,
+    val disableNotification: Boolean = false,
+    val protectContent: Boolean = false
 ) : JsonTgCallable<Message>()

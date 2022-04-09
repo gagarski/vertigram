@@ -78,7 +78,7 @@ private val <T: TgCallable<*>> Class<T>.responseType: JavaType
 }
 
 private fun getTgCallables() =
-    Reflections("ski.gagar.vxutil.vertigram.entities.requests", Scanners.SubTypes)
+    Reflections("ski.gagar.vxutil.vertigram.methods", Scanners.SubTypes)
         .getSubTypesOf(TgCallable::class.java)
         .asSequence()
         .filter { !Modifier.isAbstract(it.modifiers) }

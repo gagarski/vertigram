@@ -1,20 +1,20 @@
 package ski.gagar.vxutil.vertigram.types
 
-import ski.gagar.vxutil.vertigram.util.TgEnumName
+import com.fasterxml.jackson.annotation.JsonProperty
 
 /**
  * Available values for [InputMedia.type]
  */
 enum class InputMediaType {
-    @TgEnumName(PHOTO_STR)
+    @JsonProperty(PHOTO_STR)
     PHOTO,
-    @TgEnumName(VIDEO_STR)
+    @JsonProperty(VIDEO_STR)
     VIDEO,
-    @TgEnumName(ANIMATION_STR)
+    @JsonProperty(ANIMATION_STR)
     ANIMATION,
-    @TgEnumName(AUDIO_STR)
+    @JsonProperty(AUDIO_STR)
     AUDIO,
-    @TgEnumName(DOCUMENT_STR)
+    @JsonProperty(DOCUMENT_STR)
     DOCUMENT;
 
     companion object {

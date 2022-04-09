@@ -1,24 +1,24 @@
 package ski.gagar.vxutil.vertigram.types
 
-import ski.gagar.vxutil.vertigram.util.TgEnumName
+import com.fasterxml.jackson.annotation.JsonProperty
 
 /**
  * Available values for [BotCommandScope.type].
  */
 enum class BotCommandScopeType {
-    @TgEnumName(DEFAULT_STR)
+    @JsonProperty(DEFAULT_STR)
     DEFAULT,
-    @TgEnumName(ALL_PRIVATE_CHATS_STR)
+    @JsonProperty(ALL_PRIVATE_CHATS_STR)
     ALL_PRIVATE_CHATS,
-    @TgEnumName(ALL_GROUP_CHATS_STR)
+    @JsonProperty(ALL_GROUP_CHATS_STR)
     ALL_GROUP_CHATS,
-    @TgEnumName(ALL_CHAT_ADMINISTRATORS_STR)
+    @JsonProperty(ALL_CHAT_ADMINISTRATORS_STR)
     ALL_CHAT_ADMINISTRATORS,
-    @TgEnumName(CHAT_STR)
+    @JsonProperty(CHAT_STR)
     CHAT,
-    @TgEnumName(CHAT_ADMINISTRATORS_STR)
+    @JsonProperty(CHAT_ADMINISTRATORS_STR)
     CHAT_ADMINISTRATORS,
-    @TgEnumName(CHAT_MEMBER_STR)
+    @JsonProperty(CHAT_MEMBER_STR)
     CHAT_MEMBER;
 
     companion object {

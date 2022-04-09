@@ -1,42 +1,42 @@
 package ski.gagar.vxutil.vertigram.types
 
-import ski.gagar.vxutil.vertigram.util.TgEnumName
+import com.fasterxml.jackson.annotation.JsonProperty
 
 /**
  * Allowed values for [MessageEntity.type]
  */
 enum class EntityType {
-    @TgEnumName("mention")
+    @JsonProperty("mention")
     MENTION,
-    @TgEnumName("hashtag")
+    @JsonProperty("hashtag")
     HASHTAG,
-    @TgEnumName("cashtag")
+    @JsonProperty("cashtag")
     CASHTAG,
-    @TgEnumName("bot_command")
+    @JsonProperty("bot_command")
     BOT_COMMAND,
-    @TgEnumName("url")
+    @JsonProperty("url")
     URL,
-    @TgEnumName("email")
+    @JsonProperty("email")
     EMAIL,
-    @TgEnumName("phone_number")
+    @JsonProperty("phone_number")
     PHONE_NUMBER,
-    @TgEnumName("bold")
+    @JsonProperty("bold")
     BOLD,
-    @TgEnumName("italic")
+    @JsonProperty("italic")
     ITALIC,
-    @TgEnumName("underline")
+    @JsonProperty("underline")
     UNDERLINE,
-    @TgEnumName("strikethrough")
+    @JsonProperty("strikethrough")
     STRIKETHROUGH,
-    @TgEnumName("spoiler")
+    @JsonProperty("spoiler")
     SPOILER,
-    @TgEnumName("code")
+    @JsonProperty("code")
     CODE,
-    @TgEnumName("pre")
+    @JsonProperty("pre")
     PRE,
-    @TgEnumName("text_link")
+    @JsonProperty("text_link")
     TEXT_LINK,
-    @TgEnumName("text_mention")
+    @JsonProperty("text_mention")
     TEXT_MENTION,
 }
 

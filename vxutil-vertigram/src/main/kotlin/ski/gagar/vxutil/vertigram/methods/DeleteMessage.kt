@@ -1,3 +1,8 @@
 package ski.gagar.vxutil.vertigram.methods
 
-data class DeleteMessage(val chatId: Long, val messageId: Long): JsonTgCallable<Boolean>()
+import ski.gagar.vxutil.vertigram.types.ChatId
+
+data class DeleteMessage(
+    val chatId: ChatId,
+    val messageId: Long
+) : JsonTgCallable<Boolean>()

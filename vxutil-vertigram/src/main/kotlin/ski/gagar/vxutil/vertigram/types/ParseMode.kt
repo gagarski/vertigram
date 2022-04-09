@@ -1,15 +1,15 @@
 package ski.gagar.vxutil.vertigram.types
 
-import ski.gagar.vxutil.vertigram.util.TgEnumName
+import com.fasterxml.jackson.annotation.JsonProperty
 
 /**
  * Available values for all parseMode fields.
  */
 enum class ParseMode {
-    @TgEnumName("Markdown")
+    @JsonProperty("Markdown")
     MARKDOWN,
-    @TgEnumName("MarkdownV2")
+    @JsonProperty("MarkdownV2")
     MARKDOWN_V2,
-    @TgEnumName("HTML")
+    @JsonProperty("HTML")
     HTML
 }

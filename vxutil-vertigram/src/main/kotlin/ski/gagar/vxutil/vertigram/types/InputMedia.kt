@@ -1,7 +1,9 @@
 package ski.gagar.vxutil.vertigram.types
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
+import ski.gagar.vxutil.vertigram.types.attachments.Attachment
 
 /**
  * Telegram type InputMedia.
@@ -16,10 +18,8 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo
 )
 sealed class InputMedia {
     abstract val type: InputMediaType
-
-    companion object {
-        fun attach(filename: String) = "attach://$filename"
-        fun attach(file: java.io.File) = "attach://${file.toPath().fileName}"
-    }
+    abstract val media: Attachment
+    abstract val thumb: Attachment?
+    abstract fun instantiate(media: Attachment, thumb: Attachment?): InputMedia
 }
 

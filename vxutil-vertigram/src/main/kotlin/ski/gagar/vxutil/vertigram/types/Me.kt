@@ -4,7 +4,7 @@ package ski.gagar.vxutil.vertigram.types
  * Telegram type User.
  *
  * This class has properties returned from getMe Telegram method.
- * @see ski.gagar.vxutil.vertigram.entities.User
+ * @see ski.gagar.vxutil.vertigram.types.User
  */
 data class Me(
     val id: Long,
