@@ -38,7 +38,7 @@
         <compiler-plugin.version>3.8.1</compiler-plugin.version>
         <deploy.plugin.version>3.0.0-M1</deploy.plugin.version>
         <gpg.plugin.version>3.0.1</gpg.plugin.version>
-        <kotlin.plugin.version>1.6.0</kotlin.plugin.version>
+        <kotlin.plugin.version>1.6.20</kotlin.plugin.version>
         <nexus-staging.plugin.version>1.6.8</nexus-staging.plugin.version>
         <release.plugin.version>3.0.0-M1</release.plugin.version>
         <source.plugin.version>3.2.0</source.plugin.version>

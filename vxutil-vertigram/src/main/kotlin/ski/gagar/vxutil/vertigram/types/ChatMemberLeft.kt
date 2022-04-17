@@ -1,11 +1,11 @@
 package ski.gagar.vxutil.vertigram.types
 
-/**
- * Telegram type ChatMemberLeft.
- */
+import com.fasterxml.jackson.annotation.JsonIgnore
+
 data class ChatMemberLeft(
     override val user: User
-) : ChatMember() {
+) : ChatMember {
     override val status: ChatMemberStatus = ChatMemberStatus.LEFT
+    @JsonIgnore
     override val isMember: Boolean = false
 }

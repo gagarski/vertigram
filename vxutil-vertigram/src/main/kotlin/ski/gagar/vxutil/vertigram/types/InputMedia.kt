@@ -5,9 +5,6 @@ import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 import ski.gagar.vxutil.vertigram.types.attachments.Attachment
 
-/**
- * Telegram type InputMedia.
- */
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
 @JsonSubTypes(
     JsonSubTypes.Type(value = InputMediaPhoto::class, name = InputMediaType.PHOTO_STR),
@@ -16,10 +13,10 @@ import ski.gagar.vxutil.vertigram.types.attachments.Attachment
     JsonSubTypes.Type(value = InputMediaAudio::class, name = InputMediaType.AUDIO_STR),
     JsonSubTypes.Type(value = InputMediaDocument::class, name = InputMediaType.DOCUMENT_STR),
 )
-sealed class InputMedia {
-    abstract val type: InputMediaType
-    abstract val media: Attachment
-    abstract val thumb: Attachment?
-    abstract fun instantiate(media: Attachment, thumb: Attachment?): InputMedia
+sealed interface InputMedia {
+    val type: InputMediaType
+    val media: Attachment
+    val thumb: Attachment?
+    fun instantiate(media: Attachment, thumb: Attachment?): InputMedia
 }
 

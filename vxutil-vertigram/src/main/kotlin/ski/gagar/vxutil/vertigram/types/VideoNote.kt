@@ -1,10 +1,12 @@
 package ski.gagar.vxutil.vertigram.types
 
+import java.time.Duration
+
 data class VideoNote(
     val fileId: String,
     val fileUniqueId: String,
-    val length: Long,
-    val duration: Long,
+    val length: Int,
+    val duration: Duration,
     val thumb: PhotoSize? = null,
-    val fileSize: Long?
+    val fileSize: Long? = null
 )

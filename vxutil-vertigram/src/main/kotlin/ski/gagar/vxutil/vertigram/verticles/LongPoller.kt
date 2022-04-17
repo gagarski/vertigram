@@ -9,6 +9,8 @@ import ski.gagar.vxutil.retrying
 import ski.gagar.vxutil.sleep
 import ski.gagar.vxutil.vertigram.client.Telegram
 import ski.gagar.vxutil.vertigram.client.TgVTelegram
+import ski.gagar.vxutil.vertigram.deleteMessage
+import ski.gagar.vxutil.vertigram.deleteWebhook
 import ski.gagar.vxutil.vertigram.types.MalformedUpdate
 import ski.gagar.vxutil.vertigram.types.ParsedUpdate
 import ski.gagar.vxutil.vertigram.types.ParsedUpdateList
@@ -31,7 +33,7 @@ class LongPoller: ErrorLoggingCoroutineVerticle() {
         startDate = Instant.now()
 
         retrying(coolDown = { sleep(3000) }) {
-            tg.call(DeleteWebhook)
+            tg.deleteWebhook()
         }
 
         launch {

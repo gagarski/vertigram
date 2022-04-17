@@ -3,9 +3,6 @@ package ski.gagar.vxutil.vertigram.types
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 
-/**
- * Telegram type PassportElementError.
- */
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "source")
 @JsonSubTypes(
     JsonSubTypes.Type(value = PassportElementErrorDataField::class, name = PassportElementErrorSource.DATA_FIELD_STR),
@@ -18,7 +15,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo
     JsonSubTypes.Type(value = PassportElementErrorTranslationFiles::class, name = PassportElementErrorSource.TRANSLATION_FILES_STR),
     JsonSubTypes.Type(value = PassportElementErrorUnspecified::class, name = PassportElementErrorSource.UNSPECIFIED_STR),
 )
-sealed class PassportElementError {
+sealed interface PassportElementError {
     abstract val source: PassportElementErrorSource
 }
 

@@ -2,6 +2,7 @@ package ski.gagar.vxutil.vertigram.methods
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.vertx.ext.web.multipart.MultipartForm
+import ski.gagar.vertigram.annotations.TgMethod
 import ski.gagar.vxutil.vertigram.types.attachments.attachIndirectly
 import ski.gagar.vxutil.vertigram.types.ChatId
 import ski.gagar.vxutil.vertigram.types.InlineKeyboardMarkup
@@ -11,13 +12,14 @@ import ski.gagar.vxutil.vertigram.util.TELEGRAM_JSON_MAPPER
 import ski.gagar.vxutil.web.attributeIfNotNull
 import ski.gagar.vxutil.web.jsonAttributeIfNotNull
 
+@TgMethod
 data class EditMessageMedia(
     val media: InputMedia,
     val chatId: ChatId? = null,
     val messageId: Long? = null,
     val inlineMessageId: Long? = null,
     val replyMarkup: InlineKeyboardMarkup? = null
-) : MultipartTgCallable<Message>() {
+) : MultipartTgCallable<Message> {
     override fun MultipartForm.doSerializeToMultipart(mapper: ObjectMapper) {
         val toAttach = putMediaDescriptor()
         attributeIfNotNull("chat_id", chatId)

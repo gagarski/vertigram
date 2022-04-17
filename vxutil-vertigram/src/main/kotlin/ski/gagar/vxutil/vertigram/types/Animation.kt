@@ -1,14 +1,13 @@
 package ski.gagar.vxutil.vertigram.types
 
-/**
- * Telegram type [Animation](https://core.telegram.org/bots/api#animation).
- */
+import java.time.Duration
+
 data class Animation(
     val fileId: String,
     val fileUniqueId: String,
-    val width: Long,
-    val height: Long,
-    val duration: Long,
+    val width: Int,
+    val height: Int,
+    val duration: Duration,
     val thumb: PhotoSize? = null,
     val fileName: String? = null,
     val mimeType: String? = null,

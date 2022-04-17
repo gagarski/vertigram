@@ -3,9 +3,6 @@ package ski.gagar.vxutil.vertigram.types
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 
-/**
- * Telegram type BotCommandScope.
- */
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
 @JsonSubTypes(
     JsonSubTypes.Type(value = BotCommandScopeDefault::class, name = BotCommandScopeType.DEFAULT_STR),
@@ -14,7 +11,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo
     JsonSubTypes.Type(value = BotCommandScopeAllChatAdministrators::class,
         name = BotCommandScopeType.ALL_CHAT_ADMINISTRATORS_STR),
 )
-sealed class BotCommandScope {
-    abstract val type: BotCommandScopeType
+sealed interface BotCommandScope {
+    val type: BotCommandScopeType
 }
 

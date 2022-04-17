@@ -1,8 +1,5 @@
 package ski.gagar.vxutil.vertigram.types
 
-/**
- * Telegram type Document.
- */
 data class Document(
     val fileId: String,
     val fileUniqueId: String,

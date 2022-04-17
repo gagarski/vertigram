@@ -1,10 +1,7 @@
 package ski.gagar.vxutil.vertigram.types
 
-/**
- * Telegram type Chat.
- *
- * Contains all fields from specification and returned from getChat Method.
- */
+import java.time.Duration
+
 data class ChatVerbose(
     val id: Long,
     val type: ChatType,
@@ -19,8 +16,8 @@ data class ChatVerbose(
     val inviteLink: String? = null,
     val pinnedMessage: Message? = null,
     val permissions: ChatPermissions? = null,
-    val slowModeDelay: Long? = null,
-    val messageAutoDeleteTime: Long? = null,
+    val slowModeDelay: Duration? = null,
+    val messageAutoDeleteTime: Duration? = null,
     val hasProtectedContent: Boolean = false,
     val stickerSetName: String? = null,
     val canSetStickerSet: Boolean = false,

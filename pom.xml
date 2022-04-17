@@ -51,5 +51,8 @@
         <module>vxutil-vertigram</module>
 
         <module>aybolit-like-bom</module>
+
+        <module>vertigram-annotations</module>
+        <module>vertigram-codegen</module>
     </modules>
 </project>

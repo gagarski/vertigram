@@ -1,11 +1,8 @@
 package ski.gagar.vxutil.vertigram.types
 
-/**
- * Telegram type SuccessfulPayment.
- */
 data class SuccessfulPayment(
     val currency: String,
-    val totalAmount: Long,
+    val totalAmount: Int,
     val invoicePayload: String,
     val shippingOptionId: String? = null,
     val orderInfo: OrderInfo? = null,

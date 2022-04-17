@@ -1,11 +1,13 @@
 package ski.gagar.vxutil.vertigram.methods
 
+import ski.gagar.vertigram.annotations.TgMethod
 import ski.gagar.vxutil.vertigram.types.ChatId
 import ski.gagar.vxutil.vertigram.types.Message
 import ski.gagar.vxutil.vertigram.types.MessageEntity
 import ski.gagar.vxutil.vertigram.types.ParseMode
 import ski.gagar.vxutil.vertigram.types.ReplyMarkup
 
+@TgMethod
 data class SendContact(
     val chatId: ChatId,
     val phoneNumber: String,
@@ -17,4 +19,4 @@ data class SendContact(
     val replyToMessageId: Long? = null,
     val allowSendingWithoutReply: Boolean = false,
     val replyMarkup: ReplyMarkup? = null
-) : JsonTgCallable<Message>()
+) : JsonTgCallable<Message>

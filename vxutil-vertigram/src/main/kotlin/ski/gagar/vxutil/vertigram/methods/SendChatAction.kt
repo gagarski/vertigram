@@ -1,36 +1,11 @@
 package ski.gagar.vxutil.vertigram.methods
 
-import com.fasterxml.jackson.annotation.JsonProperty
+import ski.gagar.vertigram.annotations.TgMethod
+import ski.gagar.vxutil.vertigram.types.ChatAction
 import ski.gagar.vxutil.vertigram.types.ChatId
 
-
+@TgMethod
 data class SendChatAction(
     val chatId: ChatId,
     val action: ChatAction
-) : JsonTgCallable<Boolean>()
-
-
-enum class ChatAction {
-    @JsonProperty("typing")
-    TYPING,
-    @JsonProperty("upload_photo")
-    UPLOAD_PHOTO,
-    @JsonProperty("record_video")
-    RECORD_VIDEO,
-    @JsonProperty("upload_video")
-    UPLOAD_VIDEO,
-    @JsonProperty("record_voice")
-    RECORD_VOICE,
-    @JsonProperty("upload_voice")
-    UPLOAD_VOICE,
-    @JsonProperty("upload_document")
-    UPLOAD_DOCUMENT,
-    @JsonProperty("choose_sticker")
-    CHOOSE_STICKER,
-    @JsonProperty("find_location")
-    FIND_LOCATION,
-    @JsonProperty("record_video_note")
-    RECORD_VIDEO_NOTE,
-    @JsonProperty("upload_video_note")
-    UPLOAD_VIDEO_NOTE
-}
+) : JsonTgCallable<Boolean>

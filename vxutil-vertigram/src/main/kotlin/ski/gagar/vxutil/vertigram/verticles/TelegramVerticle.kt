@@ -164,7 +164,7 @@ class TelegramVerticle : ErrorLoggingCoroutineVerticle() {
         }
     }
 
-    data class GetUpdates(val offset: Long?, val limit: Long?)
+    data class GetUpdates(val offset: Long?, val limit: Int?)
     object GetLongPollTimeout
     data class DownloadFile(val path: String, val outputPath: String)
 }

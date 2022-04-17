@@ -2,6 +2,7 @@ package ski.gagar.vxutil.vertigram.client
 
 import com.fasterxml.jackson.databind.JavaType
 import com.fasterxml.jackson.databind.type.TypeFactory
+import ski.gagar.vxutil.vertigram.getFile
 import ski.gagar.vxutil.vertigram.methods.GetFile
 import ski.gagar.vxutil.vertigram.types.Update
 import ski.gagar.vxutil.vertigram.methods.TgCallable
@@ -12,7 +13,7 @@ import ski.gagar.vxutil.vertigram.util.getOrAssert
 
 abstract class Telegram {
     protected val typeFactory: TypeFactory = TELEGRAM_JSON_MAPPER.typeFactory
-    abstract suspend fun getUpdates(offset: Long? = null, limit: Long? = null): List<Update>
+    abstract suspend fun getUpdates(offset: Long? = null, limit: Int? = null): List<Update>
 
 
     suspend fun <T> call(callable: TgCallable<T>): T =
@@ -26,7 +27,7 @@ abstract class Telegram {
     abstract suspend fun downloadFile(path: String, outputPath: String)
 
     suspend fun downloadFileById(id: String, outputPath: String) {
-        val path = call(GetFile(id)).filePath ?: throw TelegramNoFilePathException
+        val path = getFile(id).filePath ?: throw TelegramNoFilePathException
         downloadFile(path, outputPath)
     }
 }

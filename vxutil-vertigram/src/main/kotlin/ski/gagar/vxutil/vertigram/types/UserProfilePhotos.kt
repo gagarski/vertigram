@@ -1,9 +1,6 @@
 package ski.gagar.vxutil.vertigram.types
 
-/**
- * Telegram type UserProfilePhotos.
- */
 data class UserProfilePhotos(
-    val totalCount: Long,
+    val totalCount: Int,
     val photos: List<List<PhotoSize>>
 )

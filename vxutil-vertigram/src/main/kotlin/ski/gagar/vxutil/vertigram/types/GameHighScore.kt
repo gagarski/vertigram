@@ -1,10 +1,7 @@
 package ski.gagar.vxutil.vertigram.types
 
-/**
- * Telegram type GameHighScore.
- */
 data class GameHighScore(
-    val position: Long,
+    val position: Int,
     val user: User,
-    val score: Long
+    val score: Int
 )

@@ -2,9 +2,6 @@ package ski.gagar.vxutil.vertigram.types
 
 import java.time.Instant
 
-/**
- * Telegram type ChatMemberUpdated.
- */
 data class ChatMemberUpdated(
     val chat: Chat,
     val from: User,

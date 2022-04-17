@@ -1,8 +1,5 @@
 package ski.gagar.vxutil.vertigram.types
 
-/**
- * Telegram type Contact.
- */
 data class Contact(
     val phoneNumber: String,
     val firstName: String,

@@ -2,6 +2,7 @@ package ski.gagar.vxutil.vertigram.methods
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.vertx.ext.web.multipart.MultipartForm
+import ski.gagar.vertigram.annotations.TgMethod
 import ski.gagar.vxutil.vertigram.types.ChatId
 import ski.gagar.vxutil.vertigram.types.Message
 import ski.gagar.vxutil.vertigram.types.MessageEntity
@@ -12,6 +13,7 @@ import ski.gagar.vxutil.vertigram.types.attachments.attachDirectly
 import ski.gagar.vxutil.web.attributeIfNotNull
 import ski.gagar.vxutil.web.jsonAttributeIfNotNull
 
+@TgMethod
 data class SendDocument(
     val chatId: ChatId,
     val document: Attachment,
@@ -25,7 +27,7 @@ data class SendDocument(
     val replyToMessageId: Long? = null,
     val allowSendingWithoutReply: Boolean = false,
     val replyMarkup: ReplyMarkup? = null
-) : MultipartTgCallable<Message>() {
+) : MultipartTgCallable<Message> {
     override fun MultipartForm.doSerializeToMultipart(mapper: ObjectMapper) {
         attributeIfNotNull("chat_id", chatId)
         attachDirectly("document", document)

@@ -11,8 +11,9 @@ import ski.gagar.vxutil.vertigram.types.Update
 import ski.gagar.vxutil.vertigram.methods.GetUpdatesRaw
 import ski.gagar.vxutil.vertigram.methods.TgCallable
 import java.io.Closeable
+import java.time.Duration
 
-private const val LONG_POLL_DEFAULT_GAP: Long = 5000L
+private val LONG_POLL_DEFAULT_GAP: Duration = Duration.ofSeconds(5)
 
 class DirectTelegram(
     token: String,
@@ -39,13 +40,13 @@ class DirectTelegram(
         impl.call(type, callable)
 
     @Suppress("DEPRECATION")
-    override suspend fun getUpdates(offset: Long?, limit: Long?): List<Update> =
+    override suspend fun getUpdates(offset: Long?, limit: Int?): List<Update> =
         impl.call(
             typeFactory.constructParametricType(List::class.java, Map::class.java),
             GetUpdatesRaw(
                 offset = offset,
                 limit = limit,
-                timeout = options.getUpdatesTimeoutParamMs / 1000
+                timeout = options.getUpdatesTimeoutParam
             ), longPoll = true
         ).mapNotNull { raw ->
             try {
@@ -66,9 +67,9 @@ class DirectTelegram(
 
     data class Options(
         val tgBase: String = "https://api.telegram.org",
-        val shortPollTimeout: Long = 5000L,
-        val longPollTimeout: Long = 60000L,
-        val getUpdatesTimeoutParamMs: Long = longPollTimeout - LONG_POLL_DEFAULT_GAP,
+        val shortPollTimeout: Duration = Duration.ofSeconds(5),
+        val longPollTimeout: Duration = Duration.ofSeconds(60),
+        val getUpdatesTimeoutParam: Duration = longPollTimeout - LONG_POLL_DEFAULT_GAP,
         val proxy: ProxyOptions? = null
     )
 }

@@ -12,12 +12,13 @@ import ski.gagar.vxutil.vertigram.methods.TgCallable
 import ski.gagar.vxutil.vertigram.util.TypeHints
 import ski.gagar.vxutil.vertigram.util.getOrAssert
 import ski.gagar.vxutil.vertigram.verticles.TelegramVerticle
+import java.time.Duration
 
 
 class TgVTelegram(
     private val vertx: Vertx,
     private val baseAddress: String = TelegramVerticle.Config.DEFAULT_BASE_ADDRESS,
-    private val timeoutGap: Long = 5000L
+    private val timeoutGap: Duration = Duration.ofSeconds(5)
 ) : Telegram() {
 
     private lateinit var longPollDeliveryOptions: DeliveryOptions
@@ -26,16 +27,16 @@ class TgVTelegram(
         if (::longPollDeliveryOptions.isInitialized)
             return longPollDeliveryOptions
 
-        val timeout: Long = vertx.eventBus().requestJsonAwait(
+        val timeout: Duration = vertx.eventBus().requestJsonAwait(
             TelegramVerticle.Config.longPollTimeoutAddress(baseAddress),
             TelegramVerticle.GetLongPollTimeout
         )
 
-        longPollDeliveryOptions = DeliveryOptions().setSendTimeout(timeoutGap + timeout)
+        longPollDeliveryOptions = DeliveryOptions().setSendTimeout((timeoutGap + timeout).toMillis())
         return longPollDeliveryOptions
     }
 
-    override suspend fun getUpdates(offset: Long?, limit: Long?): List<Update> =
+    override suspend fun getUpdates(offset: Long?, limit: Int?): List<Update> =
         try {
             @Suppress("DEPRECATION")
             vertx.eventBus().requestJsonAwait(

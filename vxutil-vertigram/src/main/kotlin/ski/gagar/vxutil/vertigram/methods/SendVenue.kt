@@ -1,9 +1,11 @@
 package ski.gagar.vxutil.vertigram.methods
 
+import ski.gagar.vertigram.annotations.TgMethod
 import ski.gagar.vxutil.vertigram.types.ChatId
 import ski.gagar.vxutil.vertigram.types.Message
 import ski.gagar.vxutil.vertigram.types.ReplyMarkup
 
+@TgMethod
 data class SendVenue(
     val chatId: ChatId,
     val latitude: Double,
@@ -19,4 +21,4 @@ data class SendVenue(
     val replyToMessageId: Long? = null,
     val allowSendingWithoutReply: Boolean = false,
     val replyMarkup: ReplyMarkup? = null
-) : JsonTgCallable<Message>()
+) : JsonTgCallable<Message>

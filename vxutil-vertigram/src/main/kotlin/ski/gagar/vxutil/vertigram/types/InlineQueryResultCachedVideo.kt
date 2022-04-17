@@ -1,8 +1,5 @@
 package ski.gagar.vxutil.vertigram.types
 
-/**
- * Telegram type InlineQueryResultCachedVideo.
- */
 data class InlineQueryResultCachedVideo(
     val id: String,
     val videoFileId: String,
@@ -13,7 +10,7 @@ data class InlineQueryResultCachedVideo(
     val captionEntities: List<MessageEntity>? = null,
     val replyMarkup: InlineKeyboardMarkup? = null,
     val inputMessageContent: InputMessageContent? = null
-) : InlineQueryResult() {
+) : InlineQueryResult {
     override val type: InlineQueryResultType = InlineQueryResultType.VIDEO
 }
 

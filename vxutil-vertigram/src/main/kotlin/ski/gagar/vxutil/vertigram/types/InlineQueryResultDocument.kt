@@ -1,8 +1,5 @@
 package ski.gagar.vxutil.vertigram.types
 
-/**
- * Telegram type InlineQueryResultDocument.
- */
 data class InlineQueryResultDocument(
     val id: String,
     val title: String,
@@ -15,9 +12,9 @@ data class InlineQueryResultDocument(
     val replyMarkup: InlineKeyboardMarkup? = null,
     val inputMessageContent: InputMessageContent? = null,
     val thumbUrl: String? = null,
-    val thumbWidth: Long? = null,
-    val thumbHeight: Long? = null
-) : InlineQueryResult() {
+    val thumbWidth: Int? = null,
+    val thumbHeight: Int? = null
+) : InlineQueryResult {
     override val type: InlineQueryResultType = InlineQueryResultType.DOCUMENT
 }
 

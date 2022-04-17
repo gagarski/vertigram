@@ -1,34 +1,31 @@
 package ski.gagar.vxutil.vertigram.methods
 
-import com.fasterxml.jackson.annotation.JsonProperty
-import ski.gagar.vxutil.vertigram.util.TgEnumName
+import com.fasterxml.jackson.databind.ObjectMapper
+import io.vertx.ext.web.multipart.MultipartForm
+import ski.gagar.vertigram.annotations.TgMethod
+import ski.gagar.vxutil.vertigram.types.UpdateType
+import ski.gagar.vxutil.vertigram.types.attachments.Attachment
+import ski.gagar.vxutil.vertigram.types.attachments.attachDirectly
+import ski.gagar.vxutil.web.attributeIfNotNull
+import ski.gagar.vxutil.web.attributeIfTrue
+import ski.gagar.vxutil.web.jsonAttributeIfNotNull
+import kotlin.math.max
 
-enum class UpdateType {
-    @JsonProperty("message")
-    MESSAGE,
-    @JsonProperty("edited_message")
-    EDITED_MESSAGE,
-    @JsonProperty("channel_post")
-    CHANNEL_POST,
-    @JsonProperty("edited_channel_post")
-    EDITED_CHANNEL_POST,
-    @JsonProperty("inline_query")
-    INLINE_QUERY,
-    @JsonProperty("chosen_inline_result")
-    CHOSEN_INLINE_RESULT,
-    @JsonProperty("callback_query")
-    CALLBACK_QUERY,
-    @JsonProperty("shipping_query")
-    SHIPPING_QUERY,
-    @JsonProperty("pre_checkout_query")
-    PRE_CHECKOUT_QUERY;
-
-    override fun toString(): String = super.toString().lowercase()
-
-}
-
+@TgMethod
 data class SetWebhook(
     val url: String,
-    val maxConnections: Long? = null,
-    val allowedUpdates: List<UpdateType>? = null
-) : JsonTgCallable<Boolean>()
+    val certificate: Attachment? = null,
+    val ipAddress: String? = null,
+    val maxConnections: Int? = null,
+    val allowedUpdates: List<UpdateType>? = null,
+    val dropPendingUpdates: Boolean = false
+) : MultipartTgCallable<Boolean> {
+    override fun MultipartForm.doSerializeToMultipart(mapper: ObjectMapper) {
+        attributeIfNotNull("url", url)
+        attachDirectly("certificate", certificate)
+        attributeIfNotNull("ip_address", ipAddress)
+        attributeIfNotNull("max_connections", maxConnections)
+        jsonAttributeIfNotNull("allowed_updates", allowedUpdates)
+        attributeIfTrue("drop_pending_updates", dropPendingUpdates)
+    }
+}

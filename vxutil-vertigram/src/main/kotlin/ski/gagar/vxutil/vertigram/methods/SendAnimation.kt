@@ -2,6 +2,7 @@ package ski.gagar.vxutil.vertigram.methods
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.vertx.ext.web.multipart.MultipartForm
+import ski.gagar.vertigram.annotations.TgMethod
 import ski.gagar.vxutil.vertigram.types.ChatId
 import ski.gagar.vxutil.vertigram.types.Message
 import ski.gagar.vxutil.vertigram.types.MessageEntity
@@ -13,13 +14,15 @@ import ski.gagar.vxutil.vertigram.util.TELEGRAM_JSON_MAPPER
 import ski.gagar.vxutil.web.attributeIfNotNull
 import ski.gagar.vxutil.web.attributeIfTrue
 import ski.gagar.vxutil.web.jsonAttributeIfNotNull
+import java.time.Duration
 
+@TgMethod
 data class SendAnimation(
     val chatId: ChatId,
     val animation: Attachment,
-    val duration: Long? = null,
-    val width: Long? = null,
-    val height: Long? = null,
+    val duration: Duration? = null,
+    val width: Int? = null,
+    val height: Int? = null,
     val thumb: Attachment? = null,
     val caption: String? = null,
     val parseMode: ParseMode? = null,
@@ -29,11 +32,11 @@ data class SendAnimation(
     val replyToMessageId: Long? = null,
     val allowSendingWithoutReply: Boolean = false,
     val replyMarkup: ReplyMarkup? = null
-) : MultipartTgCallable<Message>() {
+) : MultipartTgCallable<Message> {
     override fun MultipartForm.doSerializeToMultipart(mapper: ObjectMapper) {
         attributeIfNotNull("chat_id", chatId)
         attachDirectly("animation", animation)
-        attributeIfNotNull("duration", duration)
+        attributeIfNotNull("duration", duration?.toSeconds())
         attributeIfNotNull("width", width)
         attributeIfNotNull("height", height)
         attachDirectly("thumb", thumb)

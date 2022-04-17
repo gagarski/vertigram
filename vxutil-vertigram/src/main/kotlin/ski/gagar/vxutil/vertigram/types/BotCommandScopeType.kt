@@ -2,9 +2,6 @@ package ski.gagar.vxutil.vertigram.types
 
 import com.fasterxml.jackson.annotation.JsonProperty
 
-/**
- * Available values for [BotCommandScope.type].
- */
 enum class BotCommandScopeType {
     @JsonProperty(DEFAULT_STR)
     DEFAULT,

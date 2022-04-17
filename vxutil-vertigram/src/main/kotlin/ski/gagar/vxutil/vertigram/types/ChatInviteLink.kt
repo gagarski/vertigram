@@ -2,9 +2,6 @@ package ski.gagar.vxutil.vertigram.types
 
 import java.time.Instant
 
-/**
- * Telegram type ChatInviteLink.
- */
 data class ChatInviteLink(
     val inviteLink: String,
     val creator: User,
@@ -13,6 +10,6 @@ data class ChatInviteLink(
     val isRevoked: Boolean,
     val name: String? = null,
     val expireDate: Instant? = null,
-    val memberLimit: Long? = null,
-    val pendingJoinRequestCount: Long? = null
+    val memberLimit: Int? = null,
+    val pendingJoinRequestCount: Int? = null
 )

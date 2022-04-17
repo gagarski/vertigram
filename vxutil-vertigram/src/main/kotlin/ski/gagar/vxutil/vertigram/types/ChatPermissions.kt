@@ -1,8 +1,5 @@
 package ski.gagar.vxutil.vertigram.types
 
-/**
- * Telegram type ChatPermissions.
- */
 data class ChatPermissions(
     val canSendMessages: Boolean = false,
     val canSendMediaMessages: Boolean = false,

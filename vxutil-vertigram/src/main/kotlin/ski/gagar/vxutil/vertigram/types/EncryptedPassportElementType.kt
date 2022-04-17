@@ -2,9 +2,6 @@ package ski.gagar.vxutil.vertigram.types
 
 import com.fasterxml.jackson.annotation.JsonProperty
 
-/**
- * Available values for [EncryptedPassportElement.type]
- */
 enum class EncryptedPassportElementType {
     @JsonProperty(PERSONAL_DETAILS_STR)
     PERSONAL_DETAILS,

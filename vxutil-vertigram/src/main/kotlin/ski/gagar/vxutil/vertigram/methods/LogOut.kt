@@ -1,3 +1,6 @@
 package ski.gagar.vxutil.vertigram.methods
 
-object LogOut : JsonTgCallable<Boolean>()
+import ski.gagar.vertigram.annotations.TgMethod
+
+@TgMethod
+object LogOut : JsonTgCallable<Boolean>

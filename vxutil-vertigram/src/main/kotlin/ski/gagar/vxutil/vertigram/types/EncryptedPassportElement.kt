@@ -1,8 +1,5 @@
 package ski.gagar.vxutil.vertigram.types
 
-/**
- * Telegram type EncryptedPassportElement.
- */
 data class EncryptedPassportElement(
     val type: EncryptedPassportElementType,
     val data: String? = null,

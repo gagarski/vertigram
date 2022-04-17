@@ -2,9 +2,6 @@ package ski.gagar.vxutil.vertigram.types
 
 import com.fasterxml.jackson.annotation.JsonProperty
 
-/**
- * Available values for [PassportElementError.source]
- */
 enum class PassportElementErrorSource {
     @JsonProperty(DATA_FIELD_STR)
     DATA_FIELD,

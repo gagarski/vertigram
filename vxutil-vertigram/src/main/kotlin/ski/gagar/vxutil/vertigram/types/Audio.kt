@@ -1,12 +1,11 @@
 package ski.gagar.vxutil.vertigram.types
 
-/**
- * Telegram type Audio.
- */
+import java.time.Duration
+
 data class Audio(
     val fileId: String,
     val fileUniqueId: String,
-    val duration: Long,
+    val duration: Duration,
     val performer: String? = null,
     val title: String? = null,
     val fileName: String? = null,

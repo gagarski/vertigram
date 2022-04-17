@@ -1,8 +1,5 @@
 package ski.gagar.vxutil.vertigram.types
 
-/**
- * Telegram type Venue
- */
 data class Venue(
     val location: Location,
     val title: String,

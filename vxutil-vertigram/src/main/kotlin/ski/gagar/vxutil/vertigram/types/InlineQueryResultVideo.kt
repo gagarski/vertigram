@@ -1,8 +1,7 @@
 package ski.gagar.vxutil.vertigram.types
 
-/**
- * Telegram type InlineQueryResultVideo.
- */
+import java.time.Duration
+
 data class InlineQueryResultVideo(
     val id: String,
     val videoUrl: String,
@@ -12,13 +11,13 @@ data class InlineQueryResultVideo(
     val caption: String? = null,
     val parseMode: ParseMode? = null,
     val captionEntities: List<MessageEntity>? = null,
-    val videoWidth: Long? = null,
-    val videoHeight: Long? = null,
-    val videoDuration: Long? = null,
+    val videoWidth: Int? = null,
+    val videoHeight: Int? = null,
+    val videoDuration: Duration? = null,
     val description: String? = null,
     val replyMarkup: InlineKeyboardMarkup? = null,
     val inputMessageContent: InputMessageContent? = null
-) : InlineQueryResult() {
+) : InlineQueryResult {
     override val type: InlineQueryResultType = InlineQueryResultType.VIDEO
 }
 

@@ -1,14 +1,13 @@
 package ski.gagar.vxutil.vertigram.types
 
-/**
- * Telegram type Video.
- */
+import java.time.Duration
+
 data class Video(
     val fileId: String,
     val fileUniqueId: String,
-    val width: Long,
-    val height: Long,
-    val duration: Long,
+    val width: Int,
+    val height: Int,
+    val duration: Duration,
     val thumb: PhotoSize? = null,
     val fileName: String? = null,
     val mimeType: String? = null,

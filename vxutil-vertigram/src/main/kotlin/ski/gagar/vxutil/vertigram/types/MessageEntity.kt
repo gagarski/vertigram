@@ -2,9 +2,6 @@ package ski.gagar.vxutil.vertigram.types
 
 import com.fasterxml.jackson.annotation.JsonProperty
 
-/**
- * Allowed values for [MessageEntity.type]
- */
 enum class EntityType {
     @JsonProperty("mention")
     MENTION,

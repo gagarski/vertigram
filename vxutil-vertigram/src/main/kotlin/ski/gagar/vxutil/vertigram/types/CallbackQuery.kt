@@ -1,8 +1,5 @@
 package ski.gagar.vxutil.vertigram.types
 
-/**
- * Telegram type CallbackQuery.
- */
 data class CallbackQuery(
     val id: String,
     val from: User,

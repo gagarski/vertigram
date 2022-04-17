@@ -2,9 +2,6 @@ package ski.gagar.vxutil.vertigram.types
 
 import com.fasterxml.jackson.annotation.JsonProperty
 
-/**
- * Available values for all parseMode fields.
- */
 enum class ParseMode {
     @JsonProperty("Markdown")
     MARKDOWN,

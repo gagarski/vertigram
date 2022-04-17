@@ -2,24 +2,26 @@ package ski.gagar.vxutil.vertigram.methods
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.vertx.ext.web.multipart.MultipartForm
-import ski.gagar.vxutil.vertigram.types.attachments.Attachment
-import ski.gagar.vxutil.vertigram.types.attachments.attachDirectly
+import ski.gagar.vertigram.annotations.TgMethod
 import ski.gagar.vxutil.vertigram.types.attachments.attachIndirectly
 import ski.gagar.vxutil.vertigram.types.ChatId
 import ski.gagar.vxutil.vertigram.types.InputMedia
 import ski.gagar.vxutil.vertigram.types.Message
 import ski.gagar.vxutil.vertigram.util.TELEGRAM_JSON_MAPPER
+import ski.gagar.vxutil.vertigram.util.TgMedia
 import ski.gagar.vxutil.web.attributeIfNotNull
 import ski.gagar.vxutil.web.jsonAttributeIfNotNull
 
+@TgMethod
 data class SendMediaGroup(
     val chatId: ChatId,
+    @TgMedia
     val media: List<InputMedia>,
     val disableNotification: Boolean = false,
     val protectContent: Boolean = false,
     val replyToMessageId: Long? = null,
     val allowSendingWithoutReply: Boolean = false,
-) : MultipartTgCallable<List<Message>>() {
+) : MultipartTgCallable<List<Message>> {
     override fun MultipartForm.doSerializeToMultipart(mapper: ObjectMapper) {
         attributeIfNotNull("chat_id", chatId)
         val toAttach = putMediaDescriptor()
@@ -33,8 +35,8 @@ data class SendMediaGroup(
     private fun MultipartForm.putMediaDescriptor(): List<ProcessedMedia> {
         val processed = media.asSequence().withIndex().map { (index, it) ->
             ProcessedMedia(index, it, it.instantiate(
-                media = it.media.getIndirectAttachment("$ATTACHMENT_MEDIA_PREFIX$index"),
-                thumb = it.thumb?.getIndirectAttachment("$ATTACHMENT_THUMB_PREFIX$index")
+                media = it.media.getIndirectAttachment("$MEDIA$index"),
+                thumb = it.thumb?.getIndirectAttachment("$THUMB$index")
             ))
         }.toList()
 
@@ -45,9 +47,9 @@ data class SendMediaGroup(
 
     private fun MultipartForm.attachMedia(media: List<ProcessedMedia>) {
         for (medium in media) {
-            attachIndirectly("$ATTACHMENT_MEDIA_PREFIX${medium.index}", medium.original.media)
+            attachIndirectly("$MEDIA${medium.index}", medium.original.media)
             medium.original.thumb?.let {
-                attachIndirectly("$ATTACHMENT_THUMB_PREFIX${medium.index}", it)
+                attachIndirectly("$THUMB${medium.index}", it)
             }
         }
     }
@@ -55,7 +57,8 @@ data class SendMediaGroup(
     private data class ProcessedMedia(val index: Int, val original: InputMedia, val processed: InputMedia)
 
     companion object {
-        const val ATTACHMENT_MEDIA_PREFIX = "attachment_media_"
-        const val ATTACHMENT_THUMB_PREFIX = "attachment_thumb_"
+        const val ATTACHMENT = "attachment"
+        const val MEDIA = "media"
+        const val THUMB = "thumb"
     }
 }

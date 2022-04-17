@@ -1,14 +1,13 @@
 package ski.gagar.vxutil.vertigram.types
 
-/**
- * Telegram type InlineQueryResultGif.
- */
+import java.time.Duration
+
 data class InlineQueryResultGif(
     val id: String,
     val gifUrl: String,
-    val gifWidth: Long? = null,
-    val gifHeight: Long? = null,
-    val gifDuration: Long? = null,
+    val gifWidth: Int? = null,
+    val gifHeight: Int? = null,
+    val gifDuration: Duration? = null,
     val thumbUrl: String,
     val thumbMimeType: String? = null,
     val title: String? = null,
@@ -17,7 +16,7 @@ data class InlineQueryResultGif(
     val captionEntities: List<MessageEntity>? = null,
     val replyMarkup: InlineKeyboardMarkup? = null,
     val inputMessageContent: InputMessageContent? = null
-) : InlineQueryResult() {
+) : InlineQueryResult {
     override val type: InlineQueryResultType = InlineQueryResultType.GIF
 }
 

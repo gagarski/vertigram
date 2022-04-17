@@ -1,8 +1,5 @@
 package ski.gagar.vxutil.vertigram.types
 
-/**
- * Telegram type InlineQueryResultContact
- */
 data class InlineQueryResultContact(
     val id: String,
     val phoneNumber: String,
@@ -13,8 +10,8 @@ data class InlineQueryResultContact(
     val replyMarkup: InlineKeyboardMarkup? = null,
     val inputMessageContent: InputMessageContent? = null,
     val thumbUrl: String? = null,
-    val thumbWidth: Long? = null,
-    val thumbHeight: Long? = null
-) : InlineQueryResult() {
+    val thumbWidth: Int? = null,
+    val thumbHeight: Int? = null
+) : InlineQueryResult {
     override val type: InlineQueryResultType = InlineQueryResultType.CONTACT
 }

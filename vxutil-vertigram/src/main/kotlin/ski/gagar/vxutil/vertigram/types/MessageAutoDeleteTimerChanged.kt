@@ -1,8 +1,7 @@
 package ski.gagar.vxutil.vertigram.types
 
-/**
- * Telegram type MessageAutoDeleteTimerChanged.
- */
+import java.time.Duration
+
 data class MessageAutoDeleteTimerChanged(
-    val messageAutoDeleteTime: Long
+    val messageAutoDeleteTime: Duration
 )

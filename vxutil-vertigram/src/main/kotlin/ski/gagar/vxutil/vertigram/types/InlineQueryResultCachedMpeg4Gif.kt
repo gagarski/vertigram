@@ -1,8 +1,5 @@
 package ski.gagar.vxutil.vertigram.types
 
-/**
- * Telegram type InlineQueryResultCachedMpeg4Gif.
- */
 data class InlineQueryResultCachedMpeg4Gif(
     val id: String,
     val mpeg4FileId: String,
@@ -12,7 +9,7 @@ data class InlineQueryResultCachedMpeg4Gif(
     val captionEntities: List<MessageEntity>? = null,
     val replyMarkup: InlineKeyboardMarkup? = null,
     val inputMessageContent: InputMessageContent? = null
-) : InlineQueryResult() {
+) : InlineQueryResult {
     override val type: InlineQueryResultType = InlineQueryResultType.MPEG4_GIF
 }
 

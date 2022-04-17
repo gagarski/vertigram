@@ -1,5 +1,7 @@
 package ski.gagar.vxutil.vertigram.methods
 
+import ski.gagar.vertigram.annotations.TgMethod
 import ski.gagar.vxutil.vertigram.types.Me
 
-object GetMe : JsonTgCallable<Me>()
+@TgMethod
+object GetMe : JsonTgCallable<Me>

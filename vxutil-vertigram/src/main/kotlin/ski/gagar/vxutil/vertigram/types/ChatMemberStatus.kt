@@ -2,9 +2,6 @@ package ski.gagar.vxutil.vertigram.types
 
 import com.fasterxml.jackson.annotation.JsonProperty
 
-/**
- * Available values for [ChatMember.status]
- */
 enum class ChatMemberStatus {
     @JsonProperty(OWNER_STR)
     OWNER,

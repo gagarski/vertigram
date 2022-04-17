@@ -4,9 +4,6 @@ import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 import ski.gagar.vxutil.vertigram.util.TgIgnoreTypeInfo
 
-/**
- * Telegram type InlineQueryResult.
- */
 @TgIgnoreTypeInfo
 @JsonTypeInfo(use = JsonTypeInfo.Id.MINIMAL_CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@class")
 // We use @class here because type field does not properly distinguish sub-types (cached vs non-cached.
@@ -32,24 +29,7 @@ import ski.gagar.vxutil.vertigram.util.TgIgnoreTypeInfo
     JsonSubTypes.Type(value = InlineQueryResultCachedVoice::class),
     JsonSubTypes.Type(value = InlineQueryResultCachedAudio::class),
 )
-sealed class InlineQueryResult {
-    abstract val type: InlineQueryResultType
+sealed interface InlineQueryResult {
+    val type: InlineQueryResultType
 }
 
-/**
- * Telegram type InlineQueryResultArticle.
- */
-data class InlineQueryResultArticle(
-    val id: String,
-    val title: String,
-    val inputMessageContent: InputMessageContent,
-    val replyMarkup: InlineKeyboardMarkup? = null,
-    val url: String? = null,
-    val hideUrl: Boolean = false,
-    val description: String? = null,
-    val thumbUrl: String? = null,
-    val thumbWidth: Long? = null,
-    val thumbHeight: Long? = null
-) : InlineQueryResult() {
-    override val type = InlineQueryResultType.ARTICLE
-}

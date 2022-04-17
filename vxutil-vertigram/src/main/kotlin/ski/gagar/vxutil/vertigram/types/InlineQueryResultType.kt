@@ -2,9 +2,6 @@ package ski.gagar.vxutil.vertigram.types
 
 import com.fasterxml.jackson.annotation.JsonProperty
 
-/**
- * Available values for [InlineQueryResult.type]
- */
 enum class InlineQueryResultType {
     @JsonProperty(ARTICLE_STR)
     ARTICLE,

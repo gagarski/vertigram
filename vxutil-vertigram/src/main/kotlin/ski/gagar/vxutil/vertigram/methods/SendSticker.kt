@@ -2,6 +2,7 @@ package ski.gagar.vxutil.vertigram.methods
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.vertx.ext.web.multipart.MultipartForm
+import ski.gagar.vertigram.annotations.TgMethod
 import ski.gagar.vxutil.vertigram.types.attachments.Attachment
 import ski.gagar.vxutil.vertigram.types.attachments.attachDirectly
 import ski.gagar.vxutil.vertigram.types.ChatId
@@ -12,6 +13,7 @@ import ski.gagar.vxutil.web.binaryFileUploadIfNotNull
 import ski.gagar.vxutil.web.jsonAttributeIfNotNull
 import java.io.File
 
+@TgMethod
 data class SendSticker(
     val chatId: ChatId,
     val sticker: Attachment,
@@ -20,7 +22,7 @@ data class SendSticker(
     val replyToMessageId: Long? = null,
     val allowSendingWithoutReply: Boolean = false,
     val replyMarkup: ReplyMarkup? = null
-) : MultipartTgCallable<Message>() {
+) : MultipartTgCallable<Message> {
     override fun MultipartForm.doSerializeToMultipart(mapper: ObjectMapper) {
         attributeIfNotNull("chat_id", chatId)
         attachDirectly("sticker", sticker)

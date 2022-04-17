@@ -1,11 +1,5 @@
 package ski.gagar.vxutil.vertigram.types
 
-/**
- * Telegram type User
- *
- * This class does not support propertiers which are returned from getMe method.
- * @see ski.gagar.vxutil.vertigram.entities.Me
- */
 data class User(
     val id: Long,
     @get:JvmName("getIsBot")

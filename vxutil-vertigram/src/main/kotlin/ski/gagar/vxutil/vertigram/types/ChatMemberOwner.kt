@@ -1,14 +1,14 @@
 package ski.gagar.vxutil.vertigram.types
 
-/**
- * Telegram type ChatMemberOwner.
- */
+import com.fasterxml.jackson.annotation.JsonIgnore
+
 data class ChatMemberOwner(
     override val user: User,
     @get:JvmName("getIsAnonymous")
     val isAnonymous: Boolean,
     val customTitle: String? = null
-) : ChatMember() {
+) : ChatMember {
     override val status: ChatMemberStatus = ChatMemberStatus.OWNER
+    @JsonIgnore
     override val isMember: Boolean = true
 }

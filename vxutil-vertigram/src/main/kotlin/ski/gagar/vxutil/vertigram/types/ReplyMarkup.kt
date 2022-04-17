@@ -4,9 +4,6 @@ import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 import ski.gagar.vxutil.vertigram.util.TgIgnoreTypeInfo
 
-/**
- * A common type for Telegram types InlineKeyboardMarkup, ReplyKeyboardMarkup, ReplyKeyboardRemove and ForceReply.
- */
 @TgIgnoreTypeInfo
 @JsonTypeInfo(use = JsonTypeInfo.Id.MINIMAL_CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@class")
 @JsonSubTypes(
@@ -15,4 +12,4 @@ import ski.gagar.vxutil.vertigram.util.TgIgnoreTypeInfo
     JsonSubTypes.Type(value = ReplyKeyboardRemove::class),
     JsonSubTypes.Type(value = ForceReply::class)
 )
-sealed class ReplyMarkup
+sealed interface ReplyMarkup

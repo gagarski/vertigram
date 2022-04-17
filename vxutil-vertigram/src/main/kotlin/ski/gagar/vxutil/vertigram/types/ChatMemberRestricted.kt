@@ -3,11 +3,9 @@ package ski.gagar.vxutil.vertigram.types
 import com.fasterxml.jackson.annotation.JsonProperty
 import java.time.Instant
 
-/**
- * Telegram type ChatMemberRestricted.
- */
 data class ChatMemberRestricted(
     override val user: User,
+    @get:JvmName("getIsMember")
     override val isMember: Boolean,
     val canChangeInfo: Boolean,
     val canInviteUsers: Boolean,
@@ -21,7 +19,7 @@ data class ChatMemberRestricted(
     @Deprecated("Access through untilDate instead")
     val untilDateRaw: Instant
 
-) : ChatMember() {
+) : ChatMember {
     override val status: ChatMemberStatus = ChatMemberStatus.RESTRICTED
     @Suppress("DEPRECATION")
     val untilDate: Instant?

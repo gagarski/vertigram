@@ -1,5 +1,6 @@
 package ski.gagar.vxutil.vertigram.client.impl
 
+import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.JavaType
 import io.netty.handler.codec.http.HttpHeaderNames
 import io.netty.handler.codec.http.HttpHeaderValues
@@ -11,24 +12,26 @@ import io.vertx.ext.web.client.WebClientOptions
 import io.vertx.ext.web.codec.BodyCodec
 import io.vertx.ext.web.multipart.MultipartForm
 import io.vertx.kotlin.coroutines.await
-import ski.gagar.vxutil.vertigram.types.Wrapper
+import ski.gagar.vxutil.logger
+import ski.gagar.vxutil.uncheckedCast
 import ski.gagar.vxutil.vertigram.methods.JsonTgCallable
 import ski.gagar.vxutil.vertigram.methods.MultipartTgCallable
 import ski.gagar.vxutil.vertigram.methods.TgCallable
+import ski.gagar.vxutil.vertigram.types.Wrapper
 import ski.gagar.vxutil.vertigram.util.TELEGRAM_JSON_MAPPER
+import ski.gagar.vxutil.vertigram.util.TELEGRAM_JSON_MAPPER_WITH_MULTIPART
 import ski.gagar.vxutil.vertigram.util.TelegramCallException
 import ski.gagar.vxutil.vertigram.util.TelegramDownloadException
 import ski.gagar.vxutil.vertigram.util.TypeHints
 import ski.gagar.vxutil.vertigram.util.getOrAssert
-import ski.gagar.vxutil.logger
-import ski.gagar.vxutil.uncheckedCast
 import ski.gagar.vxutil.web.bodyAsJson
 import ski.gagar.vxutil.web.sendJsonAwait
+import java.time.Duration
 
 internal data class TelegramImplOptions(
     val tgBase: String = "https://api.telegram.org",
-    val shortPollTimeout: Long = 5000L,
-    val longPollTimeout: Long = 60000L
+    val shortPollTimeout: Duration = Duration.ofSeconds(5),
+    val longPollTimeout: Duration = Duration.ofSeconds(60)
 )
 
 @PublishedApi
@@ -68,9 +71,9 @@ internal class TelegramImpl(
         client(longPoll, upload).postAbs("${options.tgBase}/bot$token/$method")
             .putHeader("${HttpHeaderNames.ACCEPT}", "${HttpHeaderValues.APPLICATION_JSON}").apply {
                 if (longPoll) {
-                    timeout(options.longPollTimeout)
+                    timeout(options.longPollTimeout.toMillis())
                 } else {
-                    timeout(options.longPollTimeout)
+                    timeout(options.longPollTimeout.toMillis())
                 }
             }
 
@@ -179,7 +182,7 @@ internal class TelegramImpl(
         callMultipart(
             type,
             TypeHints.methodNames.getOrAssert(mpc.javaClass),
-            mpc.serializeToMultipart(mapper),
+            TELEGRAM_JSON_MAPPER_WITH_MULTIPART.toMultipart(mpc),
             upload = true
         )
 

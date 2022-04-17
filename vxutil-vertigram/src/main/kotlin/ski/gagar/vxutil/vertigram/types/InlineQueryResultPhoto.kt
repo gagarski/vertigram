@@ -1,14 +1,11 @@
 package ski.gagar.vxutil.vertigram.types
 
-/**
- * Telegram type InlineQueryResultPhoto.
- */
 data class InlineQueryResultPhoto(
     val id: String,
     val photoUrl: String,
     val thumbUrl: String,
-    val photoWidth: Long? = null,
-    val photoHeight: Long? = null,
+    val photoWidth: Int? = null,
+    val photoHeight: Int? = null,
     val title: String? = null,
     val description: String? = null,
     val caption: String? = null,
@@ -17,7 +14,7 @@ data class InlineQueryResultPhoto(
     val replyMarkup: InlineKeyboardMarkup? = null,
     val inputMessageContent: InputMessageContent? = null
 
-) : InlineQueryResult() {
+) : InlineQueryResult {
     override val type: InlineQueryResultType = InlineQueryResultType.PHOTO
 }
 

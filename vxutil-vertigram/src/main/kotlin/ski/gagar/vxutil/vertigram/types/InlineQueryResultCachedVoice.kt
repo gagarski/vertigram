@@ -1,8 +1,5 @@
 package ski.gagar.vxutil.vertigram.types
 
-/**
- * Telegram type InlineQueryResultCachedVoice.
- */
 data class InlineQueryResultCachedVoice(
     val id: String,
     val voiceFileId: String,
@@ -12,7 +9,7 @@ data class InlineQueryResultCachedVoice(
     val captionEntities: List<MessageEntity>? = null,
     val replyMarkup: InlineKeyboardMarkup? = null,
     val inputMessageContent: InputMessageContent? = null
-) : InlineQueryResult() {
+) : InlineQueryResult {
     override val type: InlineQueryResultType = InlineQueryResultType.VOICE
 }
 

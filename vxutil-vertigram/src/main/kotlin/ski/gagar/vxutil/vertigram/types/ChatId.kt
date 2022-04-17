@@ -19,6 +19,7 @@ sealed interface ChatId {
 data class LongChatId(val long: Long) : ChatId {
     override fun toString(): String = long.toString()
 }
+
 data class StringChatId(val string: String) : ChatId{
     override fun toString(): String = string
 }

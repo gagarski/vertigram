@@ -2,6 +2,7 @@ package ski.gagar.vxutil.vertigram.methods
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.vertx.ext.web.multipart.MultipartForm
+import ski.gagar.vertigram.annotations.TgMethod
 import ski.gagar.vxutil.vertigram.types.attachments.Attachment
 import ski.gagar.vxutil.vertigram.types.attachments.attachDirectly
 import ski.gagar.vxutil.vertigram.types.MaskPosition
@@ -11,17 +12,18 @@ import ski.gagar.vxutil.web.binaryFileUploadIfNotNull
 import ski.gagar.vxutil.web.jsonAttributeIfNotNull
 import java.io.File
 
+@TgMethod
 data class CreateNewStickerSet(
     val userId: Long,
     val name: String,
     val title: String,
+    val emojis: String,
     val pngSticker: Attachment? = null,
     val tgsSticker: Attachment? = null,
     val webmSticker: Attachment? = null,
-    val emojis: String,
     val containsMasks: Boolean? = null,
     val maskPosition: MaskPosition? = null
-) : MultipartTgCallable<Boolean>() {
+) : MultipartTgCallable<Boolean> {
     override fun MultipartForm.doSerializeToMultipart(mapper: ObjectMapper) {
         attributeIfNotNull("user_id", userId)
         attributeIfNotNull("name", name)

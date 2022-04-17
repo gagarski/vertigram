@@ -1,8 +1,5 @@
 package ski.gagar.vxutil.vertigram.types
 
-/**
- * Telegram type ShippingAddress.
- */
 data class ShippingAddress(
     val countryCode: String,
     val state: String,

@@ -2,9 +2,6 @@ package ski.gagar.vxutil.vertigram.types
 
 import com.fasterxml.jackson.annotation.JsonProperty
 
-/**
- * Available values for [InputMedia.type]
- */
 enum class InputMediaType {
     @JsonProperty(PHOTO_STR)
     PHOTO,

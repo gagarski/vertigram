@@ -1,8 +1,7 @@
 package ski.gagar.vxutil.vertigram.types
 
-/**
- * Telegram type InlineQueryResultVoice.
- */
+import java.time.Duration
+
 data class InlineQueryResultVoice(
     val id: String,
     val voiceUrl: String,
@@ -10,10 +9,10 @@ data class InlineQueryResultVoice(
     val caption: String? = null,
     val parseMode: ParseMode? = null,
     val captionEntities: List<MessageEntity>? = null,
-    val voiceDuration: Long? = null,
+    val voiceDuration: Duration? = null,
     val replyMarkup: InlineKeyboardMarkup? = null,
     val inputMessageContent: InputMessageContent? = null
-) : InlineQueryResult() {
+) : InlineQueryResult {
     override val type: InlineQueryResultType = InlineQueryResultType.VOICE
 }
 

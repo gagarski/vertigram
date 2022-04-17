@@ -4,9 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 
-/**
- * Telegram type ChatMember.
- */
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "status")
 @JsonSubTypes(
     JsonSubTypes.Type(value = ChatMemberOwner::class, name = ChatMemberStatus.OWNER_STR),
@@ -16,10 +13,10 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo
     JsonSubTypes.Type(value = ChatMemberLeft::class, name = ChatMemberStatus.LEFT_STR),
     JsonSubTypes.Type(value = ChatMemberBanned::class, name = ChatMemberStatus.BANNED_STR),
 )
-sealed class ChatMember {
-    abstract val status: ChatMemberStatus
+sealed interface ChatMember {
+    val status: ChatMemberStatus
     @get:JsonIgnore
-    abstract val isMember: Boolean
-    abstract val user: User
+    val isMember: Boolean
+    val user: User
 }
 

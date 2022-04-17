@@ -2,9 +2,6 @@ package ski.gagar.vxutil.vertigram.types
 
 import java.time.Instant
 
-/**
- * Telegram type Message.
- */
 data class Message(
     val messageId: Long,
     val from: User? = null,
@@ -58,10 +55,11 @@ data class Message(
     val connectedWebsite: String? = null,
     val passportData: PassportData? = null,
     val proximityAlertTriggered: ProximityAlertTriggered? = null,
-    val voiceChatScheduled: VoiceChatScheduled? = null,
-    val voiceChatStarted: VoiceChatStarted? = null,
-    val voiceChatEnded: VoiceChatEnded? = null,
-    val voiceChatParticipantsInvited: VoiceChatParticipantsInvited? = null,
+    val videoChatScheduled: VideoChatScheduled? = null,
+    val videoChatStarted: VideoChatStarted? = null,
+    val videoChatEnded: VideoChatEnded? = null,
+    val videoChatParticipantsInvited: VideoChatParticipantsInvited? = null,
+    val webAppData: WebAppData? = null,
     val replyMarkup: InlineKeyboardMarkup? = null
 
 )

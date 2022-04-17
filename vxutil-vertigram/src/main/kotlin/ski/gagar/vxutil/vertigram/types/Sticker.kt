@@ -1,13 +1,10 @@
 package ski.gagar.vxutil.vertigram.types
 
-/**
- * Telegram type Sticker.
- */
 data class Sticker(
     val fileId: String,
     val fileUniqueId: String,
-    val width: Long,
-    val height: Long,
+    val width: Int,
+    val height: Int,
     @get:JvmName("getIsAnimated")
     val isAnimated: Boolean,
     @get:JvmName("getIsVideo")

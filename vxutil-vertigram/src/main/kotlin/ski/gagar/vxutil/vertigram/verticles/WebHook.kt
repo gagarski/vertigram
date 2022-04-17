@@ -11,10 +11,12 @@ import ski.gagar.vxutil.sleep
 import ski.gagar.vxutil.vertigram.client.Telegram
 import ski.gagar.vxutil.vertigram.client.TgVTelegram
 import ski.gagar.vxutil.vertigram.config.WebHookConfig
+import ski.gagar.vxutil.vertigram.deleteWebhook
 import ski.gagar.vxutil.vertigram.types.ParsedUpdate
 import ski.gagar.vxutil.vertigram.types.ParsedUpdateList
 import ski.gagar.vxutil.vertigram.methods.DeleteWebhook
 import ski.gagar.vxutil.vertigram.methods.SetWebhook
+import ski.gagar.vxutil.vertigram.setWebhook
 import ski.gagar.vxutil.vertigram.util.TELEGRAM_JSON_MAPPER
 import ski.gagar.vxutil.web.IpNetworkAddress
 import ski.gagar.vxutil.web.RealIpLoggerHandler
@@ -32,7 +34,7 @@ class WebHook : ErrorLoggingCoroutineVerticle() {
     override suspend fun start() {
         logger.info("Deleting old webhook...")
         retrying(coolDown = { sleep(3000) }) {
-            tg.call(DeleteWebhook)
+            tg.deleteWebhook()
         }
 
         logger.info("Staring ski.gagar.vxutil.web server...")
@@ -72,7 +74,7 @@ class WebHook : ErrorLoggingCoroutineVerticle() {
 
         logger.info("Setting new Telegram webhook...")
         retrying(coolDown = { sleep(3000) }) {
-            tg.call(SetWebhook("${typedConfig.webHook.publicUrl}/${secret}"))
+            tg.setWebhook("${typedConfig.webHook.publicUrl}/${secret}")
         }
 
         logger.info("Web server is listening...")

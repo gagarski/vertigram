@@ -1,8 +1,5 @@
 package ski.gagar.vxutil.vertigram.types
 
-/**
- * Telegram type StickerSet.
- */
 data class StickerSet(
     val name: String,
     val title: String,

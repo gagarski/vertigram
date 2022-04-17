@@ -6,14 +6,17 @@ import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.core.JsonToken
 import com.fasterxml.jackson.core.Version
+import com.fasterxml.jackson.databind.DeserializationConfig
 import com.fasterxml.jackson.databind.DeserializationContext
 import com.fasterxml.jackson.databind.DeserializationFeature
+import com.fasterxml.jackson.databind.JavaType
 import com.fasterxml.jackson.databind.JsonDeserializer
 import com.fasterxml.jackson.databind.JsonMappingException
 import com.fasterxml.jackson.databind.JsonSerializer
 import com.fasterxml.jackson.databind.Module
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.PropertyNamingStrategies
+import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.databind.SerializerProvider
 import com.fasterxml.jackson.databind.introspect.Annotated
 import com.fasterxml.jackson.databind.introspect.AnnotatedMember
@@ -22,15 +25,29 @@ import com.fasterxml.jackson.databind.introspect.NopAnnotationIntrospector
 import com.fasterxml.jackson.databind.jsontype.TypeSerializer
 import com.fasterxml.jackson.databind.module.SimpleDeserializers
 import com.fasterxml.jackson.databind.module.SimpleSerializers
+import com.fasterxml.jackson.databind.ser.BeanPropertyWriter
+import com.fasterxml.jackson.databind.ser.BeanSerializer
+import com.fasterxml.jackson.databind.ser.DefaultSerializerProvider
+import com.fasterxml.jackson.databind.util.TokenBuffer
 import com.fasterxml.jackson.module.kotlin.KotlinModule
+import io.vertx.ext.web.multipart.MultipartForm
 import ski.gagar.vxutil.uncheckedCast
 import ski.gagar.vxutil.uncheckedCastOrNull
-import ski.gagar.vxutil.vertigram.types.attachments.Attachment
-import ski.gagar.vxutil.vertigram.types.attachments.UrlAttachment
+import ski.gagar.vxutil.vertigram.methods.SendMediaGroup
 import ski.gagar.vxutil.vertigram.types.ChatId
+import ski.gagar.vxutil.vertigram.types.InputMedia
 import ski.gagar.vxutil.vertigram.types.LongChatId
 import ski.gagar.vxutil.vertigram.types.StringChatId
+import ski.gagar.vxutil.vertigram.types.attachments.Attachment
+import ski.gagar.vxutil.vertigram.types.attachments.UrlAttachment
+import ski.gagar.vxutil.vertigram.types.attachments.attachDirectly
+import ski.gagar.vxutil.vertigram.types.attachments.attachIndirectly
+import ski.gagar.vxutil.web.attributeIfNotNull
+import ski.gagar.vxutil.web.attributeIfTrue
+import java.io.Closeable
+import java.time.Duration
 import java.time.Instant
+
 
 @Target(
     AnnotationTarget.ANNOTATION_CLASS,
@@ -58,12 +75,8 @@ annotation class TgIgnoreTypeInfo
 
 class ChatIdSerializer : JsonSerializer<ChatId>() {
     override fun serialize(value: ChatId, gen: JsonGenerator, serializers: SerializerProvider) = when(value) {
-        is LongChatId -> {
-            gen.writeNumber(value.long)
-        }
-        is StringChatId -> {
-            gen.writeString(value.string)
-        }
+        is LongChatId -> gen.writeNumber(value.long)
+        is StringChatId -> gen.writeString(value.string)
     }
 
     override fun serializeWithType(
@@ -93,6 +106,23 @@ class UnixTimestampDeserializer : JsonDeserializer<Instant>() {
 
     override fun handledType(): Class<Instant> = Instant::class.java
 }
+
+class DurationInSecondsSerializer : JsonSerializer<Duration>() {
+    override fun serialize(duration: Duration, gen: JsonGenerator, sp: SerializerProvider?) {
+        gen.writeNumber(duration.toSeconds())
+    }
+
+    override fun handledType(): Class<Duration> = Duration::class.java
+}
+
+class DurationInSecondsDeserializer : JsonDeserializer<Duration>() {
+    override fun deserialize(parser: JsonParser, ctxt: DeserializationContext?): Duration {
+        return Duration.ofSeconds(parser.longValue)
+    }
+
+    override fun handledType(): Class<Duration> = Duration::class.java
+}
+
 
 class ChatIdDeserializer : JsonDeserializer<ChatId>() {
     override fun deserialize(parser: JsonParser, ctxt: DeserializationContext?): ChatId = when (parser.currentToken) {
@@ -186,6 +216,7 @@ object TelegramModule : Module() {
             addSerializer(ChatIdSerializer())
             addSerializer(AttachmentSerializer())
             addSerializer(UrlAttachmentSerializer())
+            addSerializer(DurationInSecondsSerializer())
         })
         context.addDeserializers(SimpleDeserializers().apply {
             addDeserializer(Instant::class.java,
@@ -198,17 +229,24 @@ object TelegramModule : Module() {
                 Attachment::class.java,
                 AttachmentDeserializer()
             )
+            addDeserializer(
+                Duration::class.java,
+                DurationInSecondsDeserializer()
+            )
         })
     }
 
 }
 
+fun telegramJsonMapper(): ObjectMapper = ObjectMapper()
+    .setAnnotationIntrospector(NoTypeInfoAnnotationIntrospector())
+    .setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE)
+    .enable(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES)
+    .setSerializationInclusion(JsonInclude.Include.NON_NULL)
+    .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+    .registerModule(KotlinModule())
+    .registerModule(TelegramModule)
+
 val TELEGRAM_JSON_MAPPER: ObjectMapper =
-    ObjectMapper() // default mapper
-        .setAnnotationIntrospector(NoTypeInfoAnnotationIntrospector())
-        .setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE)
-        .enable(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES)
-        .setSerializationInclusion(JsonInclude.Include.NON_NULL)
-        .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-        .registerModule(KotlinModule())
-        .registerModule(TelegramModule)
+    telegramJsonMapper()
+

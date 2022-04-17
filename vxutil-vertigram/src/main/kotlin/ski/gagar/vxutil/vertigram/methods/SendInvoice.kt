@@ -1,10 +1,12 @@
 package ski.gagar.vxutil.vertigram.methods
 
+import ski.gagar.vertigram.annotations.TgMethod
 import ski.gagar.vxutil.vertigram.types.ChatId
 import ski.gagar.vxutil.vertigram.types.LabeledPrice
 import ski.gagar.vxutil.vertigram.types.Message
 import ski.gagar.vxutil.vertigram.types.ReplyMarkup
 
+@TgMethod
 data class SendInvoice(
     val chatId: ChatId,
     val title: String,
@@ -13,14 +15,14 @@ data class SendInvoice(
     val providerToken: String,
     val currency: String,
     val prices: List<LabeledPrice>,
-    val maxTipAmount: Long? = null,
-    val suggestedTipAmounts: List<Long>? = null,
+    val maxTipAmount: Int? = null,
+    val suggestedTipAmounts: List<Int>? = null,
     val startParameter: String? = null,
     val providerData: String? = null,
     val photoUrl: String? = null,
-    val photoSize: Long? = null,
-    val photoWidth: Long? = null,
-    val photoHeight: Long? = null,
+    val photoSize: Int? = null,
+    val photoWidth: Int? = null,
+    val photoHeight: Int? = null,
     val needName: Boolean = false,
     val needPhoneNumber: Boolean = false,
     val needEmail: Boolean = false,
@@ -34,4 +36,4 @@ data class SendInvoice(
     val replyToMessageId: Long? = null,
     val allowSendingWithoutReply: Boolean = false,
     val replyMarkup: ReplyMarkup? = null
-) : JsonTgCallable<Message>()
+) : JsonTgCallable<Message>

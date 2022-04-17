@@ -4,9 +4,6 @@ import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 import ski.gagar.vxutil.vertigram.util.TgIgnoreTypeInfo
 
-/**
- * Telegram type InputMessageContent.
- */
 @TgIgnoreTypeInfo
 @JsonTypeInfo(use = JsonTypeInfo.Id.MINIMAL_CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@class")
 @JsonSubTypes(
@@ -16,17 +13,7 @@ import ski.gagar.vxutil.vertigram.util.TgIgnoreTypeInfo
     JsonSubTypes.Type(value = InputContactMessageContent::class),
     JsonSubTypes.Type(value = InputInvoiceMessageContent::class)
 )
-sealed class InputMessageContent
-
-/**
- * Telegram type InputTextMessageContent.
- */
-data class InputTextMessageContent(
-    val messageText: String,
-    val parseMode: ParseMode? = null,
-    val entities: List<MessageEntity>? = null,
-    val disableWebPagePreview: Boolean = false
-) : InputMessageContent()
+sealed interface InputMessageContent
 
 val InputTextMessageContent.captionEntitiesInstantiated: List<InstantiatedEntity>
     get() = entities?.map { InstantiatedEntity(it, this.messageText) } ?: listOf()
