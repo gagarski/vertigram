@@ -3,7 +3,7 @@
     <parent>
         <artifactId>vxutil-parent-base</artifactId>
         <groupId>ski.gagar.vxutil</groupId>
-        <version>1.0.0-alpha0</version>
+        <version>1.0.0-alpha1-SNAPSHOT</version>
         <relativePath>../vxutil-parent-base</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
