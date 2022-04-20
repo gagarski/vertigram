@@ -63,9 +63,3 @@ data class Message(
     val replyMarkup: InlineKeyboardMarkup? = null
 
 )
-
-val Message.entitiesInstantiated: List<InstantiatedEntity>
-    get() = entities?.map { InstantiatedEntity(it, this.text) } ?: listOf()
-
-val Message.captionEntitiesInstantiated: List<InstantiatedEntity>
-    get() = captionEntities?.map { InstantiatedEntity(it, this.text) } ?: listOf()

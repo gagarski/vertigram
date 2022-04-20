@@ -8,4 +8,4 @@ import ski.gagar.vxutil.vertigram.types.SentWebAppMessage
 data class AnswerWebAppQuery(
     val webAppQueryId: String,
     val result: List<InlineQueryResult>
-) : JsonTgCallable<SentWebAppMessage>
+) : JsonTgCallable<SentWebAppMessage>()

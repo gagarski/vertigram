@@ -6,4 +6,4 @@ import ski.gagar.vxutil.vertigram.types.StickerSet
 @TgMethod
 data class GetStickerSet(
     val name: String
-) : JsonTgCallable<StickerSet>
+) : JsonTgCallable<StickerSet>()

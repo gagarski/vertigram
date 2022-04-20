@@ -13,4 +13,4 @@ data class SendGame(
     val replyToMessageId: Long? = null,
     val allowSendingWithoutReply: Boolean = false,
     val replyMarkup: ReplyMarkup? = null
-) : JsonTgCallable<Boolean>
+) : JsonTgCallable<Boolean>()

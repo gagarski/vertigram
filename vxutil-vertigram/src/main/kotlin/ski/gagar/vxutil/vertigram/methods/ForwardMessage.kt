@@ -11,4 +11,4 @@ data class ForwardMessage(
     val messageId: Long,
     val disableNotification: Boolean = false,
     val protectContent: Boolean = false
-) : JsonTgCallable<Message>
+) : JsonTgCallable<Message>()

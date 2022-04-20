@@ -11,6 +11,3 @@ data class InlineQueryResultCachedAudio(
 ) : InlineQueryResult {
     override val type: InlineQueryResultType = InlineQueryResultType.AUDIO
 }
-
-val InlineQueryResultCachedAudio.captionEntitiesInstantiated: List<InstantiatedEntity>
-    get() = captionEntities?.map { InstantiatedEntity(it, this.caption) } ?: listOf()

@@ -16,4 +16,4 @@ data class EditMessageCaption(
     val parseMode: ParseMode? = null,
     val captionEntities: List<MessageEntity>? = null,
     val replyMarkup: ReplyMarkup? = null
-) : JsonTgCallable<Message>
+) : JsonTgCallable<Message>()

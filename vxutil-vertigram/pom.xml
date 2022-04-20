@@ -104,12 +104,7 @@
         </dependency>
         <dependency>
             <groupId>ski.gagar.vxutil</groupId>
-            <artifactId>vertigram-annotations</artifactId>
-            <version>0.5.2-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>ski.gagar.vxutil</groupId>
-            <artifactId>vertigram-codegen</artifactId>
+            <artifactId>vxutil-vertigram-annotations</artifactId>
             <version>0.5.2-SNAPSHOT</version>
         </dependency>
     </dependencies>
@@ -118,6 +113,13 @@
             <plugin>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-maven-plugin</artifactId>
+                <dependencies>
+                    <dependency>
+                        <groupId>ski.gagar.vxutil</groupId>
+                        <artifactId>vxutil-vertigram-codegen</artifactId>
+                        <version>0.5.2-SNAPSHOT</version>
+                    </dependency>
+                </dependencies>
                 <executions>
                     <execution>
                         <id>kapt</id>
@@ -131,7 +133,7 @@
                             <annotationProcessorPaths>
                                 <annotationProcessorPath>
                                     <groupId>ski.gagar.vxutil</groupId>
-                                    <artifactId>vertigram-codegen</artifactId>
+                                    <artifactId>vxutil-vertigram-codegen</artifactId>
                                     <version>${project.version}</version> <!-- Maybe not a very good thing to do -->
                                 </annotationProcessorPath>
                             </annotationProcessorPaths>

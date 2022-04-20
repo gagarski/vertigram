@@ -2,7 +2,7 @@ package ski.gagar.vxutil.vertigram.types
 
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
-import ski.gagar.vxutil.vertigram.util.TgIgnoreTypeInfo
+import ski.gagar.vxutil.vertigram.util.json.TgIgnoreTypeInfo
 
 @TgIgnoreTypeInfo
 @JsonTypeInfo(use = JsonTypeInfo.Id.MINIMAL_CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@class")
@@ -14,6 +14,3 @@ import ski.gagar.vxutil.vertigram.util.TgIgnoreTypeInfo
     JsonSubTypes.Type(value = InputInvoiceMessageContent::class)
 )
 sealed interface InputMessageContent
-
-val InputTextMessageContent.captionEntitiesInstantiated: List<InstantiatedEntity>
-    get() = entities?.map { InstantiatedEntity(it, this.messageText) } ?: listOf()

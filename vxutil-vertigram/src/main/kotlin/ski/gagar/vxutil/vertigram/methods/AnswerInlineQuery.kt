@@ -14,4 +14,4 @@ data class AnswerInlineQuery(
     val nextOffset: String? = null,
     val switchPmText: String? = null,
     val switchPmParameter: String? = null
-) : JsonTgCallable<Boolean>
+) : JsonTgCallable<Boolean>()

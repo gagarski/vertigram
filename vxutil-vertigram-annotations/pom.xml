@@ -11,7 +11,7 @@
         <relativePath>../vxutil-bom-internal</relativePath>
     </parent>
 
-    <artifactId>vertigram-annotations</artifactId>
+    <artifactId>vxutil-vertigram-annotations</artifactId>
 
     <name>Vertigram annotations</name>
     <description>Vertigram annotations for code generation</description>

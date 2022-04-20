@@ -19,6 +19,3 @@ data class InlineQueryResultMpeg4Gif(
 ) : InlineQueryResult {
     override val type: InlineQueryResultType = InlineQueryResultType.MPEG4_GIF
 }
-
-val InlineQueryResultMpeg4Gif.captionEntitiesInstantiated: List<InstantiatedEntity>
-    get() = captionEntities?.map { InstantiatedEntity(it, this.caption) } ?: listOf()

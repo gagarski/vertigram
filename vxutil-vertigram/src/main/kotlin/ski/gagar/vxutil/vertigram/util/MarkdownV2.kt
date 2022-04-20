@@ -2,6 +2,8 @@ package ski.gagar.vxutil.vertigram.util
 
 import ski.gagar.vxutil.vertigram.types.User
 
+fun md(init: Markdown.() -> Unit) = Markdown().apply(init)
+
 fun String.escapeText() =
     this.replace("""([_*\[\]()~`>#+\-=|{}.!\\])""".toRegex(), """\\$1""")
 
@@ -15,7 +17,7 @@ fun String.escapeCode() =
 annotation class MdV2TagMarker
 
 @MdV2TagMarker
-abstract class MdV2Element {
+abstract class MdV2Element internal constructor() {
     abstract fun render(builder: StringBuilder)
 
     override fun toString() = StringBuilder().apply {
@@ -23,14 +25,14 @@ abstract class MdV2Element {
     }.toString()
 }
 
-class Text(private val value: String): MdV2Element() {
+class Text internal constructor(private val value: String): MdV2Element() {
     override fun render(builder: StringBuilder) {
         builder.append(value.escapeText())
     }
 }
 
 
-class Raw(private val value: String): MdV2Element() {
+class Raw internal constructor(private val value: String): MdV2Element() {
     override fun render(builder: StringBuilder) {
         builder.append(value)
     }
@@ -44,7 +46,7 @@ private val User.fullName: String?
     }
 
 
-abstract class MdV2ElementWithChildren : MdV2Element() {
+abstract class MdV2ElementWithChildren internal constructor() : MdV2Element() {
     private val children: MutableList<MdV2Element> = mutableListOf()
 
     protected fun <T : MdV2Element> initTag(tag: T, init: T.() -> Unit = {}): T {
@@ -110,7 +112,7 @@ abstract class MdV2ElementWithChildren : MdV2Element() {
     fun unsafe() = Unsafe()
 }
 
-abstract class WrappedMdV2ElementWithChildren : MdV2ElementWithChildren() {
+abstract class WrappedMdV2ElementWithChildren internal constructor() : MdV2ElementWithChildren() {
     abstract fun renderPrefix(builder: StringBuilder)
     open fun renderPostfix(builder: StringBuilder) = renderPrefix(builder)
 
@@ -122,7 +124,7 @@ abstract class WrappedMdV2ElementWithChildren : MdV2ElementWithChildren() {
 
 }
 
-class Bold : WrappedMdV2ElementWithChildren() {
+class Bold internal constructor() : WrappedMdV2ElementWithChildren() {
     override fun renderPrefix(builder: StringBuilder) {
         builder.append("*")
     }
@@ -136,7 +138,7 @@ class Bold : WrappedMdV2ElementWithChildren() {
     public override fun spoiler(init: Spoiler.() -> Unit) = super.spoiler(init)
 }
 
-class Italic(
+class Italic internal constructor(
     // See notes here: https://core.telegram.org/bots/api#markdownv2-style
     // We could be more smart here and add extra char only when italic is the last part of underline
     private val insideUnderline: Boolean = false
@@ -161,7 +163,7 @@ class Italic(
     public override fun spoiler(init: Spoiler.() -> Unit) = super.spoiler(init)
 }
 
-class Underline() : WrappedMdV2ElementWithChildren() {
+class Underline internal constructor() : WrappedMdV2ElementWithChildren() {
     override fun renderPrefix(builder: StringBuilder) {
         builder.append("__")
     }
@@ -175,7 +177,7 @@ class Underline() : WrappedMdV2ElementWithChildren() {
     public override fun spoiler(init: Spoiler.() -> Unit) = super.spoiler(init)
 }
 
-class Strikethrough : WrappedMdV2ElementWithChildren() {
+class Strikethrough internal constructor(): WrappedMdV2ElementWithChildren() {
     override fun renderPrefix(builder: StringBuilder) {
         builder.append("~")
     }
@@ -189,7 +191,7 @@ class Strikethrough : WrappedMdV2ElementWithChildren() {
     public override fun spoiler(init: Spoiler.() -> Unit) = super.spoiler(init)
 }
 
-class Link(private val href: String) : MdV2ElementWithChildren() {
+class Link internal constructor(private val href: String) : MdV2ElementWithChildren() {
     override fun render(builder: StringBuilder) {
         builder.append("[")
         renderChildren(builder)
@@ -205,14 +207,14 @@ class Link(private val href: String) : MdV2ElementWithChildren() {
 
 }
 
-class Code(private val code: String) : MdV2Element() {
+class Code internal constructor(private val code: String) : MdV2Element() {
     override fun render(builder: StringBuilder) {
         builder.append("`${code.escapeCode()}`")
     }
 
 }
 
-class Pre(private val code: String, private val language: String? = null) : MdV2Element() {
+class Pre internal constructor(private val code: String, private val language: String? = null) : MdV2Element() {
     override fun render(builder: StringBuilder) {
         builder.append("```")
         language?.let {
@@ -225,7 +227,7 @@ class Pre(private val code: String, private val language: String? = null) : MdV2
 
 }
 
-class Spoiler : WrappedMdV2ElementWithChildren() {
+class Spoiler internal constructor()  : WrappedMdV2ElementWithChildren() {
     override fun renderPrefix(builder: StringBuilder) {
         builder.append("||")
     }
@@ -240,7 +242,7 @@ class Spoiler : WrappedMdV2ElementWithChildren() {
 }
 
 
-class Markdown : MdV2ElementWithChildren() {
+class Markdown internal constructor() : MdV2ElementWithChildren() {
     public override fun b(init: Bold.() -> Unit) = super.b(init)
     public override fun i(init: Italic.() -> Unit) = super.i(init)
     public override fun u(init: Underline.() -> Unit) = super.u(init)
@@ -257,5 +259,3 @@ class Markdown : MdV2ElementWithChildren() {
         renderChildren(builder)
     }
 }
-
-fun md(init: Markdown.() -> Unit) = Markdown().apply(init)

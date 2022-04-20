@@ -14,7 +14,7 @@ data class SendDice(
     val replyToMessageId: Long? = null,
     val allowSendingWithoutReply: Boolean = false,
     val replyMarkup: ReplyMarkup? = null
-) : JsonTgCallable<Message> {
+) : JsonTgCallable<Message>() {
     companion object {
         const val CUBE_EMOJI = "\uD83C\uDFB2"
         const val DART_EMOJI = "\uD83C\uDFAF"

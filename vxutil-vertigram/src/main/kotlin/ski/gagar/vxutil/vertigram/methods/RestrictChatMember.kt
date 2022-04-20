@@ -11,4 +11,4 @@ data class RestrictChatMember(
     val userId: Long,
     val permissions: ChatPermissions,
     val untilDate: Instant? = null
-) : JsonTgCallable<Boolean>
+) : JsonTgCallable<Boolean>()

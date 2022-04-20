@@ -8,6 +8,3 @@ data class Game(
     val textEntities: List<MessageEntity>? = null,
     val animation: Animation? = null
 )
-
-val Game.textEntitiesInstantiated: List<InstantiatedEntity>
-    get() = textEntities?.map { InstantiatedEntity(it, this.text) } ?: listOf()

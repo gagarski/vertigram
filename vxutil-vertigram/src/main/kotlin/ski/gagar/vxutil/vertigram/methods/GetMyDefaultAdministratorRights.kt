@@ -6,4 +6,4 @@ import ski.gagar.vxutil.vertigram.types.ChatAdministratorRights
 @TgMethod
 data class GetMyDefaultAdministratorRights(
     val forChannels: Boolean = false
-) : JsonTgCallable<ChatAdministratorRights>
+) : JsonTgCallable<ChatAdministratorRights>()

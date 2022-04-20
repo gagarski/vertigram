@@ -21,4 +21,4 @@ data class SendVenue(
     val replyToMessageId: Long? = null,
     val allowSendingWithoutReply: Boolean = false,
     val replyMarkup: ReplyMarkup? = null
-) : JsonTgCallable<Message>
+) : JsonTgCallable<Message>()

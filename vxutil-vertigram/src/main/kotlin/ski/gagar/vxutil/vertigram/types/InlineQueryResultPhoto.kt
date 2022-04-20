@@ -17,6 +17,3 @@ data class InlineQueryResultPhoto(
 ) : InlineQueryResult {
     override val type: InlineQueryResultType = InlineQueryResultType.PHOTO
 }
-
-val InlineQueryResultPhoto.captionEntitiesInstantiated: List<InstantiatedEntity>
-    get() = captionEntities?.map { InstantiatedEntity(it, this.caption) } ?: listOf()

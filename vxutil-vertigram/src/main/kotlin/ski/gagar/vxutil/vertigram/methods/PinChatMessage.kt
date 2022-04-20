@@ -8,4 +8,4 @@ data class PinChatMessage(
     val chatId: ChatId,
     val messageId: Long,
     val disableNotification: Boolean = false
-) : JsonTgCallable<Boolean>
+) : JsonTgCallable<Boolean>()

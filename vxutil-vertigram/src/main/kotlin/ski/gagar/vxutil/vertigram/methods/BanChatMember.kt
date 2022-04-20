@@ -10,4 +10,4 @@ data class BanChatMember(
     val userId: Long,
     val untilDate: Instant? = null,
     val revokeMessages: Boolean = false
-) : JsonTgCallable<Boolean>
+) : JsonTgCallable<Boolean>()

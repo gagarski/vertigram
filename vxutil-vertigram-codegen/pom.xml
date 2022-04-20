@@ -11,7 +11,7 @@
         <relativePath>../vxutil-bom-internal</relativePath>
     </parent>
 
-    <artifactId>vertigram-codegen</artifactId>
+    <artifactId>vxutil-vertigram-codegen</artifactId>
 
     <name>Vertigram Codegen</name>
     <description>Codegen tools for Vertigram</description>
@@ -33,7 +33,7 @@
 <!--        </dependency>-->
         <dependency>
             <groupId>ski.gagar.vxutil</groupId>
-            <artifactId>vertigram-annotations</artifactId>
+            <artifactId>vxutil-vertigram-annotations</artifactId>
             <version>0.5.2-SNAPSHOT</version>
         </dependency>
         <dependency>

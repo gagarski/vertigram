@@ -10,4 +10,4 @@ data class AnswerCallbackQuery(
     val showAlert: Boolean? = null,
     val url: String? = null,
     val cacheTime: Duration? = null
-) : JsonTgCallable<Boolean>
+) : JsonTgCallable<Boolean>()

@@ -10,4 +10,4 @@ data class GetGameHighScores(
     val chatId: ChatId? = null,
     val messageId: Long? = null,
     val inlineMessageId: String? = null
-) : JsonTgCallable<List<GameHighScore>>
+) : JsonTgCallable<List<GameHighScore>>()

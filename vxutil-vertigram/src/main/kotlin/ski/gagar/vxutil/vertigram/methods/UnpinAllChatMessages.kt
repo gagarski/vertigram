@@ -6,4 +6,4 @@ import ski.gagar.vxutil.vertigram.types.ChatId
 @TgMethod
 data class UnpinAllChatMessages(
     val chatId: ChatId
-) : JsonTgCallable<Boolean>
+) : JsonTgCallable<Boolean>()

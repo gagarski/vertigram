@@ -12,4 +12,4 @@ data class CreateChatInviteLink(
     val expireDate: Instant? = null,
     val memberLimit: Int? = null,
     val createsJoinRequest: Boolean = false
-) : JsonTgCallable<ChatInviteLink>
+) : JsonTgCallable<ChatInviteLink>()

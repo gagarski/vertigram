@@ -13,6 +13,3 @@ data class InputMediaDocument(
     override val type: InputMediaType = InputMediaType.DOCUMENT
     override fun instantiate(media: Attachment, thumb: Attachment?) = copy(media = media, thumb = thumb)
 }
-
-val InputMediaDocument.captionEntitiesInstantiated: List<InstantiatedEntity>
-    get() = captionEntities?.map { InstantiatedEntity(it, this.caption) } ?: listOf()

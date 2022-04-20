@@ -7,4 +7,4 @@ import ski.gagar.vxutil.vertigram.types.ChatId
 data class SetChatTitle(
     val chatId: ChatId,
     val title: String
-) : JsonTgCallable<Boolean>
+) : JsonTgCallable<Boolean>()

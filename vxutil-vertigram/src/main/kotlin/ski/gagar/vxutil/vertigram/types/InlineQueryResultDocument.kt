@@ -17,6 +17,3 @@ data class InlineQueryResultDocument(
 ) : InlineQueryResult {
     override val type: InlineQueryResultType = InlineQueryResultType.DOCUMENT
 }
-
-val InlineQueryResultDocument.captionEntitiesInstantiated: List<InstantiatedEntity>
-    get() = captionEntities?.map { InstantiatedEntity(it, this.caption) } ?: listOf()

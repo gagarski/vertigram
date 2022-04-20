@@ -17,6 +17,3 @@ data class InputMediaVideo(
     override val type: InputMediaType = InputMediaType.VIDEO
     override fun instantiate(media: Attachment, thumb: Attachment?) = copy(media = media, thumb = thumb)
 }
-
-val InputMediaVideo.captionEntitiesInstantiated: List<InstantiatedEntity>
-    get() = captionEntities?.map { InstantiatedEntity(it, this.caption) } ?: listOf()

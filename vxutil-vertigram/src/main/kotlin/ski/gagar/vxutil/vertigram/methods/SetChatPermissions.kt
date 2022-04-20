@@ -8,4 +8,4 @@ import ski.gagar.vxutil.vertigram.types.ChatPermissions
 data class SetChatPermissions(
     val chatId: ChatId,
     val permissions: ChatPermissions
-) : JsonTgCallable<Boolean>
+) : JsonTgCallable<Boolean>()

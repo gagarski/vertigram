@@ -1,6 +1,5 @@
 package ski.gagar.vxutil.vertigram.client.impl
 
-import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.JavaType
 import io.netty.handler.codec.http.HttpHeaderNames
 import io.netty.handler.codec.http.HttpHeaderValues
@@ -18,12 +17,12 @@ import ski.gagar.vxutil.vertigram.methods.JsonTgCallable
 import ski.gagar.vxutil.vertigram.methods.MultipartTgCallable
 import ski.gagar.vxutil.vertigram.methods.TgCallable
 import ski.gagar.vxutil.vertigram.types.Wrapper
-import ski.gagar.vxutil.vertigram.util.TELEGRAM_JSON_MAPPER
-import ski.gagar.vxutil.vertigram.util.TELEGRAM_JSON_MAPPER_WITH_MULTIPART
 import ski.gagar.vxutil.vertigram.util.TelegramCallException
 import ski.gagar.vxutil.vertigram.util.TelegramDownloadException
 import ski.gagar.vxutil.vertigram.util.TypeHints
 import ski.gagar.vxutil.vertigram.util.getOrAssert
+import ski.gagar.vxutil.vertigram.util.json.TELEGRAM_JSON_MAPPER
+import ski.gagar.vxutil.vertigram.util.multipart.TELEGRAM_JSON_MAPPER_WITH_MULTIPART
 import ski.gagar.vxutil.web.bodyAsJson
 import ski.gagar.vxutil.web.sendJsonAwait
 import java.time.Duration

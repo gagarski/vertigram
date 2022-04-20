@@ -4,11 +4,12 @@ import com.fasterxml.jackson.databind.JavaType
 import org.apache.commons.lang3.StringUtils
 import org.reflections.Reflections
 import org.reflections.scanners.Scanners
+import ski.gagar.vxutil.uncheckedCast
+import ski.gagar.vxutil.uncheckedCastOrNull
 import ski.gagar.vxutil.vertigram.methods.JsonTgCallable
 import ski.gagar.vxutil.vertigram.methods.MultipartTgCallable
 import ski.gagar.vxutil.vertigram.methods.TgCallable
-import ski.gagar.vxutil.uncheckedCast
-import ski.gagar.vxutil.uncheckedCastOrNull
+import ski.gagar.vxutil.vertigram.util.json.TELEGRAM_JSON_MAPPER
 import java.lang.reflect.GenericDeclaration
 import java.lang.reflect.Modifier
 import java.lang.reflect.ParameterizedType

@@ -17,4 +17,4 @@ data class EditMessageText(
     val entities: List<MessageEntity>? = null,
     val disableWebPagePreview: Boolean = false,
     val replyMarkup: ReplyMarkup? = null
-) : JsonTgCallable<Message>
+) : JsonTgCallable<Message>()

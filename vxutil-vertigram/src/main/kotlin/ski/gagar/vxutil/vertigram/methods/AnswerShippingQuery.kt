@@ -9,4 +9,4 @@ data class AnswerShippingQuery(
     val ok: Boolean,
     val shippingOptions: List<ShippingOption>? = null,
     val errorMessage: String? = null
-) : JsonTgCallable<Boolean>
+) : JsonTgCallable<Boolean>()

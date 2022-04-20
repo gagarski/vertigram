@@ -12,6 +12,3 @@ data class InputMediaPhoto(
     override val thumb = null
     override fun instantiate(media: Attachment, thumb: Attachment?) = copy(media = media)
 }
-
-val InputMediaPhoto.captionEntitiesInstantiated: List<InstantiatedEntity>
-    get() = captionEntities?.map { InstantiatedEntity(it, this.caption) } ?: listOf()

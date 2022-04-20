@@ -52,7 +52,7 @@
 
         <module>aybolit-like-bom</module>
 
-        <module>vertigram-annotations</module>
-        <module>vertigram-codegen</module>
+        <module>vxutil-vertigram-annotations</module>
+        <module>vxutil-vertigram-codegen</module>
     </modules>
 </project>

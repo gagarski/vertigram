@@ -4,4 +4,4 @@ import ski.gagar.vertigram.annotations.TgMethod
 import ski.gagar.vxutil.vertigram.types.Me
 
 @TgMethod
-object GetMe : JsonTgCallable<Me>
+object GetMe : JsonTgCallable<Me>()

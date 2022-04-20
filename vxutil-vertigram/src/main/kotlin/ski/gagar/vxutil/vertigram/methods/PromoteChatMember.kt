@@ -19,4 +19,4 @@ data class PromoteChatMember(
     val canChangeInfo: Boolean = false,
     val canInviteUsers: Boolean = false,
     val canPinMessages: Boolean = false
-) : JsonTgCallable<Boolean>
+) : JsonTgCallable<Boolean>()

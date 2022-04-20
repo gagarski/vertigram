@@ -13,6 +13,3 @@ data class InlineQueryResultCachedDocument(
 ) : InlineQueryResult {
     override val type: InlineQueryResultType = InlineQueryResultType.DOCUMENT
 }
-
-val InlineQueryResultCachedDocument.captionEntitiesInstantiated: List<InstantiatedEntity>
-    get() = captionEntities?.map { InstantiatedEntity(it, this.caption) } ?: listOf()

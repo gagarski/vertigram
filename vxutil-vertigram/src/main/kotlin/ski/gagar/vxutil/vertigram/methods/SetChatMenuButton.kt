@@ -7,4 +7,4 @@ import ski.gagar.vxutil.vertigram.types.MenuButton
 data class SetChatMenuButton(
     val chatId: Long? = null,
     val menuButton: MenuButton? = null
-) : JsonTgCallable<Boolean>
+) : JsonTgCallable<Boolean>()

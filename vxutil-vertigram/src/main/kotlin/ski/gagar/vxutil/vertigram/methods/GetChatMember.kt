@@ -5,4 +5,4 @@ import ski.gagar.vxutil.vertigram.types.ChatId
 import ski.gagar.vxutil.vertigram.types.ChatMember
 
 @TgMethod
-data class GetChatMember(val chatId: ChatId, val userId: Long) : JsonTgCallable<ChatMember>
+data class GetChatMember(val chatId: ChatId, val userId: Long) : JsonTgCallable<ChatMember>()

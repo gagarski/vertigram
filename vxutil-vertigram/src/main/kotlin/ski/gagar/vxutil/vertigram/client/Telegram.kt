@@ -3,13 +3,12 @@ package ski.gagar.vxutil.vertigram.client
 import com.fasterxml.jackson.databind.JavaType
 import com.fasterxml.jackson.databind.type.TypeFactory
 import ski.gagar.vxutil.vertigram.getFile
-import ski.gagar.vxutil.vertigram.methods.GetFile
-import ski.gagar.vxutil.vertigram.types.Update
 import ski.gagar.vxutil.vertigram.methods.TgCallable
-import ski.gagar.vxutil.vertigram.util.TELEGRAM_JSON_MAPPER
+import ski.gagar.vxutil.vertigram.types.Update
 import ski.gagar.vxutil.vertigram.util.TelegramNoFilePathException
 import ski.gagar.vxutil.vertigram.util.TypeHints
 import ski.gagar.vxutil.vertigram.util.getOrAssert
+import ski.gagar.vxutil.vertigram.util.json.TELEGRAM_JSON_MAPPER
 
 abstract class Telegram {
     protected val typeFactory: TypeFactory = TELEGRAM_JSON_MAPPER.typeFactory

@@ -4,4 +4,4 @@ import ski.gagar.vertigram.annotations.TgMethod
 import ski.gagar.vxutil.vertigram.types.WebhookInfo
 
 @TgMethod
-object GetWebHookInfo : JsonTgCallable<WebhookInfo>
+object GetWebHookInfo : JsonTgCallable<WebhookInfo>()

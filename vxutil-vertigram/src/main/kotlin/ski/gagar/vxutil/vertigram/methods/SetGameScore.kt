@@ -12,4 +12,4 @@ data class SetGameScore(
     val chatId: ChatId? = null,
     val messageId: Long? = null,
     val inlineMessageId: Long? = null
-) : JsonTgCallable<Boolean>
+) : JsonTgCallable<Boolean>()

@@ -8,4 +8,4 @@ import ski.gagar.vxutil.vertigram.types.ChatId
 data class SendChatAction(
     val chatId: ChatId,
     val action: ChatAction
-) : JsonTgCallable<Boolean>
+) : JsonTgCallable<Boolean>()

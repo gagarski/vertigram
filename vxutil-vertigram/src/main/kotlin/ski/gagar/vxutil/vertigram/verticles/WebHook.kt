@@ -12,12 +12,10 @@ import ski.gagar.vxutil.vertigram.client.Telegram
 import ski.gagar.vxutil.vertigram.client.TgVTelegram
 import ski.gagar.vxutil.vertigram.config.WebHookConfig
 import ski.gagar.vxutil.vertigram.deleteWebhook
+import ski.gagar.vxutil.vertigram.setWebhook
 import ski.gagar.vxutil.vertigram.types.ParsedUpdate
 import ski.gagar.vxutil.vertigram.types.ParsedUpdateList
-import ski.gagar.vxutil.vertigram.methods.DeleteWebhook
-import ski.gagar.vxutil.vertigram.methods.SetWebhook
-import ski.gagar.vxutil.vertigram.setWebhook
-import ski.gagar.vxutil.vertigram.util.TELEGRAM_JSON_MAPPER
+import ski.gagar.vxutil.vertigram.util.json.TELEGRAM_JSON_MAPPER
 import ski.gagar.vxutil.web.IpNetworkAddress
 import ski.gagar.vxutil.web.RealIpLoggerHandler
 import java.util.*

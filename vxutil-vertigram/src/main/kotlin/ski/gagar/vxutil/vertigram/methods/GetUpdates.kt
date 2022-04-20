@@ -12,10 +12,10 @@ import java.time.Duration
 @Deprecated("Use Telegram.getUpdates instead")
 @DoNotGenerateInTgVerticle
 internal data class GetUpdates(val offset: Long? = null, val timeout: Duration = Duration.ZERO, val limit: Int? = null) :
-    JsonTgCallable<List<Update>>
+    JsonTgCallable<List<Update>>()
 
 @Deprecated("Use Telegram.getUpdates instead")
 @DoNotGenerateInTgVerticle
 @TgMethodName("getUpdates")
 internal data class GetUpdatesRaw(val offset: Long? = null, val timeout: Duration = Duration.ZERO, val limit: Int? = null) :
-    JsonTgCallable<List<Map<String, Any?>>>
+    JsonTgCallable<List<Map<String, Any?>>>()

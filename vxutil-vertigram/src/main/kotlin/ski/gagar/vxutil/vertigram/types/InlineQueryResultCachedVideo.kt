@@ -13,6 +13,3 @@ data class InlineQueryResultCachedVideo(
 ) : InlineQueryResult {
     override val type: InlineQueryResultType = InlineQueryResultType.VIDEO
 }
-
-val InlineQueryResultCachedVideo.captionEntitiesInstantiated: List<InstantiatedEntity>
-    get() = captionEntities?.map { InstantiatedEntity(it, this.caption) } ?: listOf()

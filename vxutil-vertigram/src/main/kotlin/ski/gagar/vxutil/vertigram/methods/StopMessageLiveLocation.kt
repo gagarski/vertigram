@@ -11,4 +11,4 @@ data class StopMessageLiveLocation(
     val messageId: Long? = null,
     val inlineMessageId: String? = null,
     val replyMarkup: ReplyMarkup? = null
-) : JsonTgCallable<Message>
+) : JsonTgCallable<Message>()

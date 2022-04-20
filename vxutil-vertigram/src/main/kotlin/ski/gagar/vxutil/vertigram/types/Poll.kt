@@ -20,6 +20,3 @@ data class Poll(
     val openPeriod: Duration? = null,
     val closeDate: Instant? = null
 )
-
-val Poll.explanationEntitiesInstantiated: List<InstantiatedEntity>
-    get() = explanationEntities?.map { InstantiatedEntity(it, this.explanation) } ?: listOf()

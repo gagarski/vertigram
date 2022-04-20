@@ -6,5 +6,5 @@ import ski.gagar.vertigram.annotations.TgMethod
 data class SetStickerPositionInSet(
     val sticker: String,
     val position: Int
-) : JsonTgCallable<Boolean>
+) : JsonTgCallable<Boolean>()
 

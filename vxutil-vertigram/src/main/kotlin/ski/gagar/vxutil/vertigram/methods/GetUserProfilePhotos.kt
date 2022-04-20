@@ -8,7 +8,7 @@ data class GetUserProfilePhotos(
     val userId: Long,
     val offset: Long = Defaults.offset,
     val limit: Long = Defaults.limit
-) : JsonTgCallable<List<UserProfilePhotos>> {
+) : JsonTgCallable<List<UserProfilePhotos>>() {
     object Defaults {
         const val offset = 0L
         const val limit = 100L

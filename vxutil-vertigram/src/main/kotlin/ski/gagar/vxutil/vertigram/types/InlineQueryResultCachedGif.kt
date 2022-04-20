@@ -12,6 +12,3 @@ data class InlineQueryResultCachedGif(
 ) : InlineQueryResult {
     override val type: InlineQueryResultType = InlineQueryResultType.GIF
 }
-
-val InlineQueryResultCachedGif.captionEntitiesInstantiated: List<InstantiatedEntity>
-    get() = captionEntities?.map { InstantiatedEntity(it, this.caption) } ?: listOf()

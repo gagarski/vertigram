@@ -4,4 +4,4 @@ import ski.gagar.vertigram.annotations.TgMethod
 import ski.gagar.vxutil.vertigram.types.File
 
 @TgMethod
-data class GetFile(val fileId: String) : JsonTgCallable<File>
+data class GetFile(val fileId: String) : JsonTgCallable<File>()
