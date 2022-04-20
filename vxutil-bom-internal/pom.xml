@@ -4,7 +4,7 @@
 
     <groupId>ski.gagar.vxutil</groupId>
     <artifactId>vxutil-bom-internal</artifactId>
-    <version>1.0.0-alpha1-SNAPSHOT</version>
+    <version>1.0.0-alpha1</version>
     <packaging>pom</packaging>
 
     <name>Vxutil Internal BOM</name>
@@ -30,7 +30,7 @@
         <connection>scm:git:git@github.com:gagarski/vxutil.git</connection>
         <developerConnection>scm:git:git@github.com:gagarski/vxutil.git</developerConnection>
         <url>https://github.com/gagarski/vxutil</url>
-      <tag>v1.0.0-alpha0</tag>
+      <tag>v1.0.0-alpha1</tag>
   </scm>
 
     <properties>
@@ -192,32 +192,32 @@
             <dependency>
                 <groupId>ski.gagar.vxutil</groupId>
                 <artifactId>vxutil-core</artifactId>
-                <version>1.0.0-alpha1-SNAPSHOT</version>
+                <version>1.0.0-alpha1</version>
             </dependency>
             <dependency>
                 <groupId>ski.gagar.vxutil</groupId>
                 <artifactId>vxutil-jackson</artifactId>
-                <version>1.0.0-alpha1-SNAPSHOT</version>
+                <version>1.0.0-alpha1</version>
             </dependency>
             <dependency>
                 <groupId>ski.gagar.vxutil</groupId>
                 <artifactId>vxutil-jackson-core</artifactId>
-                <version>1.0.0-alpha1-SNAPSHOT</version>
+                <version>1.0.0-alpha1</version>
             </dependency>
             <dependency>
                 <groupId>ski.gagar.vxutil</groupId>
                 <artifactId>vxutil-jooq</artifactId>
-                <version>1.0.0-alpha1-SNAPSHOT</version>
+                <version>1.0.0-alpha1</version>
             </dependency>
             <dependency>
                 <groupId>ski.gagar.vxutil</groupId>
                 <artifactId>vxutil-vertigram</artifactId>
-                <version>1.0.0-alpha1-SNAPSHOT</version>
+                <version>1.0.0-alpha1</version>
             </dependency>
             <dependency>
                 <groupId>ski.gagar.vxutil</groupId>
                 <artifactId>vxutil-web</artifactId>
-                <version>1.0.0-alpha1-SNAPSHOT</version>
+                <version>1.0.0-alpha1</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
