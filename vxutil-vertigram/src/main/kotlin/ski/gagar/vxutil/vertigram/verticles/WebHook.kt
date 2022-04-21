@@ -44,7 +44,6 @@ class WebHook : ErrorLoggingCoroutineVerticle() {
         router.route().handler(BodyHandler.create())
 
         router.post("${typedConfig.webHook.base}/${secret}").handler { context ->
-            logger.error("${context.bodyAsJson}")
             val json = context.bodyAsJson
             val req = try {
                 json.mapTo(
