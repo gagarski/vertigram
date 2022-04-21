@@ -6,9 +6,9 @@ data class Sticker(
     val width: Int,
     val height: Int,
     @get:JvmName("getIsAnimated")
-    val isAnimated: Boolean,
+    val isAnimated: Boolean = false,
     @get:JvmName("getIsVideo")
-    val isVideo: Boolean,
+    val isVideo: Boolean = false,
     val thumb: PhotoSize? = null,
     val emoji: String? = null,
     val setName: String? = null,

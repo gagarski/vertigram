@@ -6,7 +6,7 @@ data class ChatMemberUpdated(
     val chat: Chat,
     val from: User,
     val date: Instant,
-    val oldChatmember: ChatMember,
+    val oldChatMember: ChatMember,
     val newChatMember: ChatMember,
     val inviteLink: ChatInviteLink? = null
 )

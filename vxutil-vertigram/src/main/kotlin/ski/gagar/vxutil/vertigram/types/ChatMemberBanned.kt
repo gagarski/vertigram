@@ -8,12 +8,14 @@ data class ChatMemberBanned(
     override val user: User,
     @JsonProperty("untilDate")
     @Deprecated("Access through untilDate instead")
-    val untilDateRaw: Instant
+    val untilDateRaw: Instant? = null
 ) : ChatMember {
     override val status: ChatMemberStatus = ChatMemberStatus.BANNED
     @JsonIgnore
     override val isMember: Boolean = false
     @Suppress("DEPRECATION")
     val untilDate: Instant?
-        get() = if (untilDateRaw.toEpochMilli() == 0L) null else untilDateRaw
+        get() = untilDateRaw?.let {
+            if (untilDateRaw.toEpochMilli() == 0L) null else untilDateRaw
+        }
 }

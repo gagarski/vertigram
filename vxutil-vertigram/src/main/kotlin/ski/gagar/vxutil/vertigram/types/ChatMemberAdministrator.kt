@@ -4,20 +4,20 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 
 data class ChatMemberAdministrator(
     override val user: User,
-    val canBeEdited: Boolean,
+    val canBeEdited: Boolean = false,
     @get:JvmName("getIsAnonymous")
-    val isAnonymous: Boolean,
-    val canManageChat: Boolean,
-    val canDeleteMessages: Boolean,
-    val canManageVideoChats: Boolean,
-    val canRestrictMembers: Boolean,
-    val canPromoteMembers: Boolean,
-    val canChangeInfo: Boolean,
-    val canInviteUsers: Boolean,
-    val canPostMessages: Boolean,
-    val canEditMessages: Boolean,
-    val canPinMessages: Boolean,
-    val customTitle: String
+    val isAnonymous: Boolean = false,
+    val canManageChat: Boolean = false,
+    val canDeleteMessages: Boolean = false,
+    val canManageVideoChats: Boolean = false,
+    val canRestrictMembers: Boolean = false,
+    val canPromoteMembers: Boolean = false,
+    val canChangeInfo: Boolean = false,
+    val canInviteUsers: Boolean = false,
+    val canPostMessages: Boolean = false,
+    val canEditMessages: Boolean = false,
+    val canPinMessages: Boolean = false,
+    val customTitle: String? = null
 ) : ChatMember {
     override val status: ChatMemberStatus = ChatMemberStatus.ADMINISTRATOR
     @JsonIgnore

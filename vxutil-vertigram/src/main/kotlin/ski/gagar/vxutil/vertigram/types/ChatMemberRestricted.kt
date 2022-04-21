@@ -6,15 +6,15 @@ import java.time.Instant
 data class ChatMemberRestricted(
     override val user: User,
     @get:JvmName("getIsMember")
-    override val isMember: Boolean,
-    val canChangeInfo: Boolean,
-    val canInviteUsers: Boolean,
-    val canPinMessages: Boolean,
-    val canSendMessages: Boolean,
-    val canSendMediaMessages: Boolean,
-    val canSendPolls: Boolean,
-    val canSendOtherMessages: Boolean,
-    val canAddWebPagePreviews: Boolean,
+    override val isMember: Boolean = false,
+    val canChangeInfo: Boolean = false,
+    val canInviteUsers: Boolean = false,
+    val canPinMessages: Boolean = false,
+    val canSendMessages: Boolean = false,
+    val canSendMediaMessages: Boolean = false,
+    val canSendPolls: Boolean = false,
+    val canSendOtherMessages: Boolean = false,
+    val canAddWebPagePreviews: Boolean = false,
     @JsonProperty("untilDate")
     @Deprecated("Access through untilDate instead")
     val untilDateRaw: Instant

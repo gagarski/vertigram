@@ -4,8 +4,8 @@ import java.time.Instant
 
 data class WebhookInfo(
     val url: String,
-    val hasCustomCertificate: Boolean,
-    val pendingUpdateCount: Int,
+    val hasCustomCertificate: Boolean = false,
+    val pendingUpdateCount: Int = 0,
     val ipAddress: String? = null,
     val lastErrorDate: Instant? = null,
     val lastErrorMessage: String? = null,
