@@ -14,6 +14,7 @@ data class ChatMemberBanned(
     @JsonIgnore
     override val isMember: Boolean = false
     @Suppress("DEPRECATION")
+    @get:JsonIgnore
     val untilDate: Instant?
         get() = untilDateRaw?.let {
             if (untilDateRaw.toEpochMilli() == 0L) null else untilDateRaw
