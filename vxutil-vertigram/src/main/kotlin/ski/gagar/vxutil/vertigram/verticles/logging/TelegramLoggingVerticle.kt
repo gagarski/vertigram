@@ -22,6 +22,7 @@ class TelegramLoggingVerticle : ErrorLoggingCoroutineVerticle() {
     private val typedConf: Config by lazy {
         config.mapTo()
     }
+
     private lateinit var tg: Telegram
 
     private var acc: MutableMap<Level, Int>? = null
@@ -197,8 +198,8 @@ class TelegramLoggingVerticle : ErrorLoggingCoroutineVerticle() {
     private suspend fun handleLogEvent(log: LogEvent) {
         bypassEventBusAppenderSuspend {
             if (null == acc) {
-                sendExplicit(log)
                 startAccumulating()
+                sendExplicit(log)
             } else {
                 accumulate(log)
             }
