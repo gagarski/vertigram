@@ -64,6 +64,8 @@ class TelegramLoggingVerticle : ErrorLoggingCoroutineVerticle() {
                         +"${it.username}" // null should not happen for bots
                     }
 
+                    br()
+
                     b {
                         +"Logger: "
                     }
