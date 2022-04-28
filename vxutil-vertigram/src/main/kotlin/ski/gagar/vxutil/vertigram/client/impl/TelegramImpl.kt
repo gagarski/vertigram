@@ -30,31 +30,43 @@ import java.time.Duration
 internal data class TelegramImplOptions(
     val tgBase: String = "https://api.telegram.org",
     val shortPollTimeout: Duration = Duration.ofSeconds(5),
-    val longPollTimeout: Duration = Duration.ofSeconds(60)
-)
+    val longPollTimeout: Duration = Duration.ofSeconds(60),
+    val pools: Pools? = null
+) {
+    data class Pools(
+        val regular: Int?,
+        val upload: Int?,
+        val longPoll: Int?,
+        val download: Int?
+    )
+}
 
 @PublishedApi
 internal class TelegramImpl(
     private val token: String,
     vertx: Vertx,
-    proxy: ProxyOptions? = null,
+    private val proxy: ProxyOptions? = null,
     private val options: TelegramImplOptions = TelegramImplOptions()
 ) {
-    private val clientOptions: WebClientOptions = WebClientOptions().apply {
-        proxy?.let {
-            this.proxyOptions = proxy
-            this.maxPoolSize
+    private fun makeClientOptions(poolSize: Int?) =
+        WebClientOptions().apply {
+            proxy?.let {
+                this.proxyOptions = proxy
+            }
+
+            poolSize?.let {
+                this.maxPoolSize = poolSize
+            }
         }
-    }
 
     private val fs by lazy {
         vertx.fileSystem()
     }
 
-    private val regularClient = WebClient.create(vertx, clientOptions)
-    private val uploadClient = WebClient.create(vertx, clientOptions)
-    private val longPollClient = WebClient.create(vertx, clientOptions)
-    private val downloadClient = WebClient.create(vertx, clientOptions)
+    private val regularClient = WebClient.create(vertx, makeClientOptions(options.pools?.regular))
+    private val uploadClient = WebClient.create(vertx, makeClientOptions(options.pools?.upload))
+    private val longPollClient = WebClient.create(vertx, makeClientOptions(options.pools?.longPoll))
+    private val downloadClient = WebClient.create(vertx, makeClientOptions(options.pools?.download))
 
     @PublishedApi
     internal val mapper = TELEGRAM_JSON_MAPPER

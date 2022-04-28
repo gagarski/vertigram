@@ -55,6 +55,7 @@
         <jooq.version>3.16.6</jooq.version>
         <kotlinx.coroutines.version>1.6.1</kotlinx.coroutines.version>
         <kotlin.stdlib.version>1.6.21</kotlin.stdlib.version>
+        <logback.version>1.2.11</logback.version>
         <psqldriver.version>42.3.4</psqldriver.version>
         <reflections.version>0.10.2</reflections.version>
         <slf4j.version>1.7.36</slf4j.version>
@@ -64,6 +65,11 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-classic</artifactId>
+                <version>${logback.version}</version>
+            </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-annotations</artifactId>
@@ -144,6 +150,7 @@
                 <artifactId>flyway-core</artifactId>
                 <version>${flyway.version}</version>
             </dependency>
+
             <dependency>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-stdlib-jdk8</artifactId>
@@ -157,6 +164,11 @@
             <dependency>
                 <groupId>org.jetbrains.kotlinx</groupId>
                 <artifactId>kotlinx-coroutines-jdk8</artifactId>
+                <version>${kotlinx.coroutines.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jetbrains.kotlinx</groupId>
+                <artifactId>kotlinx-coroutines-slf4j</artifactId>
                 <version>${kotlinx.coroutines.version}</version>
             </dependency>
             <dependency>
@@ -207,6 +219,11 @@
             <dependency>
                 <groupId>ski.gagar.vxutil</groupId>
                 <artifactId>vxutil-jooq</artifactId>
+                <version>1.0.0-alpha4-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>ski.gagar.vxutil</groupId>
+                <artifactId>vxutil-logback</artifactId>
                 <version>1.0.0-alpha4-SNAPSHOT</version>
             </dependency>
             <dependency>

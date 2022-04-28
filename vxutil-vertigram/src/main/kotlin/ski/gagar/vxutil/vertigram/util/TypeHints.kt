@@ -17,14 +17,7 @@ import java.lang.reflect.Type
 import java.lang.reflect.TypeVariable
 
 
-private const val MULTIPART = "Multipart"
 private val TYPE_FACTORY = TELEGRAM_JSON_MAPPER.typeFactory
-
-private fun String.dropSuffix(suffix: String) =
-    if (endsWith(suffix))
-        substring(0, lastIndexOf(suffix))
-    else
-        this
 
 private val <T: TgCallable<*>> Class<T>.responseType: JavaType
     get() {
@@ -88,9 +81,7 @@ private fun getTgCallables() =
 
 
 private val <T: TgCallable<*>> Class<T>.tgMethodName: String
-    get() = getAnnotation(TgMethodName::class.java)?.name ?: StringUtils.uncapitalize(simpleName.dropSuffix(
-        MULTIPART
-    ))
+    get() = getAnnotation(TgMethodName::class.java)?.name ?: StringUtils.uncapitalize(simpleName)
 
 
 internal object TypeHints {
