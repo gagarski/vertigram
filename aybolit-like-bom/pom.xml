@@ -178,24 +178,6 @@
                 <inherited>false</inherited>
             </plugin>
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>buildnumber-maven-plugin</artifactId>
-                <version>${buildnumber.plugin.version}</version>
-                <executions>
-                    <execution>
-                        <phase>validate</phase>
-                        <goals>
-                            <goal>create</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <getRevisionOnlyOnce>true</getRevisionOnlyOnce>
-                    <attach>true</attach>
-                    <addOutputDirectoryToResources>true</addOutputDirectoryToResources>
-                </configuration>
-            </plugin>
-            <plugin>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-maven-plugin</artifactId>
                 <inherited>false</inherited>
