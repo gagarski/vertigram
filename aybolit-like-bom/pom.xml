@@ -21,6 +21,7 @@
         <janino.version>3.1.7</janino.version>
         <logback.version>1.2.11</logback.version>
 
+        <shade.plugin.version>3.3.0</shade.plugin.version>
         <exec.main-class />
     </properties>
 
@@ -75,7 +76,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-shade-plugin</artifactId>
-                    <version>2.3</version>
+                    <version>${shade.plugin.version}</version>
                     <executions>
                         <execution>
                             <phase>package</phase>
@@ -96,9 +97,12 @@
                                 <transformers>
                                     <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                         <manifestEntries>
-                                            <Main-Class>
-                                                ${exec.main-class}
-                                            </Main-Class>
+                                            <Main-Class>${exec.main-class}</Main-Class>
+                                            <Specification-Title>${project.artifactId}</Specification-Title>
+                                            <Specification-Version>${project.version}</Specification-Version>
+                                            <Implementation-Title>${project.artifactId}</Implementation-Title>
+                                            <Implementation-Version>${project.version}</Implementation-Version>
+                                            <Implementation-Vendor-Id>${project.groupId}</Implementation-Vendor-Id>
                                         </manifestEntries>
                                     </transformer>
                                     <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
@@ -172,6 +176,24 @@
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
                 <inherited>false</inherited>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>buildnumber-maven-plugin</artifactId>
+                <version>${buildnumber.plugin.version}</version>
+                <executions>
+                    <execution>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>create</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <getRevisionOnlyOnce>true</getRevisionOnlyOnce>
+                    <attach>true</attach>
+                    <addOutputDirectoryToResources>true</addOutputDirectoryToResources>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.jetbrains.kotlin</groupId>
