@@ -20,7 +20,18 @@ enum class UpdateType {
     @JsonProperty("shipping_query")
     SHIPPING_QUERY,
     @JsonProperty("pre_checkout_query")
-    PRE_CHECKOUT_QUERY;
+    PRE_CHECKOUT_QUERY,
+    @JsonProperty("poll")
+    POLL,
+    @JsonProperty("poll_answer")
+    POLL_ANSWER,
+    @JsonProperty("my_chat_member")
+    MY_CHAT_MEMBER,
+    @JsonProperty("chat_member")
+    CHAT_MEMBER,
+    @JsonProperty("chat_join_request")
+    CHAT_JOIN_REQUEST;
+
 
     override fun toString(): String = super.toString().lowercase()
 

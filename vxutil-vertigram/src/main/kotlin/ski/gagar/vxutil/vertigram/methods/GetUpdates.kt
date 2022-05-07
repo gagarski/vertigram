@@ -1,6 +1,7 @@
 package ski.gagar.vxutil.vertigram.methods
 
 import ski.gagar.vxutil.vertigram.types.Update
+import ski.gagar.vxutil.vertigram.types.UpdateType
 import ski.gagar.vxutil.vertigram.util.DoNotGenerateInTgVerticle
 import ski.gagar.vxutil.vertigram.util.TgMethodName
 import java.time.Duration
@@ -11,11 +12,21 @@ import java.time.Duration
  */
 @Deprecated("Use Telegram.getUpdates instead")
 @DoNotGenerateInTgVerticle
-internal data class GetUpdates(val offset: Long? = null, val timeout: Duration = Duration.ZERO, val limit: Int? = null) :
+internal data class GetUpdates(
+    val offset: Long? = null,
+    val timeout: Duration = Duration.ZERO,
+    val limit: Int? = null,
+    val allowedUpdates: List<UpdateType>? = null
+) :
     JsonTgCallable<List<Update>>()
 
 @Deprecated("Use Telegram.getUpdates instead")
 @DoNotGenerateInTgVerticle
 @TgMethodName("getUpdates")
-internal data class GetUpdatesRaw(val offset: Long? = null, val timeout: Duration = Duration.ZERO, val limit: Int? = null) :
+internal data class GetUpdatesRaw(
+    val offset: Long? = null,
+    val timeout: Duration = Duration.ZERO,
+    val limit: Int? = null,
+    val allowedUpdates: List<UpdateType>? = null
+) :
     JsonTgCallable<List<Map<String, Any?>>>()

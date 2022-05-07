@@ -6,9 +6,10 @@ import io.vertx.core.eventbus.DeliveryOptions
 import ski.gagar.vxutil.ignore
 import ski.gagar.vxutil.jackson.ReplyException
 import ski.gagar.vxutil.jackson.requestJsonAwait
-import ski.gagar.vxutil.vertigram.types.Update
 import ski.gagar.vxutil.vertigram.methods.GetUpdates
 import ski.gagar.vxutil.vertigram.methods.TgCallable
+import ski.gagar.vxutil.vertigram.types.Update
+import ski.gagar.vxutil.vertigram.types.UpdateType
 import ski.gagar.vxutil.vertigram.util.TypeHints
 import ski.gagar.vxutil.vertigram.util.getOrAssert
 import ski.gagar.vxutil.vertigram.verticles.TelegramVerticle
@@ -36,17 +37,17 @@ class TgVTelegram(
         return longPollDeliveryOptions
     }
 
-    override suspend fun getUpdates(offset: Long?, limit: Int?): List<Update> =
+    override suspend fun getUpdates(offset: Long?, limit: Int?, allowedUpdates: List<UpdateType>?): List<Update> =
         try {
             @Suppress("DEPRECATION")
             vertx.eventBus().requestJsonAwait(
                 TelegramVerticle.Config.callAddress(GetUpdates::class.java, baseAddress),
-                TelegramVerticle.GetUpdates(offset, limit),
+                TelegramVerticle.GetUpdates(offset, limit, allowedUpdates),
                 TypeHints.returnTypesByClass.getOrAssert(GetUpdates::class.java),
                 options = getLongPollDeliveryOptions()
             )
         } catch (ex: ReplyException) {
-            throw ex.cause
+            ex.unwrap()
         }
 
     @Suppress("UNCHECKED_CAST")
@@ -59,7 +60,7 @@ class TgVTelegram(
                     type
                 ) as T
         } catch (ex: ReplyException) {
-            throw ex.cause
+            ex.unwrap()
         }
 
     override suspend fun downloadFile(path: String, outputPath: String) {
@@ -69,7 +70,7 @@ class TgVTelegram(
                 TelegramVerticle.DownloadFile(path, outputPath)
             ))
         } catch (ex: ReplyException) {
-            throw ex.cause
+            ex.unwrap()
         }
     }
 }

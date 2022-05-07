@@ -11,6 +11,7 @@ import io.vertx.ext.web.client.WebClientOptions
 import io.vertx.ext.web.codec.BodyCodec
 import io.vertx.ext.web.multipart.MultipartForm
 import io.vertx.kotlin.coroutines.await
+import ski.gagar.vxutil.lazy
 import ski.gagar.vxutil.logger
 import ski.gagar.vxutil.uncheckedCast
 import ski.gagar.vxutil.vertigram.methods.JsonTgCallable
@@ -94,13 +95,12 @@ internal class TelegramImpl(
         method: String,
         type: JavaType,
         obj: Req? = null,
-        longPoll: Boolean = false,
-        upload: Boolean = false
+        longPoll: Boolean = false
     ): Pair<Int, Any?> {
-        logger.trace("Calling $method with $obj")
-        val resp = client(method, longPoll, upload).sendJsonAwait(obj, mapper)
+        logger.lazy.trace { "Calling $method with $obj" }
+        val resp = client(method, longPoll, false).sendJsonAwait(obj, mapper)
         return resp.statusCode() to resp.bodyAsJson<Any>(type, mapper).also {
-            logger.trace("Received response $it")
+            logger.lazy.trace { "Received response $it" }
         }
     }
 
@@ -109,13 +109,12 @@ internal class TelegramImpl(
         method: String,
         type: JavaType,
         form: MultipartForm,
-        longPoll: Boolean = false,
-        upload: Boolean = true
+        longPoll: Boolean = false
     ): Pair<Int, Any?> {
-        logger.trace("Calling $method with $form (form/multipart)")
-        val resp = client(method, longPoll, upload).sendMultipartForm(form).await()
+        logger.lazy.trace { "Calling $method with $form (form/multipart)" }
+        val resp = client(method, longPoll, form.any { it.isFileUpload }).sendMultipartForm(form).await()
         return resp.statusCode() to resp.bodyAsJson<Any>(type, mapper).also {
-            logger.trace("Received response $it")
+            logger.lazy.trace { "Received response $it" }
         }
     }
 
@@ -128,15 +127,13 @@ internal class TelegramImpl(
         respType: JavaType,
         method: String,
         obj: Req? = null,
-        longPoll: Boolean = false,
-        upload: Boolean = false
+        longPoll: Boolean = false
     ): Pair<Int, Wrapper<Resp>> =
         callForObject(
             method,
             mapper.typeFactory.constructParametricType(Wrapper::class.java, respType),
             obj,
-            longPoll,
-            upload
+            longPoll
         ).uncheckedCast()
 
     @Suppress("DEPRECATION")
@@ -144,43 +141,43 @@ internal class TelegramImpl(
         respType: JavaType,
         method: String,
         form: MultipartForm,
-        longPoll: Boolean = false,
-        upload: Boolean = true
+        longPoll: Boolean = false
     ): Pair<Int, Wrapper<Resp>> =
         callForObjectMultipart(
             method,
             mapper.typeFactory.constructParametricType(Wrapper::class.java, respType),
             form,
-            longPoll,
-            upload
+            longPoll
         ).uncheckedCast()
 
-    private suspend inline fun <Req, Resp> call(
+    private suspend inline fun <Req: JsonTgCallable<*>, Resp> call(
         respType: JavaType,
         method: String,
-        obj: Req? = null,
-        longPoll: Boolean = false,
-        upload: Boolean = false
+        obj: Req,
+        longPoll: Boolean = false
     ): Resp {
-        val (status, wrapper) = callForWrapper<Req, Resp>(respType, method, obj, longPoll, upload)
+        val (status, wrapper) = callForWrapper<Req, Resp>(respType, method, obj, longPoll)
 
         if (status != 200 || !wrapper.ok)
-            throw TelegramCallException(status, wrapper.ok, wrapper.description)
+            throw TelegramCallException.create(status, wrapper.ok, wrapper.description, obj)
 
         return wrapper.result!!
     }
 
-    private suspend fun <Resp> callMultipart(
+    private suspend fun <Req: MultipartTgCallable<*>, Resp> callMultipart(
         respType: JavaType,
         method: String,
-        form: MultipartForm,
-        longPoll: Boolean = false,
-        upload: Boolean = true
+        mpc: Req,
+        longPoll: Boolean = false
     ): Resp {
-        val (status, wrapper) = callForWrapperMultipart<Resp>(respType, method, form, longPoll, upload)
+        val (status, wrapper) = callForWrapperMultipart<Resp>(
+            respType,
+            method,
+            TELEGRAM_JSON_MAPPER_WITH_MULTIPART.toMultipart(mpc),
+            longPoll)
 
         if (status != 200 || !wrapper.ok)
-            throw TelegramCallException(status, wrapper.ok, wrapper.description)
+            throw TelegramCallException.create(status, wrapper.ok, wrapper.description, mpc)
 
         return wrapper.result!!
     }
@@ -193,12 +190,11 @@ internal class TelegramImpl(
         callMultipart(
             type,
             TypeHints.methodNames.getOrAssert(mpc.javaClass),
-            TELEGRAM_JSON_MAPPER_WITH_MULTIPART.toMultipart(mpc),
-            upload = true
+            mpc
         )
 
     suspend fun <T> call(type: JavaType, callable: TgCallable<T>, longPoll: Boolean = false): T =
-        when(callable) {
+        when (callable) {
             is JsonTgCallable<T> -> callJson(type, callable, longPoll)
             is MultipartTgCallable<T> -> callMultipart(type, callable)
         }
@@ -212,7 +208,7 @@ internal class TelegramImpl(
         if (resp.statusCode() != 200) {
             fs.delete(outputPath).await()
             // TODO try to get a response from file and parse it
-            throw TelegramDownloadException(resp.statusCode())
+            throw TelegramDownloadException.create(resp.statusCode(), path)
         }
     }
 

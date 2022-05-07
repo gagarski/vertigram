@@ -10,6 +10,10 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo
     JsonSubTypes.Type(value = BotCommandScopeAllGroupChats::class, name = BotCommandScopeType.ALL_GROUP_CHATS_STR),
     JsonSubTypes.Type(value = BotCommandScopeAllChatAdministrators::class,
         name = BotCommandScopeType.ALL_CHAT_ADMINISTRATORS_STR),
+    JsonSubTypes.Type(value = BotCommandScopeChat::class, name = BotCommandScopeType.CHAT_STR),
+    JsonSubTypes.Type(value = BotCommandScopeChatAdministrators::class,
+        name = BotCommandScopeType.CHAT_ADMINISTRATORS_STR),
+    JsonSubTypes.Type(value = BotCommandScopeChatMember::class, name = BotCommandScopeType.CHAT_MEMBER_STR),
 )
 sealed interface BotCommandScope {
     val type: BotCommandScopeType

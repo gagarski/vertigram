@@ -22,7 +22,7 @@ fun <T> Vertx.runBlocking(block: suspend Vertx.() -> T) {
             block()
         }
     } catch (t: Throwable) {
-        globalLogger.error("", t)
+        logger.lazy.error(throwable = t) { "Error while runBlocking" }
         exitProcess(-1)
     }
 }
@@ -53,7 +53,7 @@ suspend fun <T> Vertx.retrying(
             return block()
         } catch (e: Exception) {
             i++
-            logger.error(e.message, e)
+            logger.lazy.error(throwable = e) { "Error while attempt #$i" }
             if (shouldStop(i))
                 throw e
             else
@@ -73,11 +73,11 @@ fun DeploymentOptions.setTypedConfig(obj: Any): DeploymentOptions =
     setConfig(JsonObject.mapFrom(obj))
 
 
-abstract class ErrorLoggingCoroutineVerticle : io.vertx.kotlin.coroutines.CoroutineVerticle() {
+abstract class ErrorLoggingCoroutineVerticle : CoroutineVerticle() {
     private lateinit var context: Context
     override val coroutineContext: CoroutineContext by lazy {
         context.dispatcher() + SupervisorJob() + CoroutineExceptionHandler { _, ex ->
-            logger.error("Unhandled exception", ex)
+            logger.lazy.error(throwable = ex) { "Unhandled exception" }
         }
     }
 
@@ -87,6 +87,6 @@ abstract class ErrorLoggingCoroutineVerticle : io.vertx.kotlin.coroutines.Corout
     }
 }
 
-fun Vertx.logUnhandledExceptions(logger: Logger = globalLogger): Vertx = exceptionHandler {
-    logger.error("Unhandled exception", it)
+fun Vertx.logUnhandledExceptions(logger: Logger = ski.gagar.vxutil.logger): Vertx = exceptionHandler {
+    logger.lazy.error(throwable = it) { "Unhandled exception" }
 }

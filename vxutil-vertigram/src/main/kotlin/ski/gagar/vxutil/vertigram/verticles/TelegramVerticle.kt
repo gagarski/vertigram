@@ -1,20 +1,20 @@
 package ski.gagar.vxutil.vertigram.verticles
 
-import ski.gagar.vxutil.vertigram.client.DirectTelegram
-import ski.gagar.vxutil.vertigram.methods.GetUpdates
-import ski.gagar.vxutil.vertigram.methods.JsonTgCallable
-import ski.gagar.vxutil.vertigram.methods.MultipartTgCallable
-import ski.gagar.vxutil.vertigram.methods.TgCallable
-import ski.gagar.vxutil.vertigram.util.TypeHints
-import ski.gagar.vxutil.vertigram.util.getOrAssert
 import ski.gagar.vxutil.ErrorLoggingCoroutineVerticle
 import ski.gagar.vxutil.jackson.mapTo
 import ski.gagar.vxutil.jackson.suspendJsonConsumer
 import ski.gagar.vxutil.use
+import ski.gagar.vxutil.vertigram.client.DirectTelegram
+import ski.gagar.vxutil.vertigram.methods.JsonTgCallable
+import ski.gagar.vxutil.vertigram.methods.MultipartTgCallable
+import ski.gagar.vxutil.vertigram.methods.TgCallable
 import ski.gagar.vxutil.vertigram.types.UpdateList
+import ski.gagar.vxutil.vertigram.types.UpdateType
+import ski.gagar.vxutil.vertigram.util.TypeHints
+import ski.gagar.vxutil.vertigram.util.getOrAssert
 
 @Suppress("DEPRECATION")
-private typealias RawGetUpdates = GetUpdates
+private typealias RawGetUpdates = ski.gagar.vxutil.vertigram.methods.GetUpdates
 
 class TelegramVerticle : ErrorLoggingCoroutineVerticle() {
     private val typedConfig by lazy {
@@ -65,7 +65,8 @@ class TelegramVerticle : ErrorLoggingCoroutineVerticle() {
         suspendJsonConsumer(typedConfig.downloadFileAddress(), function = ::handleDownloadFile)
     }
 
-    private suspend fun handleGetUpdates(msg: GetUpdates) = UpdateList(tg.getUpdates(limit = msg.limit, offset = msg.offset))
+    private suspend fun handleGetUpdates(msg: GetUpdates) =
+        UpdateList(tg.getUpdates(limit = msg.limit, offset = msg.offset, allowedUpdates = msg.allowedUpdates))
 
     private fun handleLongPollTimeout(msg: GetLongPollTimeout) = typedConfig.tgOptions.longPollTimeout.also { use(msg) }
 
@@ -164,7 +165,7 @@ class TelegramVerticle : ErrorLoggingCoroutineVerticle() {
         }
     }
 
-    data class GetUpdates(val offset: Long?, val limit: Int?)
+    data class GetUpdates(val offset: Long?, val limit: Int?, val allowedUpdates: List<UpdateType>? = null)
     object GetLongPollTimeout
     data class DownloadFile(val path: String, val outputPath: String)
 }

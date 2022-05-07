@@ -15,7 +15,7 @@ import io.vertx.kotlin.coroutines.CoroutineVerticle
 import io.vertx.kotlin.coroutines.await
 import kotlinx.coroutines.launch
 
-interface DoNotSuppressError
+interface BadRequest
 
 open class NoStackTraceThrowable(msg: String) : io.vertx.core.impl.NoStackTraceThrowable(msg) {
     override fun initCause(cause: Throwable?): Throwable {
@@ -26,7 +26,11 @@ open class NoStackTraceThrowable(msg: String) : io.vertx.core.impl.NoStackTraceT
     }
 }
 
-class ReplyException(msg: String?, override val cause: Throwable) : Exception(msg, cause)
+class ReplyException(msg: String?, override val cause: Throwable) : Exception(msg, cause) {
+    fun unwrap(): Nothing {
+        throw cause
+    }
+}
 class InternalServerError(msg: String) : NoStackTraceThrowable(msg)
 
 @PublishedApi
@@ -95,7 +99,7 @@ fun Message<JsonObject?>.replyWithThrowable(t: Throwable, options: DeliveryOptio
                     t
                 )
             )
-            t is DoNotSuppressError -> {
+            t is BadRequest -> {
                 t.stackTrace = emptyArray()
                 JsonObject.mapFrom(Reply.error(t))
             }
@@ -119,7 +123,6 @@ internal inline fun <reified Result> Message<JsonObject?>.replyWithSuccess(
         reply(JsonObject.mapFrom(Reply.success(null)), options)
     else
         reply(JsonObject.mapFrom(Reply.success(res)), options)
-
 inline fun <reified Request, reified Result> Verticle.jsonConsumer(
     address: String,
     replyOptions: DeliveryOptions = DeliveryOptions(),
@@ -128,13 +131,14 @@ inline fun <reified Request, reified Result> Verticle.jsonConsumer(
 ) : MessageConsumer<JsonObject> = vertx.eventBus().consumer(address) { msg ->
     val reqW: RequestWrapper<Request> =
         msg.body().mapTo(TYPE_FACTORY.constructParametricType(RequestWrapper::class.java, requestJavaType))
-    val res = try {
-        function(reqW.request)
+    try {
+        msg.replyWithSuccess(function(reqW.request), replyOptions)
     } catch (t: Throwable) {
         msg.replyWithThrowable(t, replyOptions)
-        throw t
+        if (t !is BadRequest) {
+            throw t
+        }
     }
-    msg.replyWithSuccess(res, replyOptions)
 }
 
 inline fun <reified Request, reified Result>
@@ -147,12 +151,13 @@ inline fun <reified Request, reified Result>
     launch {
         val reqW: RequestWrapper<Request> =
             msg.body().mapTo(TYPE_FACTORY.constructParametricType(RequestWrapper::class.java, requestJavaType))
-        val res = try {
-            function(reqW.request)
+        try {
+            msg.replyWithSuccess(function(reqW.request), replyOptions)
         } catch (t: Throwable) {
             msg.replyWithThrowable(t, replyOptions)
-            throw t
+            if (t !is BadRequest) {
+                throw t
+            }
         }
-        msg.replyWithSuccess(res, replyOptions)
     }
 }

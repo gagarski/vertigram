@@ -23,7 +23,7 @@ enum class BotCommandScopeType {
         const val ALL_PRIVATE_CHATS_STR = "all_private_chats"
         const val ALL_GROUP_CHATS_STR = "all_group_chats"
         const val ALL_CHAT_ADMINISTRATORS_STR = "all_chat_administrators"
-        const val CHAT_STR = "chat_str"
+        const val CHAT_STR = "chat"
         const val CHAT_ADMINISTRATORS_STR = "chat_administrators"
         const val CHAT_MEMBER_STR = "chat_member"
     }

@@ -13,7 +13,7 @@
     <packaging>pom</packaging>
 
 
-    <name>Vxutil parent </name>
+    <name>Vxutil parent base</name>
     <description>Parent POM for Vxutil which includes internal plugin configurations. Not to be used by external projects.</description>
 
     <properties>

@@ -6,6 +6,7 @@ import kotlinx.coroutines.slf4j.MDCContext
 import kotlinx.coroutines.withContext
 import org.slf4j.LoggerFactory
 import org.slf4j.MDC
+import ski.gagar.vxutil.lazy
 import ski.gagar.vxutil.logger
 import ski.gagar.vxutil.uncheckedCast
 import java.util.concurrent.atomic.AtomicReference
@@ -38,7 +39,7 @@ fun Vertx.attachEventBusLogging() {
     }
 
     if (!attached) {
-        logger.error("No loggers attached to vertx, check your logback config")
+        logger.lazy.error { "No loggers attached to vertx, check your logback config" }
     }
 }
 

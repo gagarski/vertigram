@@ -15,6 +15,7 @@ import org.jooq.DSLContext
 import org.jooq.TransactionalCallable
 import org.jooq.impl.DSL
 import org.jooq.tools.jdbc.JDBCUtils
+import ski.gagar.vxutil.lazy
 import ski.gagar.vxutil.logger
 import ski.gagar.vxutil.plus
 import java.io.Closeable
@@ -70,7 +71,7 @@ class Database(
         const val DEFAULT_DATA_SOURCE_NAME = "default"
 
         private suspend fun migrate(vertx: Vertx, ds: DataSource, locations: List<String>) {
-            logger.info("Running migrations for $ds")
+            logger.lazy.info { "Running migrations for $ds" }
             vertx.executeBlocking<Unit> {
                 try {
                     Flyway.configure()
@@ -87,7 +88,7 @@ class Database(
         }
 
         suspend fun initDs(vertx: Vertx, name: String, config: DbConfig, migrate: Boolean = true): DataSource {
-            logger.info("Creating shared data source with config $config")
+            logger.lazy.info { "Creating shared data source with config $config" }
             val ds = vertx.createSharedDataSource(name, config.jdbcUrl, config.username, config.password)
 
             if (migrate) {

@@ -8,6 +8,7 @@ package ski.gagar.vxutil.vertigram.methods
  * [ReturnType] is used in type hints to store return types of methods and also to allow type inference to infer
  * the return type of [ski.gagar.vxutil.vertigram.client.Telegram.call].
  */
+
 sealed class TgCallable<ReturnType>
 
 abstract class JsonTgCallable<ReturnType> : TgCallable<ReturnType>()

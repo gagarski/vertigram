@@ -5,11 +5,11 @@ import io.vertx.core.Vertx
 import io.vertx.core.net.ProxyOptions
 import ski.gagar.vxutil.vertigram.client.impl.TelegramImpl
 import ski.gagar.vxutil.vertigram.client.impl.TelegramImplOptions
-import ski.gagar.vxutil.vertigram.methods.GetUpdatesRaw
 import ski.gagar.vxutil.vertigram.methods.TgCallable
 import ski.gagar.vxutil.vertigram.types.MalformedUpdate
 import ski.gagar.vxutil.vertigram.types.ParsedUpdate
 import ski.gagar.vxutil.vertigram.types.Update
+import ski.gagar.vxutil.vertigram.types.UpdateType
 import java.io.Closeable
 import java.time.Duration
 
@@ -40,13 +40,14 @@ class DirectTelegram(
         impl.call(type, callable)
 
     @Suppress("DEPRECATION")
-    override suspend fun getUpdates(offset: Long?, limit: Int?): List<Update> =
+    override suspend fun getUpdates(offset: Long?, limit: Int?, allowedUpdates: List<UpdateType>?): List<Update> =
         impl.call(
             typeFactory.constructParametricType(List::class.java, Map::class.java),
-            GetUpdatesRaw(
+            ski.gagar.vxutil.vertigram.methods.GetUpdatesRaw(
                 offset = offset,
                 limit = limit,
-                timeout = options.getUpdatesTimeoutParam
+                timeout = options.getUpdatesTimeoutParam,
+                allowedUpdates = allowedUpdates
             ), longPoll = true
         ).mapNotNull { raw ->
             try {

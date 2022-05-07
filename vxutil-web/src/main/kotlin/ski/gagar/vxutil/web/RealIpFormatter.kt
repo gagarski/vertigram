@@ -7,6 +7,7 @@ import io.vertx.ext.web.handler.LoggerFormat
 import io.vertx.ext.web.handler.LoggerFormatter
 import io.vertx.ext.web.handler.LoggerHandler
 import io.vertx.ext.web.impl.Utils
+import ski.gagar.vxutil.lazy
 import ski.gagar.vxutil.logger
 
 // TODO simplify it
@@ -22,7 +23,7 @@ class RealIpFormatter(private val immediate: Boolean = false,
             return try {
                 trustedNetworks.any { IpAddress(this) in it }
             } catch (ex: IllegalArgumentException) {
-                logger.error("Failed to parse client IP", ex)
+                logger.lazy.error(throwable = ex) { "Failed to parse client IP" }
                 false
             }
         }
