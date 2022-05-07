@@ -5,7 +5,7 @@
     <parent>
         <groupId>ski.gagar.vxutil</groupId>
         <artifactId>vxutil-bom-internal</artifactId>
-        <version>1.0.0-alpha8-SNAPSHOT</version>
+        <version>1.0.0-alpha8</version>
         <relativePath>../vxutil-bom-internal</relativePath>
     </parent>
 
@@ -32,7 +32,7 @@
         <dependency>
             <groupId>ski.gagar.vxutil</groupId>
             <artifactId>vxutil-vertigram-annotations</artifactId>
-            <version>1.0.0-alpha8-SNAPSHOT</version>
+            <version>1.0.0-alpha8</version>
         </dependency>
         <dependency>
             <groupId>com.squareup</groupId>

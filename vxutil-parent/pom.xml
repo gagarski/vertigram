@@ -5,12 +5,12 @@
     <parent>
         <groupId>ski.gagar.vxutil</groupId>
         <artifactId>vxutil-parent-base</artifactId>
-        <version>1.0.0-alpha8-SNAPSHOT</version>
+        <version>1.0.0-alpha8</version>
         <relativePath>../vxutil-parent-base</relativePath>
     </parent>
 
     <artifactId>vxutil-parent</artifactId>
-    <version>1.0.0-alpha8-SNAPSHOT</version>
+    <version>1.0.0-alpha8</version>
     <packaging>pom</packaging>
 
 
@@ -120,4 +120,8 @@
             </plugin>
         </plugins>
     </build>
+
+  <scm>
+    <tag>v1.0.0-alpha8</tag>
+  </scm>
 </project>
