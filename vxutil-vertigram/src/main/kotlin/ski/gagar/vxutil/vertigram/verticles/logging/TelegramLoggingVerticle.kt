@@ -159,7 +159,7 @@ class TelegramLoggingVerticle : ErrorLoggingCoroutineVerticle() {
             text = md {
                 +"For the last ${typedConf.accumulationPeriod} the following log events occurred"
                 typedConf.me?.let {
-                    +" in ${it.username}"
+                    +" in @${it.username}"
                 }
                 +":"
 
