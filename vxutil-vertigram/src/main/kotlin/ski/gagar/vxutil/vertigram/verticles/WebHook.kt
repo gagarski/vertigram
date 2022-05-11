@@ -2,13 +2,13 @@ package ski.gagar.vxutil.vertigram.verticles
 
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.handler.BodyHandler
+import kotlinx.coroutines.delay
 import ski.gagar.vxutil.ErrorLoggingCoroutineVerticle
 import ski.gagar.vxutil.jackson.mapTo
 import ski.gagar.vxutil.jackson.publishJson
 import ski.gagar.vxutil.lazy
 import ski.gagar.vxutil.logger
 import ski.gagar.vxutil.retrying
-import ski.gagar.vxutil.sleep
 import ski.gagar.vxutil.vertigram.client.Telegram
 import ski.gagar.vxutil.vertigram.client.TgVTelegram
 import ski.gagar.vxutil.vertigram.config.WebHookConfig
@@ -33,7 +33,7 @@ class WebHook : ErrorLoggingCoroutineVerticle() {
 
     override suspend fun start() {
         logger.lazy.info { "Deleting old webhook..." }
-        retrying(coolDown = { sleep(3000) }) {
+        retrying(coolDown = { delay(3000) }) {
             tg.deleteWebhook()
         }
 
@@ -72,7 +72,7 @@ class WebHook : ErrorLoggingCoroutineVerticle() {
         server.listen(typedConfig.webHook.port, typedConfig.webHook.host)
 
         logger.lazy.info { "Setting new Telegram webhook..." }
-        retrying(coolDown = { sleep(3000) }) {
+        retrying(coolDown = { delay(3000) }) {
             tg.setWebhook("${typedConfig.webHook.publicUrl}/${secret}", allowedUpdates = typedConfig.allowedUpdates)
         }
 

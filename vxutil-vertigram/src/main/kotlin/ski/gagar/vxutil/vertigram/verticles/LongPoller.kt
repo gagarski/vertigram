@@ -1,5 +1,6 @@
 package ski.gagar.vxutil.vertigram.verticles
 
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import ski.gagar.vxutil.ErrorLoggingCoroutineVerticle
 import ski.gagar.vxutil.jackson.mapTo
@@ -7,7 +8,6 @@ import ski.gagar.vxutil.jackson.publishJson
 import ski.gagar.vxutil.lazy
 import ski.gagar.vxutil.logger
 import ski.gagar.vxutil.retrying
-import ski.gagar.vxutil.sleep
 import ski.gagar.vxutil.vertigram.client.Telegram
 import ski.gagar.vxutil.vertigram.client.TgVTelegram
 import ski.gagar.vxutil.vertigram.deleteWebhook
@@ -32,7 +32,7 @@ class LongPoller: ErrorLoggingCoroutineVerticle() {
         logger.lazy.info { "Deleting old Telegram webhook if any..." }
         startDate = Instant.now()
 
-        retrying(coolDown = { sleep(3000) }) {
+        retrying(coolDown = { delay(3000) }) {
             tg.deleteWebhook()
         }
 
@@ -45,7 +45,7 @@ class LongPoller: ErrorLoggingCoroutineVerticle() {
         while (true) {
             logger.lazy.trace { "Fetching updates with offset $offset" }
             val updates = try {
-                vertx.retrying(shouldStop = { false }) {
+                retrying(shouldStop = { false }) {
                     tg.getUpdates(offset = offset, allowedUpdates = typedConfig.allowedUpdates)
                 }
             } catch (ex: IllegalArgumentException) {
