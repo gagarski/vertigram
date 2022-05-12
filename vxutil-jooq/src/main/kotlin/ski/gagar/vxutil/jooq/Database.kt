@@ -7,12 +7,11 @@ import io.vertx.core.impl.cpu.CpuCoreSensor
 import io.vertx.kotlin.coroutines.CoroutineVerticle
 import io.vertx.kotlin.coroutines.await
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import org.flywaydb.core.Flyway
 import org.jooq.DSLContext
-import org.jooq.TransactionalCallable
 import org.jooq.impl.DSL
 import org.jooq.tools.jdbc.JDBCUtils
 import ski.gagar.vxutil.lazy
@@ -20,6 +19,9 @@ import ski.gagar.vxutil.logger
 import ski.gagar.vxutil.plus
 import java.io.Closeable
 import javax.sql.DataSource
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
+import kotlin.coroutines.suspendCoroutine
 
 typealias WorkerExecutorFactory = Vertx.(String) -> WorkerExecutor
 
@@ -56,14 +58,16 @@ class Database(
     }
 
     inner class WithTransaction {
-        suspend operator fun <T> invoke(body: suspend DSLContext.() -> T) =
-            coroutineScope {
-                dsl.transactionResult(TransactionalCallable {
-                    async(dispatcher) {
-                        dsl.run { body() }
+        suspend operator fun <T> invoke(body: suspend DSLContext.() -> T): T =
+            suspendCoroutine { cont ->
+                dsl.transactionResultAsync { conf -> runBlocking(dispatcher) { DSL.using(conf).body() } }
+                    .whenComplete { res, ex ->
+                        when (ex) {
+                            null -> cont.resume(res)
+                            else -> cont.resumeWithException(ex)
+                        }
                     }
-                })
-            }.await()
+            }
     }
 
     companion object {
