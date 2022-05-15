@@ -21,8 +21,7 @@
         <janino.version>3.1.7</janino.version>
         <logback.version>1.2.11</logback.version>
 
-<!--        <shade.plugin.version>3.3.0</shade.plugin.version>-->
-        <spring-boot.plugin.version>2.6.7</spring-boot.plugin.version>
+        <shade.plugin.version>3.3.0</shade.plugin.version>
         <exec.main-class />
     </properties>
 
@@ -75,17 +74,48 @@
                     <inherited>false</inherited>
                 </plugin>
                 <plugin>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-maven-plugin</artifactId>
-                    <version>${spring-boot.plugin.version}</version>
-                    <configuration>
-                        <mainClass>${exec.main-class}</mainClass>
-                    </configuration>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-shade-plugin</artifactId>
+                    <version>${shade.plugin.version}</version>
                     <executions>
                         <execution>
+                            <phase>package</phase>
                             <goals>
-                                <goal>repackage</goal>
+                                <goal>shade</goal>
                             </goals>
+                            <configuration>
+                                <filters>
+                                    <filter>
+                                        <artifact>*:*:*:*</artifact>
+                                        <excludes>
+                                            <exclude>META-INF/*.SF</exclude>
+                                            <exclude>META-INF/*.DSA</exclude>
+                                            <exclude>META-INF/*.RSA</exclude>
+                                        </excludes>
+                                    </filter>
+                                </filters>
+                                <transformers>
+                                    <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                        <manifestEntries>
+                                            <Main-Class>${exec.main-class}</Main-Class>
+                                            <Specification-Title>${project.artifactId}</Specification-Title>
+                                            <Specification-Version>${project.version}</Specification-Version>
+                                            <Implementation-Title>${project.artifactId}</Implementation-Title>
+                                            <Implementation-Version>${project.version}</Implementation-Version>
+                                            <Implementation-Vendor-Id>${project.groupId}</Implementation-Vendor-Id>
+                                        </manifestEntries>
+                                    </transformer>
+                                    <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                                        <resource>
+                                            META-INF/services/io.vertx.core.spi.VerticleFactory
+                                        </resource>
+                                    </transformer>
+                                </transformers>
+                                <artifactSet />
+                                <outputFile>
+                                    ${project.build.directory}/${project.artifactId}-${project.version}-fat.jar
+                                </outputFile>
+                            </configuration>
                         </execution>
                     </executions>
                 </plugin>
