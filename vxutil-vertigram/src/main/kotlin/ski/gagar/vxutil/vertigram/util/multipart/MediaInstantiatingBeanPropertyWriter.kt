@@ -20,8 +20,8 @@ internal class MediaInstantiatingBeanPropertyWriter(delegate: BeanPropertyWriter
         val thumbName = "${ATTACHMENT}_${_name}${indexStr}_${THUMB}"
 
         val processedMedia = value.instantiate(
-            media = value.media.getIndirectAttachment(mediaName),
-            thumb = value.thumb?.getIndirectAttachment(thumbName)
+            media = value.media.getReference(mediaName),
+            thumb = value.thumb?.getReference(thumbName)
         )
 
         deferred[mediaName] = AttachmentInfo(value.media, true)

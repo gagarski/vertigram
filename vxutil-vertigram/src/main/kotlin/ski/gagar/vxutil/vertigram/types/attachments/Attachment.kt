@@ -3,24 +3,17 @@ package ski.gagar.vxutil.vertigram.types.attachments
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 import com.fasterxml.jackson.annotation.JsonTypeInfo.As
 import com.fasterxml.jackson.annotation.JsonTypeInfo.Id
-import io.vertx.ext.web.multipart.MultipartForm
+import io.vertx.core.Vertx
+import ski.gagar.vxutil.web.multipart.Part
 import java.io.File
 
 @JsonTypeInfo(use=Id.CLASS, include=As.PROPERTY, property="@class")
 interface Attachment {
-    fun attachDirectly(form: MultipartForm, field: String)
-    fun attachIndirectly(form: MultipartForm, field: String)
-    fun getIndirectUrl(field: String): String
-    fun getIndirectAttachment(field: String): UrlAttachment
+    fun getReference(referredField: String): UrlAttachment
+    fun getReferredPart(field: String, vertx: Vertx): Part<*>?
+    fun getPart(field: String, vertx: Vertx): Part<*>
     companion object
 }
-
-fun MultipartForm.attachDirectly(field: String, attachment: Attachment?) =
-    attachment?.attachDirectly(this, field)
-
-fun MultipartForm.attachIndirectly(field: String, attachment: Attachment?) =
-    attachment?.attachIndirectly(this, field)
-
 fun Attachment.Companion.url(url: String) = UrlAttachment(url)
 fun Attachment.Companion.file(file: File) = FileAttachment(file)
 

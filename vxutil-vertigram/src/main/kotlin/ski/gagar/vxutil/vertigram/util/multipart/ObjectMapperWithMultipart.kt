@@ -9,13 +9,11 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.ser.BeanSerializer
 import com.fasterxml.jackson.databind.ser.DefaultSerializerProvider
 import com.fasterxml.jackson.databind.util.TokenBuffer
-import io.vertx.ext.web.multipart.MultipartForm
+import io.vertx.core.Vertx
 import ski.gagar.vxutil.uncheckedCast
 import ski.gagar.vxutil.uncheckedCastOrNull
-import ski.gagar.vxutil.vertigram.types.attachments.attachDirectly
-import ski.gagar.vxutil.vertigram.types.attachments.attachIndirectly
-import ski.gagar.vxutil.web.attributeIfNotNull
-import ski.gagar.vxutil.web.attributeIfTrue
+import ski.gagar.vxutil.web.multipart.FieldPart
+import ski.gagar.vxutil.web.multipart.MultipartForm
 
 /**
  * An ugly attempt to make ObjectMapper support Telegram flavor of multipart form format.
@@ -33,7 +31,7 @@ import ski.gagar.vxutil.web.attributeIfTrue
  *  - [com.fasterxml.jackson.annotation.JsonFilter] is not supported
  *  - Top level objects which are not using [BeanSerializer] are not supported
  */
-internal class ObjectMapperWithMultipart(delegate: ObjectMapper) : ObjectMapper(delegate) {
+internal class ObjectMapperWithMultipart(delegate: ObjectMapper, private val vertx: Vertx) : ObjectMapper(delegate) {
     private fun JsonParser.toMap(): Map<String, Any?>? {
         val deserConfig: DeserializationConfig = getDeserializationConfig()
         val mapType = typeFactory.constructType(Map::class.java)
@@ -57,7 +55,7 @@ internal class ObjectMapperWithMultipart(delegate: ObjectMapper) : ObjectMapper(
         return map
     }
 
-    fun toMultipart(obj: Any): MultipartForm = MultipartForm.create().apply {
+    fun toMultipart(obj: Any): MultipartForm = MultipartForm(buildList {
         val buf = TokenBuffer(this@ObjectMapperWithMultipart, false)
         val prov = _serializerProvider(serializationConfig)
         val ser = prov
@@ -74,22 +72,24 @@ internal class ObjectMapperWithMultipart(delegate: ObjectMapper) : ObjectMapper(
 
         val map = buf.asParser().toMap()
 
-        for ((k, v) in map ?: return@apply) {
+        for ((k, v) in map ?: return@buildList) {
             when (v) {
                 null -> continue
-                is Boolean -> attributeIfTrue(k, v)
-                is Map<*, *> -> attributeIfNotNull(k, writeValueAsString(v))
-                is List<*> -> attributeIfNotNull(k, writeValueAsString(v))
-                else -> attributeIfNotNull(k, v.toString())
+                is Boolean -> if (v) add(FieldPart(k, v))
+                is Map<*, *>, is List<*> -> add(FieldPart(k, writeValueAsString(v)))
+                else -> add(FieldPart(k, v))
             }
         }
 
         for ((name, attachment) in deferredMedia) {
             if (attachment.isIndirect) {
-                attachIndirectly(name, attachment.attachment)
+                attachment.attachment.getReferredPart(name, vertx)?.let {
+                    add(it)
+                }
             } else {
-                attachDirectly(name, attachment.attachment)
+                add(attachment.attachment.getPart(name, vertx))
             }
         }
-    }
+    })
 }
+

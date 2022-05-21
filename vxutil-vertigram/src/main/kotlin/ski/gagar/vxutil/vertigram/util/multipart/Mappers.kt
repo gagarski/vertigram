@@ -1,8 +1,10 @@
 package ski.gagar.vxutil.vertigram.util.multipart
 
-import ski.gagar.vxutil.vertigram.util.json.telegramJsonMapper
+import com.fasterxml.jackson.databind.ObjectMapper
+import io.vertx.core.Vertx
 
-internal fun telegramJsonMapperWithMultipart() =
-    ObjectMapperWithMultipart(telegramJsonMapper())
+internal fun telegramJsonMapperWithMultipart(vertx: Vertx) =
+    telegramJsonMapperWithMultipart(ski.gagar.vxutil.vertigram.util.json.telegramJsonMapper(), vertx)
 
-internal val TELEGRAM_JSON_MAPPER_WITH_MULTIPART = telegramJsonMapperWithMultipart()
+internal fun telegramJsonMapperWithMultipart(underlying: ObjectMapper, vertx: Vertx) =
+    ObjectMapperWithMultipart(underlying, vertx)

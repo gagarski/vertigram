@@ -9,7 +9,6 @@ import io.vertx.core.net.ProxyOptions
 import io.vertx.ext.web.client.WebClient
 import io.vertx.ext.web.client.WebClientOptions
 import io.vertx.ext.web.codec.BodyCodec
-import io.vertx.ext.web.multipart.MultipartForm
 import io.vertx.kotlin.coroutines.await
 import ski.gagar.vxutil.lazy
 import ski.gagar.vxutil.logger
@@ -23,8 +22,11 @@ import ski.gagar.vxutil.vertigram.util.TelegramDownloadException
 import ski.gagar.vxutil.vertigram.util.TypeHints
 import ski.gagar.vxutil.vertigram.util.getOrAssert
 import ski.gagar.vxutil.vertigram.util.json.TELEGRAM_JSON_MAPPER
-import ski.gagar.vxutil.vertigram.util.multipart.TELEGRAM_JSON_MAPPER_WITH_MULTIPART
+import ski.gagar.vxutil.vertigram.util.multipart.telegramJsonMapperWithMultipart
 import ski.gagar.vxutil.web.bodyAsJson
+import ski.gagar.vxutil.web.multipart.FieldPart
+import ski.gagar.vxutil.web.multipart.MultipartForm
+import ski.gagar.vxutil.web.multipart.sendMultipartForm
 import ski.gagar.vxutil.web.sendJsonAwait
 import java.time.Duration
 
@@ -71,6 +73,7 @@ internal class TelegramImpl(
 
     @PublishedApi
     internal val mapper = TELEGRAM_JSON_MAPPER
+    internal val mapperMp = telegramJsonMapperWithMultipart(mapper, vertx)
 
     private fun client(longPoll: Boolean = false, upload: Boolean = false): WebClient =
         when {
@@ -112,7 +115,7 @@ internal class TelegramImpl(
         longPoll: Boolean = false
     ): Pair<Int, Any?> {
         logger.lazy.trace { "Calling $method with $form (form/multipart)" }
-        val resp = client(method, longPoll, form.any { it.isFileUpload }).sendMultipartForm(form).await()
+        val resp = client(method, longPoll, !form.parts.all { it is FieldPart }).sendMultipartForm(form)
         return resp.statusCode() to resp.bodyAsJson<Any>(type, mapper).also {
             logger.lazy.trace { "Received response $it" }
         }
@@ -173,7 +176,7 @@ internal class TelegramImpl(
         val (status, wrapper) = callForWrapperMultipart<Resp>(
             respType,
             method,
-            TELEGRAM_JSON_MAPPER_WITH_MULTIPART.toMultipart(mpc),
+            mapperMp.toMultipart(mpc),
             longPoll)
 
         if (status != 200 || !wrapper.ok)

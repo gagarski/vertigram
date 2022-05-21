@@ -1,20 +1,19 @@
 package ski.gagar.vxutil.vertigram.types.attachments
 
-import io.vertx.ext.web.multipart.MultipartForm
-import ski.gagar.vxutil.web.attributeIfNotNull
-import ski.gagar.vxutil.web.binaryFileUploadIfNotNull
+import io.vertx.core.Vertx
+import io.vertx.core.file.AsyncFile
+import io.vertx.core.file.OpenOptions
+import io.vertx.kotlin.coroutines.await
+import ski.gagar.vxutil.web.multipart.FilePart
 import java.io.File
 
 data class FileAttachment(val file: File) : Attachment {
-    override fun attachDirectly(form: MultipartForm, field: String) {
-        form.binaryFileUploadIfNotNull(field, file)
-    }
+    private var asyncFile: AsyncFile? = null
+    override fun getReference(referredField: String): UrlAttachment = UrlAttachment("attach://$referredField")
+    override fun getReferredPart(field: String, vertx: Vertx) = doAttach(field, vertx)
 
-    override fun attachIndirectly(form: MultipartForm, field: String) {
-        form.binaryFileUploadIfNotNull(field, file)
-    }
+    override fun getPart(field: String, vertx: Vertx): FilePart = doAttach(field, vertx)
 
-    override fun getIndirectUrl(field: String): String = "attach://$field"
-
-    override fun getIndirectAttachment(field: String): UrlAttachment = UrlAttachment(getIndirectUrl(field))
+    private fun doAttach(field: String, vertx: Vertx): FilePart =
+        FilePart(field, file.toPath().fileName.toString(), { vertx.fileSystem().open(file.path, OpenOptions()).await() } )
 }
