@@ -6,7 +6,8 @@ import io.vertx.core.streams.ReadStream
 class SingletonStream<T>(private val value: T) : ReadStream<T> {
     enum class State {
         NOT_FIRED,
-        FIRED
+        FIRED,
+        DONE
     }
     private var paused = false
     private var state = State.NOT_FIRED
@@ -22,31 +23,43 @@ class SingletonStream<T>(private val value: T) : ReadStream<T> {
         }
     }
 
-    private fun fire() {
-        doCatching { handler?.handle(value) }
-        doCatching { endHandler?.handle(null) }
+    private fun fireValueIfNecessary() {
+        val h = handler
+        if (paused) return
+        if (state != State.NOT_FIRED) return
+        if (h == null) return
         state = State.FIRED
+        h.handle(value)
     }
 
+    private fun fireEndIfNecessary() {
+        val h = endHandler
+        if (paused) return
+        if (state != State.FIRED) return
+        if (h == null) return
+        state = State.DONE
+        h.handle(null)
+    }
     override fun pause(): ReadStream<T> = apply {
         paused = true
     }
 
     override fun resume(): ReadStream<T> = apply {
         paused = false
-        if (state != State.NOT_FIRED) return@apply
-        fire()
+        fireValueIfNecessary()
+        fireEndIfNecessary()
     }
 
     override fun handler(handler: Handler<T>?): ReadStream<T> = apply {
         this.handler = handler
-        if (state != State.NOT_FIRED) return@apply
-        if (paused) return@apply
-        fire()
+        fireValueIfNecessary()
+        fireEndIfNecessary()
     }
 
     override fun fetch(amount: Long): ReadStream<T> = apply {
-        resume()
+        if (amount != 0L) {
+            resume()
+        }
     }
 
     override fun exceptionHandler(handler: Handler<Throwable>?): ReadStream<T> = apply {
@@ -55,6 +68,7 @@ class SingletonStream<T>(private val value: T) : ReadStream<T> {
 
     override fun endHandler(endHandler: Handler<Void?>?): ReadStream<T> = apply {
         this.endHandler = endHandler
+        fireEndIfNecessary()
     }
 
     override fun toString(): String {

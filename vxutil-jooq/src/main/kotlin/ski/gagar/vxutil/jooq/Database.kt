@@ -8,20 +8,18 @@ import io.vertx.kotlin.coroutines.CoroutineVerticle
 import io.vertx.kotlin.coroutines.await
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import org.flywaydb.core.Flyway
+import org.jooq.Configuration
 import org.jooq.DSLContext
 import org.jooq.impl.DSL
+import org.jooq.impl.transactionResultInt
 import org.jooq.tools.jdbc.JDBCUtils
 import ski.gagar.vxutil.lazy
 import ski.gagar.vxutil.logger
 import ski.gagar.vxutil.plus
 import java.io.Closeable
 import javax.sql.DataSource
-import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
-import kotlin.coroutines.suspendCoroutine
 
 typealias WorkerExecutorFactory = Vertx.(String) -> WorkerExecutor
 
@@ -59,14 +57,8 @@ class Database(
 
     inner class WithTransaction {
         suspend operator fun <T> invoke(body: suspend DSLContext.() -> T): T =
-            suspendCoroutine { cont ->
-                dsl.transactionResultAsync { conf -> runBlocking(dispatcher) { DSL.using(conf).body() } }
-                    .whenComplete { res, ex ->
-                        when (ex) {
-                            null -> cont.resume(res)
-                            else -> cont.resumeWithException(ex)
-                        }
-                    }
+            dsl.transactionResultCoro { conf ->
+                DSL.using(conf).body()
             }
     }
 
@@ -125,3 +117,6 @@ fun Vertx.Database(scope: CoroutineScope,
 fun CoroutineVerticle.Database(executorName: String = Database.DEFAULT_EXECUTOR_NAME,
                                dataSourceName: String = Database.DEFAULT_DATA_SOURCE_NAME) =
     Database(vertx, this, executorName, dataSourceName)
+
+suspend fun <T> DSLContext.transactionResultCoro(block: suspend (Configuration) -> T): T =
+    transactionResultInt(block)

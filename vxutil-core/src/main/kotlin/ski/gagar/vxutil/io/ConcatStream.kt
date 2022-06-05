@@ -21,7 +21,7 @@ class ConcatStream<T>(streams: Sequence<ReadStream<T>>) : ReadStream<T> {
     private var paused = false
     private var state = State.INITIAL
     private var current: ReadStream<T>? = null
-    private var demand: Long = 0
+    private var demand: Long = Long.MAX_VALUE
     private var handled: Long = 0
 
     constructor(streams: Collection<ReadStream<T>>) : this(streams.asSequence())
@@ -57,6 +57,14 @@ class ConcatStream<T>(streams: Sequence<ReadStream<T>>) : ReadStream<T> {
             return
         }
 
+        if (paused) {
+            next.pause()
+        }
+
+        if (demand != Long.MAX_VALUE && demand != 0L) {
+            next.fetch(demand)
+        }
+
         next.exceptionHandler(exceptionHandler)
 
         next.endHandler {
@@ -64,34 +72,28 @@ class ConcatStream<T>(streams: Sequence<ReadStream<T>>) : ReadStream<T> {
         }
 
         next.handler(demandTrackingHandler(handler))
-
-        if (demand != 0L && demand != Long.MAX_VALUE) {
-            next.fetch(demand)
-        }
     }
 
     override fun pause(): ReadStream<T> = apply {
         paused = true
+        demand = 0
         current?.pause()
     }
 
     override fun resume(): ReadStream<T> = apply {
         paused = false
         demand = Long.MAX_VALUE
-        when (state) {
-            State.DONE -> return this
-            State.INITIAL -> switchStreams()
-            else -> {}
-        }
         current?.resume()
     }
 
-    override fun fetch(amount: Long): ReadStream<T> = apply {
-        paused = false
-        demand += amount
-        if (state == State.INITIAL) {
-            switchStreams()
+    private fun incDemand(value: Long) {
+        demand += value
+        if (demand < 0) {
+            demand = Long.MAX_VALUE
         }
+    }
+    override fun fetch(amount: Long): ReadStream<T> = apply {
+        incDemand(amount)
         current?.fetch(demand)
     }
 

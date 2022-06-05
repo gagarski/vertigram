@@ -3,7 +3,6 @@ package ski.gagar.vxutil.web.multipart
 import io.netty.handler.codec.http.HttpHeaderNames
 import io.vertx.core.buffer.Buffer
 import io.vertx.core.streams.ReadStream
-import kotlinx.coroutines.coroutineScope
 import ski.gagar.vxutil.io.ConcatStream
 
 abstract class Part<T : ReadStream<Buffer>>(private val streamOwned: Boolean) {
@@ -34,13 +33,12 @@ abstract class Part<T : ReadStream<Buffer>>(private val streamOwned: Boolean) {
 
     private fun trailingLength() = NL.length.toLong()
 
-    suspend fun stream(): ReadStream<Buffer> = coroutineScope {
+    suspend fun stream(): ReadStream<Buffer> =
         ConcatStream(
             headersBuffer.asSingletonStream(),
             getAndAcquireDataStream(),
             NL.asSingletonStream(),
         )
-    }
 
     protected abstract suspend fun close(stream: T)
 
