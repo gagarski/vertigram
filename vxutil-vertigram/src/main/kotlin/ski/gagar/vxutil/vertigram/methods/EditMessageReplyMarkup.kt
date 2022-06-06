@@ -10,5 +10,5 @@ data class EditMessageReplyMarkup(
     val chatId: ChatId? = null,
     val messageId: Long? = null,
     val inlineMessageId: String? = null,
-    val inlineKeyboardMarkup: InlineKeyboardMarkup? = null
+    val replyMarkup: InlineKeyboardMarkup? = null
 ) : JsonTgCallable<Message>()

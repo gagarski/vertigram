@@ -94,6 +94,8 @@ fun <Request> EventBus.publishJson(address: String,
 fun Message<JsonObject?>.replyWithThrowable(t: Throwable, options: DeliveryOptions = DeliveryOptions()) =
     reply(
         when {
+            !isSend -> {
+            }
             DEBUG -> JsonObject.mapFrom(
                 Reply.error(
                     t
@@ -118,11 +120,13 @@ fun Message<JsonObject?>.replyWithThrowable(t: Throwable, options: DeliveryOptio
 internal inline fun <reified Result> Message<JsonObject?>.replyWithSuccess(
     res: Result,
     options: DeliveryOptions = DeliveryOptions()
-) =
-    if (Result::class.java == Unit::class.java)
-        reply(JsonObject.mapFrom(Reply.success(null)), options)
-    else
-        reply(JsonObject.mapFrom(Reply.success(res)), options)
+) {
+    when {
+        !isSend -> return
+        Result::class.java == Unit::class.java -> reply(JsonObject.mapFrom(Reply.success(null)), options)
+        else -> reply(JsonObject.mapFrom(Reply.success(res)), options)
+    }
+}
 inline fun <reified Request, reified Result> Verticle.jsonConsumer(
     address: String,
     replyOptions: DeliveryOptions = DeliveryOptions(),
@@ -135,7 +139,7 @@ inline fun <reified Request, reified Result> Verticle.jsonConsumer(
         msg.replyWithSuccess(function(reqW.request), replyOptions)
     } catch (t: Throwable) {
         msg.replyWithThrowable(t, replyOptions)
-        if (t !is BadRequest) {
+        if (t !is BadRequest || !msg.isSend) {
             throw t
         }
     }
@@ -155,7 +159,7 @@ inline fun <reified Request, reified Result>
             msg.replyWithSuccess(function(reqW.request), replyOptions)
         } catch (t: Throwable) {
             msg.replyWithThrowable(t, replyOptions)
-            if (t !is BadRequest) {
+            if (t !is BadRequest || !msg.isSend) {
                 throw t
             }
         }
