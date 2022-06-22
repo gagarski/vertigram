@@ -22,5 +22,7 @@ data class ChatVerbose(
     val stickerSetName: String? = null,
     val canSetStickerSet: Boolean = false,
     val linkedChatId: Long? = null,
-    val location: ChatLocation? = null
+    val location: ChatLocation? = null,
+    val joinToSendMessages: Boolean = false,
+    val jointByRequest: Boolean = false,
 )

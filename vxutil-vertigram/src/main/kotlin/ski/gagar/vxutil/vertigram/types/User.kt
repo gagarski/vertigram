@@ -7,5 +7,7 @@ data class User(
     val firstName: String? = null,
     val lastName: String? = null,
     val username: String? = null,
-    val languageCode: String? = null
+    val languageCode: String? = null,
+    @get:JvmName("getIsPremium")
+    val isPremium: Boolean = false
 )

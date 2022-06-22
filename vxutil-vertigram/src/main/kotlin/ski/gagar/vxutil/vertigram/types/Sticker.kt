@@ -1,5 +1,4 @@
 package ski.gagar.vxutil.vertigram.types
-
 data class Sticker(
     val fileId: String,
     val fileUniqueId: String,
@@ -13,5 +12,6 @@ data class Sticker(
     val emoji: String? = null,
     val setName: String? = null,
     val maskPosition: MaskPosition? = null,
-    val fileSize: Long? = null
+    val fileSize: Long? = null,
+    val premiumAnimation: File? = null
 )

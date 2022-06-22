@@ -1,5 +1,6 @@
 package ski.gagar.vxutil.vertigram.verticles
 
+import io.netty.handler.codec.http.HttpResponseStatus
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.handler.BodyHandler
 import kotlinx.coroutines.delay
@@ -45,7 +46,12 @@ class WebHook : ErrorLoggingCoroutineVerticle() {
             trustDomainSockets = typedConfig.webHook.proxy?.trustDomainSockets ?: false))
         router.route().handler(BodyHandler.create())
 
-        router.post("${typedConfig.webHook.base}/${secret}").handler { context ->
+        router.post(typedConfig.webHook.base).handler { context ->
+            if (context.request().getHeader(X_TELEGRAM_BOT_API_SECRET_TOKEN) != secret.toString()) {
+                context.response().statusCode = HttpResponseStatus.FORBIDDEN.code()
+                context.response().end()
+                return@handler
+            }
             val json = context.bodyAsJson
             val req = try {
                 json.mapTo(
@@ -73,7 +79,11 @@ class WebHook : ErrorLoggingCoroutineVerticle() {
 
         logger.lazy.info { "Setting new Telegram webhook..." }
         retrying(coolDown = { delay(3000) }) {
-            tg.setWebhook("${typedConfig.webHook.publicUrl}/${secret}", allowedUpdates = typedConfig.allowedUpdates)
+            tg.setWebhook(
+                typedConfig.webHook.publicUrl,
+                allowedUpdates = typedConfig.allowedUpdates,
+                secretToken = secret.toString()
+            )
         }
 
         logger.lazy.info { "Web server is listening..." }
@@ -88,5 +98,9 @@ class WebHook : ErrorLoggingCoroutineVerticle() {
         companion object {
             const val DEFAULT_UPDATE_PUBLISHING_ADDRESS = "ski.gagar.vertigram.updates"
         }
+    }
+
+    companion object {
+        private const val X_TELEGRAM_BOT_API_SECRET_TOKEN = "X-Telegram-Bot-Api-Secret-Token"
     }
 }
