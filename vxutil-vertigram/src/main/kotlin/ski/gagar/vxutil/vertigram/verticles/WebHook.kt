@@ -46,7 +46,10 @@ class WebHook : ErrorLoggingCoroutineVerticle() {
             trustDomainSockets = typedConfig.webHook.proxy?.trustDomainSockets ?: false))
         router.route().handler(BodyHandler.create())
 
-        router.post(typedConfig.webHook.base).handler { context ->
+        val addr =
+            if (typedConfig.webHook.base.startsWith("/")) typedConfig.webHook.base else "/${typedConfig.webHook.base}"
+
+        router.post(addr).handler { context ->
             if (context.request().getHeader(X_TELEGRAM_BOT_API_SECRET_TOKEN) != secret.toString()) {
                 context.response().statusCode = HttpResponseStatus.FORBIDDEN.code()
                 context.response().end()
