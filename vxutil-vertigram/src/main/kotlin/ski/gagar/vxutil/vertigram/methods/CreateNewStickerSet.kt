@@ -2,6 +2,7 @@ package ski.gagar.vxutil.vertigram.methods
 
 import ski.gagar.vertigram.annotations.TgMethod
 import ski.gagar.vxutil.vertigram.types.MaskPosition
+import ski.gagar.vxutil.vertigram.types.StickerType
 import ski.gagar.vxutil.vertigram.types.attachments.Attachment
 import ski.gagar.vxutil.vertigram.util.multipart.TgMedia
 
@@ -17,6 +18,6 @@ data class CreateNewStickerSet(
     val tgsSticker: Attachment? = null,
     @TgMedia
     val webmSticker: Attachment? = null,
-    val containsMasks: Boolean? = null,
+    val stickerType: StickerType = StickerType.REGULAR,
     val maskPosition: MaskPosition? = null
 ) : MultipartTgCallable<Boolean>()

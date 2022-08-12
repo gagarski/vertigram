@@ -12,6 +12,7 @@ data class ChatVerbose(
     val photo: ChatPhoto? = null,
     val bio: String? = null,
     val hasPrivateForwards: Boolean = false,
+    val hasRestrictedVoiceAndVideoMessages: Boolean = false,
     val description: String? = null,
     val inviteLink: String? = null,
     val pinnedMessage: Message? = null,

@@ -35,4 +35,6 @@ enum class MessageEntityType {
     TEXT_LINK,
     @JsonProperty("text_mention")
     TEXT_MENTION,
+    @JsonProperty("custom_emoji")
+    CUSTOM_EMOJI
 }

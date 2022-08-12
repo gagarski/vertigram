@@ -5,6 +5,7 @@ data class MessageEntity(
     val offset: Int,
     val length: Int,
     val url: String? = null,
-    val user: User? = null
+    val user: User? = null,
+    val customEmojiId: String? = null
 )
 
