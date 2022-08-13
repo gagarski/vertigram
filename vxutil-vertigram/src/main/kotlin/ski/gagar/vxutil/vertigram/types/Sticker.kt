@@ -14,6 +14,6 @@ data class Sticker(
     val setName: String? = null,
     val premiumAnimation: File? = null,
     val maskPosition: MaskPosition? = null,
-    val customEmojiId: String,
+    val customEmojiId: String? = null,
     val fileSize: Long? = null
 )
