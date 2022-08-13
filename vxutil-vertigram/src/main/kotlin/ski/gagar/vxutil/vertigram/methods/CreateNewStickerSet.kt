@@ -18,6 +18,10 @@ data class CreateNewStickerSet(
     val tgsSticker: Attachment? = null,
     @TgMedia
     val webmSticker: Attachment? = null,
-    val stickerType: StickerType = StickerType.REGULAR,
+    val stickerType: StickerType = Defaults.stickerType,
     val maskPosition: MaskPosition? = null
-) : MultipartTgCallable<Boolean>()
+) : MultipartTgCallable<Boolean>() {
+    object Defaults {
+        val stickerType = StickerType.REGULAR
+    }
+}

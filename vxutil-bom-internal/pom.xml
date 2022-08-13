@@ -36,30 +36,29 @@
     <properties>
         <build-helper.plugin.version>3.3.0</build-helper.plugin.version>
         <compiler-plugin.version>3.10.1</compiler-plugin.version>
-        <deploy.plugin.version>3.0.0-M2</deploy.plugin.version>
+        <deploy.plugin.version>3.0.0</deploy.plugin.version>
         <gpg.plugin.version>3.0.1</gpg.plugin.version>
-        <kotlin.plugin.version>1.6.21</kotlin.plugin.version>
-        <nexus-staging.plugin.version>1.6.12</nexus-staging.plugin.version>
-        <release.plugin.version>3.0.0-M5</release.plugin.version>
+        <kotlin.plugin.version>1.7.10</kotlin.plugin.version>
+        <nexus-staging.plugin.version>1.6.13</nexus-staging.plugin.version>
+        <release.plugin.version>3.0.0-M6</release.plugin.version>
         <source.plugin.version>3.2.1</source.plugin.version>
 
         <java.version.kotlin>1.8</java.version.kotlin>
-        <java.version>17</java.version>
+        <java.version>18</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <commons-lang.version>3.12.0</commons-lang.version>
-        <flyway.version>8.5.8</flyway.version>
+        <flyway.version>9.1.3</flyway.version>
         <hikari.version>5.0.1</hikari.version>
-        <jackson.version>2.13.2</jackson.version>
-        <jackson.databind.version>2.13.2.1</jackson.databind.version> <!-- TODO tmp -->
-        <jooq.version>3.16.6</jooq.version>
-        <kotlinx.coroutines.version>1.6.1</kotlinx.coroutines.version>
-        <kotlin.stdlib.version>1.6.21</kotlin.stdlib.version>
+        <jackson.version>2.13.3</jackson.version>
+        <jooq.version>3.17.2</jooq.version>
+        <kotlinx.coroutines.version>1.6.4</kotlinx.coroutines.version>
+        <kotlin.stdlib.version>1.7.10</kotlin.stdlib.version>
         <logback.version>1.2.11</logback.version>
-        <psqldriver.version>42.3.4</psqldriver.version>
+        <psqldriver.version>42.4.1</psqldriver.version>
         <reflections.version>0.10.2</reflections.version>
         <slf4j.version>1.7.36</slf4j.version>
-        <vertx.version>4.2.7</vertx.version>
+        <vertx.version>4.3.3</vertx.version>
 
     </properties>
 
@@ -83,7 +82,7 @@
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
-                <version>${jackson.databind.version}</version>
+                <version>${jackson.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.datatype</groupId>
