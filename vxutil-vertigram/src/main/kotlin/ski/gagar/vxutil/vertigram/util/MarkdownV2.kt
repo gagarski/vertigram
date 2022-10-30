@@ -4,6 +4,8 @@ import ski.gagar.vxutil.vertigram.types.User
 
 fun md(init: Markdown.() -> Unit) = Markdown().apply(init)
 
+fun String.toMarkdown() = md { +this@toMarkdown }
+
 fun String.escapeText() =
     this.replace("""([_*\[\]()~`>#+\-=|{}.!\\])""".toRegex(), """\\$1""")
 

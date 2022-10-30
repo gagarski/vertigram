@@ -71,6 +71,10 @@ abstract class ErrorLoggingCoroutineVerticle : CoroutineVerticle() {
         super.init(vertx, context)
         this.context = context
     }
+
+    fun suicide() {
+        vertx.undeploy(deploymentID)
+    }
 }
 
 fun Vertx.logUnhandledExceptions(logger: Logger = ski.gagar.vxutil.logger): Vertx = exceptionHandler {
