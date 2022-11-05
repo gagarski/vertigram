@@ -68,10 +68,11 @@ val DEBUG by lazy {
 
 val TYPE_FACTORY: TypeFactory = DatabindCodec.mapper().typeFactory
 
-suspend inline fun <Argument, reified Result> EventBus.requestJsonAwait(
+suspend inline fun <Argument, Result> EventBus.requestJsonAwait(
+    resultClass: Class<Result>,
     address: String,
     value: Argument,
-    resultJavaType: JavaType = TYPE_FACTORY.constructType(Result::class.java),
+    resultJavaType: JavaType = TYPE_FACTORY.constructType(resultClass),
     options: DeliveryOptions = DeliveryOptions()
 ): Result {
     val reply: Reply<Result> =
@@ -84,6 +85,19 @@ suspend inline fun <Argument, reified Result> EventBus.requestJsonAwait(
 
     return reply.result as Result
 }
+
+suspend inline fun <Argument, reified Result> EventBus.requestJsonAwait(
+    address: String,
+    value: Argument,
+    resultJavaType: JavaType = TYPE_FACTORY.constructType(Result::class.java),
+    options: DeliveryOptions = DeliveryOptions()
+): Result = requestJsonAwait(
+    resultClass = Result::class.java,
+    address = address,
+    value = value,
+    resultJavaType = resultJavaType,
+    options = options
+)
 
 
 fun <Request> EventBus.publishJson(address: String,
@@ -117,30 +131,71 @@ fun Message<JsonObject?>.replyWithThrowable(t: Throwable, options: DeliveryOptio
     )
 
 @PublishedApi
-internal inline fun <reified Result> Message<JsonObject?>.replyWithSuccess(
+internal fun <Result> Message<JsonObject?>.replyWithSuccess(
+    resultClass: Class<Result>,
     res: Result,
     options: DeliveryOptions = DeliveryOptions()
 ) {
     when {
         !isSend -> return
-        Result::class.java == Unit::class.java -> reply(JsonObject.mapFrom(Reply.success(null)), options)
+        resultClass == Unit::class.java -> reply(JsonObject.mapFrom(Reply.success(null)), options)
         else -> reply(JsonObject.mapFrom(Reply.success(res)), options)
     }
 }
-inline fun <reified Request, reified Result> Verticle.jsonConsumer(
+
+inline fun <Request, Result> Verticle.jsonConsumer(
+    requestClass: Class<Request>,
+    resultClass: Class<Result>,
     address: String,
     replyOptions: DeliveryOptions = DeliveryOptions(),
-    requestJavaType: JavaType = TYPE_FACTORY.constructType(Request::class.java),
+    requestJavaType: JavaType = TYPE_FACTORY.constructType(requestClass),
     crossinline function: (Request) -> Result
 ) : MessageConsumer<JsonObject> = vertx.eventBus().consumer(address) { msg ->
     val reqW: RequestWrapper<Request> =
         msg.body().mapTo(TYPE_FACTORY.constructParametricType(RequestWrapper::class.java, requestJavaType))
     try {
-        msg.replyWithSuccess(function(reqW.request), replyOptions)
+        msg.replyWithSuccess(resultClass, function(reqW.request), replyOptions)
     } catch (t: Throwable) {
         msg.replyWithThrowable(t, replyOptions)
         if (t !is BadRequest || !msg.isSend) {
             throw t
+        }
+    }
+}
+
+inline fun <reified Request, reified Result> Verticle.jsonConsumer(
+    address: String,
+    replyOptions: DeliveryOptions = DeliveryOptions(),
+    requestJavaType: JavaType = TYPE_FACTORY.constructType(Request::class.java),
+    crossinline function: (Request) -> Result
+) = jsonConsumer(
+    requestClass = Request::class.java,
+    resultClass = Result::class.java,
+    address = address,
+    replyOptions = replyOptions,
+    requestJavaType = requestJavaType,
+    function = function
+)
+
+inline fun <Request, Result>
+        CoroutineVerticle.suspendJsonConsumer(
+    requestClass: Class<Request>,
+    resultClass: Class<Result>,
+    address: String,
+    replyOptions: DeliveryOptions = DeliveryOptions(),
+    requestJavaType: JavaType = TYPE_FACTORY.constructType(requestClass),
+    crossinline function: suspend (Request) -> Result
+) : MessageConsumer<JsonObject> = vertx.eventBus().consumer(address) { msg ->
+    launch {
+        val reqW: RequestWrapper<Request> =
+            msg.body().mapTo(TYPE_FACTORY.constructParametricType(RequestWrapper::class.java, requestJavaType))
+        try {
+            msg.replyWithSuccess(resultClass, function(reqW.request), replyOptions)
+        } catch (t: Throwable) {
+            msg.replyWithThrowable(t, replyOptions)
+            if (t !is BadRequest || !msg.isSend) {
+                throw t
+            }
         }
     }
 }
@@ -151,17 +206,11 @@ inline fun <reified Request, reified Result>
     replyOptions: DeliveryOptions = DeliveryOptions(),
     requestJavaType: JavaType = TYPE_FACTORY.constructType(Request::class.java),
     crossinline function: suspend (Request) -> Result
-) : MessageConsumer<JsonObject> = vertx.eventBus().consumer(address) { msg ->
-    launch {
-        val reqW: RequestWrapper<Request> =
-            msg.body().mapTo(TYPE_FACTORY.constructParametricType(RequestWrapper::class.java, requestJavaType))
-        try {
-            msg.replyWithSuccess(function(reqW.request), replyOptions)
-        } catch (t: Throwable) {
-            msg.replyWithThrowable(t, replyOptions)
-            if (t !is BadRequest || !msg.isSend) {
-                throw t
-            }
-        }
-    }
-}
+) = suspendJsonConsumer(
+    requestClass = Request::class.java,
+    resultClass = Result::class.java,
+    address = address,
+    replyOptions = replyOptions,
+    requestJavaType = requestJavaType,
+    function = function
+)
