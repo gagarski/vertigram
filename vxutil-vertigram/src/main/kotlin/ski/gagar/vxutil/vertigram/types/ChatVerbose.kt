@@ -26,4 +26,9 @@ data class ChatVerbose(
     val location: ChatLocation? = null,
     val joinToSendMessages: Boolean = false,
     val jointByRequest: Boolean = false,
+    @get:JvmName("getIsForum")
+    val isForum: Boolean = false,
+    val activeUserNames: List<String> = listOf(),
+    // Since Telegram Bot Api 6.3
+    val emojiStatusCustomEmojiId: String? = null
 )

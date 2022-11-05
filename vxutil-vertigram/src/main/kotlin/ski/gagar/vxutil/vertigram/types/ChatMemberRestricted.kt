@@ -17,7 +17,9 @@ data class ChatMemberRestricted(
     val canAddWebPagePreviews: Boolean = false,
     @JsonProperty("untilDate")
     @Deprecated("Access through untilDate instead")
-    val untilDateRaw: Instant
+    val untilDateRaw: Instant,
+    // Since Telegram Bot Api 6.3
+    val canManageTopics: Boolean = false
 
 ) : ChatMember {
     override val status: ChatMemberStatus = ChatMemberStatus.RESTRICTED

@@ -17,7 +17,9 @@ data class ChatMemberAdministrator(
     val canPostMessages: Boolean = false,
     val canEditMessages: Boolean = false,
     val canPinMessages: Boolean = false,
-    val customTitle: String? = null
+    val customTitle: String? = null,
+    // Since Telegram Bot Api 6.3
+    val canManageTopics: Boolean = false
 ) : ChatMember {
     override val status: ChatMemberStatus = ChatMemberStatus.ADMINISTRATOR
     @JsonIgnore

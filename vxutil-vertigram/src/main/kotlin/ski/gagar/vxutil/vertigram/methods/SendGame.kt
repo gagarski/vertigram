@@ -12,5 +12,7 @@ data class SendGame(
     val protectContent: Boolean = false,
     val replyToMessageId: Long? = null,
     val allowSendingWithoutReply: Boolean = false,
-    val replyMarkup: ReplyMarkup? = null
+    val replyMarkup: ReplyMarkup? = null,
+    // Since Telegram Bot Api 6.3
+    val messageThreadId: Long? = null
 ) : JsonTgCallable<Boolean>()

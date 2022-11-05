@@ -10,5 +10,7 @@ data class ForwardMessage(
     val fromChatId: ChatId,
     val messageId: Long,
     val disableNotification: Boolean = false,
-    val protectContent: Boolean = false
+    val protectContent: Boolean = false,
+    // Since Telegram Bot Api 6.3
+    val messageThreadId: Long? = null
 ) : JsonTgCallable<Message>()

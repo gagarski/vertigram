@@ -6,6 +6,9 @@ data class Chat(
     val title: String? = null,
     val username: String? = null,
     val firstName: String? = null,
-    val lastName: String? = null
+    val lastName: String? = null,
+    // Since Telegram Bot Api 6.3
+    @get:JvmName("getIsForum")
+    val isForum: Boolean = false
 )
 

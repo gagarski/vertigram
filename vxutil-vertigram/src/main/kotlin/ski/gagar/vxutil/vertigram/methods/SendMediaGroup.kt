@@ -15,4 +15,6 @@ data class SendMediaGroup(
     val protectContent: Boolean = false,
     val replyToMessageId: Long? = null,
     val allowSendingWithoutReply: Boolean = false,
+    // Since Telegram Bot Api 6.3
+    val messageThreadId: Long? = null,
 ) : MultipartTgCallable<List<Message>>()

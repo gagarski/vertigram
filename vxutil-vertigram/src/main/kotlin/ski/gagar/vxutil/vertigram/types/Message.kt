@@ -4,6 +4,7 @@ import java.time.Instant
 
 data class Message(
     val messageId: Long,
+    val messageThreadId: Long? = null,
     val from: User? = null,
     val senderChat: Chat? = null,
     val date: Instant,
@@ -14,6 +15,7 @@ data class Message(
     val forwardSignature: String? = null,
     val forwardSenderName: String? = null,
     val forwardDate: Instant? = null,
+    @get:JvmName("getIsAutomaticForward")
     val isAutomaticForward: Boolean = false,
     val replyToMessage: Message? = null,
     val editDate: Instant? = null,
@@ -60,6 +62,10 @@ data class Message(
     val videoChatEnded: VideoChatEnded? = null,
     val videoChatParticipantsInvited: VideoChatParticipantsInvited? = null,
     val webAppData: WebAppData? = null,
-    val replyMarkup: InlineKeyboardMarkup? = null
-
+    val replyMarkup: InlineKeyboardMarkup? = null,
+    @get:JvmName("getIsTopicMessage")
+    val isTopicMessage: Boolean = false,
+    val forumTopicCreated: ForumTopicCreated? = null,
+    val forumTopicClosed: ForumTopicClosed? = null,
+    val forumTopicReopened: ForumTopicReopened? = null,
 )

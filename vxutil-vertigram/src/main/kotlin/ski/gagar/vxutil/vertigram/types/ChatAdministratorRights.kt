@@ -13,4 +13,6 @@ data class ChatAdministratorRights(
     val canPostMessages: Boolean = false,
     val canEditMessages: Boolean = false,
     val canPinMessages: Boolean = false,
+    // Since Telegram Bot Api 6.3
+    val canManageTopics: Boolean = false
 )
