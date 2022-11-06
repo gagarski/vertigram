@@ -1,6 +1,8 @@
 package ski.gagar.vxutil.vertigram.methods
 
 import ski.gagar.vertigram.annotations.TgMethod
+import ski.gagar.vxutil.vertigram.throttling.HasChatId
+import ski.gagar.vxutil.vertigram.throttling.Throttled
 import ski.gagar.vxutil.vertigram.types.ChatId
 import ski.gagar.vxutil.vertigram.types.Message
 import ski.gagar.vxutil.vertigram.types.MessageEntity
@@ -11,8 +13,9 @@ import java.time.Duration
 import java.time.Instant
 
 @TgMethod
+@Throttled
 data class SendPoll(
-    val chatId: ChatId,
+    override val chatId: ChatId,
     val question: String,
     val options: List<String>,
     @get:JvmName("getIsAnonymous")
@@ -34,7 +37,7 @@ data class SendPoll(
     val replyMarkup: ReplyMarkup? = null,
     // Since Telegram Bot Api 6.3
     val messageThreadId: Long? = null
-) : JsonTgCallable<Message>() {
+) : JsonTgCallable<Message>(), HasChatId {
 
     object Defaults {
         const val isAnonymous = true

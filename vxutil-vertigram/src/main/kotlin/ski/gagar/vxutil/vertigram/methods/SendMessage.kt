@@ -1,6 +1,8 @@
 package ski.gagar.vxutil.vertigram.methods
 
 import ski.gagar.vertigram.annotations.TgMethod
+import ski.gagar.vxutil.vertigram.throttling.HasChatId
+import ski.gagar.vxutil.vertigram.throttling.Throttled
 import ski.gagar.vxutil.vertigram.types.ChatId
 import ski.gagar.vxutil.vertigram.types.Message
 import ski.gagar.vxutil.vertigram.types.MessageEntity
@@ -8,8 +10,9 @@ import ski.gagar.vxutil.vertigram.types.ParseMode
 import ski.gagar.vxutil.vertigram.types.ReplyMarkup
 
 @TgMethod
+@Throttled
 data class SendMessage(
-    val chatId: ChatId,
+    override val chatId: ChatId,
     val text: String,
     val parseMode: ParseMode? = null,
     val entities: List<MessageEntity>? = null,
@@ -21,4 +24,4 @@ data class SendMessage(
     val replyMarkup: ReplyMarkup? = null,
     // Since Telegram Bot Api 6.3
     val messageThreadId: Long? = null
-) : JsonTgCallable<Message>()
+) : JsonTgCallable<Message>(), HasChatId

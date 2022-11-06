@@ -1,11 +1,12 @@
 package ski.gagar.vxutil.vertigram.methods
 
 import ski.gagar.vertigram.annotations.TgMethod
+import ski.gagar.vxutil.vertigram.throttling.HasChatId
 import ski.gagar.vxutil.vertigram.types.ChatId
 
 @TgMethod
 data class PromoteChatMember(
-    val chatId: ChatId,
+    override val chatId: ChatId,
     val userId: Long,
     @get:JvmName("getIsAnonymous")
     val isAnonymous: Boolean = false,
@@ -21,4 +22,4 @@ data class PromoteChatMember(
     val canPinMessages: Boolean = false,
     // Since Telegram Bot Api 6.3
     val canManageTopics: Boolean = false
-) : JsonTgCallable<Boolean>()
+) : JsonTgCallable<Boolean>(), HasChatId

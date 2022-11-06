@@ -1,14 +1,18 @@
 package ski.gagar.vxutil.vertigram.methods
 
 import ski.gagar.vertigram.annotations.TgMethod
+import ski.gagar.vxutil.vertigram.throttling.HasChatId
+import ski.gagar.vxutil.vertigram.throttling.Throttled
 import ski.gagar.vxutil.vertigram.types.ChatId
+import ski.gagar.vxutil.vertigram.types.DiceEmoji
 import ski.gagar.vxutil.vertigram.types.Message
 import ski.gagar.vxutil.vertigram.types.ReplyMarkup
 
 @TgMethod
+@Throttled
 data class SendDice(
-    val chatId: ChatId,
-    val emoji: String? = null,
+    override val chatId: ChatId,
+    val emoji: DiceEmoji? = null,
     val disableNotification: Boolean = false,
     val protectContent: Boolean = false,
     val replyToMessageId: Long? = null,
@@ -16,9 +20,4 @@ data class SendDice(
     val replyMarkup: ReplyMarkup? = null,
     // Since Telegram Bot Api 6.3
     val messageThreadId: Long? = null
-) : JsonTgCallable<Message>() {
-    companion object {
-        const val CUBE_EMOJI = "\uD83C\uDFB2"
-        const val DART_EMOJI = "\uD83C\uDFAF"
-    }
-}
+) : JsonTgCallable<Message>(), HasChatId
