@@ -19,7 +19,7 @@ class DirectTelegram(
     token: String,
     vertx: Vertx,
     private val options: Options = Options()
-) : Telegram(), Closeable {
+) : AbstractTelegram(), Closeable {
     @PublishedApi
     internal val impl: TelegramImpl =
         TelegramImpl(

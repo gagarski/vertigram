@@ -20,7 +20,7 @@ class TgVTelegram(
     private val vertx: Vertx,
     private val baseAddress: String = TelegramVerticle.Config.DEFAULT_BASE_ADDRESS,
     private val timeoutGap: Duration = Duration.ofSeconds(5)
-) : Telegram() {
+) : AbstractTelegram() {
 
     private lateinit var longPollDeliveryOptions: DeliveryOptions
 
