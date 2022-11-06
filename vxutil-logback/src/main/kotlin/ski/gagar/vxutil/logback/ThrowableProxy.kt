@@ -40,6 +40,8 @@ internal class IThrowableProxyImpl(private val p: ThrowableProxy) : IThrowablePr
 
     override fun getSuppressed(): Array<IThrowableProxy>? =
         p.suppressed?.asSequence()?.map { IThrowableProxyImpl(it) }?.toList()?.toTypedArray()
+
+    override fun isCyclic(): Boolean = false
 }
 
 fun ThrowableProxy.asString(): String = ThrowableProxyUtil.asString(IThrowableProxyImpl(this))
