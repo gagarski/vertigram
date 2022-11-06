@@ -6,12 +6,14 @@ import io.netty.handler.codec.http.HttpHeaderValues
 import io.vertx.core.Vertx
 import io.vertx.core.file.OpenOptions
 import io.vertx.core.net.ProxyOptions
+import io.vertx.ext.web.client.HttpResponse
 import io.vertx.ext.web.client.WebClient
 import io.vertx.ext.web.client.WebClientOptions
 import io.vertx.ext.web.codec.BodyCodec
 import io.vertx.kotlin.coroutines.await
 import ski.gagar.vxutil.lazy
 import ski.gagar.vxutil.logger
+import ski.gagar.vxutil.toMap
 import ski.gagar.vxutil.uncheckedCast
 import ski.gagar.vxutil.vertigram.methods.JsonTgCallable
 import ski.gagar.vxutil.vertigram.methods.MultipartTgCallable
@@ -99,10 +101,10 @@ internal class TelegramImpl(
         type: JavaType,
         obj: Req? = null,
         longPoll: Boolean = false
-    ): Pair<Int, Any?> {
+    ): Pair<HttpResponse<*>, Any?> {
         logger.lazy.trace { "Calling $method with $obj" }
         val resp = client(method, longPoll, false).sendJsonAwait(obj, mapper)
-        return resp.statusCode() to resp.bodyAsJson<Any>(type, mapper).also {
+        return resp to resp.bodyAsJson<Any>(type, mapper).also {
             logger.lazy.trace { "Received response $it" }
         }
     }
@@ -113,10 +115,10 @@ internal class TelegramImpl(
         type: JavaType,
         form: MultipartForm,
         longPoll: Boolean = false
-    ): Pair<Int, Any?> {
+    ): Pair<HttpResponse<*>, Any?> {
         logger.lazy.trace { "Calling $method with $form (form/multipart)" }
         val resp = client(method, longPoll, !form.parts.all { it is FieldPart }).sendMultipartForm(form)
-        return resp.statusCode() to resp.bodyAsJson<Any>(type, mapper).also {
+        return resp to resp.bodyAsJson<Any>(type, mapper).also {
             logger.lazy.trace { "Received response $it" }
         }
     }
@@ -131,7 +133,7 @@ internal class TelegramImpl(
         method: String,
         obj: Req? = null,
         longPoll: Boolean = false
-    ): Pair<Int, Wrapper<Resp>> =
+    ): Pair<HttpResponse<*>, Wrapper<Resp>> =
         callForObject(
             method,
             mapper.typeFactory.constructParametricType(Wrapper::class.java, respType),
@@ -145,7 +147,7 @@ internal class TelegramImpl(
         method: String,
         form: MultipartForm,
         longPoll: Boolean = false
-    ): Pair<Int, Wrapper<Resp>> =
+    ): Pair<HttpResponse<*>, Wrapper<Resp>> =
         callForObjectMultipart(
             method,
             mapper.typeFactory.constructParametricType(Wrapper::class.java, respType),
@@ -159,10 +161,11 @@ internal class TelegramImpl(
         obj: Req,
         longPoll: Boolean = false
     ): Resp {
-        val (status, wrapper) = callForWrapper<Req, Resp>(respType, method, obj, longPoll)
+        val (response, wrapper) = callForWrapper<Req, Resp>(respType, method, obj, longPoll)
 
-        if (status != 200 || !wrapper.ok)
-            throw TelegramCallException.create(status, wrapper.ok, wrapper.description, obj)
+        if (response.statusCode() != 200 || !wrapper.ok)
+            throw TelegramCallException.create(response.statusCode(), wrapper.ok, wrapper.description, obj,
+                response.headers().toMap())
 
         return wrapper.result!!
     }
@@ -173,14 +176,15 @@ internal class TelegramImpl(
         mpc: Req,
         longPoll: Boolean = false
     ): Resp {
-        val (status, wrapper) = callForWrapperMultipart<Resp>(
+        val (response, wrapper) = callForWrapperMultipart<Resp>(
             respType,
             method,
             mapperMp.toMultipart(mpc),
             longPoll)
 
-        if (status != 200 || !wrapper.ok)
-            throw TelegramCallException.create(status, wrapper.ok, wrapper.description, mpc)
+        if (response.statusCode() != 200 || !wrapper.ok)
+            throw TelegramCallException.create(response.statusCode(), wrapper.ok, wrapper.description, mpc,
+                response.headers().toMap())
 
         return wrapper.result!!
     }

@@ -6,7 +6,6 @@ import io.vertx.core.eventbus.DeliveryOptions
 import ski.gagar.vxutil.ignore
 import ski.gagar.vxutil.jackson.ReplyException
 import ski.gagar.vxutil.jackson.requestJsonAwait
-import ski.gagar.vxutil.vertigram.methods.GetUpdates
 import ski.gagar.vxutil.vertigram.methods.TgCallable
 import ski.gagar.vxutil.vertigram.types.Update
 import ski.gagar.vxutil.vertigram.types.UpdateType
@@ -41,9 +40,9 @@ class TgVTelegram(
         try {
             @Suppress("DEPRECATION")
             vertx.eventBus().requestJsonAwait(
-                TelegramVerticle.Config.callAddress(GetUpdates::class.java, baseAddress),
+                TelegramVerticle.Config.callAddress(ski.gagar.vxutil.vertigram.methods.GetUpdates::class.java, baseAddress),
                 TelegramVerticle.GetUpdates(offset, limit, allowedUpdates),
-                TypeHints.returnTypesByClass.getOrAssert(GetUpdates::class.java),
+                TypeHints.returnTypesByClass.getOrAssert(ski.gagar.vxutil.vertigram.methods.GetUpdates::class.java),
                 options = getLongPollDeliveryOptions()
             )
         } catch (ex: ReplyException) {
@@ -73,4 +72,6 @@ class TgVTelegram(
             ex.unwrap()
         }
     }
+
+    override fun close() {}
 }

@@ -10,7 +10,6 @@ import ski.gagar.vxutil.vertigram.types.MalformedUpdate
 import ski.gagar.vxutil.vertigram.types.ParsedUpdate
 import ski.gagar.vxutil.vertigram.types.Update
 import ski.gagar.vxutil.vertigram.types.UpdateType
-import java.io.Closeable
 import java.time.Duration
 
 private val LONG_POLL_DEFAULT_GAP: Duration = Duration.ofSeconds(5)
@@ -19,7 +18,7 @@ class DirectTelegram(
     token: String,
     vertx: Vertx,
     private val options: Options = Options()
-) : AbstractTelegram(), Closeable {
+) : AbstractTelegram() {
     @PublishedApi
     internal val impl: TelegramImpl =
         TelegramImpl(

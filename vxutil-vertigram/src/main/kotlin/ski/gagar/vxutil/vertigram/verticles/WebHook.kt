@@ -55,7 +55,7 @@ class WebHook : ErrorLoggingCoroutineVerticle() {
                 context.response().end()
                 return@handler
             }
-            val json = context.bodyAsJson
+            val json = context.body().asJsonObject()
             val req = try {
                 json.mapTo(
                     ParsedUpdate::class.java,

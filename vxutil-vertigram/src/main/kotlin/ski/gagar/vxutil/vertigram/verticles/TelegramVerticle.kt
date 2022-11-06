@@ -5,9 +5,12 @@ import ski.gagar.vxutil.jackson.mapTo
 import ski.gagar.vxutil.jackson.suspendJsonConsumer
 import ski.gagar.vxutil.use
 import ski.gagar.vxutil.vertigram.client.DirectTelegram
+import ski.gagar.vxutil.vertigram.client.Telegram
 import ski.gagar.vxutil.vertigram.methods.JsonTgCallable
 import ski.gagar.vxutil.vertigram.methods.MultipartTgCallable
 import ski.gagar.vxutil.vertigram.methods.TgCallable
+import ski.gagar.vxutil.vertigram.throttling.ThrottlingOptions
+import ski.gagar.vxutil.vertigram.throttling.ThrottlingTelegram
 import ski.gagar.vxutil.vertigram.types.UpdateList
 import ski.gagar.vxutil.vertigram.types.UpdateType
 import ski.gagar.vxutil.vertigram.util.TypeHints
@@ -20,14 +23,20 @@ class TelegramVerticle : ErrorLoggingCoroutineVerticle() {
     private val typedConfig by lazy {
         config.mapTo<Config>()
     }
-    private lateinit var tg: DirectTelegram
+    private lateinit var tg: Telegram
 
     override suspend fun start() {
-        tg = DirectTelegram(
+        val directTg = DirectTelegram(
             typedConfig.token,
             vertx,
             typedConfig.tgOptions
         )
+        val throttling = typedConfig.throttling
+        tg = if (null == throttling) {
+            directTg
+        } else {
+            ThrottlingTelegram(vertx, directTg, throttling)
+        }
 
         @Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
         suspendJsonConsumer(
@@ -65,6 +74,10 @@ class TelegramVerticle : ErrorLoggingCoroutineVerticle() {
         suspendJsonConsumer(typedConfig.downloadFileAddress(), function = ::handleDownloadFile)
     }
 
+    override suspend fun stop() {
+        tg.close()
+    }
+
     private suspend fun handleGetUpdates(msg: GetUpdates) =
         UpdateList(tg.getUpdates(limit = msg.limit, offset = msg.offset, allowedUpdates = msg.allowedUpdates))
 
@@ -95,7 +108,8 @@ class TelegramVerticle : ErrorLoggingCoroutineVerticle() {
     data class Config(
         val token: String,
         val baseAddress: String = DEFAULT_BASE_ADDRESS,
-        val tgOptions: DirectTelegram.Options = DirectTelegram.Options()
+        val tgOptions: DirectTelegram.Options = DirectTelegram.Options(),
+        val throttling: ThrottlingOptions? = ThrottlingOptions()
     ) {
 
         internal fun callAddress(methodName: String, requestType: RequestType) =

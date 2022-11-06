@@ -12,7 +12,7 @@ internal fun telegramJsonMapper(): ObjectMapper = ObjectMapper()
     .enable(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES)
     .setSerializationInclusion(JsonInclude.Include.NON_NULL)
     .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-    .registerModule(KotlinModule())
+    .registerModule(KotlinModule.Builder().build())
     .registerModule(TelegramModule)
 
 internal val TELEGRAM_JSON_MAPPER: ObjectMapper =

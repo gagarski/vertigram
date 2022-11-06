@@ -17,4 +17,4 @@ package ski.gagar.vertigram.annotations
  *  generatable.
  */
 @Retention(AnnotationRetention.SOURCE)
-annotation class TgMethod
+annotation class TgMethod(val kotlinMethodName: String = "")

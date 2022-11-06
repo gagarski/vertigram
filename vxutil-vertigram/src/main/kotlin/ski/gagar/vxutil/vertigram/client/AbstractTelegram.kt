@@ -1,6 +1,5 @@
 package ski.gagar.vxutil.vertigram.client
 
-import com.fasterxml.jackson.databind.JavaType
 import com.fasterxml.jackson.databind.type.TypeFactory
 import ski.gagar.vxutil.vertigram.getFile
 import ski.gagar.vxutil.vertigram.methods.TgCallable
@@ -14,11 +13,6 @@ abstract class AbstractTelegram : Telegram {
 
     override suspend fun <T> call(callable: TgCallable<T>): T =
         call(TypeHints.returnTypesByClass.getOrAssert(callable.javaClass), callable)
-
-    abstract suspend fun <T> call(
-        type: JavaType,
-        callable: TgCallable<T>
-    ): T
 
     override suspend fun downloadFileById(id: String, outputPath: String) {
         val path = getFile(id).filePath ?: throw TelegramNoFilePathException(id)

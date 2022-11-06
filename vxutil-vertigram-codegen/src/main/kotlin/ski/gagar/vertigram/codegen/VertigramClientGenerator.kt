@@ -30,25 +30,23 @@ class VertigramClientGenerator : AbstractProcessor() {
         val ts = roundEnv.getElementsAnnotatedWith(TgMethod::class.java)
             .asSequence()
             .filter { it.kind == ElementKind.CLASS }
-            .filter{ it.getAnnotation(Metadata::class.java) != null }
-            .map { it as TypeElement }
+            .filter { it.getAnnotation(Metadata::class.java) != null }
+            .map { it as TypeElement to it.getAnnotation(TgMethod::class.java) }
             .toList()
         val inspector = ElementsClassInspector.create(processingEnv.elementUtils, processingEnv.typeUtils)
 
         val classMetadata = ts.mapNotNull {
-            val elem = it as? TypeElement ?: return@mapNotNull null
-            elem.toTypeSpec(inspector) to elem.asClassName()
+            val (te, tgMethod) = it
+            val elem = te as? TypeElement ?: return@mapNotNull null
+            Triple(te.toTypeSpec(inspector), elem.asClassName(), tgMethod)
         }
+        if (classMetadata.isEmpty()) return true
 
-        if (classMetadata.isEmpty()) {
-            return true
-        }
-
-        val methods = classMetadata.mapNotNull { (clazz, className) ->
+        val methods = classMetadata.mapNotNull { (clazz, className, tgMethod) ->
             if (clazz.kind == TypeSpec.Kind.OBJECT) {
-                objectToMethod(clazz, className)
+                objectToMethod(clazz, className, tgMethod)
             } else {
-                classToMethod(clazz, className)
+                classToMethod(clazz, className, tgMethod)
             }
         }
 
@@ -61,8 +59,12 @@ class VertigramClientGenerator : AbstractProcessor() {
         return true
     }
 
-    fun objectToMethod(clazz: TypeSpec, className: ClassName): FunSpec? {
-        val name = clazz.name?.replaceFirstChar { it.lowercase(Locale.getDefault()) } ?: return null
+    fun objectToMethod(clazz: TypeSpec, className: ClassName, tgMethod: TgMethod?): FunSpec? {
+        val kotlinMethodName = tgMethod?.kotlinMethodName
+        val declName = if (!kotlinMethodName.isNullOrEmpty()) kotlinMethodName else null
+        val name = declName
+            ?: clazz.name?.replaceFirstChar { it.lowercase(Locale.getDefault()) }
+            ?: return null
         return FunSpec.builder(name)
             .addModifiers(KModifier.INLINE, KModifier.SUSPEND)
             .receiver(ClassName("ski.gagar.vxutil.vertigram.client", "Telegram"))
@@ -71,11 +73,15 @@ class VertigramClientGenerator : AbstractProcessor() {
             .build()
     }
 
-    fun classToMethod(clazz: TypeSpec, className: ClassName): FunSpec? {
+    fun classToMethod(clazz: TypeSpec, className: ClassName, tgMethod: TgMethod?): FunSpec? {
         val constructor = clazz.primaryConstructor ?: return null
-        val name = clazz.name?.replaceFirstChar { it.lowercase(Locale.getDefault()) } ?: return null
-
-        val defaults = clazz.typeSpecs?.firstOrNull { it.kind == TypeSpec.Kind.OBJECT && it.name == "Defaults" }
+        val kotlinMethodName = tgMethod?.kotlinMethodName
+        val declName = if (!kotlinMethodName.isNullOrEmpty()) kotlinMethodName else null
+        val name =
+            declName
+                ?: clazz.name?.replaceFirstChar { it.lowercase(Locale.getDefault()) }
+                ?: return null
+        val defaults = clazz.typeSpecs.firstOrNull { it.kind == TypeSpec.Kind.OBJECT && it.name == "Defaults" }
 
         return FunSpec.builder(name)
             .addModifiers(KModifier.INLINE, KModifier.SUSPEND)
