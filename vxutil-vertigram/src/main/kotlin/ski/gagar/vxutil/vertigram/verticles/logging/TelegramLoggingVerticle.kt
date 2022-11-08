@@ -1,5 +1,6 @@
 package ski.gagar.vxutil.vertigram.verticles.logging
 
+import ski.gagar.vxutil.CoroTimerHandle
 import ski.gagar.vxutil.ErrorLoggingCoroutineVerticle
 import ski.gagar.vxutil.jackson.mapTo
 import ski.gagar.vxutil.jackson.suspendJsonConsumer
@@ -26,13 +27,17 @@ class TelegramLoggingVerticle : ErrorLoggingCoroutineVerticle() {
     private lateinit var tg: Telegram
 
     private var acc: MutableMap<Level, Int>? = null
-
+    private var timer: CoroTimerHandle? = null
     override suspend fun start() {
         tg = DirectTelegram(typedConf.token, vertx, typedConf.tgOptions)
 
         suspendJsonConsumer<LogEvent, Unit>(typedConf.listenAddress) {
             handleLogEvent(it)
         }
+    }
+
+    override suspend fun stop() {
+        cancelTimer()
     }
 
     private fun String.ellipsize(max: Int) = when {
@@ -185,9 +190,13 @@ class TelegramLoggingVerticle : ErrorLoggingCoroutineVerticle() {
 
         acc = sortedMapOf()
 
-        setTimerCoro(period.toMillis()) {
+        timer = setTimerCoro(period.toMillis()) {
             flushAcc()
         }
+    }
+
+    private fun cancelTimer() {
+        timer?.cancel()
     }
 
     private fun accumulate(log: LogEvent) {

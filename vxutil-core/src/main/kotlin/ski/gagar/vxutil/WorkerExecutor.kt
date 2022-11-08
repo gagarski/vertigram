@@ -35,7 +35,7 @@ private class WorkerExecutorServiceScheduledFuture(
         return null
     }
 
-    override fun get(timeout: Long, unit: TimeUnit?): Any? {
+    override fun get(timeout: Long, unit: TimeUnit): Any? {
         return null
     }
 

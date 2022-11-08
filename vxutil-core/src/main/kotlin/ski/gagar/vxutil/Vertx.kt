@@ -7,10 +7,14 @@ import io.vertx.core.json.JsonObject
 import io.vertx.kotlin.coroutines.CoroutineVerticle
 import io.vertx.kotlin.coroutines.dispatcher
 import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import org.slf4j.Logger
 import kotlin.coroutines.CoroutineContext
 import kotlin.system.exitProcess
@@ -27,12 +31,27 @@ fun <T> Vertx.runBlocking(block: suspend Vertx.() -> T) {
 }
 
 
-fun CoroutineVerticle.setTimerCoro(millis: Long, handler: suspend (timerId: Long) -> Unit) =
-    this.vertx.setTimer(millis) { timerId ->
-        launch {
-            handler(timerId)
-        }
+data class CoroTimerHandle(val vertx: Vertx, val timerId: Long, var job: Job? = null) {
+    fun cancel() {
+        vertx.cancelTimer(timerId)
+        job?.cancel()
     }
+}
+private fun Long.coroTimerHandle(vertx: Vertx) = CoroTimerHandle(vertx, this)
+fun CoroutineVerticle.setTimerCoro(millis: Long, handler: suspend (timerId: Long) -> Unit): CoroTimerHandle {
+    var handle: CoroTimerHandle? = null
+
+    handle = this.vertx.setTimer(millis) { timerId ->
+        handle!!.job = launch {
+            if (!isActive) return@launch
+            withContext(NonCancellable) {
+                handler(timerId)
+            }
+        }
+    }.coroTimerHandle(vertx)
+    return handle
+}
+
 
 suspend fun <T> retrying(
     shouldStop: (Int) -> Boolean = { it >= 10 },
