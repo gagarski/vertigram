@@ -1,6 +1,6 @@
 package ski.gagar.vxutil.vertigram.verticles.logging
 
-import ski.gagar.vxutil.CoroTimerHandle
+import kotlinx.coroutines.Job
 import ski.gagar.vxutil.ErrorLoggingCoroutineVerticle
 import ski.gagar.vxutil.jackson.mapTo
 import ski.gagar.vxutil.jackson.suspendJsonConsumer
@@ -8,7 +8,7 @@ import ski.gagar.vxutil.logback.Level
 import ski.gagar.vxutil.logback.LogEvent
 import ski.gagar.vxutil.logback.asString
 import ski.gagar.vxutil.logback.bypassEventBusAppenderSuspend
-import ski.gagar.vxutil.setTimerCoro
+import ski.gagar.vxutil.setTimer
 import ski.gagar.vxutil.vertigram.client.DirectTelegram
 import ski.gagar.vxutil.vertigram.client.THIN_POOLS
 import ski.gagar.vxutil.vertigram.client.Telegram
@@ -27,7 +27,7 @@ class TelegramLoggingVerticle : ErrorLoggingCoroutineVerticle() {
     private lateinit var tg: Telegram
 
     private var acc: MutableMap<Level, Int>? = null
-    private var timer: CoroTimerHandle? = null
+    private var timer: Job? = null
     override suspend fun start() {
         tg = DirectTelegram(typedConf.token, vertx, typedConf.tgOptions)
 
@@ -190,7 +190,7 @@ class TelegramLoggingVerticle : ErrorLoggingCoroutineVerticle() {
 
         acc = sortedMapOf()
 
-        timer = setTimerCoro(period.toMillis()) {
+        timer = setTimer(period) {
             flushAcc()
         }
     }
