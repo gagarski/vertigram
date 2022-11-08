@@ -5,7 +5,7 @@
     <parent>
         <groupId>ski.gagar.vxutil</groupId>
         <artifactId>vxutil-bom-internal</artifactId>
-        <version>1.0.0-alpha24</version>
+        <version>1.0.0-alpha25-SNAPSHOT</version>
         <relativePath>../vxutil-bom-internal</relativePath>
     </parent>
 
@@ -92,7 +92,7 @@
         <dependency>
             <groupId>ski.gagar.vxutil</groupId>
             <artifactId>vxutil-core</artifactId>
-            <version>1.0.0-alpha24</version>
+            <version>1.0.0-alpha25-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>ski.gagar.vxutil</groupId>
@@ -109,7 +109,7 @@
         <dependency>
             <groupId>ski.gagar.vxutil</groupId>
             <artifactId>vxutil-vertigram-annotations</artifactId>
-            <version>1.0.0-alpha24</version>
+            <version>1.0.0-alpha25-SNAPSHOT</version>
         </dependency>
     </dependencies>
     <build>
@@ -121,7 +121,7 @@
                     <dependency>
                         <groupId>ski.gagar.vxutil</groupId>
                         <artifactId>vxutil-vertigram-codegen</artifactId>
-                        <version>1.0.0-alpha24</version>
+                        <version>1.0.0-alpha25-SNAPSHOT</version>
                     </dependency>
                 </dependencies>
                 <executions>
