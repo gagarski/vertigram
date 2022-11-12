@@ -1,7 +1,7 @@
 package ski.gagar.vxutil.vertigram.verticles.logging
 
 import kotlinx.coroutines.Job
-import ski.gagar.vxutil.ErrorLoggingCoroutineVerticle
+import ski.gagar.vxutil.jackson.CONSUMER_ADDRESS_MDC
 import ski.gagar.vxutil.jackson.mapTo
 import ski.gagar.vxutil.jackson.suspendJsonConsumer
 import ski.gagar.vxutil.logback.Level
@@ -9,6 +9,8 @@ import ski.gagar.vxutil.logback.LogEvent
 import ski.gagar.vxutil.logback.asString
 import ski.gagar.vxutil.logback.bypassEventBusAppenderSuspend
 import ski.gagar.vxutil.setTimer
+import ski.gagar.vxutil.verticles.ErrorLoggingCoroutineVerticle
+import ski.gagar.vxutil.verticles.Named
 import ski.gagar.vxutil.vertigram.client.DirectTelegram
 import ski.gagar.vxutil.vertigram.client.THIN_POOLS
 import ski.gagar.vxutil.vertigram.client.Telegram
@@ -81,8 +83,29 @@ class TelegramLoggingVerticle : ErrorLoggingCoroutineVerticle() {
                         +"Thread: "
                     }
                     +log.threadName.ellipsize(LINE_MAX_LENGTH)
-
                     br()
+
+                    val verticleName = log.mdcMap[Named.VERTICLE_NAME_MDC]
+
+                    if (null != verticleName) {
+                        b {
+                            +"Verticle: "
+                        }
+                        +verticleName.ellipsize(LINE_MAX_LENGTH)
+                        br()
+                    }
+
+                    val address = log.mdcMap[CONSUMER_ADDRESS_MDC]
+
+                    if (null != address) {
+                        b {
+                            +"Address: "
+                        }
+                        +address.ellipsize(LINE_MAX_LENGTH)
+                        br()
+                    }
+
+
                     br()
 
                     stackTraceLines?.let {

@@ -1,9 +1,9 @@
 package ski.gagar.vxutil.vertigram.verticles
 
-import ski.gagar.vxutil.ErrorLoggingCoroutineVerticle
 import ski.gagar.vxutil.jackson.mapTo
 import ski.gagar.vxutil.jackson.suspendJsonConsumer
 import ski.gagar.vxutil.use
+import ski.gagar.vxutil.verticles.ErrorLoggingCoroutineVerticle
 import ski.gagar.vxutil.vertigram.client.DirectTelegram
 import ski.gagar.vxutil.vertigram.client.Telegram
 import ski.gagar.vxutil.vertigram.methods.JsonTgCallable

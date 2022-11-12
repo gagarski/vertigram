@@ -7,6 +7,7 @@ data class LogEvent(
     val threadName: String,
     val message: String,
     val loggerName: String,
+    val mdcMap: Map<String, String>,
     val throwableProxy: ThrowableProxy? = null
 )
 
@@ -15,5 +16,6 @@ fun LogEvent(orig: ILoggingEvent): LogEvent = LogEvent(
     threadName = orig.threadName,
     message = orig.message,
     loggerName = orig.loggerName,
+    mdcMap = orig.mdcPropertyMap.toMutableMap(),
     throwableProxy = ThrowableProxy(orig.throwableProxy)
 )

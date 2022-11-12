@@ -1,7 +1,10 @@
 package ski.gagar.vxutil
 
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.slf4j.MDCContext
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.slf4j.MDC
 import java.lang.invoke.MethodHandles
 
 val logger: Logger
@@ -55,6 +58,31 @@ value class LazyLogger(@PublishedApi internal val delegate: Logger) {
                 delegate.error(msgProvider())
             else
                 delegate.error(msgProvider(), throwable)
+        }
+    }
+}
+
+fun CoroutineScope.coroMdcWith(vararg extra: Pair<String, String>) =
+    (coroutineContext[MDCContext]?.contextMap ?: mapOf()).toMutableMap().apply {
+        putAll(extra)
+    }
+
+
+inline fun withExtraMdc(extra: Map<String, String>, block: () -> Unit) {
+    val old = extra.keys.asSequence().map { it to MDC.get(it) }.toMap()
+
+    for ((k, v) in extra) {
+        MDC.put(k, v)
+    }
+    try {
+        block()
+    } finally {
+        for ((k, v) in old) {
+            if (v != null) {
+                MDC.put(k, v)
+            } else {
+                MDC.remove(k)
+            }
         }
     }
 }

@@ -4,7 +4,7 @@ import io.netty.handler.codec.http.HttpResponseStatus
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.handler.BodyHandler
 import kotlinx.coroutines.delay
-import ski.gagar.vxutil.ErrorLoggingCoroutineVerticle
+import ski.gagar.vxutil.verticles.ErrorLoggingCoroutineVerticle
 import ski.gagar.vxutil.jackson.mapTo
 import ski.gagar.vxutil.jackson.publishJson
 import ski.gagar.vxutil.lazy

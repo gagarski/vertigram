@@ -2,12 +2,12 @@ package ski.gagar.vxutil.vertigram.verticles
 
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import ski.gagar.vxutil.ErrorLoggingCoroutineVerticle
 import ski.gagar.vxutil.jackson.mapTo
 import ski.gagar.vxutil.jackson.publishJson
 import ski.gagar.vxutil.lazy
 import ski.gagar.vxutil.logger
 import ski.gagar.vxutil.retrying
+import ski.gagar.vxutil.verticles.ErrorLoggingCoroutineVerticle
 import ski.gagar.vxutil.vertigram.client.Telegram
 import ski.gagar.vxutil.vertigram.client.TgVTelegram
 import ski.gagar.vxutil.vertigram.deleteWebhook

@@ -14,6 +14,10 @@ import io.vertx.core.json.jackson.DatabindCodec
 import io.vertx.kotlin.coroutines.CoroutineVerticle
 import io.vertx.kotlin.coroutines.await
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.slf4j.MDCContext
+import ski.gagar.vxutil.coroMdcWith
+import ski.gagar.vxutil.verticles.Named
+import ski.gagar.vxutil.withExtraMdc
 
 interface BadRequest
 
@@ -151,14 +155,20 @@ inline fun <Request, Result> Verticle.jsonConsumer(
     requestJavaType: JavaType = TYPE_FACTORY.constructType(requestClass),
     crossinline function: (Request) -> Result
 ) : MessageConsumer<JsonObject> = vertx.eventBus().consumer(address) { msg ->
-    val reqW: RequestWrapper<Request> =
-        msg.body().mapTo(TYPE_FACTORY.constructParametricType(RequestWrapper::class.java, requestJavaType))
-    try {
-        msg.replyWithSuccess(resultClass, function(reqW.request), replyOptions)
-    } catch (t: Throwable) {
-        msg.replyWithThrowable(t, replyOptions)
-        if (t !is BadRequest || !msg.isSend) {
-            throw t
+    val mdcMap = sequence {
+        if (this is Named) yield(Named.VERTICLE_NAME_MDC to name)
+        yield(CONSUMER_ADDRESS_MDC to address)
+    }.toMap()
+    withExtraMdc(mdcMap) {
+        val reqW: RequestWrapper<Request> =
+            msg.body().mapTo(TYPE_FACTORY.constructParametricType(RequestWrapper::class.java, requestJavaType))
+        try {
+            msg.replyWithSuccess(resultClass, function(reqW.request), replyOptions)
+        } catch (t: Throwable) {
+            msg.replyWithThrowable(t, replyOptions)
+            if (t !is BadRequest || !msg.isSend) {
+                throw t
+            }
         }
     }
 }
@@ -186,7 +196,7 @@ inline fun <Request, Result>
     requestJavaType: JavaType = TYPE_FACTORY.constructType(requestClass),
     crossinline function: suspend (Request) -> Result
 ) : MessageConsumer<JsonObject> = vertx.eventBus().consumer(address) { msg ->
-    launch {
+    launch(MDCContext(coroMdcWith(CONSUMER_ADDRESS_MDC to address))) {
         val reqW: RequestWrapper<Request> =
             msg.body().mapTo(TYPE_FACTORY.constructParametricType(RequestWrapper::class.java, requestJavaType))
         try {
@@ -214,3 +224,5 @@ inline fun <reified Request, reified Result>
     requestJavaType = requestJavaType,
     function = function
 )
+
+const val CONSUMER_ADDRESS_MDC = "consumerAddress"
