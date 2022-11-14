@@ -9,10 +9,9 @@ import ski.gagar.vxutil.toMultiMap
 import ski.gagar.vxutil.vertigram.methods.TgCallable
 
 
-@JsonIgnoreProperties("message")
+@JsonIgnoreProperties("message", "suppressed", "localizedMessage")
 abstract class TelegramException(str: String) : Exception(str)
 
-@JsonIgnoreProperties("message")
 abstract class TelegramCallException(
     val status: Int,
     val ok: Boolean,
@@ -43,7 +42,6 @@ abstract class TelegramCallException(
 
 }
 
-@JsonIgnoreProperties("message")
 class TelegramCallClientException(
     status: Int,
     ok: Boolean,
@@ -53,7 +51,6 @@ class TelegramCallClientException(
     responseHeaders: Map<String, List<String>>
 ) : TelegramCallException(status, ok, description, call, responseHeaders), BadRequest
 
-@JsonIgnoreProperties("message")
 class TelegramCallServerException(
     status: Int,
     ok: Boolean,
@@ -63,7 +60,7 @@ class TelegramCallServerException(
     responseHeaders: Map<String, List<String>>
 ) : TelegramCallException(status, ok, description, call, responseHeaders)
 
-@JsonIgnoreProperties("message")
+
 abstract class TelegramDownloadException(val status: Int, val path: String) : TelegramException("Failed to download file: $status") {
     companion object {
         fun create(
