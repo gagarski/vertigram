@@ -75,7 +75,10 @@ class TelegramVerticle : ErrorLoggingCoroutineVerticle() {
     }
 
     override suspend fun stop() {
-        tg.close()
+        val tg = this.tg
+        if (tg is AutoCloseable) {
+            tg.close()
+        }
     }
 
     private suspend fun handleGetUpdates(msg: GetUpdates) =
