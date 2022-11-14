@@ -87,6 +87,7 @@ suspend inline fun <Argument, Result> EventBus.requestJsonAwait(
     if (!reply.success)
         reply.doThrow()
 
+    @Suppress("UNCHECKED_CAST")
     return reply.result as Result
 }
 
@@ -109,7 +110,8 @@ fun <Request> EventBus.publishJson(address: String,
                                    options: DeliveryOptions = DeliveryOptions()): EventBus =
     publish(address, JsonObject.mapFrom(RequestWrapper(value)), options)
 
-fun Message<JsonObject?>.replyWithThrowable(t: Throwable, options: DeliveryOptions = DeliveryOptions()) =
+@PublishedApi
+internal fun Message<JsonObject?>.replyWithThrowable(t: Throwable, options: DeliveryOptions = DeliveryOptions()) =
     reply(
         when {
             !isSend -> {

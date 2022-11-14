@@ -109,7 +109,6 @@
         <dependency>
             <groupId>ski.gagar.vxutil</groupId>
             <artifactId>vxutil-vertigram-annotations</artifactId>
-            <version>1.0.0-alpha27-SNAPSHOT</version>
         </dependency>
     </dependencies>
     <build>

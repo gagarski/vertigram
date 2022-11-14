@@ -20,5 +20,5 @@ fun LogbackLevel.convert(): Level = when (LogbackLevel.toLevel(levelInt).levelIn
     LogbackLevel.DEBUG_INT -> Level.DEBUG
     LogbackLevel.TRACE_INT -> Level.TRACE
     LogbackLevel.ALL_INT -> Level.ALL
-    else -> throw AssertionError("Should not happer")
+    else -> throw AssertionError("Should not happen")
 }

@@ -1,14 +1,12 @@
 package ski.gagar.vxutil.vertigram.types.attachments
 
 import io.vertx.core.Vertx
-import io.vertx.core.file.AsyncFile
 import io.vertx.core.file.OpenOptions
 import io.vertx.kotlin.coroutines.await
 import ski.gagar.vxutil.web.multipart.FilePart
 import java.io.File
 
 data class FileAttachment(val file: File) : Attachment {
-    private var asyncFile: AsyncFile? = null
     override fun getReference(referredField: String): UrlAttachment = UrlAttachment("attach://$referredField")
     override fun getReferredPart(field: String, vertx: Vertx) = doAttach(field, vertx)
 

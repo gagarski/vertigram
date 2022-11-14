@@ -17,7 +17,7 @@ import ski.gagar.vxutil.vertigram.types.ParsedUpdateList
 import ski.gagar.vxutil.vertigram.types.UpdateType
 import java.time.Instant
 
-class LongPoller: ErrorLoggingCoroutineVerticle() {
+class LongPollVerticle: ErrorLoggingCoroutineVerticle() {
     private val typedConfig by lazy {
         config.mapTo<Config>()
     }
@@ -84,7 +84,7 @@ class LongPoller: ErrorLoggingCoroutineVerticle() {
 
     data class Config(
         val tgvAddress: String = TelegramVerticle.Config.DEFAULT_BASE_ADDRESS,
-        val updatePublishingAddress: String = WebHook.Config.DEFAULT_UPDATE_PUBLISHING_ADDRESS,
+        val updatePublishingAddress: String = WebHookVerticle.Config.DEFAULT_UPDATE_PUBLISHING_ADDRESS,
         val skipMissing: Boolean = true,
         val allowedUpdates: List<UpdateType>? = null
     )

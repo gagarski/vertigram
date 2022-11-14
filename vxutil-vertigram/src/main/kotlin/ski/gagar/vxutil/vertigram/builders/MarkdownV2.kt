@@ -1,18 +1,22 @@
-package ski.gagar.vxutil.vertigram.util
+package ski.gagar.vxutil.vertigram.builders
 
 import ski.gagar.vxutil.vertigram.types.User
 
-fun md(init: Markdown.() -> Unit) = Markdown().apply(init)
+@JvmInline
+value class Markdown internal constructor(private val rendered: String) {
+    override fun toString() = rendered
+}
+fun md(init: MarkdownRoot.() -> Unit) = Markdown(MarkdownRoot().apply(init).toString())
 
 fun String.toMarkdown() = md { +this@toMarkdown }
 
-fun String.escapeText() =
+private fun String.escapeText() =
     this.replace("""([_*\[\]()~`>#+\-=|{}.!\\])""".toRegex(), """\\$1""")
 
-fun String.escapeUrl() =
+private fun String.escapeUrl() =
     this.replace("""([)\\])""".toRegex(), """\\$1""")
 
-fun String.escapeCode() =
+private fun String.escapeCode() =
     this.replace("""([`\\.])""".toRegex(), """\\$1""")
 
 @DslMarker
@@ -89,7 +93,7 @@ abstract class MdV2ElementWithChildren internal constructor() : MdV2Element() {
     protected open fun pre(code: String, language: String? = null) = initTag(Pre(code, language))
     protected open fun spoiler(init: Spoiler.() -> Unit) = initTag(Spoiler(), init)
 
-    inner class Unsafe: MdV2ElementWithChildren() {
+    inner class Unsafe : MdV2ElementWithChildren() {
         override fun render(builder: StringBuilder) {
             this@MdV2ElementWithChildren.render(builder)
         }
@@ -244,7 +248,7 @@ class Spoiler internal constructor()  : WrappedMdV2ElementWithChildren() {
 }
 
 
-class Markdown internal constructor() : MdV2ElementWithChildren() {
+class MarkdownRoot internal constructor() : MdV2ElementWithChildren() {
     public override fun b(init: Bold.() -> Unit) = super.b(init)
     public override fun i(init: Italic.() -> Unit) = super.i(init)
     public override fun u(init: Underline.() -> Unit) = super.u(init)

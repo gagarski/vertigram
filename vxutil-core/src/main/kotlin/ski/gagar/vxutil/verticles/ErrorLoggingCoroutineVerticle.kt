@@ -7,7 +7,7 @@ import io.vertx.kotlin.coroutines.dispatcher
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.slf4j.MDCContext
-import ski.gagar.vxutil.VerticleName
+import ski.gagar.vxutil.coroutines.VerticleName
 import ski.gagar.vxutil.lazy
 import ski.gagar.vxutil.logger
 import kotlin.coroutines.CoroutineContext
@@ -33,10 +33,4 @@ abstract class ErrorLoggingCoroutineVerticle : CoroutineVerticle(), Named {
         super.init(vertx, context)
         this.context = context
     }
-
-    fun suicide() {
-        vertx.undeploy(deploymentID)
-    }
-
-
 }

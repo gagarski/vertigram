@@ -1,4 +1,4 @@
-package ski.gagar.vxutil.vertigram.util
+package ski.gagar.vxutil.vertigram.builders
 
 import ski.gagar.vxutil.vertigram.types.CallbackGame
 import ski.gagar.vxutil.vertigram.types.InlineKeyboardButton
@@ -9,12 +9,23 @@ import ski.gagar.vxutil.vertigram.types.LoginUrl
 import ski.gagar.vxutil.vertigram.types.ReplyKeyboardMarkup
 import ski.gagar.vxutil.vertigram.types.WebAppInfo
 
+fun ikm(init: InlineKeyboardMarkupBuilder.() -> Unit): InlineKeyboardMarkup {
+    val bld = InlineKeyboardMarkupBuilder()
+    bld.init()
+    return bld.build()
+}
+
+fun rkm(init: ReplyKeyboardMarkupBuilder.() -> Unit): ReplyKeyboardMarkup {
+    val bld = ReplyKeyboardMarkupBuilder()
+    bld.init()
+    return bld.build()
+}
+
 @DslMarker
 annotation class InlineKeyboardMarkupDslMarker
 
 @DslMarker
 annotation class ReplyKeyboardMarkupDslMarker
-
 
 @InlineKeyboardMarkupDslMarker
 class InlineKeyboardMarkupRowBuilder {
@@ -88,7 +99,7 @@ class InlineKeyboardMarkupBuilder {
     fun build() = InlineKeyboardMarkup(rows)
 }
 
-@InlineKeyboardMarkupDslMarker
+@ReplyKeyboardMarkupDslMarker
 class ReplyKeyboardMarkupRowBuilder {
     private val buttons = mutableListOf<KeyboardButton>()
 
@@ -113,7 +124,7 @@ class ReplyKeyboardMarkupRowBuilder {
     fun build() = buttons
 }
 
-@InlineKeyboardMarkupDslMarker
+@ReplyKeyboardMarkupDslMarker
 class ReplyKeyboardMarkupBuilder {
     private val rows = mutableListOf<List<KeyboardButton>>()
 
@@ -142,16 +153,4 @@ class ReplyKeyboardMarkupBuilder {
     }
 
     fun build() = ReplyKeyboardMarkup(rows)
-}
-
-fun ikm(init: InlineKeyboardMarkupBuilder.() -> Unit): InlineKeyboardMarkup {
-    val bld = InlineKeyboardMarkupBuilder()
-    bld.init()
-    return bld.build()
-}
-
-fun rkm(init: ReplyKeyboardMarkupBuilder.() -> Unit): ReplyKeyboardMarkup {
-    val bld = ReplyKeyboardMarkupBuilder()
-    bld.init()
-    return bld.build()
 }

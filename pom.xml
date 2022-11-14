@@ -48,12 +48,14 @@
         <module>vxutil-jackson</module>
         <module>vxutil-jooq</module>
         <module>vxutil-logback</module>
-        <module>vxutil-web</module>
         <module>vxutil-vertigram</module>
+        <module>vxutil-web</module>
 
         <module>aybolit-like-bom</module>
 
         <module>vxutil-vertigram-annotations</module>
         <module>vxutil-vertigram-codegen</module>
+        <module>vxutil-verticles</module>
+        <module>vxutil-vertigram-tools</module>
     </modules>
 </project>

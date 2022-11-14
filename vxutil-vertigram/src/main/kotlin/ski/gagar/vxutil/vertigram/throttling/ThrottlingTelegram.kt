@@ -28,7 +28,7 @@ class ThrottlingTelegram(
     private val vertx: Vertx,
     private val delegate: DirectTelegram,
     val throttling: ThrottlingOptions
-) : Telegram by delegate {
+) : Telegram by delegate, AutoCloseable {
     private val cleanUpTask = vertx.setPeriodic(CLEANUP_PERIOD.toMillis()) {
         cleanUp()
     }

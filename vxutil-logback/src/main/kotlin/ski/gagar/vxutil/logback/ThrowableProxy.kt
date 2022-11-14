@@ -13,7 +13,6 @@ data class ThrowableProxy(
     val suppressed: List<ThrowableProxy>? = null
 )
 
-
 fun ThrowableProxy(orig: IThrowableProxy?): ThrowableProxy? =
     orig?.let {
         ThrowableProxy(

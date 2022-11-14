@@ -38,7 +38,7 @@
         <compiler-plugin.version>3.10.1</compiler-plugin.version>
         <deploy.plugin.version>3.0.0</deploy.plugin.version>
         <gpg.plugin.version>3.0.1</gpg.plugin.version>
-        <kotlin.plugin.version>1.7.20</kotlin.plugin.version>
+        <kotlin.plugin.version>1.7.21</kotlin.plugin.version>
         <nexus-staging.plugin.version>1.6.13</nexus-staging.plugin.version>
         <release.plugin.version>3.0.0-M7</release.plugin.version>
         <source.plugin.version>3.2.1</source.plugin.version>
@@ -48,12 +48,12 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <commons-lang.version>3.12.0</commons-lang.version>
-        <flyway.version>9.7.0</flyway.version>
+        <flyway.version>9.8.1</flyway.version>
         <hikari.version>5.0.1</hikari.version>
-        <jackson.version>2.13.4</jackson.version>
+        <jackson.version>2.14.0</jackson.version>
         <jooq.version>3.17.5</jooq.version>
         <kotlinx.coroutines.version>1.6.4</kotlinx.coroutines.version>
-        <kotlin.stdlib.version>1.7.20</kotlin.stdlib.version>
+        <kotlin.stdlib.version>1.7.21</kotlin.stdlib.version>
         <logback.version>1.4.4</logback.version>
         <psqldriver.version>42.5.0</psqldriver.version>
         <reflections.version>0.10.2</reflections.version>
@@ -227,7 +227,22 @@
             </dependency>
             <dependency>
                 <groupId>ski.gagar.vxutil</groupId>
+                <artifactId>vxutil-verticles</artifactId>
+                <version>1.0.0-alpha27-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>ski.gagar.vxutil</groupId>
                 <artifactId>vxutil-vertigram</artifactId>
+                <version>1.0.0-alpha27-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>ski.gagar.vxutil</groupId>
+                <artifactId>vxutil-vertigram-annotations</artifactId>
+                <version>1.0.0-alpha27-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>ski.gagar.vxutil</groupId>
+                <artifactId>vxutil-vertigram-tools</artifactId>
                 <version>1.0.0-alpha27-SNAPSHOT</version>
             </dependency>
             <dependency>

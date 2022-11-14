@@ -136,9 +136,7 @@ class WorkerExecutorService(
 
 }
 
-data class WorkerExecutorAndVertx(val workerExecutor: WorkerExecutor, val vertx: Vertx) {
-    fun dispatcher() = WorkerExecutorService(workerExecutor, vertx).asCoroutineDispatcher()
-}
+fun Vertx.workerExecutorDispatcher(workerExecutor: WorkerExecutor) =
+    WorkerExecutorService(workerExecutor, this).asCoroutineDispatcher()
 
-operator fun WorkerExecutor.plus(vertx: Vertx) = WorkerExecutorAndVertx(this, vertx)
-operator fun Vertx.plus(workerExecutor: WorkerExecutor) = WorkerExecutorAndVertx(workerExecutor, this)
+fun WorkerExecutor.asCoroutineDispatcher(vertx: Vertx) = WorkerExecutorService(this, vertx).asCoroutineDispatcher()

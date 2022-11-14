@@ -6,7 +6,7 @@ import io.vertx.core.streams.ReadStream
 import ski.gagar.vxutil.uncheckedCast
 
 class ConcatStream<T>(streams: Sequence<ReadStream<T>>) : ReadStream<T> {
-    enum class State {
+    private enum class State {
         INITIAL,
         WORKING,
         DONE

@@ -5,7 +5,7 @@ import ski.gagar.vxutil.vertigram.methods.TgCallable
 import ski.gagar.vxutil.vertigram.types.Update
 import ski.gagar.vxutil.vertigram.types.UpdateType
 
-interface Telegram : AutoCloseable {
+interface Telegram {
     suspend fun getUpdates(
         offset: Long? = null,
         limit: Int? = null,

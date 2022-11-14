@@ -78,11 +78,8 @@ private fun getTgCallables() =
         .filter { !Modifier.isAbstract(it.modifiers) }
         .toSet()
 
-
-
 private val <T: TgCallable<*>> Class<T>.tgMethodName: String
     get() = getAnnotation(TgMethodName::class.java)?.name ?: StringUtils.uncapitalize(simpleName)
-
 
 internal object TypeHints {
     val callables = getTgCallables()
@@ -130,7 +127,6 @@ internal object TypeHints {
         }
 
     }
-
 }
 
 internal fun <K, V> Map<K, V>.getOrAssert(key: K) = get(key) ?: throw AssertionError("oops")

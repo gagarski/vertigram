@@ -25,11 +25,11 @@ import ski.gagar.vxutil.vertigram.util.TypeHints
 import ski.gagar.vxutil.vertigram.util.getOrAssert
 import ski.gagar.vxutil.vertigram.util.json.TELEGRAM_JSON_MAPPER
 import ski.gagar.vxutil.vertigram.util.multipart.telegramJsonMapperWithMultipart
-import ski.gagar.vxutil.web.bodyAsJson
+import ski.gagar.vxutil.web.jsonBody
 import ski.gagar.vxutil.web.multipart.FieldPart
 import ski.gagar.vxutil.web.multipart.MultipartForm
 import ski.gagar.vxutil.web.multipart.sendMultipartForm
-import ski.gagar.vxutil.web.sendJsonAwait
+import ski.gagar.vxutil.web.sendJson
 import java.time.Duration
 
 internal data class TelegramImplOptions(
@@ -103,8 +103,8 @@ internal class TelegramImpl(
         longPoll: Boolean = false
     ): Pair<HttpResponse<*>, Any?> {
         logger.lazy.trace { "Calling $method with $obj" }
-        val resp = client(method, longPoll, false).sendJsonAwait(obj, mapper)
-        return resp to resp.bodyAsJson<Any>(type, mapper).also {
+        val resp = client(method, longPoll, false).sendJson(obj, mapper).await()
+        return resp to resp.jsonBody<Any>(type, mapper).also {
             logger.lazy.trace { "Received response $it" }
         }
     }
@@ -118,7 +118,7 @@ internal class TelegramImpl(
     ): Pair<HttpResponse<*>, Any?> {
         logger.lazy.trace { "Calling $method with $form (form/multipart)" }
         val resp = client(method, longPoll, !form.parts.all { it is FieldPart }).sendMultipartForm(form)
-        return resp to resp.bodyAsJson<Any>(type, mapper).also {
+        return resp to resp.jsonBody<Any>(type, mapper).also {
             logger.lazy.trace { "Received response $it" }
         }
     }

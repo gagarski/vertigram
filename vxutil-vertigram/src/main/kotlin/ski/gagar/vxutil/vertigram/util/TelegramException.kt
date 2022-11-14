@@ -78,6 +78,5 @@ abstract class TelegramDownloadException(val status: Int, val path: String) : Te
 class TelegramDownloadClientException(status: Int, path: String) : TelegramDownloadException(status, path), BadRequest
 class TelegramDownloadServerException(status: Int, path: String) : TelegramDownloadException(status, path)
 
-
 @JsonIgnoreProperties("message")
 data class TelegramNoFilePathException(val id: String) : TelegramException("getFile did not return a file path for $id"), BadRequest

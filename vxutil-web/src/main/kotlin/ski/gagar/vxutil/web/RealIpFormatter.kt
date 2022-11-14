@@ -10,7 +10,6 @@ import io.vertx.ext.web.impl.Utils
 import ski.gagar.vxutil.lazy
 import ski.gagar.vxutil.logger
 
-// TODO simplify it
 class RealIpFormatter(private val immediate: Boolean = false,
                       private val trustedNetworks: Set<IpNetworkAddress> = setOf(),
                       private val trustDomainSockets: Boolean = false) :

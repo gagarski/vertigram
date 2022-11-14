@@ -13,7 +13,6 @@ val logger: Logger
 val Logger.lazy
     get() = LazyLogger(this)
 
-// TODO implement Logger by delegation when it's supported https://youtrack.jetbrains.com/issue/KT-27435
 @JvmInline
 value class LazyLogger(@PublishedApi internal val delegate: Logger) {
     inline fun trace(throwable: Throwable? = null, crossinline msgProvider: () -> String) {

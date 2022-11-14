@@ -1,6 +1,5 @@
 package ski.gagar.vxutil.jooq
 
-import io.vertx.core.AbstractVerticle
 import io.vertx.core.Vertx
 import io.vertx.core.WorkerExecutor
 import io.vertx.core.impl.cpu.CpuCoreSensor
@@ -17,7 +16,7 @@ import org.jooq.impl.transactionResultInt
 import org.jooq.tools.jdbc.JDBCUtils
 import ski.gagar.vxutil.lazy
 import ski.gagar.vxutil.logger
-import ski.gagar.vxutil.plus
+import ski.gagar.vxutil.workerExecutorDispatcher
 import java.io.Closeable
 import javax.sql.DataSource
 
@@ -37,7 +36,7 @@ class Database(
 ) : Closeable, CoroutineScope by scope {
 
     private val executor = vertx.workerExecutorFactory(executorName)
-    private val dispatcher = (vertx + executor).dispatcher()
+    private val dispatcher = vertx.workerExecutorDispatcher(executor)
 
     private val dsl: DSLContext = vertx.getSharedDataSource(dataSourceName).let {
         DSL.using(it, JDBCUtils.dialect(it.jdbcUrl))
@@ -105,9 +104,6 @@ class Database(
 suspend fun Vertx.initDs(name: String, config: DbConfig) = Database.initDs(this, name, config)
 suspend fun Vertx.initDs(config: DbConfig) = Database.initDs(this, config)
 fun Vertx.deleteDs(name: String) = Database.deleteDs(this, name)
-suspend fun AbstractVerticle.initDs(name: String, config: DbConfig) = Database.initDs(vertx, name, config)
-suspend fun AbstractVerticle.initDs(config: DbConfig) = Database.initDs(vertx, config)
-fun AbstractVerticle.deleteDs(name: String) = Database.deleteDs(vertx, name)
 
 fun Vertx.Database(scope: CoroutineScope,
                    executorName: String = Database.DEFAULT_EXECUTOR_NAME,

@@ -72,6 +72,4 @@ class TgVTelegram(
             ex.unwrap()
         }
     }
-
-    override fun close() {}
 }

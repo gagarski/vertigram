@@ -4,42 +4,12 @@ import io.vertx.core.Handler
 import io.vertx.core.streams.ReadStream
 
 class SingletonStream<T>(private val value: T) : ReadStream<T> {
-    enum class State {
-        NOT_FIRED,
-        FIRED,
-        DONE
-    }
     private var paused = false
     private var state = State.NOT_FIRED
     private var handler: Handler<T>? = null
     private var exceptionHandler: Handler<Throwable>? = null
     private var endHandler: Handler<Void?>? = null
 
-    private inline fun doCatching(block: () -> Unit) {
-        try {
-            block()
-        } catch (t: Throwable) {
-            exceptionHandler?.handle(t)
-        }
-    }
-
-    private fun fireValueIfNecessary() {
-        val h = handler
-        if (paused) return
-        if (state != State.NOT_FIRED) return
-        if (h == null) return
-        state = State.FIRED
-        h.handle(value)
-    }
-
-    private fun fireEndIfNecessary() {
-        val h = endHandler
-        if (paused) return
-        if (state != State.FIRED) return
-        if (h == null) return
-        state = State.DONE
-        h.handle(null)
-    }
     override fun pause(): ReadStream<T> = apply {
         paused = true
     }
@@ -71,9 +41,31 @@ class SingletonStream<T>(private val value: T) : ReadStream<T> {
         fireEndIfNecessary()
     }
 
+    private fun fireValueIfNecessary() {
+        val h = handler
+        if (paused) return
+        if (state != State.NOT_FIRED) return
+        if (h == null) return
+        state = State.FIRED
+        h.handle(value)
+    }
+
+    private fun fireEndIfNecessary() {
+        val h = endHandler
+        if (paused) return
+        if (state != State.FIRED) return
+        if (h == null) return
+        state = State.DONE
+        h.handle(null)
+    }
+
     override fun toString(): String {
         return "SingletonStream(value=$value)"
     }
 
-
+    private enum class State {
+        NOT_FIRED,
+        FIRED,
+        DONE
+    }
 }

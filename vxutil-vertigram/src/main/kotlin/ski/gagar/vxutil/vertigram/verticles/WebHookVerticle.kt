@@ -4,12 +4,12 @@ import io.netty.handler.codec.http.HttpResponseStatus
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.handler.BodyHandler
 import kotlinx.coroutines.delay
-import ski.gagar.vxutil.verticles.ErrorLoggingCoroutineVerticle
 import ski.gagar.vxutil.jackson.mapTo
 import ski.gagar.vxutil.jackson.publishJson
 import ski.gagar.vxutil.lazy
 import ski.gagar.vxutil.logger
 import ski.gagar.vxutil.retrying
+import ski.gagar.vxutil.verticles.ErrorLoggingCoroutineVerticle
 import ski.gagar.vxutil.vertigram.client.Telegram
 import ski.gagar.vxutil.vertigram.client.TgVTelegram
 import ski.gagar.vxutil.vertigram.config.WebHookConfig
@@ -23,7 +23,7 @@ import ski.gagar.vxutil.web.IpNetworkAddress
 import ski.gagar.vxutil.web.RealIpLoggerHandler
 import java.util.*
 
-class WebHook : ErrorLoggingCoroutineVerticle() {
+class WebHookVerticle : ErrorLoggingCoroutineVerticle() {
     private val secret = UUID.randomUUID()
     private val typedConfig by lazy {
         config.mapTo<Config>()

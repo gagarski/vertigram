@@ -1,9 +1,7 @@
 package ski.gagar.vxutil
 
-@Suppress("UNCHECKED_CAST", "NOTHING_TO_INLINE")
 inline fun <reified D> Any?.uncheckedCast(): D = this as D
 
-@Suppress("UNCHECKED_CAST", "NOTHING_TO_INLINE")
 inline fun <reified D> Any?.uncheckedCastOrNull(): D? = when (this) {
     null -> null; else -> uncheckedCast()
 }

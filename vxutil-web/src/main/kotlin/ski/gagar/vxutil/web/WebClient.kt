@@ -6,18 +6,18 @@ import io.vertx.core.buffer.Buffer
 import io.vertx.core.json.jackson.DatabindCodec
 import io.vertx.ext.web.client.HttpRequest
 import io.vertx.ext.web.client.HttpResponse
-import io.vertx.kotlin.coroutines.awaitResult
 import ski.gagar.vxutil.jackson.jsonDecoder
 import ski.gagar.vxutil.jackson.jsonObjectMapFrom
 
-suspend fun <T, U> HttpRequest<T>.sendJsonAwait(obj: U, mapper: ObjectMapper) =
-    awaitResult<HttpResponse<T>> { sendJsonObject(
+fun <T, U> HttpRequest<T>.sendJson(obj: U, mapper: ObjectMapper) =
+    sendJsonObject(
         jsonObjectMapFrom(
             obj,
             mapper
-        ), it) }
+        )
+    )
 
-fun <R> HttpResponse<Buffer>.bodyAsJson(type: JavaType, mapper: ObjectMapper = DatabindCodec.mapper()): R? {
+fun <R> HttpResponse<Buffer>.jsonBody(type: JavaType, mapper: ObjectMapper = DatabindCodec.mapper()): R? {
     val b = bodyAsBuffer()
     return if (b != null) jsonDecoder<R>(type, mapper)(b) else null
 }

@@ -1,4 +1,4 @@
-package ski.gagar.vxutil
+package ski.gagar.vxutil.coroutines
 
 import kotlin.coroutines.AbstractCoroutineContextElement
 import kotlin.coroutines.CoroutineContext
