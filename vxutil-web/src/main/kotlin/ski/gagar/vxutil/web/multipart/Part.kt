@@ -4,11 +4,13 @@ import io.netty.handler.codec.http.HttpHeaderNames
 import io.vertx.core.buffer.Buffer
 import io.vertx.core.streams.ReadStream
 import ski.gagar.vxutil.io.ConcatStream
+import ski.gagar.vxutil.io.ReadStreamWrapper
 
-abstract class Part<T : ReadStream<Buffer>>(private val streamOwned: Boolean) {
+typealias ReadStreamWrapperBuffer = ReadStreamWrapper<Buffer, ReadStream<Buffer>>
+abstract class Part {
     abstract val contentDisposition: String
     open val headers = linkedMapOf<String, String>()
-    private var stream: T? = null
+    private var streamWrapper: ReadStreamWrapperBuffer? = null
 
     private val headersBuffer: Buffer by lazy {
         val buf = Buffer.buffer()
@@ -21,12 +23,12 @@ abstract class Part<T : ReadStream<Buffer>>(private val streamOwned: Boolean) {
 
     private fun headersLength() = headersBuffer.length().toLong()
 
-    protected abstract suspend fun dataStream(): T
+    protected abstract suspend fun dataStreamWrapper(): ReadStreamWrapperBuffer
 
-    private suspend fun getAndAcquireDataStream(): T {
-        val stream = dataStream()
-        this.stream = stream
-        return stream
+    private suspend fun getAndAcquireDataStream(): ReadStreamWrapperBuffer {
+        val streamWrapper = dataStreamWrapper()
+        this.streamWrapper = streamWrapper
+        return streamWrapper
     }
 
     protected open suspend fun dataLength(): Long? = null
@@ -35,20 +37,10 @@ abstract class Part<T : ReadStream<Buffer>>(private val streamOwned: Boolean) {
 
     suspend fun stream(): ReadStream<Buffer> =
         ConcatStream(
-            headersBuffer.asSingletonStream(),
+            ReadStreamWrapper.ofNonCloseable(headersBuffer.asSingletonStream()),
             getAndAcquireDataStream(),
-            NL.asSingletonStream(),
+            ReadStreamWrapper.ofNonCloseable(NL.asSingletonStream()),
         )
-
-    protected abstract suspend fun close(stream: T)
-
-    suspend fun closeIfNeeded() {
-        val stream = this.stream
-        if (streamOwned && null != stream) {
-            close(stream)
-        }
-    }
-
     suspend fun length() = dataLength()?.let {
         headersLength() + it + trailingLength()
     }

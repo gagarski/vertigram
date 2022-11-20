@@ -9,15 +9,15 @@ import io.vertx.ext.web.client.HttpResponse
 import io.vertx.kotlin.coroutines.await
 import org.apache.commons.lang3.RandomStringUtils
 import ski.gagar.vxutil.io.ConcatStream
-import ski.gagar.vxutil.logger
+import ski.gagar.vxutil.io.ReadStreamWrapper
 
-class MultipartForm(val parts: List<Part<*>>) {
+class MultipartForm(val parts: List<Part>) {
     private val boundary =
         RandomStringUtils.random(69, BOUNDARY_CHARS) + RandomStringUtils.random(1, BOUNDARY_LAST_CHARS)
     private val boundaryLine = "--$boundary$NL"
     private val boundaryLineLast = "--$boundary--$NL"
 
-    constructor(vararg items: Part<*>) : this(items.toList())
+    constructor(vararg items: Part) : this(items.toList())
 
     private suspend fun contentLength(): Long? {
         if (parts.any { it.length() == null }) {
@@ -36,36 +36,27 @@ class MultipartForm(val parts: List<Part<*>>) {
     }
 
     private suspend fun stream(): ReadStream<Buffer> =
-        ConcatStream(mutableListOf<ReadStream<Buffer>>().apply {
+        ConcatStream(mutableListOf<ReadStreamWrapperBuffer>().apply {
             for (item in parts) {
-                add(boundaryLine.asSingletonStream())
-                add(item.stream())
+                add(ReadStreamWrapper.ofNonCloseable(boundaryLine.asSingletonStream()))
+                add(ReadStreamWrapper.ofNonCloseable(item.stream()))
             }
-            add(boundaryLineLast.asSingletonStream())
+            add(ReadStreamWrapper.ofNonCloseable(boundaryLineLast.asSingletonStream()))
         })
 
-    suspend fun send(req: HttpRequest<Buffer>): HttpResponse<Buffer> {
-        try {
-            req.apply {
-                putHeader(
-                    "${HttpHeaderNames.CONTENT_TYPE}",
-                    "${HttpHeaderValues.MULTIPART_FORM_DATA}; boundary=$boundary"
-                )
-                contentLength()?.let {
-                    putHeader("${HttpHeaderNames.CONTENT_LENGTH}", "$it")
-                }
 
+    suspend fun send(req: HttpRequest<Buffer>): HttpResponse<Buffer> {
+        req.apply {
+            putHeader(
+                "${HttpHeaderNames.CONTENT_TYPE}",
+                "${HttpHeaderValues.MULTIPART_FORM_DATA}; boundary=$boundary"
+            )
+            contentLength()?.let {
+                putHeader("${HttpHeaderNames.CONTENT_LENGTH}", "$it")
             }
-            return req.sendStream(stream()).await()
-        } finally {
-            for (part in parts) {
-                try {
-                    part.closeIfNeeded()
-                } catch (e: Exception) {
-                    logger.warn("Failed closing $part")
-                }
-            }
+
         }
+        return req.sendStream(stream()).await()
     }
 
 
