@@ -10,8 +10,8 @@ import java.io.File
 @JsonTypeInfo(use=Id.CLASS, include=As.PROPERTY, property="@class")
 interface Attachment {
     fun getReference(referredField: String): UrlAttachment
-    fun getReferredPart(field: String, vertx: Vertx): Part<*>?
-    fun getPart(field: String, vertx: Vertx): Part<*>
+    fun getReferredPart(field: String, vertx: Vertx): Part?
+    fun getPart(field: String, vertx: Vertx): Part
     companion object
 }
 fun Attachment.Companion.url(url: String) = UrlAttachment(url)
