@@ -7,6 +7,8 @@ import io.vertx.core.streams.ReadStream
 import io.vertx.ext.web.client.HttpRequest
 import io.vertx.ext.web.client.HttpResponse
 import io.vertx.kotlin.coroutines.await
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.coroutineScope
 import org.apache.commons.lang3.RandomStringUtils
 import ski.gagar.vxutil.io.ConcatStream
 import ski.gagar.vxutil.io.ReadStreamWrapper
@@ -35,17 +37,17 @@ class MultipartForm(val parts: List<Part>) {
         return length
     }
 
-    private suspend fun stream(): ReadStream<Buffer> =
-        ConcatStream(mutableListOf<ReadStreamWrapperBuffer>().apply {
+    private suspend fun stream(scope: CoroutineScope): ReadStream<Buffer> =
+        scope.ConcatStream(mutableListOf<ReadStreamWrapperBuffer>().apply {
             for (item in parts) {
                 add(ReadStreamWrapper.ofNonCloseable(boundaryLine.asSingletonStream()))
-                add(ReadStreamWrapper.ofNonCloseable(item.stream()))
+                add(ReadStreamWrapper.ofNonCloseable(item.stream(scope)))
             }
             add(ReadStreamWrapper.ofNonCloseable(boundaryLineLast.asSingletonStream()))
         })
 
 
-    suspend fun send(req: HttpRequest<Buffer>): HttpResponse<Buffer> {
+    suspend fun send(req: HttpRequest<Buffer>): HttpResponse<Buffer> = coroutineScope {
         req.apply {
             putHeader(
                 "${HttpHeaderNames.CONTENT_TYPE}",
@@ -56,7 +58,7 @@ class MultipartForm(val parts: List<Part>) {
             }
 
         }
-        return req.sendStream(stream()).await()
+        return@coroutineScope req.sendStream(stream(this@coroutineScope)).await()
     }
 
 

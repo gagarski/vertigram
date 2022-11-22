@@ -1,12 +1,9 @@
 package ski.gagar.vxutil.io
 
 import io.vertx.core.Handler
-import io.vertx.core.buffer.Buffer
 import io.vertx.core.streams.ReadStream
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
-import ski.gagar.vxutil.uncheckedCast
 
 private typealias RSW<T> = ReadStreamWrapper<T, ReadStream<T>>
 
@@ -29,7 +26,6 @@ class ConcatStream<T> internal constructor(private val scope: CoroutineScope,
     private var state = State.INITIAL
     private var current: RSW<T>? = null
     private var demand: Long = Long.MAX_VALUE
-    private var handled: Long = 0
 
     private inline fun doCatching(block: () -> Unit) {
         try {
@@ -62,36 +58,35 @@ class ConcatStream<T> internal constructor(private val scope: CoroutineScope,
     private suspend fun switchStreams() {
         current?.close()
         val nextW = nextOrNull()
-        nextW?.open()
 
-        attachHandlers(nextW)
+        nextW?.open()
+        current = nextW
+        attachHandlers()
     }
 
-    private fun attachHandlers(nextW: RSW<T>?) {
-        val next = nextW?.get()
-
-        if (next == null) {
+    private fun attachHandlers() {
+        val currentStream = current?.get()
+        if (currentStream == null) {
             fireEnd()
             return
         }
 
         if (paused) {
-            next.pause()
+            currentStream.pause()
         }
 
         if (demand != Long.MAX_VALUE && demand != 0L) {
-            next.fetch(demand)
+            currentStream.fetch(demand)
         }
 
-        next.exceptionHandler(exceptionHandler)
+        currentStream.exceptionHandler(exceptionHandler)
 
-        next.endHandler {
+        currentStream.endHandler {
             scope.launch {
                 switchStreams()
             }
         }
-
-        next.handler(demandTrackingHandler(handler))
+        currentStream.handler(demandTrackingHandler(handler))
     }
 
     override fun pause(): ReadStream<T> = apply {
@@ -126,7 +121,7 @@ class ConcatStream<T> internal constructor(private val scope: CoroutineScope,
         when (state) {
             State.STARTED -> {
                 state = State.WORKING
-                attachHandlers(current)
+                attachHandlers()
             }
             State.WORKING -> {
                 current?.get()?.handler(demandTrackingHandler(handler))
@@ -137,7 +132,6 @@ class ConcatStream<T> internal constructor(private val scope: CoroutineScope,
 
     private fun demandTrackingHandler(handler: Handler<T>?): Handler<T> = Handler {
         if (demand != 0L && demand != Long.MAX_VALUE) demand--
-        handled += it.uncheckedCast<Buffer>().length()
         handler?.handle(it)
     }
 
@@ -159,10 +153,12 @@ suspend fun <T> CoroutineScope.ConcatStream(streams: Sequence<RSW<T>>) =
         prefetchFirst()
     }
 
-suspend fun <T> ConcatStream(streams: Collection<RSW<T>>) = coroutineScope {
-    ConcatStream(streams.asSequence())
-}
+suspend fun <T> CoroutineScope.ConcatStream(streams: Collection<RSW<T>>) =
+    ConcatStream(this, streams.asSequence()).apply {
+        prefetchFirst()
+    }
+suspend fun <T> CoroutineScope.ConcatStream(vararg streams: RSW<T>) =
+    ConcatStream(this, streams.asSequence()).apply {
+        prefetchFirst()
+    }
 
-suspend fun <T> ConcatStream(vararg streams: RSW<T>) = coroutineScope {
-    ConcatStream(streams.asSequence())
-}
