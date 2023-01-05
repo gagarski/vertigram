@@ -22,6 +22,6 @@ data class SendMessage(
     val replyToMessageId: Long? = null,
     val allowSendingWithoutReply: Boolean = false,
     val replyMarkup: ReplyMarkup? = null,
-    // Since Telegram Bot Api 6.3
+    // Since Telegram Bot Api 6.4
     val messageThreadId: Long? = null
 ) : JsonTgCallable<Message>(), HasChatId

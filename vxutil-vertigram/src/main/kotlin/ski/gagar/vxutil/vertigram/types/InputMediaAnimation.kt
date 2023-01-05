@@ -11,7 +11,9 @@ data class InputMediaAnimation(
     val captionEntities: List<MessageEntity>? = null,
     val width: Int? = null,
     val height: Int? = null,
-    val duration: Duration? = null
+    val duration: Duration? = null,
+    // Since Telegram Bot API 6.4
+    val hasSpoiler: Boolean = false
 ) : InputMedia {
     override val type: InputMediaType = InputMediaType.ANIMATION
     override fun instantiate(media: Attachment, thumb: Attachment?) = copy(media = media, thumb = thumb)

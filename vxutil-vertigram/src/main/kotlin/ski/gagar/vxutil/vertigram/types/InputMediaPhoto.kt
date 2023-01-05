@@ -6,7 +6,9 @@ data class InputMediaPhoto(
     override val media: Attachment,
     val caption: String? = null,
     val parseMode: ParseMode? = null,
-    val captionEntities: List<MessageEntity>? = null
+    val captionEntities: List<MessageEntity>? = null,
+    // Since Telegram Bot API 6.4
+    val hasSpoiler: Boolean = false
 ) : InputMedia {
     override val type: InputMediaType = InputMediaType.PHOTO
     override val thumb = null

@@ -68,4 +68,10 @@ data class Message(
     val forumTopicCreated: ForumTopicCreated? = null,
     val forumTopicClosed: ForumTopicClosed? = null,
     val forumTopicReopened: ForumTopicReopened? = null,
+    // Since Telegram Bot API 6.4
+    val hasMediaSpoiler: Boolean = false,
+    val forumTopicEdited: ForumTopicEdited? = null,
+    val generalForumTopicHidden: GeneralForumTopicHidden? = null,
+    val generalForumTopicUndhidden: GeneralForumTopicUnhidden? = null,
+    val writeAccessAllowed: WriteAccessAllowed? = null
 )

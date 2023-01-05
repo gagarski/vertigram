@@ -115,7 +115,10 @@ class ThrottlingTelegram(
 
     private fun getPreventiveDelay(callable: TgCallable<*>, fromException: Duration?): Duration {
         val now = Instant.now()
-        var toSleep = getThrottlingDuration(global, now, SECOND, throttling.globalPerSecond) ?: Duration.ZERO!!
+        var toSleep = throttling.globalPerSecond?.let {
+            getThrottlingDuration(global, now, SECOND, it)
+        } ?: Duration.ZERO!!
+
 
         val chatId = when (callable) {
             is HasChatId -> callable.chatId
@@ -127,14 +130,18 @@ class ThrottlingTelegram(
 
         if (!chatEvents.isNullOrEmpty()) {
             val perChatMinute =
-                getThrottlingDuration(chatEvents, now, MINUTE, throttling.chatPerMinute)
+                throttling.chatPerMinute?.let {
+                    getThrottlingDuration(chatEvents, now, MINUTE, it)
+                }
 
             if (null != perChatMinute && perChatMinute > toSleep) {
                 toSleep = perChatMinute
             }
 
             val perChatSecond =
-                getThrottlingDuration(chatEvents, now, SECOND, throttling.chatBurstPerSecond, true)
+                throttling.chatBurstPerSecond?.let {
+                    getThrottlingDuration(chatEvents, now, SECOND, it, true)
+                }
 
             if (null != perChatSecond && perChatSecond > toSleep) {
                 toSleep = perChatSecond

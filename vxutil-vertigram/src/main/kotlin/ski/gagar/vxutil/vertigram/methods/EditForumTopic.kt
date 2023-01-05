@@ -10,6 +10,6 @@ import ski.gagar.vxutil.vertigram.types.ChatId
 data class EditForumTopic(
     override val chatId: ChatId,
     val messageThreadId: Long,
-    val name: String,
+    val name: String? = null,
     val iconCustomEmojiId: String? = null
 ) : JsonTgCallable<Boolean>(), HasChatId
