@@ -18,10 +18,10 @@
 
     <properties>
         <compiler-plugin.version>3.8.1</compiler-plugin.version>
-        <kotlin.plugin.version>1.7.10</kotlin.plugin.version>
+        <kotlin-plugin.version>1.8.0</kotlin-plugin.version>
 
         <java.version.kotlin>1.8</java.version.kotlin>
-        <java.version>17</java.version>
+        <java.version>19</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <vxutil-jooq.db.driver>org.postgresql.Driver</vxutil-jooq.db.driver>
@@ -96,7 +96,7 @@
                 <plugin>
                     <groupId>org.jetbrains.kotlin</groupId>
                     <artifactId>kotlin-maven-plugin</artifactId>
-                    <version>${kotlin.plugin.version}</version>
+                    <version>${kotlin-plugin.version}</version>
                     <configuration>
                         <args>
                             <arg>-jvm-target</arg>

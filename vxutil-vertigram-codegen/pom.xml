@@ -16,7 +16,7 @@
 
     <properties>
         <auto-service.version>1.0</auto-service.version>
-        <kotlinpoet.version>1.11.0</kotlinpoet.version>
+        <kotlinpoet.version>1.12.0</kotlinpoet.version>
     </properties>
 
     <dependencies>
