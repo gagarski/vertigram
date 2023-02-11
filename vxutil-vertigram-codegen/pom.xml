@@ -24,11 +24,6 @@
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-stdlib-jdk8</artifactId>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>com.google.auto.service</groupId>-->
-<!--            <artifactId>auto-service</artifactId>-->
-<!--            <version>${auto-service.version}</version>-->
-<!--        </dependency>-->
         <dependency>
             <groupId>ski.gagar.vxutil</groupId>
             <artifactId>vxutil-vertigram-annotations</artifactId>
@@ -43,7 +38,7 @@
         <dependency>
             <groupId>com.squareup</groupId>
             <artifactId>kotlinpoet</artifactId>
-            <version>1.11.0</version>
+            <version>${kotlinpoet.version}</version>
         </dependency>
 
     </dependencies>

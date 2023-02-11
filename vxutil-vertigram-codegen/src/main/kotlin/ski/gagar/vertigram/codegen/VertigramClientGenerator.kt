@@ -22,7 +22,7 @@ import javax.lang.model.SourceVersion
 import javax.lang.model.element.ElementKind
 import javax.lang.model.element.TypeElement
 
-@SupportedSourceVersion(SourceVersion.RELEASE_17)
+@SupportedSourceVersion(SourceVersion.RELEASE_19)
 @SupportedAnnotationTypes("ski.gagar.vertigram.annotations.TgMethod")
 class VertigramClientGenerator : AbstractProcessor() {
     @OptIn(KotlinPoetMetadataPreview::class)

@@ -8,5 +8,7 @@ import ski.gagar.vxutil.vertigram.types.ChatPermissions
 @TgMethod
 data class SetChatPermissions(
     override val chatId: ChatId,
-    val permissions: ChatPermissions
+    val permissions: ChatPermissions,
+    // Since Telegram Bot API 6.5
+    val useIndependentChatPermissions: Boolean = false
 ) : JsonTgCallable<Boolean>(), HasChatId

@@ -7,5 +7,7 @@ data class ChatJoinRequest(
     val from: User,
     val date: Instant,
     val bio: String? = null,
-    val inviteLink: ChatInviteLink? = null
+    val inviteLink: ChatInviteLink? = null,
+    // Since Telegram Bot API 6.5
+    val userChatId: Long
 )

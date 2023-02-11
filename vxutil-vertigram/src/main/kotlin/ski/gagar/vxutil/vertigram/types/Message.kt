@@ -73,5 +73,8 @@ data class Message(
     val forumTopicEdited: ForumTopicEdited? = null,
     val generalForumTopicHidden: GeneralForumTopicHidden? = null,
     val generalForumTopicUndhidden: GeneralForumTopicUnhidden? = null,
-    val writeAccessAllowed: WriteAccessAllowed? = null
+    val writeAccessAllowed: WriteAccessAllowed? = null,
+    // Since Telegram Bot API 6.5
+    val userShared: UserShared? = null,
+    val chatShared: ChatShared? = null
 )

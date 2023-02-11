@@ -11,5 +11,7 @@ data class RestrictChatMember(
     override val chatId: ChatId,
     val userId: Long,
     val permissions: ChatPermissions,
-    val untilDate: Instant? = null
+    val untilDate: Instant? = null,
+    // Since Telegram Bot API 6.5
+    val useIndependentChatPermissions: Boolean = false
 ) : JsonTgCallable<Boolean>(), HasChatId
