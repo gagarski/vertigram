@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.databind.SerializerProvider
 import com.fasterxml.jackson.databind.ser.BeanPropertyWriter
 import ski.gagar.vxutil.vertigram.types.InputMedia
+import ski.gagar.vxutil.vertigram.types.InputSticker
 import ski.gagar.vxutil.vertigram.types.attachments.Attachment
 
 internal class MediaInstantiatingBeanPropertyWriter(delegate: BeanPropertyWriter) : BeanPropertyWriter(delegate) {
@@ -21,15 +22,34 @@ internal class MediaInstantiatingBeanPropertyWriter(delegate: BeanPropertyWriter
 
         val processedMedia = value.instantiate(
             media = value.media.getReference(mediaName),
-            thumb = value.thumb?.getReference(thumbName)
+            thumbnail = value.thumbnail?.getReference(thumbName)
         )
 
         deferred[mediaName] = AttachmentInfo(value.media, true)
-        value.thumb?.let {
+        value.thumbnail?.let {
             deferred[thumbName] = AttachmentInfo(it, true)
         }
 
         return processedMedia
+    }
+
+    private fun processSingleSticker(
+        value: InputSticker,
+        deferred: MutableMap<String, AttachmentInfo>,
+        index: Int? = null
+    ): InputSticker {
+        val indexStr = index?.let {
+            "_$it"
+        }
+        val stickerName = "${ATTACHMENT}_${_name}${indexStr}_${STICKER}"
+
+        val processedSticker = value.instantiate(
+            sticker = value.sticker.getReference(stickerName)
+        )
+
+        deferred[stickerName] = AttachmentInfo(value.sticker, true)
+
+        return processedSticker
     }
 
     fun serializeMedia(
@@ -48,12 +68,15 @@ internal class MediaInstantiatingBeanPropertyWriter(delegate: BeanPropertyWriter
             is InputMedia -> {
                 processSingleMedia(value, deferredAttachments)
             }
+            is InputSticker -> {
+                processSingleSticker(value, deferredAttachments)
+            }
             is Collection<*> -> {
                 value.withIndex().map { (index, it) ->
-                    if (it is InputMedia) {
-                        processSingleMedia(it, deferredAttachments, index)
-                    } else {
-                        it
+                    when (it) {
+                        is InputMedia -> processSingleMedia(it, deferredAttachments, index)
+                        is InputSticker -> processSingleSticker(it, deferredAttachments, index)
+                        else -> it
                     }
                 }.toList()
             }
@@ -106,5 +129,6 @@ internal class MediaInstantiatingBeanPropertyWriter(delegate: BeanPropertyWriter
         const val ATTACHMENT = "attachment"
         const val MEDIA = "media"
         const val THUMB = "thumb"
+        const val STICKER = "sticker"
     }
 }

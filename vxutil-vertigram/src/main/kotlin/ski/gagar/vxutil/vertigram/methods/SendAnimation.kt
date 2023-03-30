@@ -22,7 +22,7 @@ data class SendAnimation(
     val width: Int? = null,
     val height: Int? = null,
     @TgMedia
-    val thumb: Attachment? = null,
+    val thumbnail: Attachment? = null,
     val caption: String? = null,
     val parseMode: ParseMode? = null,
     val captionEntities: List<MessageEntity>? = null,

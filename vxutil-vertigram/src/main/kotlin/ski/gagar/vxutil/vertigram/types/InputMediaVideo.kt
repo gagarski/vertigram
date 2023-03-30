@@ -5,7 +5,7 @@ import java.time.Duration
 
 data class InputMediaVideo(
     override val media: Attachment,
-    override val thumb: Attachment? = null,
+    override val thumbnail: Attachment? = null,
     val caption: String? = null,
     val parseMode: ParseMode? = null,
     val captionEntities: List<MessageEntity>? = null,
@@ -17,5 +17,5 @@ data class InputMediaVideo(
     val hasSpoiler: Boolean = false
 ) : InputMedia {
     override val type: InputMediaType = InputMediaType.VIDEO
-    override fun instantiate(media: Attachment, thumb: Attachment?) = copy(media = media, thumb = thumb)
+    override fun instantiate(media: Attachment, thumbnail: Attachment?) = copy(media = media, thumbnail = thumbnail)
 }

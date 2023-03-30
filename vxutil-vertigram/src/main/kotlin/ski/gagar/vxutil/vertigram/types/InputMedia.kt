@@ -1,6 +1,5 @@
 package ski.gagar.vxutil.vertigram.types
 
-import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 import ski.gagar.vxutil.vertigram.types.attachments.Attachment
@@ -16,7 +15,7 @@ import ski.gagar.vxutil.vertigram.types.attachments.Attachment
 sealed interface InputMedia {
     val type: InputMediaType
     val media: Attachment
-    val thumb: Attachment?
-    fun instantiate(media: Attachment, thumb: Attachment?): InputMedia
+    val thumbnail: Attachment?
+    fun instantiate(media: Attachment, thumbnail: Attachment?): InputMedia
 }
 

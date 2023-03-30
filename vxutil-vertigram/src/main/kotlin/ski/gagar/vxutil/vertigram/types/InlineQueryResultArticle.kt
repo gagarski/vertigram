@@ -8,9 +8,9 @@ data class InlineQueryResultArticle(
     val url: String? = null,
     val hideUrl: Boolean = false,
     val description: String? = null,
-    val thumbUrl: String? = null,
-    val thumbWidth: Int? = null,
-    val thumbHeight: Int? = null
+    val thumbnailUrl: String? = null,
+    val thumbnailWidth: Int? = null,
+    val thumbnailHeight: Int? = null
 ) : InlineQueryResult {
     override val type = InlineQueryResultType.ARTICLE
 }

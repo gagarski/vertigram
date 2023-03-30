@@ -18,7 +18,7 @@ data class SendDocument(
     @TgMedia
     val document: Attachment,
     @TgMedia
-    val thumb: Attachment? = null,
+    val thumbnail: Attachment? = null,
     val caption: String? = null,
     val parseMode: ParseMode? = null,
     val captionEntities: List<MessageEntity>? = null,

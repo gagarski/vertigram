@@ -20,6 +20,8 @@ data class SendSticker(
     val replyToMessageId: Long? = null,
     val allowSendingWithoutReply: Boolean = false,
     val replyMarkup: ReplyMarkup? = null,
-    // Since Telegram Bot Api 6.3
-    val messageThreadId: Long? = null
+    // Since Telegram Bot API 6.3
+    val messageThreadId: Long? = null,
+    // Since Telegram Bot API 6.6
+    val emoji: String? = null
 ) : MultipartTgCallable<Message>(), HasChatId

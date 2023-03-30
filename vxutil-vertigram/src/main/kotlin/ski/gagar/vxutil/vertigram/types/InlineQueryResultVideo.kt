@@ -6,7 +6,7 @@ data class InlineQueryResultVideo(
     val id: String,
     val videoUrl: String,
     val mimeType: String,
-    val thumbUrl: String,
+    val thumbnailUrl: String,
     val title: String,
     val caption: String? = null,
     val parseMode: ParseMode? = null,

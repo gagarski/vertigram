@@ -11,9 +11,9 @@ data class InlineQueryResultDocument(
     val description: String? = null,
     val replyMarkup: InlineKeyboardMarkup? = null,
     val inputMessageContent: InputMessageContent? = null,
-    val thumbUrl: String? = null,
-    val thumbWidth: Int? = null,
-    val thumbHeight: Int? = null
+    val thumbnailUrl: String? = null,
+    val thumbnailWidth: Int? = null,
+    val thumbnailHeight: Int? = null
 ) : InlineQueryResult {
     override val type: InlineQueryResultType = InlineQueryResultType.DOCUMENT
 }

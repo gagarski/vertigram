@@ -5,7 +5,7 @@ import java.time.Duration
 
 data class InputMediaAudio(
     override val media: Attachment,
-    override val thumb: Attachment? = null,
+    override val thumbnail: Attachment? = null,
     val caption: String? = null,
     val parseMode: ParseMode? = null,
     val captionEntities: List<MessageEntity>? = null,
@@ -14,5 +14,5 @@ data class InputMediaAudio(
     val title: String? = null
 ) : InputMedia {
     override val type: InputMediaType = InputMediaType.AUDIO
-    override fun instantiate(media: Attachment, thumb: Attachment?) = copy(media = media, thumb = thumb)
+    override fun instantiate(media: Attachment, thumbnail: Attachment?) = copy(media = media, thumbnail = thumbnail)
 }

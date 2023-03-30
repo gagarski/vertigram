@@ -9,5 +9,5 @@ data class StickerSet(
     @get:JvmName("getIsVideo")
     val isVideo: Boolean = false,
     val stickers: List<Sticker> = listOf(),
-    val thumb: List<PhotoSize>? = null
+    val thumbnail: List<PhotoSize>? = null
 )

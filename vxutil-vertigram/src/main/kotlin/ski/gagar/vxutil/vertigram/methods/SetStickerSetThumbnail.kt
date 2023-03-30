@@ -6,9 +6,9 @@ import ski.gagar.vxutil.vertigram.types.attachments.Attachment
 import ski.gagar.vxutil.vertigram.util.multipart.TgMedia
 
 @TgMethod
-data class SetStickerSetThumb(
+data class SetStickerSetThumbnail(
     val name: String,
     val userId: Long,
     @TgMedia
-    val thumb: Attachment
+    val thumbnail: Attachment
 ) : MultipartTgCallable<Message>()

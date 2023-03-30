@@ -24,7 +24,7 @@ data class SendAudio(
     val duration: Duration? = null,
     val performer: String? = null,
     val title: String? = null,
-    val thumb: Attachment? = null,
+    val thumbnail: Attachment? = null,
     val disableNotification: Boolean = false,
     val protectContent: Boolean = false,
     val replyToMessageId: Long? = null,

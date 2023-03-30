@@ -11,6 +11,6 @@ data class InputMediaPhoto(
     val hasSpoiler: Boolean = false
 ) : InputMedia {
     override val type: InputMediaType = InputMediaType.PHOTO
-    override val thumb = null
-    override fun instantiate(media: Attachment, thumb: Attachment?) = copy(media = media)
+    override val thumbnail = null
+    override fun instantiate(media: Attachment, thumbnail: Attachment?) = copy(media = media)
 }

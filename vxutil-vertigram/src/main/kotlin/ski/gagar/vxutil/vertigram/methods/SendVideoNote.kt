@@ -19,7 +19,7 @@ data class SendVideoNote(
     val duration: Duration? = null,
     val length: Int? = null,
     @TgMedia
-    val thumb: Attachment? = null,
+    val thumbnail: Attachment? = null,
     val disableNotification: Boolean = false,
     val protectContent: Boolean = false,
     val replyToMessageId: Long? = null,

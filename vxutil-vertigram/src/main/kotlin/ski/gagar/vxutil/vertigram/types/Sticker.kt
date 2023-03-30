@@ -9,11 +9,13 @@ data class Sticker(
     val isAnimated: Boolean = false,
     @get:JvmName("getIsVideo")
     val isVideo: Boolean = false,
-    val thumb: PhotoSize? = null,
+    val thumbnail: PhotoSize? = null,
     val emoji: String? = null,
     val setName: String? = null,
     val premiumAnimation: File? = null,
     val maskPosition: MaskPosition? = null,
     val customEmojiId: String? = null,
-    val fileSize: Long? = null
+    val fileSize: Long? = null,
+    // Since Bot API 6.6
+    val needsRepainting: Boolean = false
 )
