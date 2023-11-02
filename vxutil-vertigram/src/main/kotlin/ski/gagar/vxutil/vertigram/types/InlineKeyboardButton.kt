@@ -9,5 +9,7 @@ data class InlineKeyboardButton(
     val switchInlineQuery: String? = null,
     val switchInlineQueryCurrentChat: String? = null,
     val callbackGame: CallbackGame? = null,
-    val pay: Boolean = false
+    val pay: Boolean = false,
+    // Since Telegram Bot API 6.7
+    val switchInlineQueryChosenChat: SwitchInlineQueryChosenChat? = null
 )

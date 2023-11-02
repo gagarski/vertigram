@@ -8,5 +8,7 @@ data class ChatMemberUpdated(
     val date: Instant,
     val oldChatMember: ChatMember,
     val newChatMember: ChatMember,
-    val inviteLink: ChatInviteLink? = null
+    val inviteLink: ChatInviteLink? = null,
+    // Since Telegram Bot API 6.7
+    val viaChatFolderInviteLink: Boolean = false
 )

@@ -78,6 +78,7 @@ abstract class MdV2ElementWithChildren internal constructor() : MdV2Element() {
     protected open fun u(init: Underline.() -> Unit) = initTag(Underline(), init)
     protected open fun s(init: Strikethrough.() -> Unit) = initTag(Strikethrough(), init)
     protected open fun a(href: String, init: Link.() -> Unit) = initTag(Link(href), init)
+    protected open fun emoji(basic: String, customId: Long) = initTag(Emoji(basic, customId))
     protected open fun user(user: User, text: String) = initTag(Link("tg://user?id=${user.id}")) { +text }
     protected open fun user(user: User) = when {
         user.username != null -> initTag(Text("@${user.username}"))
@@ -107,6 +108,7 @@ abstract class MdV2ElementWithChildren internal constructor() : MdV2Element() {
         public override fun u(init: Underline.() -> Unit) = this@MdV2ElementWithChildren.u(init)
         public override fun s(init: Strikethrough.() -> Unit) = this@MdV2ElementWithChildren.s(init)
         public override fun a(href: String, init: Link.() -> Unit) = this@MdV2ElementWithChildren.a(href, init)
+        public override fun emoji(basic: String, customId: Long) = this@MdV2ElementWithChildren.emoji(basic, customId)
         public override fun user(user: User, text: String) = this@MdV2ElementWithChildren.user(user, text)
         public override fun user(user: User) = this@MdV2ElementWithChildren.user(user)
         public override fun userSoft(user: User) = this@MdV2ElementWithChildren.userSoft(user)
@@ -139,6 +141,7 @@ class Bold internal constructor() : WrappedMdV2ElementWithChildren() {
     public override fun u(init: Underline.() -> Unit) = super.u(init)
     public override fun s(init: Strikethrough.() -> Unit) = super.s(init)
     public override fun a(href: String, init: Link.() -> Unit) = super.a(href, init)
+    public override fun emoji(basic: String, customId: Long) = super.emoji(basic, customId)
     public override fun user(user: User, text: String) = super.user(user, text)
     public override fun user(user: User) = super.user(user)
     public override fun spoiler(init: Spoiler.() -> Unit) = super.spoiler(init)
@@ -178,6 +181,7 @@ class Underline internal constructor() : WrappedMdV2ElementWithChildren() {
     public override fun i(init: Italic.() -> Unit) = initTag(Italic(true), init)
     public override fun s(init: Strikethrough.() -> Unit) = super.s(init)
     public override fun a(href: String, init: Link.() -> Unit) = super.a(href, init)
+    public override fun emoji(basic: String, customId: Long) = super.emoji(basic, customId)
     public override fun user(user: User, text: String) = super.user(user, text)
     public override fun user(user: User) = super.user(user)
     public override fun spoiler(init: Spoiler.() -> Unit) = super.spoiler(init)
@@ -192,6 +196,7 @@ class Strikethrough internal constructor(): WrappedMdV2ElementWithChildren() {
     public override fun i(init: Italic.() -> Unit) = super.i(init)
     public override fun u(init: Underline.() -> Unit) = super.u(init)
     public override fun a(href: String, init: Link.() -> Unit) = super.a(href, init)
+    public override fun emoji(basic: String, customId: Long) = super.emoji(basic, customId)
     public override fun user(user: User, text: String) = super.user(user, text)
     public override fun user(user: User) = super.user(user)
     public override fun spoiler(init: Spoiler.() -> Unit) = super.spoiler(init)
@@ -209,9 +214,20 @@ class Link internal constructor(private val href: String) : MdV2ElementWithChild
     public override fun i(init: Italic.() -> Unit) = super.i(init)
     public override fun u(init: Underline.() -> Unit) = super.u(init)
     public override fun s(init: Strikethrough.() -> Unit) = super.s(init)
+    public override fun emoji(basic: String, customId: Long) = super.emoji(basic, customId)
     public override fun spoiler(init: Spoiler.() -> Unit) = super.spoiler(init)
 
 }
+
+
+class Emoji internal constructor(private val basic: String, private val customId: Long) : MdV2Element() {
+    override fun render(builder: StringBuilder) {
+        builder.append("[$basic]")
+        builder.append("(tg://emoji?id=$customId})")
+    }
+}
+
+
 
 class Code internal constructor(private val code: String) : MdV2Element() {
     override fun render(builder: StringBuilder) {
