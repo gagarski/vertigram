@@ -21,5 +21,9 @@ data class PromoteChatMember(
     val canInviteUsers: Boolean = false,
     val canPinMessages: Boolean = false,
     // Since Telegram Bot Api 6.3
-    val canManageTopics: Boolean = false
+    val canManageTopics: Boolean = false,
+    // Since Telegram Bot Api 6.9
+    val canPostStories: Boolean = false,
+    val canEditStories: Boolean = false,
+    val canDeleteStories: Boolean = false,
 ) : JsonTgCallable<Boolean>(), HasChatId

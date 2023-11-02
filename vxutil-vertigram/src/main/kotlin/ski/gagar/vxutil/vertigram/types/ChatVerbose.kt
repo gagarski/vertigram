@@ -1,6 +1,7 @@
 package ski.gagar.vxutil.vertigram.types
 
 import java.time.Duration
+import java.time.Instant
 
 data class ChatVerbose(
     val id: Long,
@@ -33,5 +34,7 @@ data class ChatVerbose(
     val emojiStatusCustomEmojiId: String? = null,
     // Since Telegram Bot API 6.4
     val hasHiddenMembers: Boolean = false,
-    val hasAggressiveAntiSpamEnabled: Boolean? = null
+    val hasAggressiveAntiSpamEnabled: Boolean? = null,
+    // Since Telegram Bot API 6.8
+    val emojiStatusExpirationDate: Instant? = null
 )

@@ -76,5 +76,7 @@ data class Message(
     val writeAccessAllowed: WriteAccessAllowed? = null,
     // Since Telegram Bot API 6.5
     val userShared: UserShared? = null,
-    val chatShared: ChatShared? = null
+    val chatShared: ChatShared? = null,
+    // Since Telegram Bot API 6.8
+    val story: Story? = null,
 )
