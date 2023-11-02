@@ -6,6 +6,7 @@ import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.KModifier
 import com.squareup.kotlinpoet.ParameterSpec
+import com.squareup.kotlinpoet.ParameterizedTypeName
 import com.squareup.kotlinpoet.TypeSpec
 import com.squareup.kotlinpoet.asClassName
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
@@ -60,6 +61,13 @@ class VertigramClientGenerator : AbstractProcessor() {
     }
 
     fun objectToMethod(clazz: TypeSpec, className: ClassName, tgMethod: TgMethod?): FunSpec? {
+        val superclass = clazz.superclass
+        if (superclass !is ParameterizedTypeName || superclass.rawType.canonicalName !in SUPERTYPES)
+            throw IllegalArgumentException("$clazz is not a proper tg method")
+
+        val returnType = superclass.typeArguments.firstOrNull() ?:
+        throw IllegalArgumentException("$clazz is not a proper tg method")
+
         val kotlinMethodName = tgMethod?.kotlinMethodName
         val declName = if (!kotlinMethodName.isNullOrEmpty()) kotlinMethodName else null
         val name = declName
@@ -68,12 +76,21 @@ class VertigramClientGenerator : AbstractProcessor() {
         return FunSpec.builder(name)
             .addModifiers(KModifier.INLINE, KModifier.SUSPEND)
             .receiver(ClassName("ski.gagar.vxutil.vertigram.client", "Telegram"))
+            .returns(returnType)
             .addKdoc("Auto-generated from [%T]".trimIndent(), className)
             .addStatement("return call(%T)", className)
             .build()
     }
 
+
     fun classToMethod(clazz: TypeSpec, className: ClassName, tgMethod: TgMethod?): FunSpec? {
+        val superclass = clazz.superclass
+        if (superclass !is ParameterizedTypeName || superclass.rawType.canonicalName !in SUPERTYPES)
+            throw IllegalArgumentException("$clazz is not a proper tg method")
+
+        val returnType = superclass.typeArguments.firstOrNull() ?:
+            throw IllegalArgumentException("$clazz is not a proper tg method")
+
         val constructor = clazz.primaryConstructor ?: return null
         val kotlinMethodName = tgMethod?.kotlinMethodName
         val declName = if (!kotlinMethodName.isNullOrEmpty()) kotlinMethodName else null
@@ -86,6 +103,7 @@ class VertigramClientGenerator : AbstractProcessor() {
         return FunSpec.builder(name)
             .addModifiers(KModifier.INLINE, KModifier.SUSPEND)
             .receiver(ClassName("ski.gagar.vxutil.vertigram.client", "Telegram"))
+            .returns(returnType)
             .apply {
                 for (param in constructor.parameters) {
                     addParameter(
@@ -118,4 +136,11 @@ class VertigramClientGenerator : AbstractProcessor() {
                     }
                 }
             }.build()
+
+    companion object {
+        val SUPERTYPES = setOf(
+            "ski.gagar.vxutil.vertigram.methods.JsonTgCallable",
+            "ski.gagar.vxutil.vertigram.methods.MultipartTgCallable"
+        )
+    }
 }

@@ -75,13 +75,8 @@ class WorkerExecutorService(
     private val vertx: Vertx
     ) : AbstractExecutorService(), ScheduledExecutorService {
     override fun execute(command: Runnable) {
-        workerExecutor.executeBlocking<Void>({
-            try {
-                command.run()
-                it.complete()
-            } catch (t: Throwable) {
-                it.fail(t)
-            }
+        workerExecutor.executeBlocking(Callable {
+            command.run()
         }, false).onComplete {
             if (it.failed()) {
                 throw WorkerExecutorServiceError("Should not happen")

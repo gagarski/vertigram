@@ -18,6 +18,7 @@ import ski.gagar.vxutil.lazy
 import ski.gagar.vxutil.logger
 import ski.gagar.vxutil.workerExecutorDispatcher
 import java.io.Closeable
+import java.util.concurrent.Callable
 import javax.sql.DataSource
 
 typealias WorkerExecutorFactory = Vertx.(String) -> WorkerExecutor
@@ -67,19 +68,13 @@ class Database(
 
         private suspend fun migrate(vertx: Vertx, ds: DataSource, locations: List<String>) {
             logger.lazy.info { "Running migrations for $ds" }
-            vertx.executeBlocking<Unit> {
-                try {
-                    Flyway.configure()
-                        .dataSource(ds)
-                        .locations(*locations.toTypedArray())
-                        .load()
-                        .migrate()
-                    it.complete()
-                } catch (t: Throwable) {
-                    it.fail(t)
-                }
-
-            }.await()
+            vertx.executeBlocking(Callable<Unit> {
+                Flyway.configure()
+                    .dataSource(ds)
+                    .locations(*locations.toTypedArray())
+                    .load()
+                    .migrate()
+            }).await()
         }
 
         suspend fun initDs(vertx: Vertx, name: String, config: DbConfig, migrate: Boolean = true): DataSource {

@@ -34,31 +34,31 @@
   </scm>
 
     <properties>
-        <build-helper.plugin.version>3.3.0</build-helper.plugin.version>
-        <compiler-plugin.version>3.10.1</compiler-plugin.version>
-        <deploy-plugin.version>3.0.0</deploy-plugin.version>
-        <gpg-plugin.version>3.0.1</gpg-plugin.version>
-        <kotlin-plugin.version>1.7.21</kotlin-plugin.version>
+        <build-helper.plugin.version>3.4.0</build-helper.plugin.version>
+        <compiler-plugin.version>3.11.0</compiler-plugin.version>
+        <deploy-plugin.version>3.1.1</deploy-plugin.version>
+        <gpg-plugin.version>3.1.0</gpg-plugin.version>
+        <kotlin-plugin.version>1.9.20</kotlin-plugin.version>
         <nexus-staging-plugin.version>1.6.13</nexus-staging-plugin.version>
-        <release-plugin.version>3.0.0-M7</release-plugin.version>
-        <source.plugin.version>3.2.1</source.plugin.version>
+        <release-plugin.version>3.0.1</release-plugin.version>
+        <source.plugin.version>3.3.0</source.plugin.version>
 
-        <java.version.kotlin>1.8</java.version.kotlin>
-        <java.version>19</java.version>
+        <java.version.kotlin>20</java.version.kotlin>
+        <java.version>20</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <commons-lang.version>3.12.0</commons-lang.version>
-        <flyway.version>9.10.2</flyway.version>
+        <commons-lang.version>3.13.0</commons-lang.version>
+        <flyway.version>10.0.0</flyway.version>
         <hikari.version>5.0.1</hikari.version>
-        <jackson.version>2.14.1</jackson.version>
-        <jooq.version>3.17.6</jooq.version>
-        <kotlinx-coroutines.version>1.6.4</kotlinx-coroutines.version>
-        <kotlin-stdlib.version>1.7.21</kotlin-stdlib.version>
-        <logback.version>1.4.5</logback.version>
-        <postgresql.version>42.5.1</postgresql.version>
+        <jackson.version>2.15.3</jackson.version>
+        <jooq.version>3.18.7</jooq.version>
+        <kotlinx-coroutines.version>1.7.3</kotlinx-coroutines.version>
+        <kotlin-stdlib.version>1.9.20</kotlin-stdlib.version>
+        <logback.version>1.4.11</logback.version>
+        <postgresql.version>42.6.0</postgresql.version>
         <reflections.version>0.10.2</reflections.version>
-        <slf4j.version>2.0.6</slf4j.version>
-        <vertx.version>4.3.7</vertx.version>
+        <slf4j.version>2.0.9</slf4j.version>
+        <vertx.version>4.4.6</vertx.version>
 
     </properties>
 
