@@ -47,6 +47,11 @@
                 <artifactId>janino</artifactId>
                 <version>${janino.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.flywaydb</groupId>
+                <artifactId>flyway-database-postgresql</artifactId>
+                <version>${flyway.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -76,6 +81,7 @@
                 <plugin>
                     <groupId>org.springframework.boot</groupId>
                     <artifactId>spring-boot-maven-plugin</artifactId>
+                    <version>${spring-boot-maven-plugin.plugin.version}</version>
                     <configuration>
                         <mainClass>${exec.main-class}</mainClass>
                     </configuration>

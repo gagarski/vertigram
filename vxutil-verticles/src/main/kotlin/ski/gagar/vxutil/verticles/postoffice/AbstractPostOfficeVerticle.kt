@@ -94,10 +94,7 @@ abstract class AbstractPostOfficeVerticle<
 
     private suspend fun handleSubscribe(subscriptionRequest: S) = messageHandler {
         stateMutex.withLock {
-            val discriminator = subscriptionRequest.discriminator ?:
-                throw IllegalArgumentException(
-                    "Subscriptions without discriminator are not supported: $subscriptionRequest"
-                )
+            val discriminator = subscriptionRequest.discriminator
             logger.lazy.debug {
                 "Post office $name got subscription request $subscriptionRequest"
             }
