@@ -33,18 +33,6 @@
         </developer>
     </developers>
 
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>ski.gagar.vxutil</groupId>
-                <artifactId>vxutil-dependencies</artifactId>
-                <version>0.2.15-SNAPSHOT</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
-
     <build>
         <pluginManagement>
             <plugins>
