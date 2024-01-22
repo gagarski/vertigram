@@ -36,5 +36,7 @@ data class ChatVerbose(
     val hasHiddenMembers: Boolean = false,
     val hasAggressiveAntiSpamEnabled: Boolean? = null,
     // Since Telegram Bot API 6.8
-    val emojiStatusExpirationDate: Instant? = null
+    val emojiStatusExpirationDate: Instant? = null,
+    // Since Telegram Bot API 7.0
+    val availableReactions: List<ReactionType>? = listOf()
 )

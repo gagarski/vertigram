@@ -11,6 +11,10 @@ enum class UpdateType {
     CHANNEL_POST,
     @JsonProperty("edited_channel_post")
     EDITED_CHANNEL_POST,
+    @JsonProperty("message_reaction")
+    MESSAGE_REACTION,
+    @JsonProperty("message_reaction_COUNT")
+    MESSAGE_REACTION_COUNT,
     @JsonProperty("inline_query")
     INLINE_QUERY,
     @JsonProperty("chosen_inline_result")
@@ -31,7 +35,6 @@ enum class UpdateType {
     CHAT_MEMBER,
     @JsonProperty("chat_join_request")
     CHAT_JOIN_REQUEST;
-
 
     override fun toString(): String = super.toString().lowercase()
 

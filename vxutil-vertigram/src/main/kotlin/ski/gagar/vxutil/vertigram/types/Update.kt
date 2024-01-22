@@ -29,7 +29,10 @@ data class ParsedUpdate(
     val pollAnswer: PollAnswer? = null,
     val myChatMember: ChatMemberUpdated? = null,
     val chatMember: ChatMemberUpdated? = null,
-    val chatJoinRequest: ChatJoinRequest? = null
+    val chatJoinRequest: ChatJoinRequest? = null,
+    // Since Telegram Bot API 7.0
+    val messageReaction: MessageReactionUpdated? = null,
+    val messageReactionCount: MessageReactionCountUpdated? = null,
 ) : Update
 
 data class MalformedUpdate(
