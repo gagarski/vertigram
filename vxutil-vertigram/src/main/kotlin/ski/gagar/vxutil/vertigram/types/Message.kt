@@ -79,4 +79,7 @@ data class Message(
     val chatShared: ChatShared? = null,
     // Since Telegram Bot API 6.8
     val story: Story? = null,
+    // Since Telegram Bot API 7.0
+    val externalReply: ExternalReplyInfo,
+    val quote: TextQuote
 )
