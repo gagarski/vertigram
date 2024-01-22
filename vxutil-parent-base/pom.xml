@@ -17,8 +17,8 @@
     <description>Parent POM for Vxutil which includes internal plugin configurations. Not to be used by external projects.</description>
 
     <properties>
-        <compiler-plugin.version>3.8.1</compiler-plugin.version>
-        <kotlin-plugin.version>1.9.20</kotlin-plugin.version>
+        <compiler-plugin.version>3.12.1</compiler-plugin.version>
+        <kotlin-plugin.version>1.9.22</kotlin-plugin.version>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
