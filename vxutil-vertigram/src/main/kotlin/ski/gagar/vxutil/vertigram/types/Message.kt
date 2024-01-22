@@ -80,6 +80,7 @@ data class Message(
     // Since Telegram Bot API 6.8
     val story: Story? = null,
     // Since Telegram Bot API 7.0
-    val externalReply: ExternalReplyInfo,
-    val quote: TextQuote
+    val externalReply: ExternalReplyInfo? = null,
+    val quote: TextQuote? = null,
+    val linkPreviewOptions: LinkPreviewOptions? = null
 )

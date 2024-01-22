@@ -4,5 +4,6 @@ data class InputTextMessageContent(
     val messageText: String,
     val parseMode: ParseMode? = null,
     val entities: List<MessageEntity>? = null,
-    val disableWebPagePreview: Boolean = false
+    // Since Telegram Bot API 7.0
+    val linkPreviewOptions: LinkPreviewOptions? = null
 ) : InputMessageContent
