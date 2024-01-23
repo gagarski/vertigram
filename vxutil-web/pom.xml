@@ -3,7 +3,7 @@
     <parent>
         <groupId>ski.gagar.vxutil</groupId>
         <artifactId>vxutil-bom-internal</artifactId>
-        <version>1.0.0-alpha38</version>
+        <version>1.0.0-alpha39-SNAPSHOT</version>
         <relativePath>../vxutil-bom-internal</relativePath>
     </parent>
 
