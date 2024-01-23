@@ -36,5 +36,7 @@ enum class MessageEntityType {
     @JsonProperty("text_mention")
     TEXT_MENTION,
     @JsonProperty("custom_emoji")
-    CUSTOM_EMOJI
+    CUSTOM_EMOJI,
+    @JsonProperty("blockquote")
+    BLOCKQUOTE
 }

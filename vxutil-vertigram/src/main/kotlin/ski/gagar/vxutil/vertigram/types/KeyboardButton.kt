@@ -6,7 +6,7 @@ data class KeyboardButton(
     val requestLocation: Boolean? = false,
     val requestPoll: KeyboardButtonPollType? = null,
     val webApp: WebAppInfo? = null,
-    // Since Telegram Bot Api 6.5
-    val requestUser: KeyboardButtonRequestUser? = null,
+    // Since Telegram Bot Api7.0
+    val requestUsers: KeyboardButtonRequestUsers? = null,
     val requestChat: KeyboardButtonRequestChat? = null,
 )

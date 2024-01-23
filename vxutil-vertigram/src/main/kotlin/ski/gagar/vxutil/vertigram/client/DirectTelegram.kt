@@ -3,6 +3,8 @@ package ski.gagar.vxutil.vertigram.client
 import com.fasterxml.jackson.databind.JavaType
 import io.vertx.core.Vertx
 import io.vertx.core.net.ProxyOptions
+import ski.gagar.vxutil.lazy
+import ski.gagar.vxutil.logger
 import ski.gagar.vxutil.vertigram.client.impl.TelegramImpl
 import ski.gagar.vxutil.vertigram.client.impl.TelegramImplOptions
 import ski.gagar.vxutil.vertigram.methods.TgCallable
@@ -52,7 +54,9 @@ class DirectTelegram(
             try {
                 impl.mapper.convertValue(raw, ParsedUpdate::class.java)
             } catch (e: IllegalArgumentException) {
-                // If this one throws, we give up
+                logger.lazy.error(throwable = e) {
+                    "Malformed update $raw"
+                }
                 impl.mapper.convertValue(raw, MalformedUpdate::class.java)
             }
         }

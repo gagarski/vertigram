@@ -93,6 +93,7 @@ abstract class MdV2ElementWithChildren internal constructor() : MdV2Element() {
     protected open fun code(code: String) = initTag(Code(code))
     protected open fun pre(code: String, language: String? = null) = initTag(Pre(code, language))
     protected open fun spoiler(init: Spoiler.() -> Unit) = initTag(Spoiler(), init)
+    protected open fun blockQuote(init: BlockQuote.() -> Unit) = initTag(BlockQuote(), init)
 
     inner class Unsafe : MdV2ElementWithChildren() {
         override fun render(builder: StringBuilder) {
@@ -238,13 +239,13 @@ class Code internal constructor(private val code: String) : MdV2Element() {
 
 class Pre internal constructor(private val code: String, private val language: String? = null) : MdV2Element() {
     override fun render(builder: StringBuilder) {
-        builder.append("```")
+        builder.append("\n```")
         language?.let {
             builder.append(language.escapeCode()) // TODO should we escape here?
         }
         builder.append("\n")
         builder.append(code.escapeCode())
-        builder.append("```")
+        builder.append("```\n")
     }
 
 }
@@ -263,6 +264,27 @@ class Spoiler internal constructor()  : WrappedMdV2ElementWithChildren() {
     public override fun user(user: User) = super.user(user)
 }
 
+class BlockQuote internal constructor() : MdV2ElementWithChildren() {
+    public override fun b(init: Bold.() -> Unit) = super.b(init)
+    public override fun i(init: Italic.() -> Unit) = super.i(init)
+    public override fun u(init: Underline.() -> Unit) = super.u(init)
+    public override fun s(init: Strikethrough.() -> Unit) = super.s(init)
+    public override fun a(href: String, init: Link.() -> Unit) = super.a(href, init)
+    public override fun user(user: User, text: String) = super.user(user, text)
+    public override fun user(user: User) = super.user(user)
+    public override fun userSoft(user: User) = super.userSoft(user)
+    public override fun code(code: String) = super.code(code)
+    public override fun spoiler(init: Spoiler.() -> Unit) = super.spoiler(init)
+
+    override fun render(builder: StringBuilder) {
+        val childBuilder = StringBuilder("\n>")
+        renderChildren(childBuilder)
+        childBuilder.replace(Regex("""\n"""), "\n>")
+        childBuilder.append("\n")
+        builder.append(childBuilder.toString())
+    }
+}
+
 
 class MarkdownRoot internal constructor() : MdV2ElementWithChildren() {
     public override fun b(init: Bold.() -> Unit) = super.b(init)
@@ -276,6 +298,7 @@ class MarkdownRoot internal constructor() : MdV2ElementWithChildren() {
     public override fun code(code: String) = super.code(code)
     public override fun pre(code: String, language: String?) = super.pre(code, language)
     public override fun spoiler(init: Spoiler.() -> Unit) = super.spoiler(init)
+    public override fun blockQuote(init: BlockQuote.() -> Unit) = super.blockQuote(init)
 
     override fun render(builder: StringBuilder) {
         renderChildren(builder)

@@ -1,3 +1,3 @@
 package ski.gagar.vxutil.vertigram.types
 
-data object Story
+data object GiveawayCreated

@@ -38,5 +38,15 @@ data class ChatVerbose(
     // Since Telegram Bot API 6.8
     val emojiStatusExpirationDate: Instant? = null,
     // Since Telegram Bot API 7.0
-    val availableReactions: List<ReactionType>? = listOf()
+    val availableReactions: List<ReactionType>? = listOf(),
+    val accentColorId: Int? = null,
+    val backgroundCustomEmojiId: Int? = null,
+    val profileAccentColorId: Int? = null,
+    val profileBackgroundCustomEmojiId: Int? = null,
+    val hasVisibleHistory: Boolean = false,
 )
+
+val ChatVerbose.accentColor: AccentColor?
+    get() = AccentColor.byId[accentColorId]
+val ChatVerbose.profileAccentColor: ProfileAccentColor?
+    get() = ProfileAccentColor.byId[accentColorId]

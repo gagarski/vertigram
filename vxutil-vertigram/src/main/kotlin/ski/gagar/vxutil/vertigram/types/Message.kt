@@ -9,12 +9,6 @@ data class Message(
     val senderChat: Chat? = null,
     val date: Instant,
     val chat: Chat,
-    val forwardFrom: User? = null,
-    val forwardFromChat: Chat? = null,
-    val forwardFromMessageId: Long? = null,
-    val forwardSignature: String? = null,
-    val forwardSenderName: String? = null,
-    val forwardDate: Instant? = null,
     @get:JvmName("getIsAutomaticForward")
     val isAutomaticForward: Boolean = false,
     val replyToMessage: Message? = null,
@@ -75,12 +69,17 @@ data class Message(
     val generalForumTopicUndhidden: GeneralForumTopicUnhidden? = null,
     val writeAccessAllowed: WriteAccessAllowed? = null,
     // Since Telegram Bot API 6.5
-    val userShared: UserShared? = null,
     val chatShared: ChatShared? = null,
     // Since Telegram Bot API 6.8
     val story: Story? = null,
     // Since Telegram Bot API 7.0
     val externalReply: ExternalReplyInfo? = null,
     val quote: TextQuote? = null,
-    val linkPreviewOptions: LinkPreviewOptions? = null
+    val linkPreviewOptions: LinkPreviewOptions? = null,
+    val usersShared: UsersShared? = null,
+    val giveawayCreated: GiveawayCreated? = null,
+    val giveaway: Giveaway? = null,
+    val giveawayWinners: GiveawayWinners? = null,
+    val giveawayCompleted: GiveawayCompleted? = null,
+    val forwardOrigin: MessageOrigin? = null
 )

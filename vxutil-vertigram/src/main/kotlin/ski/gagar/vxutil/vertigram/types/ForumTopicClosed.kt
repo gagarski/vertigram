@@ -1,3 +1,3 @@
 package ski.gagar.vxutil.vertigram.types
 
-object ForumTopicClosed
+data object ForumTopicClosed
