@@ -108,8 +108,4 @@
             </plugin>
         </plugins>
     </build>
-
-  <scm>
-    <tag>v1.0.0-alpha20</tag>
-  </scm>
 </project>
