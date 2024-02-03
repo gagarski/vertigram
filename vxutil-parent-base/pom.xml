@@ -18,7 +18,10 @@
 
     <properties>
         <compiler-plugin.version>3.12.1</compiler-plugin.version>
+        <groovy-plugin.version>2.1.1</groovy-plugin.version>
         <kotlin-plugin.version>1.9.22</kotlin-plugin.version>
+        <postgresql-testcontainers.version>16.1</postgresql-testcontainers.version>
+        <testcontainers.version>1.19.4</testcontainers.version>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
@@ -28,9 +31,11 @@
         <!--        <vxutil-jooq.db.password/>-->
 
         <vxutil-jooq.jooq.db-name>org.jooq.meta.postgres.PostgresDatabase</vxutil-jooq.jooq.db-name>
+        <vxutil-jooq.jooq.sandbox-db-name>sandbox</vxutil-jooq.jooq.sandbox-db-name>
         <vxutil-jooq.jooq.generated-dir>${project.basedir}/target/generated-sources/jooq</vxutil-jooq.jooq.generated-dir>
         <vxutil-jooq.jooq.generated-package>ski.gagar.vxutil.jooq.db.model</vxutil-jooq.jooq.generated-package>
         <vxutil-jooq.jooq.schema>public</vxutil-jooq.jooq.schema>
+        <vxutil-jooq.skip-testcontainers>false</vxutil-jooq.skip-testcontainers>
 
     </properties>
 
@@ -69,6 +74,48 @@
                             <goals> <goal>testCompile</goal> </goals>
                         </execution>
                     </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.gmaven</groupId>
+                    <artifactId>groovy-maven-plugin</artifactId>
+                    <version>${groovy-plugin.version}</version>
+                    <executions>
+                        <execution>
+                            <!-- Start the container in any phase before the actual code
+                                 generation is required, i.e. at the latest in
+                                 generate-sources -->
+                            <phase>generate-sources</phase>
+                            <goals>
+                                <goal>execute</goal>
+                            </goals>
+                            <configuration>
+                                <source>
+                                    if (!"${vxutil-jooq.db.url}".toString().isBlank()) {
+                                        return
+                                    }
+                                    db = new org.testcontainers.containers.PostgreSQLContainer(
+                                            "postgres:${postgresql-testcontainers.version}")
+                                            .withUsername("${vxutil-jooq.db.username}")
+                                            .withDatabaseName("${vxutil-jooq.jooq.sandbox-db-name}")
+                                            .withPassword("${vxutil-jooq.db.password}")
+
+                                    db.start()
+
+                                    // After you've started the container, collect its generated
+                                    // JDBC URL (which contains a random port)
+                                    project.properties.setProperty('vxutil-jooq.db.url', db.getJdbcUrl())
+                                </source>
+                            </configuration>
+                        </execution>
+                    </executions>
+
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.testcontainers</groupId>
+                            <artifactId>postgresql</artifactId>
+                            <version>${testcontainers.version}</version>
+                        </dependency>
+                    </dependencies>
                 </plugin>
                 <plugin>
                     <groupId>org.flywaydb</groupId>
