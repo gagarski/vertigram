@@ -3,12 +3,13 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>ski.gagar.vxutil</groupId>
-        <artifactId>vxutil-bom-internal</artifactId>
+        <groupId>ski.gagar.vertigram</groupId>
+        <artifactId>vertigram-parent-internal</artifactId>
         <version>1.0.0-alpha41-SNAPSHOT</version>
-        <relativePath>../vxutil-bom-internal</relativePath>
+        <relativePath>../vertigram-parent-internal</relativePath>
     </parent>
 
+    <groupId>ski.gagar.vxutil</groupId>
     <artifactId>vxutil-logback</artifactId>
 
     <name>Vxutil Core</name>

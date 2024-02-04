@@ -2,14 +2,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>ski.gagar.vxutil</groupId>
-        <artifactId>vxutil-bom-internal</artifactId>
-        <version>1.0.0-alpha41-SNAPSHOT</version>
-        <relativePath>vxutil-bom-internal</relativePath>
-    </parent>
-
+    <groupId>ski.gagar.vxutil</groupId>
     <artifactId>vxutil-all</artifactId>
+    <version>1.0.0-alpha41-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Vertigram BOM</name>
@@ -38,10 +33,6 @@
     </scm>
 
     <modules>
-        <module>vxutil-bom-internal</module>
-        <module>vxutil-parent-base</module>
-        <module>vxutil-parent</module>
-
         <module>vxutil-core</module>
         <module>vxutil-jackson-core</module>
         <module>vxutil-jackson</module>
@@ -50,11 +41,32 @@
         <module>vxutil-vertigram</module>
         <module>vxutil-web</module>
 
-        <module>aybolit-like-bom</module>
-
         <module>vxutil-vertigram-annotations</module>
         <module>vxutil-vertigram-codegen</module>
         <module>vxutil-verticles</module>
         <module>vxutil-vertigram-tools</module>
+        <module>vertigram-bom</module>
+        <module>vertigram-parent-internal</module>
+        <module>vertigram-parent</module>
     </modules>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <inherited>false</inherited>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <inherited>false</inherited>
+            </plugin>
+            <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <inherited>false</inherited>
+            </plugin>
+        </plugins>
+    </build>
 </project>

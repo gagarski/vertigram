@@ -1,46 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>ski.gagar.vxutil</groupId>
-    <artifactId>vxutil-bom-internal</artifactId>
+    <groupId>ski.gagar.vertigram</groupId>
+    <artifactId>vertigram-bom</artifactId>
     <version>1.0.0-alpha41-SNAPSHOT</version>
     <packaging>pom</packaging>
 
-    <name>Vxutil Internal BOM</name>
-    <description>Internal BOM for building Vxutil packages</description>
-    <url>https://github.com/gagarski/vxutil</url>
-
-    <licenses>
-        <license>
-            <name>Apache License, Version 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
-
-    <developers>
-        <developer>
-            <name>Kirill Gagarski</name>
-            <email>kirill.gagarski@gmail.com</email>
-        </developer>
-    </developers>
-
-    <scm>
-        <connection>scm:git:git@github.com:gagarski/vxutil.git</connection>
-        <developerConnection>scm:git:git@github.com:gagarski/vxutil.git</developerConnection>
-        <url>https://github.com/gagarski/vxutil</url>
-  </scm>
-
     <properties>
-        <build-helper.plugin.version>3.5.0</build-helper.plugin.version>
         <compiler-plugin.version>3.12.1</compiler-plugin.version>
+        <kotlin-plugin.version>1.9.22</kotlin-plugin.version>
         <deploy-plugin.version>3.1.1</deploy-plugin.version>
         <gpg-plugin.version>3.1.0</gpg-plugin.version>
-        <kotlin-plugin.version>1.9.22</kotlin-plugin.version>
+        <jar-plugin.version>3.3.0</jar-plugin.version>
         <nexus-staging-plugin.version>1.6.13</nexus-staging-plugin.version>
-        <release-plugin.version>3.0.1</release-plugin.version>
-        <source.plugin.version>3.3.0</source.plugin.version>
 
         <java.version.kotlin>21</java.version.kotlin>
         <java.version>21</java.version>
@@ -251,10 +226,10 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-
     <build>
         <pluginManagement>
             <plugins>
+                <!-- Inherited -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
@@ -265,33 +240,29 @@
                         <testSource>${java.version}</testSource>
                         <testTarget>${java.version}</testTarget>
                     </configuration>
-                    <executions>
-                        <!-- Replacing default-compile as it is treated specially by maven -->
-                        <execution>
-                            <id>default-compile</id>
-                            <phase>none</phase>
-                        </execution>
-                        <!-- Replacing default-testCompile as it is treated specially by maven -->
-                        <execution>
-                            <id>default-testCompile</id>
-                            <phase>none</phase>
-                        </execution>
-                        <execution>
-                            <id>java-compile</id>
-                            <phase>compile</phase>
-                            <goals> <goal>compile</goal> </goals>
-                        </execution>
-                        <execution>
-                            <id>java-test-compile</id>
-                            <phase>test-compile</phase>
-                            <goals> <goal>testCompile</goal> </goals>
-                        </execution>
-                    </executions>
                 </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>${jar-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.jetbrains.kotlin</groupId>
+                    <artifactId>kotlin-maven-plugin</artifactId>
+                    <version>${kotlin-plugin.version}</version>
+                    <configuration>
+                        <args>
+                            <arg>-jvm-target</arg>
+                            <arg>${java.version.kotlin}</arg>
+                        </args>
+                    </configuration>
+                </plugin>
+                <!-- Non-inherited -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-deploy-plugin</artifactId>
                     <version>${deploy-plugin.version}</version>
+                    <inherited>false</inherited>
                     <configuration>
                         <skip>true</skip>
                     </configuration>
@@ -300,6 +271,7 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-gpg-plugin</artifactId>
                     <version>${gpg-plugin.version}</version>
+                    <inherited>false</inherited>
                     <executions>
                         <execution>
                             <id>sign-artifacts</id>
@@ -317,92 +289,11 @@
                     </executions>
                 </plugin>
                 <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-jar-plugin</artifactId>
-                    <executions>
-                        <execution>
-                            <id>empty-javadoc-jar</id>
-                            <phase>package</phase>
-                            <goals>
-                                <goal>jar</goal>
-                            </goals>
-                            <configuration>
-                                <classifier>javadoc</classifier>
-                                <classesDirectory>${basedir}/javadoc</classesDirectory>
-                            </configuration>
-                        </execution>
-                    </executions>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-release-plugin</artifactId>
-                    <version>${release-plugin.version}</version>
-                    <configuration>
-                        <tagNameFormat>v@{project.version}</tagNameFormat>
-                        <arguments>-Dgpg.passphrase=${gpg.passphrase} -Dgpg.keyname=${gpg.keyname}</arguments>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-source-plugin</artifactId>
-                    <version>${source.plugin.version}</version>
-                    <executions>
-                        <execution>
-                            <id>attach-sources</id>
-                            <goals>
-                                <goal>jar</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
-                <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>build-helper-maven-plugin</artifactId>
-                    <version>${build-helper.plugin.version}</version>
-                    <executions>
-                        <execution>
-                            <phase>generate-sources</phase>
-                            <goals>
-                                <goal>add-source</goal>
-                            </goals>
-                            <configuration>
-                                <sources>
-                                    <source>src/main/kotlin</source>
-                                </sources>
-                            </configuration>
-                        </execution>
-                    </executions>
-                </plugin>
-                <plugin>
-                    <groupId>org.jetbrains.kotlin</groupId>
-                    <artifactId>kotlin-maven-plugin</artifactId>
-                    <version>${kotlin-plugin.version}</version>
-                    <configuration>
-                        <args>
-                            <arg>-jvm-target</arg>
-                            <arg>${java.version.kotlin}</arg>
-                        </args>
-                    </configuration>
-                    <executions>
-                        <execution>
-                            <id>compile</id>
-                            <phase>compile</phase>
-                            <goals>
-                                <goal>compile</goal>
-                            </goals>
-                            <configuration>
-                                <sourceDirs>
-                                    <sourceDir>${project.basedir}/src/main/kotlin</sourceDir>
-                                </sourceDirs>
-                            </configuration>
-                        </execution>
-                    </executions>
-                </plugin>
-                <plugin>
                     <groupId>org.sonatype.plugins</groupId>
                     <artifactId>nexus-staging-maven-plugin</artifactId>
                     <version>${nexus-staging-plugin.version}</version>
                     <extensions>true</extensions>
+                    <inherited>false</inherited>
                     <configuration>
                         <serverId>ossrh</serverId>
                         <nexusUrl>https://oss.sonatype.org/</nexusUrl>
@@ -425,26 +316,17 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <inherited>false</inherited>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-gpg-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>build-helper-maven-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.jetbrains.kotlin</groupId>
-                <artifactId>kotlin-maven-plugin</artifactId>
+                <inherited>false</inherited>
             </plugin>
             <plugin>
                 <groupId>org.sonatype.plugins</groupId>
                 <artifactId>nexus-staging-maven-plugin</artifactId>
+                <inherited>false</inherited>
             </plugin>
         </plugins>
     </build>
@@ -460,5 +342,4 @@
             </url>
         </repository>
     </distributionManagement>
-
 </project>
