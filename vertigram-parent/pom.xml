@@ -14,6 +14,9 @@
     <artifactId>vertigram-parent</artifactId>
     <packaging>pom</packaging>
 
+    <name>Vertigram Parent</name>
+    <description>Parent POM for Vertigram-based applications</description>
+
     <properties>
         <properties-plugin.version>1.0.0</properties-plugin.version>
         <spring-boot-maven-plugin.plugin.version>3.2.0</spring-boot-maven-plugin.plugin.version>

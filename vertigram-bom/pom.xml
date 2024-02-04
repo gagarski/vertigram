@@ -175,53 +175,53 @@
                 <version>${slf4j.version}</version>
             </dependency>
             <dependency>
-                <groupId>ski.gagar.vxutil</groupId>
-                <artifactId>vxutil-core</artifactId>
+                <groupId>ski.gagar.vertigram</groupId>
+                <artifactId>vertigram-core</artifactId>
                 <version>1.0.0-alpha41-SNAPSHOT</version>
             </dependency>
             <dependency>
-                <groupId>ski.gagar.vxutil</groupId>
-                <artifactId>vxutil-jackson</artifactId>
+                <groupId>ski.gagar.vertigram</groupId>
+                <artifactId>vertigram-jackson</artifactId>
                 <version>1.0.0-alpha41-SNAPSHOT</version>
             </dependency>
             <dependency>
-                <groupId>ski.gagar.vxutil</groupId>
-                <artifactId>vxutil-jackson-core</artifactId>
+                <groupId>ski.gagar.vertigram</groupId>
+                <artifactId>vertigram-jackson-core</artifactId>
                 <version>1.0.0-alpha41-SNAPSHOT</version>
             </dependency>
             <dependency>
-                <groupId>ski.gagar.vxutil</groupId>
-                <artifactId>vxutil-jooq</artifactId>
+                <groupId>ski.gagar.vertigram</groupId>
+                <artifactId>vertigram-jooq</artifactId>
                 <version>1.0.0-alpha41-SNAPSHOT</version>
             </dependency>
             <dependency>
-                <groupId>ski.gagar.vxutil</groupId>
-                <artifactId>vxutil-logback</artifactId>
+                <groupId>ski.gagar.vertigram</groupId>
+                <artifactId>vertigram-logback</artifactId>
                 <version>1.0.0-alpha41-SNAPSHOT</version>
             </dependency>
             <dependency>
-                <groupId>ski.gagar.vxutil</groupId>
-                <artifactId>vxutil-verticles</artifactId>
+                <groupId>ski.gagar.vertigram</groupId>
+                <artifactId>vertigram-verticles</artifactId>
                 <version>1.0.0-alpha41-SNAPSHOT</version>
             </dependency>
             <dependency>
-                <groupId>ski.gagar.vxutil</groupId>
-                <artifactId>vxutil-vertigram</artifactId>
+                <groupId>ski.gagar.vertigram</groupId>
+                <artifactId>vertigram</artifactId>
                 <version>1.0.0-alpha41-SNAPSHOT</version>
             </dependency>
             <dependency>
-                <groupId>ski.gagar.vxutil</groupId>
-                <artifactId>vxutil-vertigram-annotations</artifactId>
+                <groupId>ski.gagar.vertigram</groupId>
+                <artifactId>vertigram-annotations</artifactId>
                 <version>1.0.0-alpha41-SNAPSHOT</version>
             </dependency>
             <dependency>
-                <groupId>ski.gagar.vxutil</groupId>
-                <artifactId>vxutil-vertigram-tools</artifactId>
+                <groupId>ski.gagar.vertigram</groupId>
+                <artifactId>vertigram-bot-tools</artifactId>
                 <version>1.0.0-alpha41-SNAPSHOT</version>
             </dependency>
             <dependency>
-                <groupId>ski.gagar.vxutil</groupId>
-                <artifactId>vxutil-web</artifactId>
+                <groupId>ski.gagar.vertigram</groupId>
+                <artifactId>vertigram-web</artifactId>
                 <version>1.0.0-alpha41-SNAPSHOT</version>
             </dependency>
         </dependencies>

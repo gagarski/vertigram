@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>ski.gagar.vertigram</groupId>
+        <artifactId>vertigram-parent-internal</artifactId>
+        <version>1.0.0-alpha41-SNAPSHOT</version>
+        <relativePath>../vertigram-parent-internal</relativePath>
+    </parent>
+
+    <artifactId>vertigram-codegen</artifactId>
+
+    <name>Vertigram Code Generators</name>
+    <description>Code generator tools for Vertigram</description>
+
+    <properties>
+        <auto-service.version>1.0</auto-service.version>
+        <kotlinpoet.version>1.14.2</kotlinpoet.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-stdlib-jdk8</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ski.gagar.vertigram</groupId>
+            <artifactId>vertigram-annotations</artifactId>
+            <version>1.0.0-alpha41-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.squareup</groupId>
+            <artifactId>kotlinpoet-metadata</artifactId>
+            <version>${kotlinpoet.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.squareup</groupId>
+            <artifactId>kotlinpoet</artifactId>
+            <version>${kotlinpoet.version}</version>
+        </dependency>
+
+    </dependencies>
+</project>

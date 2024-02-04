@@ -4,7 +4,6 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-
     <parent>
         <groupId>ski.gagar.vertigram</groupId>
         <artifactId>vertigram-bom</artifactId>
@@ -13,8 +12,10 @@
     </parent>
 
     <artifactId>vertigram-parent-internal</artifactId>
-    <version>1.0.0-alpha41-SNAPSHOT</version>
     <packaging>pom</packaging>
+
+    <name>Vertigram Parent (Internal)</name>
+    <description>Internal parent POM for Vertigram modules</description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

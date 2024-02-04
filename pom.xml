@@ -2,14 +2,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>ski.gagar.vxutil</groupId>
-    <artifactId>vxutil-all</artifactId>
+    <groupId>ski.gagar.vertigram</groupId>
+    <artifactId>vertigram-all</artifactId>
     <version>1.0.0-alpha41-SNAPSHOT</version>
     <packaging>pom</packaging>
 
-    <name>Vertigram BOM</name>
-    <description>A BOM for Vertigram-based projects</description>
-    <url>https://github.com/gagarski/vxutil</url>
+    <name>Vertigram Root</name>
+    <description>A Root Module for Vertigram Modules</description>
+    <url>https://github.com/gagarski/vertigram</url>
 
     <licenses>
         <license>
@@ -27,24 +27,24 @@
     </developers>
 
     <scm>
-        <connection>scm:git:git@github.com:gagarski/vxutil.git</connection>
-        <developerConnection>scm:git:git@github.com:gagarski/vxutil.git</developerConnection>
-        <url>https://github.com/gagarski/vxutil</url>
+        <connection>scm:git:git@github.com:gagarski/vertigram.git</connection>
+        <developerConnection>scm:git:git@github.com:gagarski/vertigram.git</developerConnection>
+        <url>https://github.com/gagarski/vertigram</url>
     </scm>
 
     <modules>
-        <module>vxutil-core</module>
-        <module>vxutil-jackson-core</module>
-        <module>vxutil-jackson</module>
-        <module>vxutil-jooq</module>
-        <module>vxutil-logback</module>
-        <module>vxutil-vertigram</module>
-        <module>vxutil-web</module>
+        <module>vertigram-core</module>
+        <module>vertigram-jackson-core</module>
+        <module>vertigram-jackson</module>
+        <module>vertigram-jooq</module>
+        <module>vertigram-logback</module>
+        <module>vertigram</module>
+        <module>vertigram-web</module>
 
-        <module>vxutil-vertigram-annotations</module>
-        <module>vxutil-vertigram-codegen</module>
-        <module>vxutil-verticles</module>
-        <module>vxutil-vertigram-tools</module>
+        <module>vertigram-annotations</module>
+        <module>vertigram-codegen</module>
+        <module>vertigram-verticles</module>
+        <module>vertigram-bot-tools</module>
         <module>vertigram-bom</module>
         <module>vertigram-parent-internal</module>
         <module>vertigram-parent</module>

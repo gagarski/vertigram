@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>ski.gagar.vertigram</groupId>
+        <artifactId>vertigram-parent-internal</artifactId>
+        <version>1.0.0-alpha41-SNAPSHOT</version>
+        <relativePath>../vertigram-parent-internal</relativePath>
+    </parent>
+
+    <groupId>ski.gagar.vertigram</groupId>
+    <artifactId>vertigram-logback</artifactId>
+
+    <name>Vertigram Logback</name>
+    <description>Logback-related utilities for Vertigram</description>
+
+    <dependencies>
+        <dependency>
+            <groupId>io.vertx</groupId>
+            <artifactId>vertx-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.vertx</groupId>
+            <artifactId>vertx-lang-kotlin</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.vertx</groupId>
+            <artifactId>vertx-lang-kotlin-coroutines</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.jetbrains.kotlinx</groupId>
+                    <artifactId>kotlinx-coroutines-core</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>ski.gagar.vertigram</groupId>
+            <artifactId>vertigram-jackson</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlinx</groupId>
+            <artifactId>kotlinx-coroutines-slf4j</artifactId>
+        </dependency>
+    </dependencies>
+</project>
