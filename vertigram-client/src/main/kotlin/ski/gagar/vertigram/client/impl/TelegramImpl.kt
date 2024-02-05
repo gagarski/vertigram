@@ -21,7 +21,7 @@ import ski.gagar.vertigram.types.Wrapper
 import ski.gagar.vertigram.uncheckedCast
 import ski.gagar.vertigram.util.TelegramCallException
 import ski.gagar.vertigram.util.TelegramDownloadException
-import ski.gagar.vertigram.util.TypeHints
+import ski.gagar.vertigram.util.VertigramTypeHints
 import ski.gagar.vertigram.util.getOrAssert
 import ski.gagar.vertigram.util.json.TELEGRAM_JSON_MAPPER
 import ski.gagar.vertigram.util.multipart.telegramJsonMapperWithMultipart
@@ -187,12 +187,12 @@ internal class TelegramImpl(
 
     @PublishedApi
     internal suspend fun <T> callJson(type: JavaType, jc: JsonTgCallable<T>, longPoll: Boolean = false): T =
-        call(type, TypeHints.methodNames.getOrAssert(jc.javaClass), jc, longPoll = longPoll)
+        call(type, VertigramTypeHints.methodNames.getOrAssert(jc.javaClass), jc, longPoll = longPoll)
 
     private suspend fun <T> callMultipart(type: JavaType, mpc: MultipartTgCallable<T>): T =
         callMultipart(
             type,
-            TypeHints.methodNames.getOrAssert(mpc.javaClass),
+            VertigramTypeHints.methodNames.getOrAssert(mpc.javaClass),
             mpc
         )
 

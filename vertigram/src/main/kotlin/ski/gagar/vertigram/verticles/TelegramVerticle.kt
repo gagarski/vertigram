@@ -12,7 +12,7 @@ import ski.gagar.vertigram.throttling.ThrottlingTelegram
 import ski.gagar.vertigram.types.UpdateList
 import ski.gagar.vertigram.types.UpdateType
 import ski.gagar.vertigram.use
-import ski.gagar.vertigram.util.TypeHints
+import ski.gagar.vertigram.util.VertigramTypeHints
 import ski.gagar.vertigram.util.getOrAssert
 
 @Suppress("DEPRECATION")
@@ -41,10 +41,10 @@ class TelegramVerticle : ErrorLoggingCoroutineVerticle() {
         suspendJsonConsumer(
             typedConfig.callAddress(RawGetUpdates::class.java), function = ::handleGetUpdates)
 
-        for ((methodName, requestType) in TypeHints.Json.requestTypesByMethodName) {
-            if (methodName in TypeHints.doNotGenerateInTgVerticleMethodNames)
+        for ((methodName, requestType) in VertigramTypeHints.Json.requestTypesByMethodName) {
+            if (methodName in VertigramTypeHints.doNotGenerateInTgVerticleMethodNames)
                 continue
-            val responseType = TypeHints.Json.returnTypesByMethodName.getOrAssert(methodName)
+            val responseType = VertigramTypeHints.Json.returnTypesByMethodName.getOrAssert(methodName)
             suspendJsonConsumer(
                 typedConfig.callAddress(methodName,
                     RequestType.Json
@@ -55,10 +55,10 @@ class TelegramVerticle : ErrorLoggingCoroutineVerticle() {
             }
         }
 
-        for ((methodName, requestType) in TypeHints.Multipart.requestTypesByMethodName) {
-            if (methodName in TypeHints.doNotGenerateInTgVerticleMethodNames)
+        for ((methodName, requestType) in VertigramTypeHints.Multipart.requestTypesByMethodName) {
+            if (methodName in VertigramTypeHints.doNotGenerateInTgVerticleMethodNames)
                 continue
-            val responseType = TypeHints.Multipart.returnTypesByMethodName.getOrAssert(methodName)
+            val responseType = VertigramTypeHints.Multipart.returnTypesByMethodName.getOrAssert(methodName)
             suspendJsonConsumer(
                 typedConfig.callAddress(methodName,
                     RequestType.Multipart
@@ -152,7 +152,7 @@ class TelegramVerticle : ErrorLoggingCoroutineVerticle() {
 
             fun <T : TgCallable<*>> callAddress(clazz: Class<T>, baseAddress: String = DEFAULT_BASE_ADDRESS) =
                 callAddress(
-                    TypeHints.methodNames.getOrAssert(
+                    VertigramTypeHints.methodNames.getOrAssert(
                         clazz
                     ),
                     baseAddress,
@@ -163,7 +163,7 @@ class TelegramVerticle : ErrorLoggingCoroutineVerticle() {
 
             fun <T: TgCallable<*>> callAddress(obj: T, baseAddress: String = DEFAULT_BASE_ADDRESS) =
                 callAddress(
-                    TypeHints.methodNames.getOrAssert(
+                    VertigramTypeHints.methodNames.getOrAssert(
                         obj.javaClass
                     ),
                     baseAddress,

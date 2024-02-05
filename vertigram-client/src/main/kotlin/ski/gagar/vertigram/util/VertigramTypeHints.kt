@@ -77,7 +77,7 @@ private fun getTgCallables() =
 private val <T: TgCallable<*>> Class<T>.tgMethodName: String
     get() = getAnnotation(TgMethodName::class.java)?.name ?: StringUtils.uncapitalize(simpleName)
 
-object TypeHints {
+object VertigramTypeHints {
     val callables = getTgCallables()
 
     val methodNames = callables.associateWith {
@@ -95,7 +95,7 @@ object TypeHints {
     }
 
     object Json {
-        private val callables = TypeHints.callables.filter {
+        private val callables = VertigramTypeHints.callables.filter {
             JsonTgCallable::class.java.isAssignableFrom(it)
         }
 
@@ -110,7 +110,7 @@ object TypeHints {
     }
 
     object Multipart {
-        private val callables = TypeHints.callables.filter {
+        private val callables = VertigramTypeHints.callables.filter {
             MultipartTgCallable::class.java.isAssignableFrom(it)
         }
 

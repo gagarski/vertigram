@@ -9,7 +9,7 @@ import ski.gagar.vertigram.jackson.requestJsonAwait
 import ski.gagar.vertigram.methods.TgCallable
 import ski.gagar.vertigram.types.Update
 import ski.gagar.vertigram.types.UpdateType
-import ski.gagar.vertigram.util.TypeHints
+import ski.gagar.vertigram.util.VertigramTypeHints
 import ski.gagar.vertigram.util.getOrAssert
 import ski.gagar.vertigram.verticles.TelegramVerticle
 import java.time.Duration
@@ -42,7 +42,7 @@ class TgVTelegram(
             vertx.eventBus().requestJsonAwait(
                 TelegramVerticle.Config.callAddress(ski.gagar.vertigram.methods.GetUpdates::class.java, baseAddress),
                 TelegramVerticle.GetUpdates(offset, limit, allowedUpdates),
-                TypeHints.returnTypesByClass.getOrAssert(ski.gagar.vertigram.methods.GetUpdates::class.java),
+                VertigramTypeHints.returnTypesByClass.getOrAssert(ski.gagar.vertigram.methods.GetUpdates::class.java),
                 options = getLongPollDeliveryOptions()
             )
         } catch (ex: ReplyException) {
