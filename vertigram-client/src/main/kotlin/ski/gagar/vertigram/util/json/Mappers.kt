@@ -15,6 +15,6 @@ internal fun telegramJsonMapper(): ObjectMapper = ObjectMapper()
     .registerModule(KotlinModule.Builder().build())
     .registerModule(TelegramModule)
 
-internal val TELEGRAM_JSON_MAPPER: ObjectMapper =
+val TELEGRAM_JSON_MAPPER: ObjectMapper =
     telegramJsonMapper()
 

@@ -12,7 +12,7 @@ import java.time.Duration
  */
 @Deprecated("Use Telegram.getUpdates instead")
 @DoNotGenerateInTgVerticle
-internal data class GetUpdates(
+data class GetUpdates(
     val offset: Long? = null,
     val timeout: Duration = Duration.ZERO,
     val limit: Int? = null,

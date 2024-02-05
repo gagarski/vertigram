@@ -3,31 +3,21 @@ package ski.gagar.vertigram.tools.verticles
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import ski.gagar.vertigram.*
+import ski.gagar.vertigram.builders.Markdown
+import ski.gagar.vertigram.builders.md
+import ski.gagar.vertigram.client.Telegram
+import ski.gagar.vertigram.client.TgVTelegram
 import ski.gagar.vertigram.coroutines.setTimerNonCancellable
 import ski.gagar.vertigram.jackson.suspendJsonConsumer
-import ski.gagar.vertigram.lazy
-import ski.gagar.vertigram.logger
+import ski.gagar.vertigram.tools.isCommandForBot
+import ski.gagar.vertigram.tools.verticles.address.VertigramAddress
+import ski.gagar.vertigram.types.*
+import ski.gagar.vertigram.verticles.TelegramVerticle
 import ski.gagar.vertigram.verticles.address.VxUtilAddress
 import ski.gagar.vertigram.verticles.children.AbstractHierarchyVerticle
 import ski.gagar.vertigram.verticles.children.messages.DeathNotice
 import ski.gagar.vertigram.verticles.children.messages.DeathReason
-import ski.gagar.vertigram.client.Telegram
-import ski.gagar.vertigram.client.TgVTelegram
-import ski.gagar.vertigram.editMessageReplyMarkup
-import ski.gagar.vertigram.editMessageText
-import ski.gagar.vertigram.sendMessage
-import ski.gagar.vertigram.tools.isCommandForBot
-import ski.gagar.vertigram.tools.verticles.address.VertigramAddress
-import ski.gagar.vertigram.types.CallbackQuery
-import ski.gagar.vertigram.types.InlineKeyboardMarkup
-import ski.gagar.vertigram.types.Me
-import ski.gagar.vertigram.types.Message
-import ski.gagar.vertigram.types.ParseMode
-import ski.gagar.vertigram.types.ReplyMarkup
-import ski.gagar.vertigram.types.toChatId
-import ski.gagar.vertigram.builders.Markdown
-import ski.gagar.vertigram.builders.md
-import ski.gagar.vertigram.verticles.TelegramVerticle
 import java.time.Duration
 
 abstract class AbstractTelegramDialogVerticle : AbstractHierarchyVerticle() {
@@ -182,7 +172,7 @@ abstract class AbstractTelegramDialogVerticle : AbstractHierarchyVerticle() {
         become(state, HistoryBehavior.SKIP)
     }
 
-    protected suspend fun sendOrEdit(text: ski.gagar.vertigram.builders.Markdown, buttons: InlineKeyboardMarkup? = null, forceSend: Boolean = false) {
+    protected suspend fun sendOrEdit(text: Markdown, buttons: InlineKeyboardMarkup? = null, forceSend: Boolean = false) {
         if (forceSend) {
             resetKnownMessage()
         }

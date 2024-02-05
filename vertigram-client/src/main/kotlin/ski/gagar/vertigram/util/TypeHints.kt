@@ -4,17 +4,13 @@ import com.fasterxml.jackson.databind.JavaType
 import org.apache.commons.lang3.StringUtils
 import org.reflections.Reflections
 import org.reflections.scanners.Scanners
-import ski.gagar.vertigram.uncheckedCast
-import ski.gagar.vertigram.uncheckedCastOrNull
 import ski.gagar.vertigram.methods.JsonTgCallable
 import ski.gagar.vertigram.methods.MultipartTgCallable
 import ski.gagar.vertigram.methods.TgCallable
+import ski.gagar.vertigram.uncheckedCast
+import ski.gagar.vertigram.uncheckedCastOrNull
 import ski.gagar.vertigram.util.json.TELEGRAM_JSON_MAPPER
-import java.lang.reflect.GenericDeclaration
-import java.lang.reflect.Modifier
-import java.lang.reflect.ParameterizedType
-import java.lang.reflect.Type
-import java.lang.reflect.TypeVariable
+import java.lang.reflect.*
 
 
 private val TYPE_FACTORY = TELEGRAM_JSON_MAPPER.typeFactory
@@ -81,7 +77,7 @@ private fun getTgCallables() =
 private val <T: TgCallable<*>> Class<T>.tgMethodName: String
     get() = getAnnotation(TgMethodName::class.java)?.name ?: StringUtils.uncapitalize(simpleName)
 
-internal object TypeHints {
+object TypeHints {
     val callables = getTgCallables()
 
     val methodNames = callables.associateWith {
@@ -129,4 +125,4 @@ internal object TypeHints {
     }
 }
 
-internal fun <K, V> Map<K, V>.getOrAssert(key: K) = get(key) ?: throw AssertionError("oops")
+fun <K, V> Map<K, V>.getOrAssert(key: K) = get(key) ?: throw AssertionError("oops")

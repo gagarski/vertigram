@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
     <parent>
         <groupId>ski.gagar.vertigram</groupId>
         <artifactId>vertigram-parent-internal</artifactId>
@@ -9,11 +10,7 @@
         <relativePath>../vertigram-parent-internal</relativePath>
     </parent>
 
-    <groupId>ski.gagar.vertigram</groupId>
-    <artifactId>vertigram</artifactId>
-
-    <name>Vertigram</name>
-    <description>Telegram tools for Vert.x</description>
+    <artifactId>vertigram-client</artifactId>
 
     <dependencies>
         <dependency>
@@ -67,10 +64,6 @@
             <artifactId>vertx-web-client</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.jetbrains.kotlinx</groupId>
             <artifactId>kotlinx-coroutines-core-jvm</artifactId>
         </dependency>
@@ -92,20 +85,10 @@
         </dependency>
         <dependency>
             <groupId>ski.gagar.vertigram</groupId>
-            <artifactId>vertigram-client</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>ski.gagar.vertigram</groupId>
-            <artifactId>vertigram-core</artifactId>
-        </dependency>
-
+            <artifactId>vertigram-core</artifactId></dependency>
         <dependency>
             <groupId>ski.gagar.vertigram</groupId>
             <artifactId>vertigram-jackson</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>ski.gagar.vertigram</groupId>
-            <artifactId>vertigram-logback</artifactId>
         </dependency>
         <dependency>
             <groupId>ski.gagar.vertigram</groupId>
@@ -116,4 +99,54 @@
             <artifactId>vertigram-annotations</artifactId>
         </dependency>
     </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-maven-plugin</artifactId>
+                <dependencies>
+                    <dependency>
+                        <groupId>ski.gagar.vertigram</groupId>
+                        <artifactId>vertigram-codegen</artifactId>
+                        <version>1.0.0-alpha41-SNAPSHOT</version>
+                    </dependency>
+                </dependencies>
+                <executions>
+                    <execution>
+                        <id>kapt</id>
+                        <goals>
+                            <goal>kapt</goal>
+                        </goals>
+                        <configuration>
+                            <sourceDirs>
+                                <sourceDir>src/main/kotlin</sourceDir>
+                            </sourceDirs>
+                            <annotationProcessorPaths>
+                                <annotationProcessorPath>
+                                    <groupId>ski.gagar.vertigram</groupId>
+                                    <artifactId>vertigram-codegen</artifactId>
+                                    <version>${project.version}</version> <!-- Maybe not a very good thing to do -->
+                                </annotationProcessorPath>
+                            </annotationProcessorPaths>
+                            <annotationProcessors>
+                                <processor>ski.gagar.vertigram.codegen.VertigramClientGenerator</processor>
+                            </annotationProcessors>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>compile</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                        <configuration>
+                            <sourceDirs>
+                                <sourceDir>${project.basedir}/src/main/kotlin</sourceDir>
+                            </sourceDirs>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>

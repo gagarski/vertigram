@@ -80,9 +80,5 @@
             <groupId>ski.gagar.vertigram</groupId>
             <artifactId>vertigram-core</artifactId>
         </dependency>
-        <dependency>
-            <groupId>ski.gagar.vertigram</groupId>
-            <artifactId>vertigram-jackson-core</artifactId>
-        </dependency>
     </dependencies>
 </project>

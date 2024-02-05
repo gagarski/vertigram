@@ -34,7 +34,6 @@
 
     <modules>
         <module>vertigram-core</module>
-        <module>vertigram-jackson-core</module>
         <module>vertigram-jackson</module>
         <module>vertigram-jooq</module>
         <module>vertigram-logback</module>
@@ -48,6 +47,7 @@
         <module>vertigram-bom</module>
         <module>vertigram-parent-internal</module>
         <module>vertigram-parent</module>
+        <module>vertigram-client</module>
     </modules>
 
     <build>

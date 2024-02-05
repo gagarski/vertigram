@@ -1,11 +1,9 @@
 package ski.gagar.vertigram.verticles
 
-import ski.gagar.vertigram.jackson.mapTo
-import ski.gagar.vertigram.jackson.suspendJsonConsumer
-import ski.gagar.vertigram.use
-import ski.gagar.vertigram.verticles.ErrorLoggingCoroutineVerticle
 import ski.gagar.vertigram.client.DirectTelegram
 import ski.gagar.vertigram.client.Telegram
+import ski.gagar.vertigram.jackson.mapTo
+import ski.gagar.vertigram.jackson.suspendJsonConsumer
 import ski.gagar.vertigram.methods.JsonTgCallable
 import ski.gagar.vertigram.methods.MultipartTgCallable
 import ski.gagar.vertigram.methods.TgCallable
@@ -13,6 +11,7 @@ import ski.gagar.vertigram.throttling.ThrottlingOptions
 import ski.gagar.vertigram.throttling.ThrottlingTelegram
 import ski.gagar.vertigram.types.UpdateList
 import ski.gagar.vertigram.types.UpdateType
+import ski.gagar.vertigram.use
 import ski.gagar.vertigram.util.TypeHints
 import ski.gagar.vertigram.util.getOrAssert
 

@@ -13,12 +13,12 @@ import io.vertx.ext.web.codec.BodyCodec
 import io.vertx.kotlin.coroutines.await
 import ski.gagar.vertigram.lazy
 import ski.gagar.vertigram.logger
-import ski.gagar.vertigram.toMap
-import ski.gagar.vertigram.uncheckedCast
 import ski.gagar.vertigram.methods.JsonTgCallable
 import ski.gagar.vertigram.methods.MultipartTgCallable
 import ski.gagar.vertigram.methods.TgCallable
+import ski.gagar.vertigram.toMap
 import ski.gagar.vertigram.types.Wrapper
+import ski.gagar.vertigram.uncheckedCast
 import ski.gagar.vertigram.util.TelegramCallException
 import ski.gagar.vertigram.util.TelegramDownloadException
 import ski.gagar.vertigram.util.TypeHints
@@ -94,7 +94,6 @@ internal class TelegramImpl(
                 }
             }
 
-    @Deprecated("Use more high-level methods")
     @PublishedApi
     internal suspend fun <Req> callForObject(
         method: String,
@@ -109,7 +108,6 @@ internal class TelegramImpl(
         }
     }
 
-    @Deprecated("Use more high-level methods")
     internal suspend fun callForObjectMultipart(
         method: String,
         type: JavaType,
@@ -127,7 +125,6 @@ internal class TelegramImpl(
     // Methods for any API-method
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    @Suppress("DEPRECATION")
     private suspend fun <Req, Resp> callForWrapper(
         respType: JavaType,
         method: String,
@@ -141,7 +138,6 @@ internal class TelegramImpl(
             longPoll
         ).uncheckedCast()
 
-    @Suppress("DEPRECATION")
     private suspend fun <Resp> callForWrapperMultipart(
         respType: JavaType,
         method: String,
