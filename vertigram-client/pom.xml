@@ -11,6 +11,8 @@
     </parent>
 
     <artifactId>vertigram-client</artifactId>
+    <name>Vertigram Client</name>
+    <description>Telegram client for Vert.x</description>
 
     <dependencies>
         <dependency>

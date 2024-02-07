@@ -1,11 +1,20 @@
 package ski.gagar.vertigram.methods
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import ski.gagar.vertigram.annotations.TgMethod
 import ski.gagar.vertigram.types.LabeledPrice
 import ski.gagar.vertigram.types.Message
+import ski.gagar.vertigram.util.NoPosArgs
 
+/**
+ * Telegram [createInvoiceLink](https://core.telegram.org/bots/api#createinvoicelink) method.
+ *
+ * For up-to-date documentation please consult the official Telegram docs.
+ */
 @TgMethod
 data class CreateInvoiceLink(
+    @JsonIgnore
+    private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
     val title: String,
     val description: String,
     val payload: String,

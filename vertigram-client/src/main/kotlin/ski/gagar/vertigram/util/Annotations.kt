@@ -2,4 +2,9 @@ package ski.gagar.vertigram.util
 
 internal annotation class TgMethodName(val name: String)
 
-internal annotation class DoNotGenerateInTgVerticle
+const val DEFAULT_ADDRESS = "DEFAULT"
+
+internal annotation class TgVerticleGenerate(
+    val generate: Boolean = true,
+    val address: String = DEFAULT_ADDRESS
+)

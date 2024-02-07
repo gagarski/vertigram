@@ -6,6 +6,9 @@
 
     <groupId>ski.gagar.vertigram</groupId>
     <artifactId>vertigram-bom</artifactId>
+    <name>Vertigram BOM</name>
+    <description>BOM for Vertigram-based apps</description>
+
     <version>1.0.0-alpha41-SNAPSHOT</version>
     <packaging>pom</packaging>
 

@@ -74,6 +74,15 @@ private fun getTgCallables() =
         .filter { !Modifier.isAbstract(it.modifiers) }
         .toSet()
 
+private val <T: TgCallable<*>> Class<T>.tgvAddress: String?
+    get() = getAnnotation(TgVerticleGenerate::class.java)?.address?.let {
+        if (it == DEFAULT_ADDRESS) {
+            null
+        } else {
+            it
+        }
+    }
+
 private val <T: TgCallable<*>> Class<T>.tgMethodName: String
     get() = getAnnotation(TgMethodName::class.java)?.name ?: StringUtils.uncapitalize(simpleName)
 
@@ -84,9 +93,13 @@ object VertigramTypeHints {
         it.tgMethodName
     }
 
-    val doNotGenerateInTgVerticleMethodNames =
-        methodNames
-            .filter { (k, _) -> k.getAnnotation(DoNotGenerateInTgVerticle::class.java) != null }
+    val tgvAddresses = callables.associateWith {
+        it.tgvAddress ?: it.tgMethodName
+    }
+
+    val doNotGenerateInTgVerticleAddresses =
+        tgvAddresses
+            .filter { (k, _) -> k.getAnnotation(TgVerticleGenerate::class.java)?.generate == false }
             .values
             .toSet()
 
@@ -99,12 +112,12 @@ object VertigramTypeHints {
             JsonTgCallable::class.java.isAssignableFrom(it)
         }
 
-        val requestTypesByMethodName = callables.associate {
-            it.tgMethodName to TYPE_FACTORY.constructType(it)
+        val requestTypesByTgvAddress = callables.associate {
+            (it.tgvAddress ?: it.tgMethodName) to TYPE_FACTORY.constructType(it)
         }
 
-        val returnTypesByMethodName = callables.associate {
-            it.tgMethodName to it.responseType
+        val returnTypesByTgvAddress = callables.associate {
+            (it.tgvAddress ?: it.tgMethodName) to it.responseType
         }
 
     }
@@ -114,12 +127,12 @@ object VertigramTypeHints {
             MultipartTgCallable::class.java.isAssignableFrom(it)
         }
 
-        val requestTypesByMethodName = callables.associate {
-            it.tgMethodName to TYPE_FACTORY.constructType(it)
+        val requestTypesByTgvAddress = callables.associate {
+            (it.tgvAddress ?: it.tgMethodName) to TYPE_FACTORY.constructType(it)
         }
 
-        val returnTypesByMethodName = callables.associate {
-            it.tgMethodName to it.responseType
+        val returnTypesByTgvAddress = callables.associate {
+            (it.tgvAddress ?: it.tgMethodName) to it.responseType
         }
 
     }

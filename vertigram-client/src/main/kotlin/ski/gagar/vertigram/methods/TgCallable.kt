@@ -1,5 +1,7 @@
 package ski.gagar.vertigram.methods
 
+import ski.gagar.vertigram.annotations.TgSuperClass
+
 /**
  * This class and subclasses are intentionally a class.
  *
@@ -11,6 +13,8 @@ package ski.gagar.vertigram.methods
 
 sealed class TgCallable<ReturnType>
 
+@TgSuperClass
 abstract class JsonTgCallable<ReturnType> : TgCallable<ReturnType>()
 
+@TgSuperClass
 abstract class MultipartTgCallable<ReturnType> : TgCallable<ReturnType>()
