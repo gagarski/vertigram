@@ -1,7 +1,9 @@
 package ski.gagar.vertigram.methods
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.annotation.JsonUnwrapped
 import ski.gagar.vertigram.annotations.TgMethod
+import ski.gagar.vertigram.richtext.RichCaption
 import ski.gagar.vertigram.throttling.HasChatId
 import ski.gagar.vertigram.throttling.Throttled
 import ski.gagar.vertigram.types.*

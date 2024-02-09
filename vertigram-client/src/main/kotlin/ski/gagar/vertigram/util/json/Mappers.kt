@@ -14,7 +14,6 @@ internal fun telegramJsonMapper(): ObjectMapper = ObjectMapper()
     .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
     .registerModule(KotlinModule.Builder().build())
     .registerModule(TelegramModule)
-
 val TELEGRAM_JSON_MAPPER: ObjectMapper =
     telegramJsonMapper()
 

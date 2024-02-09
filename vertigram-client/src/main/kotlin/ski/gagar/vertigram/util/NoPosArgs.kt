@@ -5,5 +5,7 @@ class NoPosArgs private constructor() {
         @PublishedApi
         internal val INSTANCE = NoPosArgs()
     }
+
+    override fun toString(): String = "NoPosArgs"
 }
 

@@ -98,29 +98,22 @@ class VertigramClientGenerator : AbstractProcessor() {
     }
 
     fun classToMethod(clazz: TypeSpec, className: ClassName, tgMethod: TgMethod?, superClasses: Map<ClassName, TypeSpec>): FunSpec? {
-        println(clazz)
         var superclass = clazz.superclass
         var prevSuperclass: TypeName? = null
-
-        println(superClasses)
-        println(superclass.rawIfParametrized())
 
 
         var superclassSpec = superClasses[superclass.rawIfParametrized()] ?: throw IllegalArgumentException("Wrong superclass")
 
         while (true) {
             if (superclass is ParameterizedTypeName && superclass.rawType.canonicalName !in SUPERTYPES) {
-                println("Parametrized but not root")
                 throw IllegalStateException("Wrong superclass")
             }
 
             if (superclass.rawIfParametrized().canonicalName in SUPERTYPES) {
-                println("Root!")
                 break
             }
 
             if (superclass in ROOT_CLASSES || superclass == prevSuperclass) {
-                println("Kotlin Root!")
                 throw IllegalStateException("Wrong superclass")
             }
 
