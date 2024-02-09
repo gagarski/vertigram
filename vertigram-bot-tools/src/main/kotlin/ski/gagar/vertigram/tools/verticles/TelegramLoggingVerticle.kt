@@ -14,7 +14,7 @@ import ski.gagar.vertigram.verticles.Named
 import ski.gagar.vertigram.client.DirectTelegram
 import ski.gagar.vertigram.client.THIN_POOLS
 import ski.gagar.vertigram.client.Telegram
-import ski.gagar.vertigram.sendMessage
+import ski.gagar.vertigram.methods.sendMessage
 import ski.gagar.vertigram.types.Me
 import ski.gagar.vertigram.types.ParseMode
 import ski.gagar.vertigram.types.toChatId

@@ -12,8 +12,8 @@ import ski.gagar.vertigram.retrying
 import ski.gagar.vertigram.client.Telegram
 import ski.gagar.vertigram.client.TgVTelegram
 import ski.gagar.vertigram.config.WebHookConfig
-import ski.gagar.vertigram.deleteWebhook
-import ski.gagar.vertigram.setWebhook
+import ski.gagar.vertigram.methods.deleteWebhook
+import ski.gagar.vertigram.methods.setWebhook
 import ski.gagar.vertigram.types.ParsedUpdate
 import ski.gagar.vertigram.types.ParsedUpdateList
 import ski.gagar.vertigram.types.UpdateType

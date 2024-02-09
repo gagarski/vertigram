@@ -7,10 +7,9 @@ import ski.gagar.vertigram.jackson.publishJson
 import ski.gagar.vertigram.lazy
 import ski.gagar.vertigram.logger
 import ski.gagar.vertigram.retrying
-import ski.gagar.vertigram.verticles.ErrorLoggingCoroutineVerticle
 import ski.gagar.vertigram.client.Telegram
 import ski.gagar.vertigram.client.TgVTelegram
-import ski.gagar.vertigram.deleteWebhook
+import ski.gagar.vertigram.methods.deleteWebhook
 import ski.gagar.vertigram.types.MalformedUpdate
 import ski.gagar.vertigram.types.ParsedUpdate
 import ski.gagar.vertigram.types.ParsedUpdateList

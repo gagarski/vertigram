@@ -9,7 +9,7 @@ import ski.gagar.vertigram.verticles.children.messages.DeathNotice
 import ski.gagar.vertigram.verticles.children.messages.DeathReason
 import ski.gagar.vertigram.client.Telegram
 import ski.gagar.vertigram.client.TgVTelegram
-import ski.gagar.vertigram.sendMessage
+import ski.gagar.vertigram.methods.sendMessage
 import ski.gagar.vertigram.tools.verticles.address.VertigramAddress
 import ski.gagar.vertigram.types.CallbackQuery
 import ski.gagar.vertigram.types.Message

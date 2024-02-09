@@ -10,6 +10,9 @@ import ski.gagar.vertigram.client.Telegram
 import ski.gagar.vertigram.client.TgVTelegram
 import ski.gagar.vertigram.coroutines.setTimerNonCancellable
 import ski.gagar.vertigram.jackson.suspendJsonConsumer
+import ski.gagar.vertigram.methods.editMessageReplyMarkup
+import ski.gagar.vertigram.methods.editMessageText
+import ski.gagar.vertigram.methods.sendMessage
 import ski.gagar.vertigram.tools.isCommandForBot
 import ski.gagar.vertigram.tools.verticles.address.VertigramAddress
 import ski.gagar.vertigram.types.*
