@@ -18,7 +18,6 @@ import kotlinx.coroutines.slf4j.MDCContext
 import ski.gagar.vertigram.coroMdcWith
 import ski.gagar.vertigram.verticles.Named
 import ski.gagar.vertigram.withExtraMdc
-import ski.gagar.vertigram.jackson.mapTo
 
 interface BadRequest
 

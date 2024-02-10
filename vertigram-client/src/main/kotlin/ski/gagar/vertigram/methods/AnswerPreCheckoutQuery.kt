@@ -1,8 +1,8 @@
 package ski.gagar.vertigram.methods
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.annotations.TgMethod
-import ski.gagar.vertigram.annotations.TgSuperClass
 import ski.gagar.vertigram.util.NoPosArgs
 import ski.gagar.vertigram.util.TgMethodName
 import ski.gagar.vertigram.util.TgVerticleGenerate
@@ -13,15 +13,19 @@ import ski.gagar.vertigram.util.TgVerticleGenerate
  *
  * For up-to-date documentation please consult the official Telegram docs.
  */
-@TgSuperClass
 sealed class AnswerPreCheckoutQuery : JsonTgCallable<Boolean>() {
     /**
      * Case when ok is true
      */
-    @TgMethod(kotlinMethodName = "answerPreCheckoutQuery")
+    @TgMethod
     @TgMethodName("answerPreCheckoutQuery")
     @TgVerticleGenerate(address = "answerPreCheckoutQueryOk")
-    data class Ok(
+    @TelegramCodegen(
+        methodName = "answerPreCheckoutQuery",
+        generatePseudoConstructor = true,
+        pseudoConstructorName = "AnswerPreCheckoutQuery"
+    )
+    data class Ok internal constructor(
         @JsonIgnore
         private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
         val preCheckoutQueryId: String
@@ -32,10 +36,15 @@ sealed class AnswerPreCheckoutQuery : JsonTgCallable<Boolean>() {
     /**
      * Case when ok is false
      */
-    @TgMethod(kotlinMethodName = "answerPreCheckoutQuery")
+    @TgMethod
     @TgMethodName("answerPreCheckoutQuery")
     @TgVerticleGenerate(address = "answerPreCheckoutQueryError")
-    data class Error(
+    @TelegramCodegen(
+        methodName = "answerPreCheckoutQuery",
+        generatePseudoConstructor = true,
+        pseudoConstructorName = "AnswerPreCheckoutQuery"
+    )
+    data class Error internal constructor(
         @JsonIgnore
         private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
         val preCheckoutQueryId: String,

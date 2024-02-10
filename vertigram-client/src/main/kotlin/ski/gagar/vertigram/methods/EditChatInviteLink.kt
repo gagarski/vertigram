@@ -1,6 +1,7 @@
 package ski.gagar.vertigram.methods
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.annotations.TgMethod
 import ski.gagar.vertigram.throttling.HasChatId
 import ski.gagar.vertigram.types.ChatId
@@ -31,10 +32,15 @@ sealed class EditChatInviteLink {
     /**
      * Case when [memberLimit] is specified, implies that [createsJoinRequest] is false
      */
-    @TgMethod(kotlinMethodName = "editChatInviteLink")
+    @TgMethod
     @TgMethodName("editChatInviteLink")
     @TgVerticleGenerate(address = "editChatInviteLinkWithMemberLimit")
-    data class WithMemberLimit(
+    @TelegramCodegen(
+        methodName = "editChatInviteLink",
+        generatePseudoConstructor = true,
+        pseudoConstructorName = "EditChatInviteLink"
+    )
+    data class WithMemberLimit internal constructor(
         @JsonIgnore
         private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
         override val chatId: ChatId,
@@ -49,10 +55,15 @@ sealed class EditChatInviteLink {
     /**
      * Case when [memberLimit] is missing, [createsJoinRequest] is specified explicitly
      */
-    @TgMethod(kotlinMethodName = "editChatInviteLink")
+    @TgMethod
     @TgMethodName("editChatInviteLink")
     @TgVerticleGenerate(address = "editChatInviteLinkWithJoinRequest")
-    data class WithJoinRequest(
+    @TelegramCodegen(
+        methodName = "editChatInviteLink",
+        generatePseudoConstructor = true,
+        pseudoConstructorName = "EditChatInviteLink"
+    )
+    data class WithJoinRequest internal constructor(
         @JsonIgnore
         private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
         override val chatId: ChatId,

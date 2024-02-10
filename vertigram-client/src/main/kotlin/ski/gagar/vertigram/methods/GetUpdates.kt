@@ -1,5 +1,6 @@
 package ski.gagar.vertigram.methods
 
+import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.types.Update
 import ski.gagar.vertigram.types.UpdateType
 import ski.gagar.vertigram.util.TgMethodName
@@ -23,6 +24,9 @@ data class GetUpdates(
 @Deprecated("Use Telegram.getUpdates instead")
 @TgVerticleGenerate(generate = false)
 @TgMethodName("getUpdates")
+@TelegramCodegen(
+    generateMethod = false
+)
 internal data class GetUpdatesRaw(
     val offset: Long? = null,
     val timeout: Duration = Duration.ZERO,

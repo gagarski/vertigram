@@ -3,7 +3,8 @@ package ski.gagar.vertigram.richtext
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
-import ski.gagar.vertigram.types.*
+import ski.gagar.vertigram.types.MessageEntity
+import ski.gagar.vertigram.types.ParseMode
 
 @Suppress("DEPRECATION")
 @JsonTypeInfo(

@@ -10,7 +10,11 @@ import ski.gagar.vertigram.methods.TgCallable
 import ski.gagar.vertigram.uncheckedCast
 import ski.gagar.vertigram.uncheckedCastOrNull
 import ski.gagar.vertigram.util.json.TELEGRAM_JSON_MAPPER
-import java.lang.reflect.*
+import java.lang.reflect.GenericDeclaration
+import java.lang.reflect.Modifier
+import java.lang.reflect.ParameterizedType
+import java.lang.reflect.Type
+import java.lang.reflect.TypeVariable
 
 
 private val TYPE_FACTORY = TELEGRAM_JSON_MAPPER.typeFactory

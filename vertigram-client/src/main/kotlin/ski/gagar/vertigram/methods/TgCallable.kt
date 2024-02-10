@@ -1,7 +1,6 @@
 package ski.gagar.vertigram.methods
 
 import ski.gagar.vertigram.annotations.TelegramCodegen
-import ski.gagar.vertigram.annotations.TgSuperClass
 
 /**
  * This class and subclasses are intentionally a class.
@@ -15,9 +14,7 @@ import ski.gagar.vertigram.annotations.TgSuperClass
 sealed class TgCallable<ReturnType>
 
 @TelegramCodegen
-@TgSuperClass
 abstract class JsonTgCallable<ReturnType> : TgCallable<ReturnType>()
 
 @TelegramCodegen
-@TgSuperClass
 abstract class MultipartTgCallable<ReturnType> : TgCallable<ReturnType>()

@@ -1,22 +1,22 @@
 package ski.gagar.vertigram.tools.verticles
 
 import kotlinx.coroutines.launch
+import ski.gagar.vertigram.builders.md
+import ski.gagar.vertigram.client.Telegram
+import ski.gagar.vertigram.client.TgVTelegram
 import ski.gagar.vertigram.ignore
 import ski.gagar.vertigram.jackson.requestJsonAwait
 import ski.gagar.vertigram.jackson.suspendJsonConsumer
-import ski.gagar.vertigram.verticles.children.AbstractHierarchyVerticle
-import ski.gagar.vertigram.verticles.children.messages.DeathNotice
-import ski.gagar.vertigram.verticles.children.messages.DeathReason
-import ski.gagar.vertigram.client.Telegram
-import ski.gagar.vertigram.client.TgVTelegram
 import ski.gagar.vertigram.methods.sendMessage
 import ski.gagar.vertigram.tools.verticles.address.VertigramAddress
 import ski.gagar.vertigram.types.CallbackQuery
 import ski.gagar.vertigram.types.Message
 import ski.gagar.vertigram.types.ParseMode
 import ski.gagar.vertigram.types.toChatId
-import ski.gagar.vertigram.builders.md
 import ski.gagar.vertigram.verticles.TelegramVerticle
+import ski.gagar.vertigram.verticles.children.AbstractHierarchyVerticle
+import ski.gagar.vertigram.verticles.children.messages.DeathNotice
+import ski.gagar.vertigram.verticles.children.messages.DeathReason
 
 abstract class AbstractDispatchVerticle<DialogKey> : AbstractHierarchyVerticle() {
     open val tgVAddressBase = TelegramVerticle.Config.DEFAULT_BASE_ADDRESS

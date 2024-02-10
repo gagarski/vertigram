@@ -1,8 +1,8 @@
 package ski.gagar.vertigram.methods
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.annotations.TgMethod
-import ski.gagar.vertigram.annotations.TgSuperClass
 import ski.gagar.vertigram.throttling.HasChatId
 import ski.gagar.vertigram.types.ChatId
 import ski.gagar.vertigram.types.ChatInviteLink
@@ -16,15 +16,19 @@ import java.time.Instant
  *
  * For up-to-date documentation please consult the official Telegram docs.
  */
-@TgSuperClass
 sealed class CreateChatInviteLink : JsonTgCallable<ChatInviteLink>(), HasChatId {
     /**
      * Case when [memberLimit] is specified, implies that [createsJoinRequest] is false
      */
-    @TgMethod(kotlinMethodName = "createChatInviteLink")
+    @TgMethod
     @TgMethodName("createChatInviteLink")
     @TgVerticleGenerate(address = "createChatInviteLinkWithMemberLimit")
-    data class WithMemberLimit(
+    @TelegramCodegen(
+        methodName = "createChatInviteLink",
+        generatePseudoConstructor = true,
+        pseudoConstructorName = "CreateChatInviteLink"
+    )
+    data class WithMemberLimit internal constructor(
         @JsonIgnore
         private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
         override val chatId: ChatId,
@@ -38,10 +42,15 @@ sealed class CreateChatInviteLink : JsonTgCallable<ChatInviteLink>(), HasChatId 
     /**
      * Case when [memberLimit] is missing, [createsJoinRequest] is specified explicitly
      */
-    @TgMethod(kotlinMethodName = "createChatInviteLink")
+    @TgMethod
     @TgMethodName("createChatInviteLink")
     @TgVerticleGenerate(address = "createChatInviteLinkWithJoinRequest")
-    data class WithJoinRequest(
+    @TelegramCodegen(
+        methodName = "createChatInviteLink",
+        generatePseudoConstructor = true,
+        pseudoConstructorName = "CreateChatInviteLink"
+    )
+    data class WithJoinRequest internal constructor(
         @JsonIgnore
         private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
         override val chatId: ChatId,

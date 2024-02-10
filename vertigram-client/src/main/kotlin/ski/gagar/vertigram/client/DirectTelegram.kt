@@ -3,10 +3,10 @@ package ski.gagar.vertigram.client
 import com.fasterxml.jackson.databind.JavaType
 import io.vertx.core.Vertx
 import io.vertx.core.net.ProxyOptions
-import ski.gagar.vertigram.lazy
-import ski.gagar.vertigram.logger
 import ski.gagar.vertigram.client.impl.TelegramImpl
 import ski.gagar.vertigram.client.impl.TelegramImplOptions
+import ski.gagar.vertigram.lazy
+import ski.gagar.vertigram.logger
 import ski.gagar.vertigram.methods.TgCallable
 import ski.gagar.vertigram.types.MalformedUpdate
 import ski.gagar.vertigram.types.ParsedUpdate

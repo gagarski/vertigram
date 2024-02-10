@@ -1,6 +1,10 @@
 package ski.gagar.vertigram.tools.verticles
 
 import kotlinx.coroutines.Job
+import ski.gagar.vertigram.builders.md
+import ski.gagar.vertigram.client.DirectTelegram
+import ski.gagar.vertigram.client.THIN_POOLS
+import ski.gagar.vertigram.client.Telegram
 import ski.gagar.vertigram.coroutines.setTimerNonCancellable
 import ski.gagar.vertigram.jackson.CONSUMER_ADDRESS_MDC
 import ski.gagar.vertigram.jackson.mapTo
@@ -9,16 +13,12 @@ import ski.gagar.vertigram.logback.Level
 import ski.gagar.vertigram.logback.LogEvent
 import ski.gagar.vertigram.logback.asString
 import ski.gagar.vertigram.logback.bypassEventBusAppenderSuspend
-import ski.gagar.vertigram.verticles.ErrorLoggingCoroutineVerticle
-import ski.gagar.vertigram.verticles.Named
-import ski.gagar.vertigram.client.DirectTelegram
-import ski.gagar.vertigram.client.THIN_POOLS
-import ski.gagar.vertigram.client.Telegram
 import ski.gagar.vertigram.methods.sendMessage
 import ski.gagar.vertigram.types.Me
 import ski.gagar.vertigram.types.ParseMode
 import ski.gagar.vertigram.types.toChatId
-import ski.gagar.vertigram.builders.md
+import ski.gagar.vertigram.verticles.ErrorLoggingCoroutineVerticle
+import ski.gagar.vertigram.verticles.Named
 import java.time.Duration
 
 class TelegramLoggingVerticle : ErrorLoggingCoroutineVerticle() {

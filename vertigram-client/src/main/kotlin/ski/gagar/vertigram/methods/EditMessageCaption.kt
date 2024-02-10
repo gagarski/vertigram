@@ -1,13 +1,14 @@
 package ski.gagar.vertigram.methods
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import com.fasterxml.jackson.annotation.JsonProperty
-import com.fasterxml.jackson.annotation.JsonUnwrapped
 import ski.gagar.vertigram.annotations.TgMethod
-import ski.gagar.vertigram.richtext.RichCaption
 import ski.gagar.vertigram.throttling.HasChatId
 import ski.gagar.vertigram.throttling.Throttled
-import ski.gagar.vertigram.types.*
+import ski.gagar.vertigram.types.ChatId
+import ski.gagar.vertigram.types.Message
+import ski.gagar.vertigram.types.MessageEntity
+import ski.gagar.vertigram.types.ParseMode
+import ski.gagar.vertigram.types.ReplyMarkup
 import ski.gagar.vertigram.util.NoPosArgs
 
 /**

@@ -1,8 +1,8 @@
 package ski.gagar.vertigram.client
 
 import com.fasterxml.jackson.databind.type.TypeFactory
-import ski.gagar.vertigram.methods.getFile
 import ski.gagar.vertigram.methods.TgCallable
+import ski.gagar.vertigram.methods.getFile
 import ski.gagar.vertigram.util.TelegramNoFilePathException
 import ski.gagar.vertigram.util.VertigramTypeHints
 import ski.gagar.vertigram.util.getOrAssert

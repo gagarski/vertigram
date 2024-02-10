@@ -4,9 +4,9 @@ import kotlinx.coroutines.yield
 import ski.gagar.vertigram.jackson.mapTo
 import ski.gagar.vertigram.jackson.publishJson
 import ski.gagar.vertigram.jackson.suspendJsonConsumer
-import ski.gagar.vertigram.verticles.ErrorLoggingCoroutineVerticle
 import ski.gagar.vertigram.tools.verticles.address.VertigramAddress
 import ski.gagar.vertigram.types.ParsedUpdateList
+import ski.gagar.vertigram.verticles.ErrorLoggingCoroutineVerticle
 import ski.gagar.vertigram.verticles.WebHookVerticle
 
 class UpdateDemuxVerticle : ErrorLoggingCoroutineVerticle() {

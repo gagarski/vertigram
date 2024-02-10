@@ -1,12 +1,12 @@
 package ski.gagar.vertigram.tools.verticles
 
 import ski.gagar.vertigram.jackson.suspendJsonConsumer
-import ski.gagar.vertigram.verticles.ErrorLoggingCoroutineVerticle
 import ski.gagar.vertigram.tools.isCommandForBot
 import ski.gagar.vertigram.tools.isForwarded
 import ski.gagar.vertigram.tools.verticles.address.VertigramAddress
 import ski.gagar.vertigram.types.Me
 import ski.gagar.vertigram.types.Message
+import ski.gagar.vertigram.verticles.ErrorLoggingCoroutineVerticle
 
 abstract class AbstractSimpleCommandVerticle : ErrorLoggingCoroutineVerticle() {
     abstract val command: String

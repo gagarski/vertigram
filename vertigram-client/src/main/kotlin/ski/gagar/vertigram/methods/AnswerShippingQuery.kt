@@ -1,8 +1,8 @@
 package ski.gagar.vertigram.methods
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.annotations.TgMethod
-import ski.gagar.vertigram.annotations.TgSuperClass
 import ski.gagar.vertigram.types.ShippingOption
 import ski.gagar.vertigram.util.NoPosArgs
 import ski.gagar.vertigram.util.TgMethodName
@@ -13,15 +13,19 @@ import ski.gagar.vertigram.util.TgVerticleGenerate
  *
  * For up-to-date documentation please consult the official Telegram docs.
  */
-@TgSuperClass
 sealed class AnswerShippingQuery : JsonTgCallable<Boolean>() {
     /**
      * Case when ok is true
      */
-    @TgMethod(kotlinMethodName = "answerShippingQuery")
+    @TgMethod
     @TgMethodName("answerShippingQuery")
     @TgVerticleGenerate(address = "answerShippingQueryOk")
-    data class Ok(
+    @TelegramCodegen(
+        methodName = "answerShippingQuery",
+        generatePseudoConstructor = true,
+        pseudoConstructorName = "AnswerShippingQuery"
+    )
+    data class Ok internal constructor(
         @JsonIgnore
         private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
         val shippingQueryId: String,
@@ -33,10 +37,15 @@ sealed class AnswerShippingQuery : JsonTgCallable<Boolean>() {
     /**
      * Case when ok is false
      */
-    @TgMethod(kotlinMethodName = "answerShippingQuery")
+    @TgMethod
     @TgMethodName("answerShippingQuery")
     @TgVerticleGenerate(address = "answerShippingQueryError")
-    data class Error(
+    @TelegramCodegen(
+        methodName = "answerShippingQuery",
+        generatePseudoConstructor = true,
+        pseudoConstructorName = "AnswerShippingQuery"
+    )
+    data class Error internal constructor(
         @JsonIgnore
         private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
         val shippingQueryId: String,

@@ -5,8 +5,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 import io.vertx.core.http.impl.headers.HeadersMultiMap
 import ski.gagar.vertigram.jackson.BadRequest
-import ski.gagar.vertigram.toMultiMap
 import ski.gagar.vertigram.methods.TgCallable
+import ski.gagar.vertigram.toMultiMap
 
 
 @JsonIgnoreProperties("message", "suppressed", "localizedMessage")
