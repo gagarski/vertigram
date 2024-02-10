@@ -1,6 +1,5 @@
 package ski.gagar.vertigram.throttling
 
-import com.fasterxml.jackson.databind.JavaType
 import io.netty.handler.codec.http.HttpHeaderNames
 import io.netty.handler.codec.http.HttpResponseStatus
 import io.vertx.core.Vertx
@@ -35,7 +34,7 @@ class ThrottlingTelegram(
     private val perChat: MutableMap<ChatId, NavigableSet<Instant>> = mutableMapOf()
     private val global: NavigableSet<Instant> = TreeSet()
 
-    override suspend fun <T> call(type: JavaType, callable: TelegramCallable<T>): T {
+    override suspend fun <T> call(callable: TelegramCallable<T>): T {
         if (callable.javaClass !in TO_THROTTLE) {
             // Won't do any logic if it's a non-throttled-method
             translateRateLimit {
@@ -190,7 +189,7 @@ class ThrottlingTelegram(
     }
 
     companion object {
-        val TO_THROTTLE =
+        private val TO_THROTTLE =
             Reflections("ski.gagar.vertigram.methods").getTypesAnnotatedWith(Throttled::class.java)
     }
 }

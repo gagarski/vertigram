@@ -8,9 +8,9 @@ import ski.gagar.vertigram.jackson.ReplyException
 import ski.gagar.vertigram.jackson.requestJsonAwait
 import ski.gagar.vertigram.methods.TelegramCallable
 import ski.gagar.vertigram.types.Update
+import ski.gagar.vertigram.types.UpdateList
 import ski.gagar.vertigram.types.UpdateType
-import ski.gagar.vertigram.util.VertigramTypeHints
-import ski.gagar.vertigram.util.getOrAssert
+import ski.gagar.vertigram.util.TELEGRAM_TYPE_FACTORY
 import ski.gagar.vertigram.verticles.TelegramVerticle
 import java.time.Duration
 
@@ -40,9 +40,9 @@ class TgVTelegram(
         try {
             @Suppress("DEPRECATION")
             vertx.eventBus().requestJsonAwait(
-                TelegramVerticle.Config.callAddress(ski.gagar.vertigram.methods.GetUpdates::class.java, baseAddress),
+                TelegramVerticle.Config.updatesAddress(baseAddress),
                 TelegramVerticle.GetUpdates(offset, limit, allowedUpdates),
-                VertigramTypeHints.responseTypeByClass.getOrAssert(ski.gagar.vertigram.methods.GetUpdates::class.java),
+                UPDATE_LIST_TYPE,
                 options = getLongPollDeliveryOptions()
             )
         } catch (ex: ReplyException) {
@@ -71,5 +71,9 @@ class TgVTelegram(
         } catch (ex: ReplyException) {
             ex.unwrap()
         }
+    }
+
+    companion object {
+        private val UPDATE_LIST_TYPE = TELEGRAM_TYPE_FACTORY.constructType(UpdateList::class.java)
     }
 }

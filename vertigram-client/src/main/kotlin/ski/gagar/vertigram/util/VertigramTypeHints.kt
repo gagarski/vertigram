@@ -19,7 +19,7 @@ import java.lang.reflect.TypeVariable
 /**
  * Type factory from [TELEGRAM_JSON_MAPPER]
  */
-private val TYPE_FACTORY = TELEGRAM_JSON_MAPPER.typeFactory
+val TELEGRAM_TYPE_FACTORY = TELEGRAM_JSON_MAPPER.typeFactory
 
 /**
  * Response type for `this`.
@@ -50,7 +50,7 @@ private val <T> Class<T>.responseType: JavaType
                 } else {
                     params[t as TypeVariable<*>]
                 }
-                return TYPE_FACTORY.constructType(tInst)
+                return TELEGRAM_TYPE_FACTORY.constructType(tInst)
             }
 
             params = rawType
@@ -160,7 +160,7 @@ object VertigramTypeHints {
          * Map of [tgvAddress] to request type for JSON Telegram callables
          */
         val requestTypeByTgvAddress = callables.associate {
-            it.tgvAddress to TYPE_FACTORY.constructType(it)
+            it.tgvAddress to TELEGRAM_TYPE_FACTORY.constructType(it)
         }
     }
 
@@ -179,7 +179,7 @@ object VertigramTypeHints {
          * Map of [tgvAddress] to request type for Multipart Telegram callables
          */
         val requestTypeByTgvAddress = callables.associate {
-            it.tgvAddress to TYPE_FACTORY.constructType(it)
+            it.tgvAddress to TELEGRAM_TYPE_FACTORY.constructType(it)
         }
     }
 }

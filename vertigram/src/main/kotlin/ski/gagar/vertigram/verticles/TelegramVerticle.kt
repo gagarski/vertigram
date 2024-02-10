@@ -15,9 +15,6 @@ import ski.gagar.vertigram.use
 import ski.gagar.vertigram.util.VertigramTypeHints
 import ski.gagar.vertigram.util.getOrAssert
 
-@Suppress("DEPRECATION")
-private typealias RawGetUpdates = ski.gagar.vertigram.methods.GetUpdates
-
 class TelegramVerticle : ErrorLoggingCoroutineVerticle() {
     private val typedConfig by lazy {
         config.mapTo<Config>()
@@ -37,9 +34,8 @@ class TelegramVerticle : ErrorLoggingCoroutineVerticle() {
             ThrottlingTelegram(vertx, directTg, throttling)
         }
 
-        @Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
         suspendJsonConsumer(
-            typedConfig.callAddress(RawGetUpdates::class.java), function = ::handleGetUpdates
+            typedConfig.updatesAddress(), function = ::handleGetUpdates
         )
 
         for ((tgvAddress, requestType) in VertigramTypeHints.Json.requestTypeByTgvAddress) {
@@ -120,6 +116,8 @@ class TelegramVerticle : ErrorLoggingCoroutineVerticle() {
                 requestType
             )
 
+        fun updatesAddress() = updatesAddress(baseAddress)
+
         fun <T : TelegramCallable<*>> callAddress(clazz: Class<T>) =
             callAddress(
                 clazz,
@@ -142,12 +140,16 @@ class TelegramVerticle : ErrorLoggingCoroutineVerticle() {
 
         companion object {
             const val DEFAULT_BASE_ADDRESS = "ski.gagar.vertigram.telegram"
+            const val GET_UPDATES = "getUpdates"
 
             private fun callAddress(methodName: String,
                                     baseAddress: String = DEFAULT_BASE_ADDRESS,
                                     requestType: RequestType
             ) =
                 "$baseAddress.$methodName.${requestType.postfix}"
+
+            fun updatesAddress(baseAddress: String = DEFAULT_BASE_ADDRESS) =
+                callAddress(GET_UPDATES, baseAddress, RequestType.Json)
 
             fun <T : TelegramCallable<*>> callAddress(clazz: Class<T>, baseAddress: String = DEFAULT_BASE_ADDRESS) =
                 callAddress(
