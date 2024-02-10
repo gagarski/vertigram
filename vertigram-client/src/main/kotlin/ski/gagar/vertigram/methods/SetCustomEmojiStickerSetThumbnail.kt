@@ -3,8 +3,7 @@ package ski.gagar.vertigram.methods
 import ski.gagar.vertigram.annotations.TgMethod
 import ski.gagar.vertigram.types.Message
 
-@TgMethod
 data class SetCustomEmojiStickerSetThumbnail(
     val name: String,
     val customEmojiId: String? = null
-) : MultipartTgCallable<Message>()
+) : MultipartTelegramCallable<Message>()

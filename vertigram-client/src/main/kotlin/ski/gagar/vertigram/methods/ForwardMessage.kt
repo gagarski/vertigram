@@ -6,7 +6,6 @@ import ski.gagar.vertigram.throttling.Throttled
 import ski.gagar.vertigram.types.ChatId
 import ski.gagar.vertigram.types.Message
 
-@TgMethod
 @Throttled
 data class ForwardMessage(
     override val chatId: ChatId,
@@ -16,4 +15,4 @@ data class ForwardMessage(
     val protectContent: Boolean = false,
     // Since Telegram Bot Api 6.3
     val messageThreadId: Long? = null
-) : JsonTgCallable<Message>(), HasChatId
+) : JsonTelegramCallable<Message>(), HasChatId

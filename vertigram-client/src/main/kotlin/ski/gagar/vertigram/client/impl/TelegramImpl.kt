@@ -13,9 +13,9 @@ import io.vertx.ext.web.codec.BodyCodec
 import io.vertx.kotlin.coroutines.await
 import ski.gagar.vertigram.lazy
 import ski.gagar.vertigram.logger
-import ski.gagar.vertigram.methods.JsonTgCallable
-import ski.gagar.vertigram.methods.MultipartTgCallable
-import ski.gagar.vertigram.methods.TgCallable
+import ski.gagar.vertigram.methods.JsonTelegramCallable
+import ski.gagar.vertigram.methods.MultipartTelegramCallable
+import ski.gagar.vertigram.methods.TelegramCallable
 import ski.gagar.vertigram.toMap
 import ski.gagar.vertigram.types.Wrapper
 import ski.gagar.vertigram.uncheckedCast
@@ -94,8 +94,7 @@ internal class TelegramImpl(
                 }
             }
 
-    @PublishedApi
-    internal suspend fun <Req> callForObject(
+    private suspend fun <Req> callForObject(
         method: String,
         type: JavaType,
         obj: Req? = null,
@@ -108,7 +107,7 @@ internal class TelegramImpl(
         }
     }
 
-    internal suspend fun callForObjectMultipart(
+    private suspend fun callForObjectMultipart(
         method: String,
         type: JavaType,
         form: MultipartForm,
@@ -151,7 +150,7 @@ internal class TelegramImpl(
             longPoll
         ).uncheckedCast()
 
-    private suspend inline fun <Req: JsonTgCallable<*>, Resp> call(
+    private suspend inline fun <Req: JsonTelegramCallable<*>, Resp> call(
         respType: JavaType,
         method: String,
         obj: Req,
@@ -166,7 +165,7 @@ internal class TelegramImpl(
         return wrapper.result!!
     }
 
-    private suspend fun <Req: MultipartTgCallable<*>, Resp> callMultipart(
+    private suspend fun <Req: MultipartTelegramCallable<*>, Resp> callMultipart(
         respType: JavaType,
         method: String,
         mpc: Req,
@@ -185,21 +184,20 @@ internal class TelegramImpl(
         return wrapper.result!!
     }
 
-    @PublishedApi
-    internal suspend fun <T> callJson(type: JavaType, jc: JsonTgCallable<T>, longPoll: Boolean = false): T =
-        call(type, VertigramTypeHints.methodNames.getOrAssert(jc.javaClass), jc, longPoll = longPoll)
+    private suspend fun <T> callJson(type: JavaType, jc: JsonTelegramCallable<T>, longPoll: Boolean = false): T =
+        call(type, VertigramTypeHints.methodNameByClass.getOrAssert(jc.javaClass), jc, longPoll = longPoll)
 
-    private suspend fun <T> callMultipart(type: JavaType, mpc: MultipartTgCallable<T>): T =
+    private suspend fun <T> callMultipart(type: JavaType, mpc: MultipartTelegramCallable<T>): T =
         callMultipart(
             type,
-            VertigramTypeHints.methodNames.getOrAssert(mpc.javaClass),
+            VertigramTypeHints.methodNameByClass.getOrAssert(mpc.javaClass),
             mpc
         )
 
-    suspend fun <T> call(type: JavaType, callable: TgCallable<T>, longPoll: Boolean = false): T =
+    suspend fun <T> call(type: JavaType, callable: TelegramCallable<T>, longPoll: Boolean = false): T =
         when (callable) {
-            is JsonTgCallable<T> -> callJson(type, callable, longPoll)
-            is MultipartTgCallable<T> -> callMultipart(type, callable)
+            is JsonTelegramCallable<T> -> callJson(type, callable, longPoll)
+            is MultipartTelegramCallable<T> -> callMultipart(type, callable)
         }
 
     suspend fun downloadFile(path: String, outputPath: String) {

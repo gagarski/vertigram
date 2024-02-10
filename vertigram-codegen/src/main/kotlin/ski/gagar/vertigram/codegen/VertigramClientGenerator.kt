@@ -266,7 +266,7 @@ class VertigramClientGenerator : AbstractProcessor() {
 
         while (true) {
             if (superclass is ParameterizedTypeName && superclass.rawType.canonicalName !in SUPERTYPES) {
-                throw IllegalStateException("Intermediate parametrized classes are not supported")
+                throw IllegalStateException("Intermediate parametrized classes are not supported $superclass")
             }
 
             if (superclass.rawIfParametrized().canonicalName in SUPERTYPES) {
@@ -310,8 +310,8 @@ class VertigramClientGenerator : AbstractProcessor() {
 
     companion object {
         val SUPERTYPES = setOf(
-            "ski.gagar.vertigram.methods.JsonTgCallable",
-            "ski.gagar.vertigram.methods.MultipartTgCallable"
+            "ski.gagar.vertigram.methods.JsonTelegramCallable",
+            "ski.gagar.vertigram.methods.MultipartTelegramCallable"
         )
         val ROOT_CLASSES = setOf(
             ClassName("java.lang", "Object"),
@@ -319,7 +319,7 @@ class VertigramClientGenerator : AbstractProcessor() {
         )
 
         val NO_POS_ARGS_TYPE = ClassName("ski.gagar.vertigram.util", "NoPosArgs")
-        const val TG_METHODS = "TgMethods"
-        const val TG_CONSTRUCTORS = "TgConstructors"
+        const val TG_METHODS = "TelegramMethods"
+        const val TG_CONSTRUCTORS = "TelegramConstructors"
     }
 }

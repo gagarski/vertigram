@@ -9,13 +9,13 @@ import ski.gagar.vertigram.types.LoginUrl
 import ski.gagar.vertigram.types.ReplyKeyboardMarkup
 import ski.gagar.vertigram.types.WebAppInfo
 
-fun ikm(init: InlineKeyboardMarkupBuilder.() -> Unit): InlineKeyboardMarkup {
+fun inlineKeyboardMarkup(init: InlineKeyboardMarkupBuilder.() -> Unit): InlineKeyboardMarkup {
     val bld = InlineKeyboardMarkupBuilder()
     bld.init()
     return bld.build()
 }
 
-fun rkm(init: ReplyKeyboardMarkupBuilder.() -> Unit): ReplyKeyboardMarkup {
+fun replyKeyboardMarkup(init: ReplyKeyboardMarkupBuilder.() -> Unit): ReplyKeyboardMarkup {
     val bld = ReplyKeyboardMarkupBuilder()
     bld.init()
     return bld.build()

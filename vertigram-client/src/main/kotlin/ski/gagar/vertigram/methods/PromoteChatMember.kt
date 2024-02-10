@@ -4,7 +4,6 @@ import ski.gagar.vertigram.annotations.TgMethod
 import ski.gagar.vertigram.throttling.HasChatId
 import ski.gagar.vertigram.types.ChatId
 
-@TgMethod
 data class PromoteChatMember(
     override val chatId: ChatId,
     val userId: Long,
@@ -26,4 +25,4 @@ data class PromoteChatMember(
     val canPostStories: Boolean = false,
     val canEditStories: Boolean = false,
     val canDeleteStories: Boolean = false,
-) : JsonTgCallable<Boolean>(), HasChatId
+) : JsonTelegramCallable<Boolean>(), HasChatId

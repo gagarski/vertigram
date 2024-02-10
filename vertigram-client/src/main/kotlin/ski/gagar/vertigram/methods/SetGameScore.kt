@@ -5,7 +5,6 @@ import ski.gagar.vertigram.throttling.HasChatId
 import ski.gagar.vertigram.throttling.Throttled
 import ski.gagar.vertigram.types.ChatId
 
-@TgMethod
 @Throttled
 data class SetGameScore(
     val userId: Long,
@@ -15,4 +14,4 @@ data class SetGameScore(
     override val chatId: ChatId? = null,
     val messageId: Long? = null,
     val inlineMessageId: Long? = null
-) : JsonTgCallable<Boolean>(), HasChatId
+) : JsonTelegramCallable<Boolean>(), HasChatId

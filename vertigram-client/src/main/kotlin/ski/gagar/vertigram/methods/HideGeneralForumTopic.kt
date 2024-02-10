@@ -5,8 +5,7 @@ import ski.gagar.vertigram.throttling.HasChatId
 import ski.gagar.vertigram.throttling.Throttled
 import ski.gagar.vertigram.types.ChatId
 
-@TgMethod
 @Throttled
 data class HideGeneralForumTopic(
     override val chatId: ChatId
-) : JsonTgCallable<Boolean>(), HasChatId
+) : JsonTelegramCallable<Boolean>(), HasChatId

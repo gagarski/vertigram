@@ -11,10 +11,9 @@ import ski.gagar.vertigram.util.NoPosArgs
  *
  * For up-to-date documentation please consult the official Telegram docs.
  */
-@TgMethod
 data class AnswerWebAppQuery(
     @JsonIgnore
     private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
     val webAppQueryId: String,
     val result: List<InlineQueryResult>
-) : JsonTgCallable<SentWebAppMessage>()
+) : JsonTelegramCallable<SentWebAppMessage>()

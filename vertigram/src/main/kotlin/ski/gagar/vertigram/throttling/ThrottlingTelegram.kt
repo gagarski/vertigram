@@ -10,7 +10,7 @@ import ski.gagar.vertigram.client.DirectTelegram
 import ski.gagar.vertigram.client.Telegram
 import ski.gagar.vertigram.lazy
 import ski.gagar.vertigram.logger
-import ski.gagar.vertigram.methods.TgCallable
+import ski.gagar.vertigram.methods.TelegramCallable
 import ski.gagar.vertigram.types.ChatId
 import ski.gagar.vertigram.types.toChatId
 import ski.gagar.vertigram.util.TelegramCallException
@@ -35,7 +35,7 @@ class ThrottlingTelegram(
     private val perChat: MutableMap<ChatId, NavigableSet<Instant>> = mutableMapOf()
     private val global: NavigableSet<Instant> = TreeSet()
 
-    override suspend fun <T> call(type: JavaType, callable: TgCallable<T>): T {
+    override suspend fun <T> call(type: JavaType, callable: TelegramCallable<T>): T {
         if (callable.javaClass !in TO_THROTTLE) {
             // Won't do any logic if it's a non-throttled-method
             translateRateLimit {
@@ -75,7 +75,7 @@ class ThrottlingTelegram(
         }
     }
 
-    private fun registerCall(callable: TgCallable<*>) {
+    private fun registerCall(callable: TelegramCallable<*>) {
         val chatId = when (callable) {
             is HasChatId -> callable.chatId
             is HasChatIdLong -> callable.chatId?.toChatId()
@@ -113,7 +113,7 @@ class ThrottlingTelegram(
         return duration - (Duration.between(event, now))
     }
 
-    private fun getPreventiveDelay(callable: TgCallable<*>, fromException: Duration?): Duration {
+    private fun getPreventiveDelay(callable: TelegramCallable<*>, fromException: Duration?): Duration {
         val now = Instant.now()
         var toSleep = throttling.globalPerSecond?.let {
             getThrottlingDuration(global, now, SECOND, it)

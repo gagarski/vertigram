@@ -14,7 +14,6 @@ import ski.gagar.vertigram.util.NoPosArgs
  *
  * For up-to-date documentation please consult the official Telegram docs.
  */
-@TgMethod
 @Throttled
 data class CreateForumTopic(
     @JsonIgnore
@@ -23,4 +22,4 @@ data class CreateForumTopic(
     val name: String,
     val iconColor: ForumTopicColor? = null,
     val iconCustomEmojiId: String? = null
-) : JsonTgCallable<ForumTopic>(), HasChatId
+) : JsonTelegramCallable<ForumTopic>(), HasChatId

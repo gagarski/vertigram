@@ -4,8 +4,7 @@ import ski.gagar.vertigram.annotations.TgMethod
 import ski.gagar.vertigram.types.MaskPosition
 import ski.gagar.vertigram.types.Message
 
-@TgMethod
 data class SetStickerMaskPosition(
     val sticker: String,
     val maskPosition: MaskPosition? = null
-) : MultipartTgCallable<Message>()
+) : MultipartTelegramCallable<Message>()

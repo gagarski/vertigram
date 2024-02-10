@@ -2,13 +2,11 @@ package ski.gagar.vertigram.methods
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import ski.gagar.vertigram.annotations.TelegramCodegen
-import ski.gagar.vertigram.annotations.TgMethod
+import ski.gagar.vertigram.annotations.TelegramMethod
 import ski.gagar.vertigram.throttling.HasChatId
 import ski.gagar.vertigram.types.ChatId
 import ski.gagar.vertigram.types.ChatInviteLink
 import ski.gagar.vertigram.util.NoPosArgs
-import ski.gagar.vertigram.util.TgMethodName
-import ski.gagar.vertigram.util.TgVerticleGenerate
 import java.time.Instant
 
 /**
@@ -16,13 +14,13 @@ import java.time.Instant
  *
  * For up-to-date documentation please consult the official Telegram docs.
  */
-sealed class CreateChatInviteLink : JsonTgCallable<ChatInviteLink>(), HasChatId {
+sealed class CreateChatInviteLink : JsonTelegramCallable<ChatInviteLink>(), HasChatId {
     /**
      * Case when [memberLimit] is specified, implies that [createsJoinRequest] is false
      */
-    @TgMethod
-    @TgMethodName("createChatInviteLink")
-    @TgVerticleGenerate(address = "createChatInviteLinkWithMemberLimit")
+    @TelegramMethod(
+        methodName = "createChatInviteLink"
+    )
     @TelegramCodegen(
         methodName = "createChatInviteLink",
         generatePseudoConstructor = true,
@@ -42,9 +40,9 @@ sealed class CreateChatInviteLink : JsonTgCallable<ChatInviteLink>(), HasChatId 
     /**
      * Case when [memberLimit] is missing, [createsJoinRequest] is specified explicitly
      */
-    @TgMethod
-    @TgMethodName("createChatInviteLink")
-    @TgVerticleGenerate(address = "createChatInviteLinkWithJoinRequest")
+    @TelegramMethod(
+        methodName = "createChatInviteLink"
+    )
     @TelegramCodegen(
         methodName = "createChatInviteLink",
         generatePseudoConstructor = true,

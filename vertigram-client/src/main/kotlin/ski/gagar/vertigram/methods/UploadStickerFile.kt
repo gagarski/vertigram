@@ -4,12 +4,11 @@ import ski.gagar.vertigram.annotations.TgMethod
 import ski.gagar.vertigram.types.Message
 import ski.gagar.vertigram.types.Sticker
 import ski.gagar.vertigram.types.StickerFormat
-import ski.gagar.vertigram.util.multipart.TgMedia
+import ski.gagar.vertigram.annotations.TelegramMedia
 
-@TgMethod
 data class UploadStickerFile(
     val userId: Long,
-    @TgMedia
+    @TelegramMedia
     val sticker: Sticker,
     val stickerFormat: StickerFormat
-) : MultipartTgCallable<Message>()
+) : MultipartTelegramCallable<Message>()

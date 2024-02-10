@@ -6,7 +6,7 @@ import io.vertx.core.eventbus.DeliveryOptions
 import ski.gagar.vertigram.ignore
 import ski.gagar.vertigram.jackson.ReplyException
 import ski.gagar.vertigram.jackson.requestJsonAwait
-import ski.gagar.vertigram.methods.TgCallable
+import ski.gagar.vertigram.methods.TelegramCallable
 import ski.gagar.vertigram.types.Update
 import ski.gagar.vertigram.types.UpdateType
 import ski.gagar.vertigram.util.VertigramTypeHints
@@ -42,7 +42,7 @@ class TgVTelegram(
             vertx.eventBus().requestJsonAwait(
                 TelegramVerticle.Config.callAddress(ski.gagar.vertigram.methods.GetUpdates::class.java, baseAddress),
                 TelegramVerticle.GetUpdates(offset, limit, allowedUpdates),
-                VertigramTypeHints.returnTypesByClass.getOrAssert(ski.gagar.vertigram.methods.GetUpdates::class.java),
+                VertigramTypeHints.responseTypeByClass.getOrAssert(ski.gagar.vertigram.methods.GetUpdates::class.java),
                 options = getLongPollDeliveryOptions()
             )
         } catch (ex: ReplyException) {
@@ -50,10 +50,10 @@ class TgVTelegram(
         }
 
     @Suppress("UNCHECKED_CAST")
-    override suspend fun <T> call(type: JavaType, callable: TgCallable<T>): T =
+    override suspend fun <T> call(type: JavaType, callable: TelegramCallable<T>): T =
         try {
             vertx.eventBus()
-                .requestJsonAwait<TgCallable<T>, Any?>(
+                .requestJsonAwait<TelegramCallable<T>, Any?>(
                     TelegramVerticle.Config.callAddress(callable, baseAddress),
                     callable,
                     type

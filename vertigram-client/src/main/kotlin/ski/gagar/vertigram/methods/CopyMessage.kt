@@ -17,7 +17,6 @@ import ski.gagar.vertigram.util.NoPosArgs
  *
  * For up-to-date documentation please consult the official Telegram docs.
  */
-@TgMethod
 @Throttled
 data class CopyMessage(
     @JsonIgnore
@@ -33,4 +32,4 @@ data class CopyMessage(
     val protectContent: Boolean = false,
     val replyParameters: ReplyParameters? = null,
     val replyMarkup: ReplyMarkup? = null
-) : JsonTgCallable<Message>(), HasChatId
+) : JsonTelegramCallable<Message>(), HasChatId

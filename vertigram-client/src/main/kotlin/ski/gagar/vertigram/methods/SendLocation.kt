@@ -9,7 +9,6 @@ import ski.gagar.vertigram.types.ReplyMarkup
 import ski.gagar.vertigram.types.ReplyParameters
 import java.time.Duration
 
-@TgMethod
 @Throttled
 data class SendLocation(
     override val chatId: ChatId,
@@ -26,4 +25,4 @@ data class SendLocation(
     val messageThreadId: Long? = null,
     // Since Telegram Bot API 7.0
     val replyParameters: ReplyParameters? = null
-) : JsonTgCallable<Message>(), HasChatId
+) : JsonTelegramCallable<Message>(), HasChatId

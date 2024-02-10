@@ -12,7 +12,6 @@ import java.time.Instant
  *
  * For up-to-date documentation please consult the official Telegram docs.
  */
-@TgMethod
 data class BanChatMember(
     @JsonIgnore
     private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
@@ -20,4 +19,4 @@ data class BanChatMember(
     val userId: Long,
     val untilDate: Instant? = null,
     val revokeMessages: Boolean = false
-) : JsonTgCallable<Boolean>(), HasChatId
+) : JsonTelegramCallable<Boolean>(), HasChatId

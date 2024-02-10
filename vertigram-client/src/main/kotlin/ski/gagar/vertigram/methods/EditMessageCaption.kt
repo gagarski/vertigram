@@ -16,7 +16,6 @@ import ski.gagar.vertigram.util.NoPosArgs
  *
  * For up-to-date documentation please consult the official Telegram docs.
  */
-@TgMethod
 @Throttled
 data class EditMessageCaption(
     @JsonIgnore
@@ -28,7 +27,7 @@ data class EditMessageCaption(
     private val parseMode: ParseMode? = null,
     private val captionEntities: List<MessageEntity>? = null,
     val replyMarkup: ReplyMarkup? = null
-) : JsonTgCallable<Message>(), HasChatId {
+) : JsonTelegramCallable<Message>(), HasChatId {
 //    val caption by lazy {
 //        caption_?.let {
 //            RichCaption.from(it, parseMode, captionEntities)

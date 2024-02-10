@@ -10,7 +10,6 @@ import ski.gagar.vertigram.types.MessageEntity
 import ski.gagar.vertigram.types.ParseMode
 import ski.gagar.vertigram.types.ReplyMarkup
 
-@TgMethod
 @Throttled
 data class EditMessageText(
     val text: String,
@@ -22,4 +21,4 @@ data class EditMessageText(
     val replyMarkup: ReplyMarkup? = null,
     // Since Telegram Bot API 7.0
     val linkPreviewOptions: LinkPreviewOptions? = null
-) : JsonTgCallable<Message>(), HasChatId
+) : JsonTelegramCallable<Message>(), HasChatId

@@ -7,7 +7,7 @@ import ski.gagar.vertigram.client.impl.TelegramImpl
 import ski.gagar.vertigram.client.impl.TelegramImplOptions
 import ski.gagar.vertigram.lazy
 import ski.gagar.vertigram.logger
-import ski.gagar.vertigram.methods.TgCallable
+import ski.gagar.vertigram.methods.TelegramCallable
 import ski.gagar.vertigram.types.MalformedUpdate
 import ski.gagar.vertigram.types.ParsedUpdate
 import ski.gagar.vertigram.types.Update
@@ -36,7 +36,7 @@ class DirectTelegram(
 
      override suspend fun <T> call(
         type: JavaType,
-        callable: TgCallable<T>
+        callable: TelegramCallable<T>
     ): T =
         impl.call(type, callable)
 

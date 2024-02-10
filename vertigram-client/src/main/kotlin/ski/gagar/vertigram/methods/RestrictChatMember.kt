@@ -6,7 +6,6 @@ import ski.gagar.vertigram.types.ChatId
 import ski.gagar.vertigram.types.ChatPermissions
 import java.time.Instant
 
-@TgMethod
 data class RestrictChatMember(
     override val chatId: ChatId,
     val userId: Long,
@@ -14,4 +13,4 @@ data class RestrictChatMember(
     val untilDate: Instant? = null,
     // Since Telegram Bot API 6.5
     val useIndependentChatPermissions: Boolean = false
-) : JsonTgCallable<Boolean>(), HasChatId
+) : JsonTelegramCallable<Boolean>(), HasChatId

@@ -13,7 +13,6 @@ import ski.gagar.vertigram.types.ReplyParameters
 import java.time.Duration
 import java.time.Instant
 
-@TgMethod
 @Throttled
 data class SendPoll(
     override val chatId: ChatId,
@@ -38,7 +37,7 @@ data class SendPoll(
     val messageThreadId: Long? = null,
     // Since Telegram Bot API 7.0
     val replyParameters: ReplyParameters? = null
-) : JsonTgCallable<Message>(), HasChatId {
+) : JsonTelegramCallable<Message>(), HasChatId {
 
     object Defaults {
         const val isAnonymous = true

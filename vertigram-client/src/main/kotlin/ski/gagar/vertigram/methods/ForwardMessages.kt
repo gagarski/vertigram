@@ -6,7 +6,6 @@ import ski.gagar.vertigram.throttling.Throttled
 import ski.gagar.vertigram.types.ChatId
 import ski.gagar.vertigram.types.Message
 
-@TgMethod
 @Throttled
 data class ForwardMessages(
     override val chatId: ChatId,
@@ -15,4 +14,4 @@ data class ForwardMessages(
     val messageThreadId: Long? = null,
     val disableNotification: Boolean = false,
     val protectContent: Boolean = false
-) : JsonTgCallable<Message>(), HasChatId
+) : JsonTelegramCallable<Message>(), HasChatId

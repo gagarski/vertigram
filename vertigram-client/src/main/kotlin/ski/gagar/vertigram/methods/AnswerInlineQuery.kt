@@ -12,7 +12,6 @@ import java.time.Duration
  *
  * For up-to-date documentation please consult the official Telegram docs.
  */
-@TgMethod
 data class AnswerInlineQuery(
     @JsonIgnore
     private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
@@ -23,4 +22,4 @@ data class AnswerInlineQuery(
     val isPersonal: Boolean = false,
     val nextOffset: String? = null,
     val button: InlineQueryResultsButton? = null
-) : JsonTgCallable<Boolean>()
+) : JsonTelegramCallable<Boolean>()

@@ -3,10 +3,10 @@ package ski.gagar.vertigram.util
 import com.fasterxml.jackson.databind.JavaType
 import org.apache.commons.lang3.StringUtils
 import org.reflections.Reflections
-import org.reflections.scanners.Scanners
-import ski.gagar.vertigram.methods.JsonTgCallable
-import ski.gagar.vertigram.methods.MultipartTgCallable
-import ski.gagar.vertigram.methods.TgCallable
+import ski.gagar.vertigram.annotations.TelegramMethod
+import ski.gagar.vertigram.methods.JsonTelegramCallable
+import ski.gagar.vertigram.methods.MultipartTelegramCallable
+import ski.gagar.vertigram.methods.TelegramCallable
 import ski.gagar.vertigram.uncheckedCast
 import ski.gagar.vertigram.uncheckedCastOrNull
 import ski.gagar.vertigram.util.json.TELEGRAM_JSON_MAPPER
@@ -16,10 +16,17 @@ import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
 import java.lang.reflect.TypeVariable
 
-
+/**
+ * Type factory from [TELEGRAM_JSON_MAPPER]
+ */
 private val TYPE_FACTORY = TELEGRAM_JSON_MAPPER.typeFactory
 
-private val <T: TgCallable<*>> Class<T>.responseType: JavaType
+/**
+ * Response type for `this`.
+ *
+ * Deduced by generic parameters passed to [TelegramCallable].
+ */
+private val <T> Class<T>.responseType: JavaType
     get() {
         if (typeParameters.isNotEmpty())
             throw IllegalArgumentException("$this should not have type parameters")
@@ -36,7 +43,7 @@ private val <T: TgCallable<*>> Class<T>.responseType: JavaType
 
             val rawType = type.rawType
 
-            if (rawType == TgCallable::class.java) {
+            if (rawType == TelegramCallable::class.java) {
                 val t = type.actualTypeArguments[0]
                 val tInst = if (t is Class<*>) {
                     t
@@ -71,75 +78,130 @@ private val <T: TgCallable<*>> Class<T>.responseType: JavaType
         throw IllegalArgumentException("$this is not a subtype of TgCallable")
 }
 
+/**
+ * List of classes, representing Telegram method.
+ */
 private fun getTgCallables() =
-    Reflections("ski.gagar.vertigram.methods", Scanners.SubTypes)
-        .getSubTypesOf(TgCallable::class.java)
+    Reflections("ski.gagar.vertigram.methods")
+        .getTypesAnnotatedWith(TelegramMethod::class.java, true)
         .asSequence()
         .filter { !Modifier.isAbstract(it.modifiers) }
         .toSet()
 
-private val <T: TgCallable<*>> Class<T>.tgvAddress: String?
-    get() = getAnnotation(TgVerticleGenerate::class.java)?.address?.let {
-        if (it == DEFAULT_ADDRESS) {
-            null
-        } else {
-            it
-        }
-    }
+/**
+ * Get consumer address for `TelegramVerticle`
+ */
+private val <T> Class<T>.tgvAddress: String
+    get() = getAnnotation(TelegramMethod::class.java).verticleConsumerName.ifEmpty { simpleName.uncapitalizeDotSeparated() }
 
-private val <T: TgCallable<*>> Class<T>.tgMethodName: String
-    get() = getAnnotation(TgMethodName::class.java)?.name ?: StringUtils.uncapitalize(simpleName)
+/**
+ * Do [StringUtils.uncapitalize] on each part of string, separated by dot.
+ */
+private fun String.uncapitalizeDotSeparated() =
+    split('.').map { StringUtils.uncapitalize(it) }.joinToString(".")
 
+/**
+ * Get method name passed to Telegram.
+ */
+private val <T> Class<T>.telegramMethodName: String
+    get() = getAnnotation(TelegramMethod::class.java).methodName.ifEmpty { StringUtils.uncapitalize(simpleName) }
+
+/**
+ * Type hints used by Vertigram implementation to deserialize Telegram entities.
+ */
 object VertigramTypeHints {
+    /**
+     * Set of Telegram callable classes
+     */
     val callables = getTgCallables()
 
-    val methodNames = callables.associateWith {
-        it.tgMethodName
+    /**
+     * [callables] associated with [telegramMethodName]
+     */
+    val methodNameByClass = callables.associateWith {
+        it.telegramMethodName
     }
 
-    val tgvAddresses = callables.associateWith {
-        it.tgvAddress ?: it.tgMethodName
+    /**
+     * [callables] associated with [tgvAddress]
+     */
+    val tgvAddressByClass = callables.associateWith {
+        it.tgvAddress
     }
 
+    /**
+     * Set of Telegram methods, for which the consumer is not generated in `TelegramVerticle`
+     */
     val doNotGenerateInTgVerticleAddresses =
-        tgvAddresses
-            .filter { (k, _) -> k.getAnnotation(TgVerticleGenerate::class.java)?.generate == false }
+        tgvAddressByClass
+            .filter { (k, _) -> k.getAnnotation(TelegramMethod::class.java)?.generateVerticleConsumer == false }
             .values
             .toSet()
 
-    val returnTypesByClass = callables.associateWith {
+    /**
+     * [callables] associated with [responseType]
+     */
+    val responseTypeByClass = callables.associateWith {
         it.responseType
     }
 
+    /**
+     * Type hints for JSON callables
+     */
     object Json {
+        /**
+         * Set of JSON Telegram callables
+         */
         private val callables = VertigramTypeHints.callables.filter {
-            JsonTgCallable::class.java.isAssignableFrom(it)
+            JsonTelegramCallable::class.java.isAssignableFrom(it)
         }
 
-        val requestTypesByTgvAddress = callables.associate {
-            (it.tgvAddress ?: it.tgMethodName) to TYPE_FACTORY.constructType(it)
+        /**
+         * Map of [tgvAddress] to request type for JSON Telegram callables
+         */
+        val requestTypeByTgvAddress = callables.associate {
+            it.tgvAddress to TYPE_FACTORY.constructType(it)
         }
 
-        val returnTypesByTgvAddress = callables.associate {
-            (it.tgvAddress ?: it.tgMethodName) to it.responseType
+        /**
+         * Map of [tgvAddress] to request type for JSON Telegram callables
+         */
+        val returnTypeByTgvAddress = callables.associate {
+            (it.tgvAddress ?: it.telegramMethodName) to it.responseType
         }
 
     }
 
+    /**
+     * Type hints for multipart callables
+     */
     object Multipart {
+        /**
+         * Set of Multipart Telegram callables
+         */
         private val callables = VertigramTypeHints.callables.filter {
-            MultipartTgCallable::class.java.isAssignableFrom(it)
+            MultipartTelegramCallable::class.java.isAssignableFrom(it)
         }
 
-        val requestTypesByTgvAddress = callables.associate {
-            (it.tgvAddress ?: it.tgMethodName) to TYPE_FACTORY.constructType(it)
+        /**
+         * Map of [tgvAddress] to request type for Multipart Telegram callables
+         */
+        val requestTypeByTgvAddress = callables.associate {
+            it.tgvAddress to TYPE_FACTORY.constructType(it)
         }
 
-        val returnTypesByTgvAddress = callables.associate {
-            (it.tgvAddress ?: it.tgMethodName) to it.responseType
+        /**
+         * Map of [tgvAddress] to request type for Multipart Telegram callables
+         */
+        val returnTypeByTgvAddress = callables.associate {
+            it.tgvAddress to it.responseType
         }
 
     }
 }
 
+/**
+ * Get from map or throw assertion error
+ * @param key map key
+ */
 fun <K, V> Map<K, V>.getOrAssert(key: K) = get(key) ?: throw AssertionError("oops")

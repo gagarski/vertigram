@@ -6,11 +6,10 @@ import ski.gagar.vertigram.throttling.Throttled
 import ski.gagar.vertigram.types.ChatAction
 import ski.gagar.vertigram.types.ChatId
 
-@TgMethod
 @Throttled
 data class SendChatAction(
     override val chatId: ChatId,
     val action: ChatAction,
     // Since Telegram Bot API 6.4
     val messageThreadId: Long? = null
-) : JsonTgCallable<Boolean>(), HasChatId
+) : JsonTelegramCallable<Boolean>(), HasChatId

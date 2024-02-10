@@ -16,8 +16,6 @@ internal object TelegramModule : Module() {
     override fun version(): Version = Version.unknownVersion()
 
     override fun setupModule(context: SetupContext) {
-        context.appendAnnotationIntrospector(TelegramAnnotationIntrospector())
-
         context.addSerializers(SimpleSerializers().apply {
             addSerializer(UnixTimestampSerializer())
             addSerializer(ChatIdSerializer())

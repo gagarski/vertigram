@@ -9,7 +9,6 @@ import ski.gagar.vertigram.types.Message
 import ski.gagar.vertigram.types.ReplyMarkup
 import ski.gagar.vertigram.types.ReplyParameters
 
-@TgMethod
 @Throttled
 data class SendInvoice(
     override val chatId: ChatId,
@@ -42,4 +41,4 @@ data class SendInvoice(
     val messageThreadId: Long? = null,
     // Since Telegram Bot API 7.0
     val replyParameters: ReplyParameters? = null
-) : JsonTgCallable<Message>(), HasChatId
+) : JsonTelegramCallable<Message>(), HasChatId

@@ -10,9 +10,8 @@ import ski.gagar.vertigram.util.NoPosArgs
  *
  * For up-to-date documentation please consult the official Telegram docs.
  */
-@TgMethod
 data class DeleteStickerSet(
     @JsonIgnore
     private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
     val name: String
-) : MultipartTgCallable<Message>()
+) : MultipartTelegramCallable<Message>()

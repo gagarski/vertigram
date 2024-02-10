@@ -7,7 +7,6 @@ import ski.gagar.vertigram.types.ChatId
 import ski.gagar.vertigram.types.ReplyMarkup
 import ski.gagar.vertigram.types.ReplyParameters
 
-@TgMethod
 @Throttled
 data class SendGame(
     override val chatId: ChatId,
@@ -19,4 +18,4 @@ data class SendGame(
     val messageThreadId: Long? = null,
     // Since Telegram Bot API 7.0
     val replyParameters: ReplyParameters? = null
-) : JsonTgCallable<Boolean>(), HasChatId
+) : JsonTelegramCallable<Boolean>(), HasChatId

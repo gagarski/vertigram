@@ -10,14 +10,13 @@ import ski.gagar.vertigram.types.ParseMode
 import ski.gagar.vertigram.types.ReplyMarkup
 import ski.gagar.vertigram.types.ReplyParameters
 import ski.gagar.vertigram.types.attachments.Attachment
-import ski.gagar.vertigram.util.multipart.TgMedia
+import ski.gagar.vertigram.annotations.TelegramMedia
 import java.time.Duration
 
-@TgMethod
 @Throttled
 data class SendAudio(
     override val chatId: ChatId,
-    @TgMedia
+    @TelegramMedia
     val audio: Attachment,
     val caption: String? = null,
     val parseMode: ParseMode? = null,
@@ -33,4 +32,4 @@ data class SendAudio(
     val messageThreadId: Long? = null,
     // Since Telegram Bot API 7.0
     val replyParameters: ReplyParameters? = null
-) : MultipartTgCallable<Message>(), HasChatId
+) : MultipartTelegramCallable<Message>(), HasChatId

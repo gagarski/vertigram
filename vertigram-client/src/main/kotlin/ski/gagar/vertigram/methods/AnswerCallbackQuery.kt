@@ -10,7 +10,6 @@ import java.time.Duration
  *
  * For up-to-date documentation please consult the official Telegram docs.
  */
-@TgMethod
 data class AnswerCallbackQuery(
     @JsonIgnore
     private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
@@ -19,4 +18,4 @@ data class AnswerCallbackQuery(
     val showAlert: Boolean? = null,
     val url: String? = null,
     val cacheTime: Duration? = null
-) : JsonTgCallable<Boolean>()
+) : JsonTelegramCallable<Boolean>()

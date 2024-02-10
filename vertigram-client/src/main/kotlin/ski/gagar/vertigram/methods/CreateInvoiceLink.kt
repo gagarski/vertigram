@@ -11,7 +11,6 @@ import ski.gagar.vertigram.util.NoPosArgs
  *
  * For up-to-date documentation please consult the official Telegram docs.
  */
-@TgMethod
 data class CreateInvoiceLink(
     @JsonIgnore
     private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
@@ -36,4 +35,4 @@ data class CreateInvoiceLink(
     val sendEmailToProvider: Boolean = false,
     @get:JvmName("getIsFlexible")
     val isFlexible: Boolean
-): JsonTgCallable<Message>()
+): JsonTelegramCallable<Message>()

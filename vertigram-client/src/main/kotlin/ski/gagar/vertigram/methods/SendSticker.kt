@@ -8,13 +8,12 @@ import ski.gagar.vertigram.types.Message
 import ski.gagar.vertigram.types.ReplyMarkup
 import ski.gagar.vertigram.types.ReplyParameters
 import ski.gagar.vertigram.types.attachments.Attachment
-import ski.gagar.vertigram.util.multipart.TgMedia
+import ski.gagar.vertigram.annotations.TelegramMedia
 
-@TgMethod
 @Throttled
 data class SendSticker(
     override val chatId: ChatId,
-    @TgMedia
+    @TelegramMedia
     val sticker: Attachment,
     val disableNotification: Boolean = false,
     val protectContent: Boolean = false,
@@ -25,4 +24,4 @@ data class SendSticker(
     val emoji: String? = null,
     // Since Telegram Bot API 7.0
     val replyParameters: ReplyParameters? = null
-) : MultipartTgCallable<Message>(), HasChatId
+) : MultipartTelegramCallable<Message>(), HasChatId

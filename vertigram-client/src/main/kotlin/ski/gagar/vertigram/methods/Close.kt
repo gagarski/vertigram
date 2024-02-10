@@ -8,8 +8,7 @@ import ski.gagar.vertigram.annotations.TgMethod
  *
  * For up-to-date documentation please consult the official Telegram docs.
  */
-@TgMethod
 @TelegramCodegen(
     methodName = "closeApi",
 )
-object Close : JsonTgCallable<Boolean>()
+object Close : JsonTelegramCallable<Boolean>()

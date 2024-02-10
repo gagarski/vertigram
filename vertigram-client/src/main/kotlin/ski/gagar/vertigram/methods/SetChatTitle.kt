@@ -5,9 +5,8 @@ import ski.gagar.vertigram.throttling.HasChatId
 import ski.gagar.vertigram.throttling.Throttled
 import ski.gagar.vertigram.types.ChatId
 
-@TgMethod
 @Throttled
 data class SetChatTitle(
     override val chatId: ChatId,
     val title: String
-) : JsonTgCallable<Boolean>(), HasChatId
+) : JsonTelegramCallable<Boolean>(), HasChatId

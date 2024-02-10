@@ -1,4 +1,4 @@
-package ski.gagar.vertigram.util
+package ski.gagar.vertigram.tools.messages
 
 import ski.gagar.vertigram.types.MessageEntity
 import ski.gagar.vertigram.types.MessageEntityType
@@ -24,20 +24,20 @@ data class InstantiatedEntity(
 
     companion object {
         private fun String?.safeSubstring(offset: Int, length: Int): String {
-            this ?: throw BadEntityException
+            this ?: throw BadEntityException("Bad telegram entity")
 
             if (offset < 0 || length < 0)
-                throw BadEntityException
+                throw BadEntityException("Bad telegram entity")
 
             if (this.length < offset + length)
-                throw BadEntityException
+                throw BadEntityException("Bad telegram entity")
 
             return this.substring(offset, offset + length)
         }
     }
 }
 
-object BadEntityException: Exception("Bad telegram entity")
+class BadEntityException(override val message: String): Exception(message)
 
 fun String?.withEntities(entities: List<MessageEntity>?) =
     entities?.map { InstantiatedEntity(it, this) } ?: listOf()

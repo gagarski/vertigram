@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 import io.vertx.core.http.impl.headers.HeadersMultiMap
 import ski.gagar.vertigram.jackson.BadRequest
-import ski.gagar.vertigram.methods.TgCallable
+import ski.gagar.vertigram.methods.TelegramCallable
 import ski.gagar.vertigram.toMultiMap
 
 
@@ -17,7 +17,7 @@ abstract class TelegramCallException(
     val ok: Boolean,
     val description: String?,
     @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@class")
-    val call: TgCallable<*>,
+    val call: TelegramCallable<*>,
     val responseHeaders: Map<String, List<String>>
 ) : TelegramException("Telegram call $call returned ${status}: $description") {
 
@@ -32,7 +32,7 @@ abstract class TelegramCallException(
             ok: Boolean,
             description: String?,
             @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@class")
-            call: TgCallable<*>,
+            call: TelegramCallable<*>,
             responseHeaders: Map<String, List<String>>
         ) = when (status) {
             in 400..499 -> TelegramCallClientException(status, ok, description, call, responseHeaders)
@@ -47,7 +47,7 @@ class TelegramCallClientException(
     ok: Boolean,
     description: String?,
     @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@class")
-    call: TgCallable<*>,
+    call: TelegramCallable<*>,
     responseHeaders: Map<String, List<String>>
 ) : TelegramCallException(status, ok, description, call, responseHeaders), BadRequest
 
@@ -56,7 +56,7 @@ class TelegramCallServerException(
     ok: Boolean,
     description: String?,
     @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@class")
-    call: TgCallable<*>,
+    call: TelegramCallable<*>,
     responseHeaders: Map<String, List<String>>
 ) : TelegramCallException(status, ok, description, call, responseHeaders)
 

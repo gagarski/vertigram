@@ -7,5 +7,4 @@ import ski.gagar.vertigram.annotations.TgMethod
  *
  * For up-to-date documentation please consult the official Telegram docs.
  */
-@TgMethod
-object DeleteWebhook : JsonTgCallable<Boolean>()
+object DeleteWebhook : JsonTelegramCallable<Boolean>()

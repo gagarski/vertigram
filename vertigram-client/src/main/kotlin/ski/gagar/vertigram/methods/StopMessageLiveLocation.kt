@@ -7,11 +7,10 @@ import ski.gagar.vertigram.types.ChatId
 import ski.gagar.vertigram.types.Message
 import ski.gagar.vertigram.types.ReplyMarkup
 
-@TgMethod
 @Throttled
 data class StopMessageLiveLocation(
     override val chatId: ChatId? = null,
     val messageId: Long? = null,
     val inlineMessageId: String? = null,
     val replyMarkup: ReplyMarkup? = null
-) : JsonTgCallable<Message>(), HasChatId
+) : JsonTelegramCallable<Message>(), HasChatId

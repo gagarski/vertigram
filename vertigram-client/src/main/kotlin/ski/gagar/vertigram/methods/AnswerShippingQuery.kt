@@ -2,24 +2,22 @@ package ski.gagar.vertigram.methods
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import ski.gagar.vertigram.annotations.TelegramCodegen
-import ski.gagar.vertigram.annotations.TgMethod
+import ski.gagar.vertigram.annotations.TelegramMethod
 import ski.gagar.vertigram.types.ShippingOption
 import ski.gagar.vertigram.util.NoPosArgs
-import ski.gagar.vertigram.util.TgMethodName
-import ski.gagar.vertigram.util.TgVerticleGenerate
 
 /**
  * Telegram [answerShippingQuery](https://core.telegram.org/bots/api#answershippingquery) method.
  *
  * For up-to-date documentation please consult the official Telegram docs.
  */
-sealed class AnswerShippingQuery : JsonTgCallable<Boolean>() {
+sealed class AnswerShippingQuery : JsonTelegramCallable<Boolean>() {
     /**
      * Case when ok is true
      */
-    @TgMethod
-    @TgMethodName("answerShippingQuery")
-    @TgVerticleGenerate(address = "answerShippingQueryOk")
+    @TelegramMethod(
+        methodName = "answerShippingQuery"
+    )
     @TelegramCodegen(
         methodName = "answerShippingQuery",
         generatePseudoConstructor = true,
@@ -37,9 +35,9 @@ sealed class AnswerShippingQuery : JsonTgCallable<Boolean>() {
     /**
      * Case when ok is false
      */
-    @TgMethod
-    @TgMethodName("answerShippingQuery")
-    @TgVerticleGenerate(address = "answerShippingQueryError")
+    @TelegramMethod(
+        methodName = "answerShippingQuery"
+    )
     @TelegramCodegen(
         methodName = "answerShippingQuery",
         generatePseudoConstructor = true,

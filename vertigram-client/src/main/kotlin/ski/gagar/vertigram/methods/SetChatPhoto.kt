@@ -6,12 +6,11 @@ import ski.gagar.vertigram.throttling.Throttled
 import ski.gagar.vertigram.types.ChatId
 import ski.gagar.vertigram.types.Message
 import ski.gagar.vertigram.types.attachments.Attachment
-import ski.gagar.vertigram.util.multipart.TgMedia
+import ski.gagar.vertigram.annotations.TelegramMedia
 
-@TgMethod
 @Throttled
 data class SetChatPhoto(
     override val chatId: ChatId,
-    @TgMedia
+    @TelegramMedia
     val photo: Attachment
-) : MultipartTgCallable<Message>(), HasChatId
+) : MultipartTelegramCallable<Message>(), HasChatId

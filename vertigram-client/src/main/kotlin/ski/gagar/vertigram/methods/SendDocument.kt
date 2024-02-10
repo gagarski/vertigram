@@ -10,15 +10,14 @@ import ski.gagar.vertigram.types.ParseMode
 import ski.gagar.vertigram.types.ReplyMarkup
 import ski.gagar.vertigram.types.ReplyParameters
 import ski.gagar.vertigram.types.attachments.Attachment
-import ski.gagar.vertigram.util.multipart.TgMedia
+import ski.gagar.vertigram.annotations.TelegramMedia
 
-@TgMethod
 @Throttled
 data class SendDocument(
     override val chatId: ChatId,
-    @TgMedia
+    @TelegramMedia
     val document: Attachment,
-    @TgMedia
+    @TelegramMedia
     val thumbnail: Attachment? = null,
     val caption: String? = null,
     val parseMode: ParseMode? = null,
@@ -31,4 +30,4 @@ data class SendDocument(
     val messageThreadId: Long? = null,
     // Since Telegram Bot API 7.0
     val replyParameters: ReplyParameters? = null
-) : MultipartTgCallable<Message>(), HasChatId
+) : MultipartTelegramCallable<Message>(), HasChatId
