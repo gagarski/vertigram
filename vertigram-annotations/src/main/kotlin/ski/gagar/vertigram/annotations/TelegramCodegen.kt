@@ -49,5 +49,9 @@ annotation class TelegramCodegen(
     /**
      * A name for generated pseudo-constructor. By default, it's class name.
      */
-    val pseudoConstructorName: String = ""
+    val pseudoConstructorName: String = "",
+    /**
+     * Generate wrapper getter for ...unwrapped params for rich text
+     */
+    val generateRichTextWrappers: Boolean = true,
 )

@@ -27,15 +27,15 @@ sealed interface RichCaption {
     val captionEntities: List<MessageEntity>?
         get() = null
     companion object {
-        fun from(caption: String,
-                 parseMode: ParseMode?,
-                 captionEntities: List<MessageEntity>?) : RichCaption {
+        operator fun invoke(caption: String,
+                            parseMode: ParseMode?,
+                            captionEntities: List<MessageEntity>?) : RichCaption {
             if (parseMode != null) require(null == captionEntities)
             return when (parseMode) {
                 ParseMode.MARKDOWN -> MarkdownCaption(caption)
                 ParseMode.MARKDOWN_V2 -> MarkdownV2Caption(caption)
                 ParseMode.HTML -> HtmlCaption(caption)
-                else -> CaptionWithEntities(caption, captionEntities!!)
+                else -> CaptionWithEntities(caption, captionEntities ?: listOf())
             }
         }
     }
