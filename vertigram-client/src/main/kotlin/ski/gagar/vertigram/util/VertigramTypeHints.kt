@@ -162,14 +162,6 @@ object VertigramTypeHints {
         val requestTypeByTgvAddress = callables.associate {
             it.tgvAddress to TYPE_FACTORY.constructType(it)
         }
-
-        /**
-         * Map of [tgvAddress] to request type for JSON Telegram callables
-         */
-        val returnTypeByTgvAddress = callables.associate {
-            (it.tgvAddress ?: it.telegramMethodName) to it.responseType
-        }
-
     }
 
     /**
@@ -189,14 +181,6 @@ object VertigramTypeHints {
         val requestTypeByTgvAddress = callables.associate {
             it.tgvAddress to TYPE_FACTORY.constructType(it)
         }
-
-        /**
-         * Map of [tgvAddress] to request type for Multipart Telegram callables
-         */
-        val returnTypeByTgvAddress = callables.associate {
-            it.tgvAddress to it.responseType
-        }
-
     }
 }
 

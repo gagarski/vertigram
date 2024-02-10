@@ -39,33 +39,32 @@ class TelegramVerticle : ErrorLoggingCoroutineVerticle() {
 
         @Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
         suspendJsonConsumer(
-            typedConfig.callAddress(RawGetUpdates::class.java), function = ::handleGetUpdates)
+            typedConfig.callAddress(RawGetUpdates::class.java), function = ::handleGetUpdates
+        )
 
         for ((tgvAddress, requestType) in VertigramTypeHints.Json.requestTypeByTgvAddress) {
             if (tgvAddress in VertigramTypeHints.doNotGenerateInTgVerticleAddresses)
                 continue
-            val responseType = VertigramTypeHints.Json.returnTypeByTgvAddress.getOrAssert(tgvAddress)
             suspendJsonConsumer(
                 typedConfig.callAddress(tgvAddress,
                     RequestType.Json
                 ),
                 requestJavaType = requestType
             ) { msg: TelegramCallable<*> ->
-                tg.call(responseType, msg)
+                tg.call(msg)
             }
         }
 
         for ((tgvAddress, requestType) in VertigramTypeHints.Multipart.requestTypeByTgvAddress) {
             if (tgvAddress in VertigramTypeHints.doNotGenerateInTgVerticleAddresses)
                 continue
-            val responseType = VertigramTypeHints.Multipart.returnTypeByTgvAddress.getOrAssert(tgvAddress)
             suspendJsonConsumer(
                 typedConfig.callAddress(tgvAddress,
                     RequestType.Multipart
                 ),
                 requestJavaType = requestType
             ) { msg: TelegramCallable<*> ->
-                tg.call(responseType, msg)
+                tg.call(msg)
             }
         }
 
