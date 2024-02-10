@@ -1,6 +1,7 @@
 package ski.gagar.vertigram.methods
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.util.NoPosArgs
 import java.time.Duration
 
@@ -9,6 +10,9 @@ import java.time.Duration
  *
  * For up-to-date documentation please consult the official Telegram docs.
  */
+@TelegramCodegen(
+    generateRichTextWrappers = false
+)
 data class AnswerCallbackQuery(
     @JsonIgnore
     private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,

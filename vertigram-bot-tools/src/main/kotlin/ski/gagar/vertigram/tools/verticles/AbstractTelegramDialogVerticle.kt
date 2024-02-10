@@ -3,24 +3,23 @@ package ski.gagar.vertigram.tools.verticles
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import ski.gagar.vertigram.builders.Markdown
-import ski.gagar.vertigram.builders.md
 import ski.gagar.vertigram.client.Telegram
 import ski.gagar.vertigram.client.TgVTelegram
 import ski.gagar.vertigram.coroutines.setTimerNonCancellable
 import ski.gagar.vertigram.jackson.suspendJsonConsumer
 import ski.gagar.vertigram.lazy
 import ski.gagar.vertigram.logger
+import ski.gagar.vertigram.markup.toRichText
 import ski.gagar.vertigram.methods.editMessageReplyMarkup
 import ski.gagar.vertigram.methods.editMessageText
 import ski.gagar.vertigram.methods.sendMessage
+import ski.gagar.vertigram.richtext.RichText
 import ski.gagar.vertigram.tools.isCommandForBot
 import ski.gagar.vertigram.tools.verticles.address.VertigramAddress
 import ski.gagar.vertigram.types.CallbackQuery
 import ski.gagar.vertigram.types.InlineKeyboardMarkup
 import ski.gagar.vertigram.types.Me
 import ski.gagar.vertigram.types.Message
-import ski.gagar.vertigram.types.ParseMode
 import ski.gagar.vertigram.types.ReplyMarkup
 import ski.gagar.vertigram.types.toChatId
 import ski.gagar.vertigram.verticles.TelegramVerticle
@@ -182,7 +181,7 @@ abstract class AbstractTelegramDialogVerticle : AbstractHierarchyVerticle() {
         become(state, HistoryBehavior.SKIP)
     }
 
-    protected suspend fun sendOrEdit(text: Markdown, buttons: InlineKeyboardMarkup? = null, forceSend: Boolean = false) {
+    protected suspend fun sendOrEdit(text: RichText, buttons: InlineKeyboardMarkup? = null, forceSend: Boolean = false) {
         if (forceSend) {
             resetKnownMessage()
         }
@@ -202,8 +201,7 @@ abstract class AbstractTelegramDialogVerticle : AbstractHierarchyVerticle() {
         if (null == msgInfo) {
             val msgId = tg.sendMessage(
                 chatId = chatId.toChatId(),
-                text = text.toString(),
-                parseMode = ParseMode.MARKDOWN_V2,
+                richText = text,
                 replyMarkup = buttons
             ).messageId
             this.msgInfo = MsgInfo(msgId, buttons != null, text.toString(), buttons)
@@ -211,8 +209,7 @@ abstract class AbstractTelegramDialogVerticle : AbstractHierarchyVerticle() {
             val msgId = tg.editMessageText(
                 chatId = chatId.toChatId(),
                 messageId = msgInfo.id,
-                text = text.toString(),
-                parseMode = ParseMode.MARKDOWN_V2,
+                richText = text,
                 replyMarkup = buttons
             ).messageId
             this.msgInfo = MsgInfo(msgId, buttons != null, text.toString(), buttons)
@@ -293,7 +290,7 @@ abstract class AbstractTelegramDialogVerticle : AbstractHierarchyVerticle() {
         }
 
         protected suspend fun sendOrEdit(
-            text: ski.gagar.vertigram.builders.Markdown, buttons: InlineKeyboardMarkup? = null, forceSend: Boolean = false
+            text: RichText, buttons: InlineKeyboardMarkup? = null, forceSend: Boolean = false
         ) {
             v.sendOrEdit(text, buttons, forceSend)
         }
@@ -319,11 +316,7 @@ abstract class AbstractTelegramDialogVerticle : AbstractHierarchyVerticle() {
 
     private class YawnTimeout(private val verticle: AbstractTelegramDialogVerticle) : State(verticle) {
         override suspend fun sideEffect() {
-            sendOrEdit(
-                md {
-                    +"\uD83E\uDD71"
-                }
-            )
+            sendOrEdit("\uD83E\uDD71".toRichText())
             verticle.timeout()
         }
     }
@@ -336,11 +329,7 @@ abstract class AbstractTelegramDialogVerticle : AbstractHierarchyVerticle() {
 
     private class CrossCancelled(private val verticle: AbstractTelegramDialogVerticle) : State(verticle) {
         override suspend fun sideEffect() {
-            sendOrEdit(
-                md {
-                    +"❌"
-                }
-            )
+            sendOrEdit("❌".toRichText())
             cancel()
         }
     }
@@ -353,11 +342,7 @@ abstract class AbstractTelegramDialogVerticle : AbstractHierarchyVerticle() {
 
     private class CheckmarkDone(private val verticle: AbstractTelegramDialogVerticle) : State(verticle) {
         override suspend fun sideEffect() {
-            sendOrEdit(
-                md {
-                    +"✅"
-                }
-            )
+            sendOrEdit("✅".toRichText())
             complete()
         }
     }

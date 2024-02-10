@@ -1,6 +1,13 @@
 package ski.gagar.vertigram.types
 
-data class ReplyParameters(
+import ski.gagar.vertigram.annotations.TelegramCodegen
+
+@TelegramCodegen(
+    generateMethod = false,
+    generatePseudoConstructor = true,
+    generateRichTextWrappers = true
+)
+data class ReplyParameters internal constructor(
     val messageId: Long,
     val chatId: ChatId? = null,
     val allowSendingWithoutReply: Boolean = false,

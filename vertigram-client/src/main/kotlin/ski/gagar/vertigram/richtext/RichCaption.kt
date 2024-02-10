@@ -14,8 +14,8 @@ import ski.gagar.vertigram.types.ParseMode
     defaultImpl = CaptionWithEntities::class
 )
 @JsonSubTypes(
-    JsonSubTypes.Type(value = MarkdownCaption::class, name = ParseMode.MARKDOWN_STR),
-    JsonSubTypes.Type(value = MarkdownV2Caption::class, name = ParseMode.MARKDOWN_V2_STR),
+    JsonSubTypes.Type(value = MarkdownV1Caption::class, name = ParseMode.MARKDOWN_STR),
+    JsonSubTypes.Type(value = MarkdownCaption::class, name = ParseMode.MARKDOWN_V2_STR),
     JsonSubTypes.Type(value = HtmlCaption::class, name = ParseMode.HTML_STR),
 )
 sealed interface RichCaption {
@@ -32,8 +32,8 @@ sealed interface RichCaption {
                             captionEntities: List<MessageEntity>?) : RichCaption {
             if (parseMode != null) require(null == captionEntities)
             return when (parseMode) {
-                ParseMode.MARKDOWN -> MarkdownCaption(caption)
-                ParseMode.MARKDOWN_V2 -> MarkdownV2Caption(caption)
+                ParseMode.MARKDOWN -> MarkdownV1Caption(caption)
+                ParseMode.MARKDOWN_V2 -> MarkdownCaption(caption)
                 ParseMode.HTML -> HtmlCaption(caption)
                 else -> CaptionWithEntities(caption, captionEntities ?: listOf())
             }
@@ -42,14 +42,14 @@ sealed interface RichCaption {
 }
 
 @Suppress("DEPRECATION")
-@Deprecated("Consider using other mode", replaceWith = ReplaceWith("MarkdownV2Caption"))
-data class MarkdownCaption(
+@Deprecated("Consider using other mode", replaceWith = ReplaceWith("MarkdownCaption"))
+data class MarkdownV1Caption(
     override val caption: String
 ) : RichCaption {
     override val parseMode: ParseMode = ParseMode.MARKDOWN
 }
 
-data class MarkdownV2Caption(
+data class MarkdownCaption(
     override val caption: String
 ) : RichCaption {
     override val parseMode: ParseMode = ParseMode.MARKDOWN_V2

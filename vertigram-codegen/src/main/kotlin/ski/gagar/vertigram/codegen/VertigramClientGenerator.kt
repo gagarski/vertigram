@@ -165,7 +165,7 @@ class VertigramClientGenerator : AbstractProcessor() {
             .returns(returnType)
             .apply {
                 val actuallyWrapped = mutableSetOf<String>()
-                addParametersFromPrimaryConstructor(clazz, className, actuallyWrapped)
+                addParametersFromPrimaryConstructor(clazz, className, actuallyWrapped, anno)
                 val call = callPrimaryConstructor(className, actuallyWrapped)
                 addStatement("return call(${call.formatString})", *call.parameters.toTypedArray())
             }
@@ -202,7 +202,7 @@ class VertigramClientGenerator : AbstractProcessor() {
             .returns(className)
             .apply {
                 val actuallyWrapped = mutableSetOf<String>()
-                addParametersFromPrimaryConstructor(clazz, className, actuallyWrapped)
+                addParametersFromPrimaryConstructor(clazz, className, actuallyWrapped, anno)
                 val call = callPrimaryConstructor(className, actuallyWrapped)
                 addStatement("return ${call.formatString}", *call.parameters.toTypedArray())
             }
@@ -287,7 +287,8 @@ class VertigramClientGenerator : AbstractProcessor() {
     private fun FunSpec.Builder.addParametersFromPrimaryConstructor(
         clazz: TypeSpec,
         className: ClassName,
-        actuallyWrapped: MutableSet<String>
+        actuallyWrapped: MutableSet<String>,
+        anno: TelegramCodegen
     ) {
         val constructor = clazz.primaryConstructor
             ?: throw IllegalStateException("Cannot add parameters to ${this}, ${clazz.name} has no primary constructor")
@@ -306,8 +307,7 @@ class VertigramClientGenerator : AbstractProcessor() {
                 continue
             }
 
-            val wrapConfig = WRAP_CONFIGS_BY_TRIGGER[param.name]
-
+            val wrapConfig = if (anno.generateRichTextWrappers) WRAP_CONFIGS_BY_TRIGGER[param.name] else null
 
             if (param.name in alreadyWrapped) {
                 continue
@@ -492,7 +492,37 @@ class VertigramClientGenerator : AbstractProcessor() {
                     "parseMode" to "parseMode",
                     "captionEntities" to "captionEntities"
                 )
-            )
+            ),
+            WrapConfig(
+                triggerParam = "text",
+                wrapper = ClassName("ski.gagar.vertigram.richtext", "RichText"),
+                wrapperParam = "richText",
+                wrapperParamMapping = mapOf(
+                    "text" to "text",
+                    "parseMode" to "parseMode",
+                    "entities" to "entities"
+                )
+            ),
+            WrapConfig(
+                triggerParam = "quote",
+                wrapper = ClassName("ski.gagar.vertigram.richtext", "RichQuote"),
+                wrapperParam = "richQuote",
+                wrapperParamMapping = mapOf(
+                    "quote" to "quote",
+                    "quoteParseMode" to "quoteParseMode",
+                    "quoteEntities" to "quoteEntities"
+                )
+            ),
+            WrapConfig(
+                triggerParam = "explanation",
+                wrapper = ClassName("ski.gagar.vertigram.richtext", "RichExplanation"),
+                wrapperParam = "richExplanation",
+                wrapperParamMapping = mapOf(
+                    "explanation" to "explanation",
+                    "explanationParseMode" to "explanationParseMode",
+                    "explanationEntities" to "explanationEntities"
+                )
+            ),
         )
 
         private val WRAP_CONFIGS_BY_TRIGGER = WRAP_CONFIGS.associateBy { it.triggerParam }

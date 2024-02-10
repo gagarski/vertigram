@@ -1,7 +1,6 @@
 package ski.gagar.vertigram.tools.verticles
 
 import kotlinx.coroutines.Job
-import ski.gagar.vertigram.builders.md
 import ski.gagar.vertigram.client.DirectTelegram
 import ski.gagar.vertigram.client.THIN_POOLS
 import ski.gagar.vertigram.client.Telegram
@@ -13,9 +12,9 @@ import ski.gagar.vertigram.logback.Level
 import ski.gagar.vertigram.logback.LogEvent
 import ski.gagar.vertigram.logback.asString
 import ski.gagar.vertigram.logback.bypassEventBusAppenderSuspend
+import ski.gagar.vertigram.markup.textMarkdown
 import ski.gagar.vertigram.methods.sendMessage
 import ski.gagar.vertigram.types.Me
-import ski.gagar.vertigram.types.ParseMode
 import ski.gagar.vertigram.types.toChatId
 import ski.gagar.vertigram.verticles.ErrorLoggingCoroutineVerticle
 import ski.gagar.vertigram.verticles.Named
@@ -56,7 +55,7 @@ class TelegramLoggingVerticle : ErrorLoggingCoroutineVerticle() {
 
             tg.sendMessage(
                 chatId = typedConf.chatId.toChatId(),
-                text = md {
+                richText = textMarkdown {
                     +log.level.emoji
                     +" "
                     b {
@@ -123,8 +122,7 @@ class TelegramLoggingVerticle : ErrorLoggingCoroutineVerticle() {
 
                         pre(firstPart)
                     }
-                }.toString(),
-                parseMode = ParseMode.MARKDOWN_V2
+                }
             )
             msgSent++
 
@@ -134,10 +132,9 @@ class TelegramLoggingVerticle : ErrorLoggingCoroutineVerticle() {
                 if (force || msgSent < MAX_SEQ_MESSAGES - 1) {
                     tg.sendMessage(
                         chatId = typedConf.chatId.toChatId(),
-                        text = md {
+                        richText = textMarkdown {
                             pre(buf.trimEnd('\n').toString())
-                        }.toString(),
-                        parseMode = ParseMode.MARKDOWN_V2
+                        }
                     )
                     buf.clear()
                     msgSent++
@@ -145,10 +142,9 @@ class TelegramLoggingVerticle : ErrorLoggingCoroutineVerticle() {
                 } else {
                     tg.sendMessage(
                         chatId = typedConf.chatId.toChatId(),
-                        text = md {
+                        richText = textMarkdown {
                             pre(TRUNCATED)
-                        }.toString(),
-                        parseMode = ParseMode.MARKDOWN_V2
+                        }
                     )
                     buf.clear()
                     // msgSent++
@@ -184,7 +180,7 @@ class TelegramLoggingVerticle : ErrorLoggingCoroutineVerticle() {
 
         tg.sendMessage(
             chatId = typedConf.chatId.toChatId(),
-            text = md {
+            richText = textMarkdown {
                 +"For the last ${typedConf.accumulationPeriod} the following log events occurred"
                 typedConf.me?.let {
                     +" in @${it.username}"
@@ -200,8 +196,7 @@ class TelegramLoggingVerticle : ErrorLoggingCoroutineVerticle() {
 
                 br() // extra after last
                 +"Please consult logs for more details."
-            }.toString(),
-            parseMode = ParseMode.MARKDOWN_V2
+            }
         )
     }
 

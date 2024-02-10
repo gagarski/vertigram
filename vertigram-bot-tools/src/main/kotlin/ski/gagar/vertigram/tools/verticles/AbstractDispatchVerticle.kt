@@ -1,17 +1,16 @@
 package ski.gagar.vertigram.tools.verticles
 
 import kotlinx.coroutines.launch
-import ski.gagar.vertigram.builders.md
 import ski.gagar.vertigram.client.Telegram
 import ski.gagar.vertigram.client.TgVTelegram
 import ski.gagar.vertigram.ignore
 import ski.gagar.vertigram.jackson.requestJsonAwait
 import ski.gagar.vertigram.jackson.suspendJsonConsumer
+import ski.gagar.vertigram.markup.toRichText
 import ski.gagar.vertigram.methods.sendMessage
 import ski.gagar.vertigram.tools.verticles.address.VertigramAddress
 import ski.gagar.vertigram.types.CallbackQuery
 import ski.gagar.vertigram.types.Message
-import ski.gagar.vertigram.types.ParseMode
 import ski.gagar.vertigram.types.toChatId
 import ski.gagar.vertigram.verticles.TelegramVerticle
 import ski.gagar.vertigram.verticles.children.AbstractHierarchyVerticle
@@ -100,9 +99,8 @@ abstract class AbstractDispatchVerticle<DialogKey> : AbstractHierarchyVerticle()
         if (deathNotice.reason == DeathReason.FAILED && null != chatId) {
             launch {
                 tg.sendMessage(
-                    text = md { +"Something went wrong" }.toString(),
+                    richText = "Something went wrong".toRichText(),
                     chatId = chatId.toChatId(),
-                    parseMode = ParseMode.MARKDOWN_V2
                 )
             }
         }

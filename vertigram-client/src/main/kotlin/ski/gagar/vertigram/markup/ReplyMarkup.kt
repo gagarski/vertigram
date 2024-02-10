@@ -1,4 +1,4 @@
-package ski.gagar.vertigram.builders
+package ski.gagar.vertigram.markup
 
 import ski.gagar.vertigram.types.CallbackGame
 import ski.gagar.vertigram.types.InlineKeyboardButton
