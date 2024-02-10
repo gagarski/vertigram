@@ -1,6 +1,7 @@
 package ski.gagar.vertigram.verticles
 
 import io.netty.handler.codec.http.HttpResponseStatus
+import io.vertx.core.http.HttpServer
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.handler.BodyHandler
 import kotlinx.coroutines.delay
@@ -31,6 +32,8 @@ class WebHookVerticle : ErrorLoggingCoroutineVerticle() {
         TgVTelegram(vertx, typedConfig.tgvAddress)
     }
 
+    private lateinit var server: HttpServer
+
     override suspend fun start() {
         logger.lazy.info { "Deleting old webhook..." }
         retrying(coolDown = { delay(3000) }) {
@@ -38,7 +41,7 @@ class WebHookVerticle : ErrorLoggingCoroutineVerticle() {
         }
 
         logger.lazy.info { "Staring $javaClass server..." }
-        val server = vertx.createHttpServer()
+        server = vertx.createHttpServer()
         val router = Router.router(vertx)
         router.route().handler(RealIpLoggerHandler(
             trustedNetworks = typedConfig.webHook.proxy?.trustedNetworks?.map { IpNetworkAddress(it) }?.toSet() ?: setOf(),
@@ -89,6 +92,10 @@ class WebHookVerticle : ErrorLoggingCoroutineVerticle() {
         }
 
         logger.lazy.info { "Web server is listening..." }
+    }
+
+    override suspend fun stop() {
+        server.close()
     }
 
     data class Config(
