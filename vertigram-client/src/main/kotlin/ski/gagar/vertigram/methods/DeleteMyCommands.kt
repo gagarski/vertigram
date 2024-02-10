@@ -1,7 +1,6 @@
 package ski.gagar.vertigram.methods
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import ski.gagar.vertigram.annotations.TgMethod
 import ski.gagar.vertigram.types.BotCommandScope
 import ski.gagar.vertigram.types.BotCommandScopeDefault
 import ski.gagar.vertigram.util.NoPosArgs

@@ -484,13 +484,13 @@ class VertigramClientGenerator : AbstractProcessor() {
         //       and replace with @JsonUnwrapped
         private val WRAP_CONFIGS = listOf(
             WrapConfig(
-                triggerParam = "captionUnwrapped",
+                triggerParam = "caption",
                 wrapper = ClassName("ski.gagar.vertigram.richtext", "RichCaption"),
-                wrapperParam = "caption",
+                wrapperParam = "richCaption",
                 wrapperParamMapping = mapOf(
-                    "captionUnwrapped" to "caption",
-                    "captionParseModeUnwrapped" to "parseMode",
-                    "captionEntitiesUnwrapped" to "captionEntities"
+                    "caption" to "caption",
+                    "parseMode" to "parseMode",
+                    "captionEntities" to "captionEntities"
                 )
             )
         )

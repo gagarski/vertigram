@@ -1,7 +1,6 @@
 package ski.gagar.vertigram.methods
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import com.fasterxml.jackson.annotation.JsonProperty
 import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.throttling.HasChatId
 import ski.gagar.vertigram.throttling.Throttled
@@ -29,12 +28,9 @@ data class CopyMessage internal constructor(
     val messageThreadId: Long? = null,
     val fromChatId: ChatId,
     val messageId: Long,
-    @JsonProperty("caption")
-    val captionUnwrapped: String? = null,
-    @JsonProperty("parse_mode")
-    val captionParseModeUnwrapped: ParseMode? = null,
-    @JsonProperty("caption_entities")
-    val captionEntitiesUnwrapped: List<MessageEntity>? = null,
+    @PublishedApi internal val caption: String? = null,
+    @PublishedApi internal val parseMode: ParseMode? = null,
+    @PublishedApi internal val captionEntities: List<MessageEntity>? = null,
     val disableNotification: Boolean = false,
     val protectContent: Boolean = false,
     val replyParameters: ReplyParameters? = null,

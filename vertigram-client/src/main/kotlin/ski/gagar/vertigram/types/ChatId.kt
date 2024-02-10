@@ -2,14 +2,14 @@ package ski.gagar.vertigram.types
 
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
-import ski.gagar.vertigram.util.json.TgIgnoreTypeInfo
+import ski.gagar.vertigram.util.json.TelegramIgnoreTypeInfo
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.MINIMAL_CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@class")
 @JsonSubTypes(
     JsonSubTypes.Type(value = LongChatId::class),
     JsonSubTypes.Type(value = StringChatId::class),
 )
-@TgIgnoreTypeInfo
+@TelegramIgnoreTypeInfo
 sealed interface ChatId {
     companion object {
         fun string(string: String) = StringChatId(string)

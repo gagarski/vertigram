@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategies
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 
 internal fun telegramJsonMapper(): ObjectMapper = ObjectMapper()
-    .setAnnotationIntrospector(NoTypeInfoAnnotationIntrospector())
+    .setAnnotationIntrospector(TelegramAnnotationIntrospector())
     .setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE)
     .enable(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES)
     .setSerializationInclusion(JsonInclude.Include.NON_NULL)

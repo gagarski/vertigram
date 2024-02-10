@@ -2,9 +2,9 @@ package ski.gagar.vertigram.types
 
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
-import ski.gagar.vertigram.util.json.TgIgnoreTypeInfo
+import ski.gagar.vertigram.util.json.TelegramIgnoreTypeInfo
 
-@TgIgnoreTypeInfo
+@TelegramIgnoreTypeInfo
 @JsonTypeInfo(use = JsonTypeInfo.Id.MINIMAL_CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@class")
 @JsonSubTypes(
     JsonSubTypes.Type(value = InlineKeyboardMarkup::class),

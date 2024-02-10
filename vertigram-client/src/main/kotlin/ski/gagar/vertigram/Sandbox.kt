@@ -10,7 +10,7 @@ fun main() {
         chatId = "1".toChatId(),
         fromChatId = "2".toChatId(),
         messageId = 1,
-        caption = CaptionWithEntities(
+        richCaption = CaptionWithEntities(
             caption = "xxx"
         )
     )

@@ -1,6 +1,5 @@
 package ski.gagar.vertigram.methods
 
-import ski.gagar.vertigram.annotations.TgMethod
 import ski.gagar.vertigram.types.UpdateType
 import ski.gagar.vertigram.types.attachments.Attachment
 import ski.gagar.vertigram.annotations.TelegramMedia

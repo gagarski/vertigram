@@ -1,6 +1,5 @@
 package ski.gagar.vertigram.methods
 
-import ski.gagar.vertigram.annotations.TgMethod
 import ski.gagar.vertigram.types.Message
 import ski.gagar.vertigram.types.Sticker
 import ski.gagar.vertigram.types.StickerFormat

@@ -1,7 +1,5 @@
 package ski.gagar.vertigram.methods
 
-import ski.gagar.vertigram.annotations.TgMethod
-
 /**
  * Telegram [deleteWebhook](https://core.telegram.org/bots/api#deletewebhook) method.
  *

@@ -10,4 +10,4 @@ package ski.gagar.vertigram.util.json
     AnnotationTarget.FIELD
 )
 @Retention(AnnotationRetention.RUNTIME)
-annotation class TgIgnoreTypeInfo
+annotation class TelegramIgnoreTypeInfo
