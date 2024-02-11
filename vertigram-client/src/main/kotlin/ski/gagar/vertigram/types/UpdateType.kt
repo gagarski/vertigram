@@ -34,8 +34,9 @@ enum class UpdateType {
     @JsonProperty("chat_member")
     CHAT_MEMBER,
     @JsonProperty("chat_join_request")
-    CHAT_JOIN_REQUEST;
-
-    override fun toString(): String = super.toString().lowercase()
-
+    CHAT_JOIN_REQUEST,
+    @JsonProperty("chat_boost")
+    CHAT_BOOST,
+    @JsonProperty("removed_chat_boost")
+    REMOVED_CHAT_BOOST
 }

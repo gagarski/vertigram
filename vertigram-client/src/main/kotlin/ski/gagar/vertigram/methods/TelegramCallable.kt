@@ -2,6 +2,7 @@ package ski.gagar.vertigram.methods
 
 import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.annotations.TelegramMethod
+import ski.gagar.vertigram.client.Telegram
 
 /**
  * Base class for every Telegram method.
@@ -11,7 +12,9 @@ import ski.gagar.vertigram.annotations.TelegramMethod
  */
 @TelegramCodegen
 @TelegramMethod
-sealed class TelegramCallable<ReturnType>
+sealed class TelegramCallable<ReturnType> {
+    suspend fun call(telegram: Telegram) = telegram.call(this)
+}
 
 abstract class JsonTelegramCallable<ReturnType> : TelegramCallable<ReturnType>()
 

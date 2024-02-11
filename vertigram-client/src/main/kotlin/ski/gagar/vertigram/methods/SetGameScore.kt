@@ -1,16 +1,54 @@
 package ski.gagar.vertigram.methods
 
-import ski.gagar.vertigram.throttling.HasChatId
+import ski.gagar.vertigram.annotations.TelegramCodegen
+import ski.gagar.vertigram.annotations.TelegramMethod
+import ski.gagar.vertigram.throttling.HasChatIdLong
 import ski.gagar.vertigram.throttling.Throttled
-import ski.gagar.vertigram.types.ChatId
+import ski.gagar.vertigram.types.Message
 
-@Throttled
-data class SetGameScore(
-    val userId: Long,
-    val score: Int,
-    val force: Boolean = false,
-    val disableEditMessage: Boolean = false,
-    override val chatId: ChatId? = null,
-    val messageId: Long? = null,
-    val inlineMessageId: Long? = null
-) : JsonTelegramCallable<Boolean>(), HasChatId
+/**
+ * Telegram [setGameScore](https://core.telegram.org/bots/api#setgamescore) method.
+ *
+ * For up-to-date documentation please consult the official Telegram docs.
+ */
+sealed interface SetGameScore {
+    /**
+     * Inline message case
+     */
+    @TelegramMethod(
+        methodName = "setGameScore"
+    )
+    @TelegramCodegen(
+        methodName = "setGameScore",
+        generatePseudoConstructor = true,
+        pseudoConstructorName = "SetGameScore"
+    )
+    @Throttled
+    data class InlineMessage internal constructor(
+        val userId: Long,
+        val score: Int,
+        val force: Boolean = false,
+        val disableEditMessage: Boolean = false,
+        val inlineMessageId: Long
+    ) : SetGameScore, JsonTelegramCallable<Boolean>()
+
+    /**
+     * Chat message case
+     */
+    @TelegramMethod(
+        methodName = "setGameScore"
+    )
+    @TelegramCodegen(
+        methodName = "setGameScore",
+        generatePseudoConstructor = true,
+        pseudoConstructorName = "SetGameScore"
+    )
+    @Throttled
+    data class ChatMessage internal constructor(
+        val userId: Long,
+        val score: Int,
+        val force: Boolean = false,
+        val disableEditMessage: Boolean = false,
+        override val chatId: Long
+    ) : SetGameScore, HasChatIdLong, JsonTelegramCallable<Message>()
+}
