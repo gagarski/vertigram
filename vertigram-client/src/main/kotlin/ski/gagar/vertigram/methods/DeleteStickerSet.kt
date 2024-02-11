@@ -1,7 +1,6 @@
 package ski.gagar.vertigram.methods
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import ski.gagar.vertigram.types.Message
 import ski.gagar.vertigram.util.NoPosArgs
 
 /**
@@ -13,4 +12,4 @@ data class DeleteStickerSet(
     @JsonIgnore
     private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
     val name: String
-) : MultipartTelegramCallable<Message>()
+) : MultipartTelegramCallable<Boolean>()

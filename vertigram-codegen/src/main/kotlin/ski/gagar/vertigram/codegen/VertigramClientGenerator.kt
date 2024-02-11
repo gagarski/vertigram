@@ -299,14 +299,7 @@ class VertigramClientGenerator : AbstractProcessor() {
 
         val alreadyWrapped = mutableSetOf<String>()
 
-        for ((ix, param) in constructor.parameters.withIndex()) {
-            if (param.type == NO_POS_ARGS_TYPE) {
-                check(ix == 0) {
-                    "$NO_POS_ARGS_TYPE parameter encountered as non-first parameter for "
-                }
-                continue
-            }
-
+        for (param in constructor.parameters) {
             val wrapConfig = if (anno.generateRichTextWrappers) WRAP_CONFIGS_BY_TRIGGER[param.name] else null
 
             if (param.name in alreadyWrapped) {
@@ -346,6 +339,9 @@ class VertigramClientGenerator : AbstractProcessor() {
     ): FunctionCall {
         val format = sequence {
             for (param in parameters) {
+                if (param.type == NO_POS_ARGS_TYPE) {
+                    continue
+                }
                 val wrapperConfig = if (param.name in actuallyWrapped) WRAP_CONFIGS_BY_WRAPPER[param.name] else null
 
                 if (null == wrapperConfig)
@@ -364,6 +360,9 @@ class VertigramClientGenerator : AbstractProcessor() {
 
         val params = sequence {
             for (param in parameters) {
+                if (param.type == NO_POS_ARGS_TYPE) {
+                    continue
+                }
                 val wrapperConfig = if (param.name in actuallyWrapped) WRAP_CONFIGS_BY_WRAPPER[param.name] else null
 
                 if (null == wrapperConfig) {

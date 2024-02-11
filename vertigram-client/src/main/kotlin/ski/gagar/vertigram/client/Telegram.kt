@@ -18,7 +18,7 @@ interface Telegram {
     suspend fun downloadFile(path: String, outputPath: String)
 
     suspend fun downloadFileById(id: String, outputPath: String) {
-        val path = getFile(id).filePath ?: throw TelegramNoFilePathException(id)
+        val path = getFile(fileId = id).filePath ?: throw TelegramNoFilePathException(id)
         downloadFile(path, outputPath)
     }
 }

@@ -17,7 +17,7 @@ import ski.gagar.vertigram.util.NoPosArgs
  *
  * For up-to-date documentation please consult the official Telegram docs.
  */
-sealed class EditMessageCaption : JsonTelegramCallable<Message>() {
+sealed interface EditMessageCaption {
     /**
      * Inline message case
      */
@@ -38,7 +38,7 @@ sealed class EditMessageCaption : JsonTelegramCallable<Message>() {
         @PublishedApi internal val parseMode: ParseMode? = null,
         @PublishedApi internal val captionEntities: List<MessageEntity>? = null,
         val replyMarkup: ReplyMarkup? = null
-    ) : EditMessageCaption()
+    ) : EditMessageCaption, JsonTelegramCallable<Boolean>()
 
     /**
      * Chat message case
@@ -61,5 +61,5 @@ sealed class EditMessageCaption : JsonTelegramCallable<Message>() {
         @PublishedApi internal val parseMode: ParseMode? = null,
         @PublishedApi internal val captionEntities: List<MessageEntity>? = null,
         val replyMarkup: ReplyMarkup? = null
-    ) : EditMessageCaption(), HasChatId
+    ) : EditMessageCaption, HasChatId, JsonTelegramCallable<Message>()
 }

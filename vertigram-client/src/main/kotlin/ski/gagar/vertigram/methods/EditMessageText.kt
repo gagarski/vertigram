@@ -1,5 +1,8 @@
 package ski.gagar.vertigram.methods
 
+import com.fasterxml.jackson.annotation.JsonIgnore
+import ski.gagar.vertigram.annotations.TelegramCodegen
+import ski.gagar.vertigram.annotations.TelegramMethod
 import ski.gagar.vertigram.throttling.HasChatId
 import ski.gagar.vertigram.throttling.Throttled
 import ski.gagar.vertigram.types.ChatId
@@ -8,16 +11,56 @@ import ski.gagar.vertigram.types.Message
 import ski.gagar.vertigram.types.MessageEntity
 import ski.gagar.vertigram.types.ParseMode
 import ski.gagar.vertigram.types.ReplyMarkup
+import ski.gagar.vertigram.util.NoPosArgs
 
-@Throttled
-data class EditMessageText(
-    val text: String,
-    override val chatId: ChatId? = null,
-    val messageId: Long? = null,
-    val inlineMessageid: Long? = null,
-    val parseMode: ParseMode? = null,
-    val entities: List<MessageEntity>? = null,
-    val replyMarkup: ReplyMarkup? = null,
-    // Since Telegram Bot API 7.0
-    val linkPreviewOptions: LinkPreviewOptions? = null
-) : JsonTelegramCallable<Message>(), HasChatId
+/**
+ * Telegram [editMessageText](https://core.telegram.org/bots/api#editmessagetext) method.
+ *
+ * For up-to-date documentation please consult the official Telegram docs.
+ */
+sealed interface EditMessageText {
+    /**
+     * Inline message case
+     */
+    @TelegramMethod(
+        methodName = "editMessageText"
+    )
+    @TelegramCodegen(
+        methodName = "editMessageText",
+        generatePseudoConstructor = true,
+        pseudoConstructorName = "EditMessageText"
+    )
+    @Throttled
+    data class InlineMessage internal constructor(
+        @JsonIgnore
+        private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+        val inlineMessageId: Long,
+        val text: String,
+        val parseMode: ParseMode? = null,
+        val entities: List<MessageEntity>? = null,
+        val linkPreviewOptions: LinkPreviewOptions? = null,
+        val replyMarkup: ReplyMarkup? = null
+    ) : EditMessageText, JsonTelegramCallable<Message>()
+
+    /**
+     * Chat message case
+     */
+    @TelegramMethod(
+        methodName = "editMessageText"
+    )
+    @TelegramCodegen(
+        methodName = "editMessageText",
+        generatePseudoConstructor = true,
+        pseudoConstructorName = "EditMessageText"
+    )
+    @Throttled
+    data class ChatMessage internal constructor(
+        override val chatId: ChatId,
+        val messageId: Long,
+        val text: String,
+        val parseMode: ParseMode? = null,
+        val entities: List<MessageEntity>? = null,
+        val linkPreviewOptions: LinkPreviewOptions? = null,
+        val replyMarkup: ReplyMarkup? = null
+    ) : EditMessageText, HasChatId, JsonTelegramCallable<Message>()
+}

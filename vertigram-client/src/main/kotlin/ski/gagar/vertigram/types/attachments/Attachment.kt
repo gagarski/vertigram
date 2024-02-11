@@ -14,6 +14,7 @@ interface Attachment {
     fun getPart(field: String, vertx: Vertx): Part
     companion object
 }
+fun Attachment.Companion.fileId(fileId: String) = UrlAttachment(fileId)
 fun Attachment.Companion.url(url: String) = UrlAttachment(url)
 fun Attachment.Companion.file(file: File) = FileAttachment(file)
 

@@ -2,7 +2,6 @@ package ski.gagar.vertigram.methods
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import ski.gagar.vertigram.types.LabeledPrice
-import ski.gagar.vertigram.types.Message
 import ski.gagar.vertigram.util.NoPosArgs
 
 /**
@@ -34,4 +33,4 @@ data class CreateInvoiceLink(
     val sendEmailToProvider: Boolean = false,
     @get:JvmName("getIsFlexible")
     val isFlexible: Boolean
-): JsonTelegramCallable<Message>()
+): JsonTelegramCallable<String>()

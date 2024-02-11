@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.annotations.TelegramMethod
 import ski.gagar.vertigram.types.ChatId
+import ski.gagar.vertigram.types.ChatInviteLink
 import ski.gagar.vertigram.util.NoPosArgs
 import java.time.Instant
 
@@ -12,7 +13,7 @@ import java.time.Instant
  *
  * For up-to-date documentation please consult the official Telegram docs.
  */
-sealed class EditChatInviteLink {
+sealed class EditChatInviteLink : JsonTelegramCallable<ChatInviteLink>() {
     /**
      * Case when [memberLimit] is specified, implies that [createsJoinRequest] is false
      */

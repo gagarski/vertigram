@@ -5,8 +5,8 @@ import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.throttling.HasChatId
 import ski.gagar.vertigram.throttling.Throttled
 import ski.gagar.vertigram.types.ChatId
-import ski.gagar.vertigram.types.Message
 import ski.gagar.vertigram.types.MessageEntity
+import ski.gagar.vertigram.types.MessageId
 import ski.gagar.vertigram.types.ParseMode
 import ski.gagar.vertigram.types.ReplyMarkup
 import ski.gagar.vertigram.types.ReplyParameters
@@ -35,5 +35,5 @@ data class CopyMessage internal constructor(
     val protectContent: Boolean = false,
     val replyParameters: ReplyParameters? = null,
     val replyMarkup: ReplyMarkup? = null
-) : JsonTelegramCallable<Message>(), HasChatId
+) : JsonTelegramCallable<MessageId>(), HasChatId
 
