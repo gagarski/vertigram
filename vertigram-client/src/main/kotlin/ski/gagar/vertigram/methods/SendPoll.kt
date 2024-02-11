@@ -49,7 +49,7 @@ sealed class SendPoll : JsonTelegramCallable<Message>(), HasChatId {
             val question: String,
             val options: List<String>,
             @get:JvmName("getIsAnonymous")
-            val isAnonymous: Boolean? = null,
+            val isAnonymous: Boolean = Defaults.isAnonymous,
             val allowsMultipleAnswers: Boolean = false,
             val openPeriod: Duration,
             val disableNotification: Boolean = false,
@@ -60,6 +60,10 @@ sealed class SendPoll : JsonTelegramCallable<Message>(), HasChatId {
             val type = PollType.REGULAR
             @get:JvmName("getIsClosed")
             val isClosed = false
+
+            object Defaults {
+                const val isAnonymous: Boolean = true
+            }
         }
 
         /**
@@ -82,7 +86,7 @@ sealed class SendPoll : JsonTelegramCallable<Message>(), HasChatId {
             val question: String,
             val options: List<String>,
             @get:JvmName("getIsAnonymous")
-            val isAnonymous: Boolean? = null,
+            val isAnonymous: Boolean = Defaults.isAnonymous,
             val allowsMultipleAnswers: Boolean = false,
             val closeDate: Instant,
             val disableNotification: Boolean = false,
@@ -93,6 +97,10 @@ sealed class SendPoll : JsonTelegramCallable<Message>(), HasChatId {
             val type = PollType.REGULAR
             @get:JvmName("getIsClosed")
             val isClosed = false
+
+            object Defaults {
+                const val isAnonymous: Boolean = true
+            }
         }
 
         /**
@@ -115,7 +123,7 @@ sealed class SendPoll : JsonTelegramCallable<Message>(), HasChatId {
             val question: String,
             val options: List<String>,
             @get:JvmName("getIsAnonymous")
-            val isAnonymous: Boolean? = null,
+            val isAnonymous: Boolean = Defaults.isAnonymous,
             val allowsMultipleAnswers: Boolean = false,
             @get:JvmName("getIsClosed")
             val isClosed: Boolean? = null,
@@ -125,6 +133,10 @@ sealed class SendPoll : JsonTelegramCallable<Message>(), HasChatId {
             val replyMarkup: ReplyMarkup? = null
         ) : Regular() {
             val type = PollType.REGULAR
+
+            object Defaults {
+                const val isAnonymous: Boolean = true
+            }
         }
     }
 
@@ -152,7 +164,7 @@ sealed class SendPoll : JsonTelegramCallable<Message>(), HasChatId {
             val question: String,
             val options: List<String>,
             @get:JvmName("getIsAnonymous")
-            val isAnonymous: Boolean? = null,
+            val isAnonymous: Boolean = Defaults.isAnonymous,
             val correctOptionId: Int,
             val explanation: String? = null,
             val explanationParseMode: ParseMode? = null,
@@ -167,6 +179,10 @@ sealed class SendPoll : JsonTelegramCallable<Message>(), HasChatId {
             @get:JvmName("getIsClosed")
             val isClosed = false
             val allowsMultipleAnswers: Boolean = false
+
+            object Defaults {
+                const val isAnonymous: Boolean = true
+            }
         }
 
         /**
@@ -189,7 +205,7 @@ sealed class SendPoll : JsonTelegramCallable<Message>(), HasChatId {
             val question: String,
             val options: List<String>,
             @get:JvmName("getIsAnonymous")
-            val isAnonymous: Boolean? = null,
+            val isAnonymous: Boolean = Defaults.isAnonymous,
             val correctOptionId: Int,
             val explanation: String? = null,
             val explanationParseMode: ParseMode? = null,
@@ -204,6 +220,10 @@ sealed class SendPoll : JsonTelegramCallable<Message>(), HasChatId {
             @get:JvmName("getIsClosed")
             val isClosed = false
             val allowsMultipleAnswers: Boolean = false
+
+            object Defaults {
+                const val isAnonymous: Boolean = true
+            }
         }
 
         /**
@@ -226,7 +246,7 @@ sealed class SendPoll : JsonTelegramCallable<Message>(), HasChatId {
             val question: String,
             val options: List<String>,
             @get:JvmName("getIsAnonymous")
-            val isAnonymous: Boolean? = null,
+            val isAnonymous: Boolean = Defaults.isAnonymous,
             val correctOptionId: Int,
             val explanation: String? = null,
             val explanationParseMode: ParseMode? = null,
@@ -240,6 +260,10 @@ sealed class SendPoll : JsonTelegramCallable<Message>(), HasChatId {
         ) : Quiz() {
             val type = PollType.QUIZ
             val allowsMultipleAnswers: Boolean = false
+
+            object Defaults {
+                const val isAnonymous: Boolean = true
+            }
         }
     }
 }

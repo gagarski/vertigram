@@ -13,11 +13,6 @@ data class GetUserProfilePhotos(
     @JsonIgnore
     private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
     val userId: Long,
-    val offset: Long = Defaults.offset,
-    val limit: Long = Defaults.limit
-) : JsonTelegramCallable<List<UserProfilePhotos>>() {
-    object Defaults {
-        const val offset = 0L
-        const val limit = 100L
-    }
-}
+    val offset: Long? = null,
+    val limit: Long? = null
+) : JsonTelegramCallable<List<UserProfilePhotos>>()
