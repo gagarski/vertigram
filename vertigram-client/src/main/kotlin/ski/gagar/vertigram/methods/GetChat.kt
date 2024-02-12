@@ -2,8 +2,8 @@ package ski.gagar.vertigram.methods
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import ski.gagar.vertigram.throttling.HasChatId
-import ski.gagar.vertigram.types.ChatId
-import ski.gagar.vertigram.types.ChatVerbose
+import ski.gagar.vertigram.types.Chat
+import ski.gagar.vertigram.types.util.ChatId
 import ski.gagar.vertigram.util.NoPosArgs
 
 /**
@@ -15,4 +15,4 @@ data class GetChat(
     @JsonIgnore
     private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
     override val chatId: ChatId
-) : JsonTelegramCallable<ChatVerbose>(), HasChatId
+) : JsonTelegramCallable<Chat.Verbose>(), HasChatId

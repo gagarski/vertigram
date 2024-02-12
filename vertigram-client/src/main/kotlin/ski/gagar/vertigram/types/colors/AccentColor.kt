@@ -1,13 +1,29 @@
-package ski.gagar.vertigram.types
+package ski.gagar.vertigram.types.colors
 
 import com.fasterxml.jackson.annotation.JsonValue
 
+/**
+ * An enum, representing a value for [ski.gagar.vertigram.types.Chat.Verbose.accentColor].
+ *
+ * See [Accent Colors](https://core.telegram.org/bots/api#accent-colors) in Telegram docs for up-to-date reference.
+ */
 enum class AccentColor(
+    /**
+     * An id of the color, according to the docs
+     */
     @JsonValue val id: Int,
+    /**
+     * List of colors, used in light Telegram theme
+     */
     val light: List<RgbColor>,
+    /**
+     * List of colors, used in light Telegram theme
+     */
     val dark: List<RgbColor> = light
 ) {
-    // 0-7 are from android TG client
+    /**
+     * This color is unspecified and depends on user theme in the app
+     */
     RED(
         0,
         listOf(
@@ -17,6 +33,9 @@ enum class AccentColor(
             RgbColor(220.toUByte(), 128.toUByte(), 91.toUByte())
         )
     ),
+    /**
+     * This color is unspecified and depends on user theme in the app
+     */
     ORANGE(
         1,
         listOf(
@@ -30,6 +49,9 @@ enum class AccentColor(
             )
         )
     ),
+    /**
+     * This color is unspecified and depends on user theme in the app
+     */
     PURPLE(
         2,
         listOf(
@@ -43,6 +65,9 @@ enum class AccentColor(
             )
         )
     ),
+    /**
+     * This color is unspecified and depends on user theme in the app
+     */
     GREEN(
         3,
         listOf(
@@ -56,6 +81,9 @@ enum class AccentColor(
             )
         )
     ),
+    /**
+     * This color is unspecified and depends on user theme in the app
+     */
     CYAN(
         4,
         listOf(
@@ -69,6 +97,9 @@ enum class AccentColor(
             )
         )
     ),
+    /**
+     * This color is unspecified and depends on user theme in the app
+     */
     BLUE(
         5,
         listOf(
@@ -82,6 +113,9 @@ enum class AccentColor(
             )
         )
     ),
+    /**
+     * This color is unspecified and depends on user theme in the app
+     */
     PINK(
         6,
         listOf(

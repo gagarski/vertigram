@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import ski.gagar.vertigram.annotations.TelegramMedia
 import ski.gagar.vertigram.throttling.HasChatId
 import ski.gagar.vertigram.throttling.Throttled
-import ski.gagar.vertigram.types.ChatId
+import ski.gagar.vertigram.types.util.ChatId
 import ski.gagar.vertigram.types.Message
 import ski.gagar.vertigram.types.ReplyMarkup
 import ski.gagar.vertigram.types.ReplyParameters

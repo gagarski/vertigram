@@ -4,8 +4,6 @@ import com.fasterxml.jackson.core.Version
 import com.fasterxml.jackson.databind.Module
 import com.fasterxml.jackson.databind.module.SimpleDeserializers
 import com.fasterxml.jackson.databind.module.SimpleSerializers
-import ski.gagar.vertigram.types.ChatId
-import ski.gagar.vertigram.types.RgbColor
 import ski.gagar.vertigram.types.attachments.Attachment
 import java.time.Duration
 import java.time.Instant
@@ -18,20 +16,14 @@ internal object TelegramModule : Module() {
     override fun setupModule(context: SetupContext) {
         context.addSerializers(SimpleSerializers().apply {
             addSerializer(UnixTimestampSerializer())
-            addSerializer(ChatIdSerializer())
             addSerializer(AttachmentSerializer())
             addSerializer(UrlAttachmentSerializer())
             addSerializer(DurationInSecondsSerializer())
-            addSerializer(RgbColorSerializer())
         })
         context.addDeserializers(SimpleDeserializers().apply {
             addDeserializer(
                 Instant::class.java,
                 UnixTimestampDeserializer()
-            )
-            addDeserializer(
-                ChatId::class.java,
-                ChatIdDeserializer()
             )
             addDeserializer(
                 Attachment::class.java,
@@ -40,10 +32,6 @@ internal object TelegramModule : Module() {
             addDeserializer(
                 Duration::class.java,
                 DurationInSecondsDeserializer()
-            )
-            addDeserializer(
-                RgbColor::class.java,
-                RgbColorDeserializer()
             )
         })
     }

@@ -1,6 +1,7 @@
 package ski.gagar.vertigram.types
 
 import ski.gagar.vertigram.annotations.TelegramCodegen
+import ski.gagar.vertigram.types.util.ChatId
 
 @TelegramCodegen(
     generateMethod = false,

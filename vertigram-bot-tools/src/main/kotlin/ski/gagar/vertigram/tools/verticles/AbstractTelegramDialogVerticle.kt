@@ -21,7 +21,7 @@ import ski.gagar.vertigram.types.InlineKeyboardMarkup
 import ski.gagar.vertigram.types.Me
 import ski.gagar.vertigram.types.Message
 import ski.gagar.vertigram.types.ReplyMarkup
-import ski.gagar.vertigram.types.toChatId
+import ski.gagar.vertigram.types.util.toChatId
 import ski.gagar.vertigram.verticles.TelegramVerticle
 import ski.gagar.vertigram.verticles.address.VxUtilAddress
 import ski.gagar.vertigram.verticles.children.AbstractHierarchyVerticle

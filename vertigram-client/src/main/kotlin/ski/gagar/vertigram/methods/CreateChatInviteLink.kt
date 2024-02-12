@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.annotations.TelegramMethod
 import ski.gagar.vertigram.throttling.HasChatId
-import ski.gagar.vertigram.types.ChatId
+import ski.gagar.vertigram.types.util.ChatId
 import ski.gagar.vertigram.types.ChatInviteLink
 import ski.gagar.vertigram.util.NoPosArgs
 import java.time.Instant

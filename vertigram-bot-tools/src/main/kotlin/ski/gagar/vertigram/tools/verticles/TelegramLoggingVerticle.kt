@@ -15,7 +15,7 @@ import ski.gagar.vertigram.logback.bypassEventBusAppenderSuspend
 import ski.gagar.vertigram.markup.textMarkdown
 import ski.gagar.vertigram.methods.sendMessage
 import ski.gagar.vertigram.types.Me
-import ski.gagar.vertigram.types.toChatId
+import ski.gagar.vertigram.types.util.toChatId
 import ski.gagar.vertigram.verticles.ErrorLoggingCoroutineVerticle
 import ski.gagar.vertigram.verticles.Named
 import java.time.Duration

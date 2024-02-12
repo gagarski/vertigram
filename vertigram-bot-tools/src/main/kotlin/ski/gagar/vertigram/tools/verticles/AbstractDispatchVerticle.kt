@@ -11,7 +11,7 @@ import ski.gagar.vertigram.methods.sendMessage
 import ski.gagar.vertigram.tools.verticles.address.VertigramAddress
 import ski.gagar.vertigram.types.CallbackQuery
 import ski.gagar.vertigram.types.Message
-import ski.gagar.vertigram.types.toChatId
+import ski.gagar.vertigram.types.util.toChatId
 import ski.gagar.vertigram.verticles.TelegramVerticle
 import ski.gagar.vertigram.verticles.children.AbstractHierarchyVerticle
 import ski.gagar.vertigram.verticles.children.messages.DeathNotice

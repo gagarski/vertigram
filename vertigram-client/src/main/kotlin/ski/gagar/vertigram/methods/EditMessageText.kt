@@ -5,7 +5,7 @@ import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.annotations.TelegramMethod
 import ski.gagar.vertigram.throttling.HasChatId
 import ski.gagar.vertigram.throttling.Throttled
-import ski.gagar.vertigram.types.ChatId
+import ski.gagar.vertigram.types.util.ChatId
 import ski.gagar.vertigram.types.LinkPreviewOptions
 import ski.gagar.vertigram.types.Message
 import ski.gagar.vertigram.types.MessageEntity

@@ -49,6 +49,7 @@ sealed interface SetGameScore {
         val score: Int,
         val force: Boolean = false,
         val disableEditMessage: Boolean = false,
-        override val chatId: Long
+        override val chatId: Long,
+        val messageId: Long
     ) : SetGameScore, HasChatIdLong, JsonTelegramCallable<Message>()
 }

@@ -85,7 +85,7 @@ class WebHookVerticle : ErrorLoggingCoroutineVerticle() {
         logger.lazy.info { "Setting new Telegram webhook..." }
         retrying(coolDown = { delay(3000) }) {
             tg.setWebhook(
-                typedConfig.webHook.publicUrl,
+                url = typedConfig.webHook.publicUrl,
                 allowedUpdates = typedConfig.allowedUpdates,
                 secretToken = secret.toString()
             )

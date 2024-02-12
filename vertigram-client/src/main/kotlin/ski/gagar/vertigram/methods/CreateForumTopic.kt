@@ -3,7 +3,7 @@ package ski.gagar.vertigram.methods
 import com.fasterxml.jackson.annotation.JsonIgnore
 import ski.gagar.vertigram.throttling.HasChatId
 import ski.gagar.vertigram.throttling.Throttled
-import ski.gagar.vertigram.types.ChatId
+import ski.gagar.vertigram.types.util.ChatId
 import ski.gagar.vertigram.types.ForumTopic
 import ski.gagar.vertigram.types.ForumTopicColor
 import ski.gagar.vertigram.util.NoPosArgs

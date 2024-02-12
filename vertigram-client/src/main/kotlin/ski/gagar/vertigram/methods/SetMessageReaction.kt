@@ -1,7 +1,7 @@
 package ski.gagar.vertigram.methods
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import ski.gagar.vertigram.types.ChatId
+import ski.gagar.vertigram.types.util.ChatId
 import ski.gagar.vertigram.types.ReactionType
 import ski.gagar.vertigram.util.NoPosArgs
 

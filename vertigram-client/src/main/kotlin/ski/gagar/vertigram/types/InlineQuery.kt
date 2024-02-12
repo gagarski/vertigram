@@ -5,6 +5,6 @@ data class InlineQuery(
     val from: User,
     val query: String,
     val offset: String,
-    val chatType: ChatType? = null,
+    val chatType: Chat.Type? = null,
     val location: Location? = null
 )

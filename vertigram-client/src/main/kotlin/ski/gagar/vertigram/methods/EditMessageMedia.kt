@@ -6,7 +6,7 @@ import ski.gagar.vertigram.annotations.TelegramMedia
 import ski.gagar.vertigram.annotations.TelegramMethod
 import ski.gagar.vertigram.throttling.HasChatId
 import ski.gagar.vertigram.throttling.Throttled
-import ski.gagar.vertigram.types.ChatId
+import ski.gagar.vertigram.types.util.ChatId
 import ski.gagar.vertigram.types.InlineKeyboardMarkup
 import ski.gagar.vertigram.types.InputMedia
 import ski.gagar.vertigram.types.Message

@@ -10,8 +10,8 @@ import ski.gagar.vertigram.client.Telegram
 import ski.gagar.vertigram.lazy
 import ski.gagar.vertigram.logger
 import ski.gagar.vertigram.methods.TelegramCallable
-import ski.gagar.vertigram.types.ChatId
-import ski.gagar.vertigram.types.toChatId
+import ski.gagar.vertigram.types.util.ChatId
+import ski.gagar.vertigram.types.util.toChatId
 import ski.gagar.vertigram.util.TelegramCallException
 import java.time.Duration
 import java.time.Instant

@@ -1,10 +1,25 @@
-package ski.gagar.vertigram.types
+package ski.gagar.vertigram.types.colors
 
 import com.fasterxml.jackson.annotation.JsonValue
 
+/**
+ * An enum, representing a value for [ski.gagar.vertigram.types.Chat.Verbose.profileAccentColor].
+ *
+ * See [Profile Accent Colors](https://core.telegram.org/bots/api#profile-accent-colors)
+ * in Telegram docs for up-to-date reference.
+ */
 enum class ProfileAccentColor(
+    /**
+     * An id of the color, according to the docs
+     */
     @JsonValue val id: Int,
+    /**
+     * List of colors, used in light Telegram theme
+     */
     val light: List<RgbColor>,
+    /**
+     * List of colors, used in light Telegram theme
+     */
     val dark: List<RgbColor> = light
 ) {
     RED(

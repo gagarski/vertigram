@@ -1,6 +1,7 @@
 package ski.gagar.vertigram.types
 
 import com.fasterxml.jackson.annotation.JsonValue
+import ski.gagar.vertigram.types.colors.RgbColor
 
 enum class ForumTopicColor(val color: RgbColor) {
     CYAN(RgbColor(0x6F.toUByte(), 0xB9.toUByte(), 0xF0.toUByte())),

@@ -1,13 +1,21 @@
 package ski.gagar.vertigram.types
 
+import com.fasterxml.jackson.annotation.JsonIgnore
+import ski.gagar.vertigram.util.NoPosArgs
 import java.time.Instant
 
+/**
+ * Telegram [ChatJoinRequest](https://core.telegram.org/bots/api#chatjoinrequest) type.
+ *
+ * For up-to-date documentation please consult the official Telegram docs.
+ */
 data class ChatJoinRequest(
-    val chat: ChatMember,
+    @JsonIgnore
+    private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+    val chat: Chat,
     val from: User,
+    val userChatId: Long,
     val date: Instant,
     val bio: String? = null,
-    val inviteLink: ChatInviteLink? = null,
-    // Since Telegram Bot API 6.5
-    val userChatId: Long
+    val inviteLink: ChatInviteLink? = null
 )
