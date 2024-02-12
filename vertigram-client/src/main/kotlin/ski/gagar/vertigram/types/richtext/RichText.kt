@@ -1,4 +1,4 @@
-package ski.gagar.vertigram.richtext
+package ski.gagar.vertigram.types.richtext
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonSubTypes

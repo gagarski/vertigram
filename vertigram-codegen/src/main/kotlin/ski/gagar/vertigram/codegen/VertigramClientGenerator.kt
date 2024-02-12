@@ -479,17 +479,15 @@ class VertigramClientGenerator : AbstractProcessor() {
         private const val TG_CONSTRUCTORS = "TelegramConstructors"
         private const val TG_RICH_TEXT_WRAPPERS = "TelegramRichTextWrappers"
 
-        // TODO: Remove that when https://github.com/FasterXML/jackson-databind/issues/1467 is implemented
-        //       and replace with @JsonUnwrapped
         private val WRAP_CONFIGS = listOf(
             WrapConfig(
                 triggerParam = "caption",
-                wrapper = ClassName("ski.gagar.vertigram.richtext", "RichCaption"),
+                wrapper = ClassName("ski.gagar.vertigram.richtext", "RichText"),
                 wrapperParam = "richCaption",
                 wrapperParamMapping = mapOf(
-                    "caption" to "caption",
+                    "caption" to "text",
                     "parseMode" to "parseMode",
-                    "captionEntities" to "captionEntities"
+                    "captionEntities" to "entities"
                 )
             ),
             WrapConfig(
@@ -504,22 +502,22 @@ class VertigramClientGenerator : AbstractProcessor() {
             ),
             WrapConfig(
                 triggerParam = "quote",
-                wrapper = ClassName("ski.gagar.vertigram.richtext", "RichQuote"),
+                wrapper = ClassName("ski.gagar.vertigram.richtext", "RichText"),
                 wrapperParam = "richQuote",
                 wrapperParamMapping = mapOf(
-                    "quote" to "quote",
-                    "quoteParseMode" to "quoteParseMode",
-                    "quoteEntities" to "quoteEntities"
+                    "quote" to "text",
+                    "quoteParseMode" to "parseMode",
+                    "quoteEntities" to "entities"
                 )
             ),
             WrapConfig(
                 triggerParam = "explanation",
-                wrapper = ClassName("ski.gagar.vertigram.richtext", "RichExplanation"),
+                wrapper = ClassName("ski.gagar.vertigram.richtext", "RichText"),
                 wrapperParam = "richExplanation",
                 wrapperParamMapping = mapOf(
-                    "explanation" to "explanation",
-                    "explanationParseMode" to "explanationParseMode",
-                    "explanationEntities" to "explanationEntities"
+                    "explanation" to "text",
+                    "explanationParseMode" to "parseMode",
+                    "explanationEntities" to "entities"
                 )
             ),
         )

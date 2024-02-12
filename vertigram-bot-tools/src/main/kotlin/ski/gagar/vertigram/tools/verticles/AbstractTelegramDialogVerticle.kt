@@ -13,7 +13,7 @@ import ski.gagar.vertigram.markup.toRichText
 import ski.gagar.vertigram.methods.editMessageReplyMarkup
 import ski.gagar.vertigram.methods.editMessageText
 import ski.gagar.vertigram.methods.sendMessage
-import ski.gagar.vertigram.richtext.RichText
+import ski.gagar.vertigram.types.richtext.RichText
 import ski.gagar.vertigram.tools.isCommandForBot
 import ski.gagar.vertigram.tools.verticles.address.VertigramAddress
 import ski.gagar.vertigram.types.CallbackQuery

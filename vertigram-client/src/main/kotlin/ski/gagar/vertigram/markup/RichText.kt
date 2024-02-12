@@ -14,34 +14,11 @@ import kotlinx.html.pre
 import kotlinx.html.span
 import kotlinx.html.stream.appendHTML
 import kotlinx.html.visit
-import ski.gagar.vertigram.richtext.CaptionWithEntities
-import ski.gagar.vertigram.richtext.ExplanationWithEntities
-import ski.gagar.vertigram.richtext.MarkdownCaption
-import ski.gagar.vertigram.richtext.MarkdownExplanation
-import ski.gagar.vertigram.richtext.MarkdownQuote
-import ski.gagar.vertigram.richtext.MarkdownText
-import ski.gagar.vertigram.richtext.QuoteWithEntities
-import ski.gagar.vertigram.richtext.TextWithEntities
 import ski.gagar.vertigram.types.MessageEntity
 import ski.gagar.vertigram.types.MessageEntityType
 import ski.gagar.vertigram.types.User
-
-//////////////
-// For Removal
-//////////////
-@JvmInline
-value class Markdown internal constructor(private val rendered: String) {
-    override fun toString() = rendered
-}
-
-fun md(init: RichTextRoot.() -> Unit) =
-    Markdown(RichTextRoot().apply(init).toMarkdownString())
-
-fun String.toMarkdown() = md { +this@toMarkdown }
-
-////////////
-// /For Removal
-////////////
+import ski.gagar.vertigram.types.richtext.MarkdownText
+import ski.gagar.vertigram.types.richtext.TextWithEntities
 
 fun String.toRichText() = TextWithEntities(this)
 
@@ -51,27 +28,6 @@ fun textHtml(init: RichTextRoot.() -> Unit) =
     MarkdownText(RichTextRoot().apply(init).toHtmlString())
 fun textWithEntities(init: RichTextRoot.() -> Unit) =
     RichTextRoot().apply(init).toTextWithEntities()
-
-fun captionMarkdown(init: RichTextRoot.() -> Unit) =
-    MarkdownCaption(RichTextRoot().apply(init).toMarkdownString())
-fun captionHtml(init: RichTextRoot.() -> Unit) =
-    MarkdownCaption(RichTextRoot().apply(init).toHtmlString())
-fun captionWithEntities(init: RichTextRoot.() -> Unit) =
-    RichTextRoot().apply(init).toCaptionWithEntities()
-
-fun quoteMarkdown(init: RichTextRoot.() -> Unit) =
-    MarkdownQuote(RichTextRoot().apply(init).toMarkdownString())
-fun quoteHtml(init: RichTextRoot.() -> Unit) =
-    MarkdownQuote(RichTextRoot().apply(init).toHtmlString())
-fun quoteWithEntities(init: RichTextRoot.() -> Unit) =
-    RichTextRoot().apply(init).toQuoteWithEntities()
-
-fun explanationMarkdown(init: RichTextRoot.() -> Unit) =
-    MarkdownExplanation(RichTextRoot().apply(init).toMarkdownString())
-fun explanationHtml(init: RichTextRoot.() -> Unit) =
-    MarkdownExplanation(RichTextRoot().apply(init).toHtmlString())
-fun explanationWithEntities(init: RichTextRoot.() -> Unit) =
-    RichTextRoot().apply(init).toExplanationWithEntities()
 
 @DslMarker
 private annotation class RichTextDslMarker
@@ -543,25 +499,6 @@ class RichTextRoot internal constructor() : RichTextElementWithChildren() {
             it.renderTextWithEntities()
             TextWithEntities(text = it.text, entities = it.entities)
         }
-
-    fun toCaptionWithEntities(): CaptionWithEntities =
-        TextWithEntitiesBuilder().let {
-            it.renderTextWithEntities()
-            CaptionWithEntities(caption = it.text, captionEntities = it.entities)
-        }
-
-    fun toQuoteWithEntities(): QuoteWithEntities =
-        TextWithEntitiesBuilder().let {
-            it.renderTextWithEntities()
-            QuoteWithEntities(quote = it.text, quoteEntities = it.entities)
-        }
-
-    fun toExplanationWithEntities(): ExplanationWithEntities =
-        TextWithEntitiesBuilder().let {
-            it.renderTextWithEntities()
-            ExplanationWithEntities(explanation = it.text, explanationEntities = it.entities)
-        }
-
 }
 
 private object TelegramHtmlEx {
