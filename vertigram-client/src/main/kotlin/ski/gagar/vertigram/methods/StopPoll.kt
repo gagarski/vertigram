@@ -3,9 +3,9 @@ package ski.gagar.vertigram.methods
 import com.fasterxml.jackson.annotation.JsonIgnore
 import ski.gagar.vertigram.throttling.HasChatId
 import ski.gagar.vertigram.throttling.Throttled
-import ski.gagar.vertigram.types.util.ChatId
-import ski.gagar.vertigram.types.InlineKeyboardMarkup
 import ski.gagar.vertigram.types.Poll
+import ski.gagar.vertigram.types.ReplyMarkup
+import ski.gagar.vertigram.types.util.ChatId
 import ski.gagar.vertigram.util.NoPosArgs
 
 /**
@@ -19,5 +19,5 @@ data class StopPoll(
     private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
     override val chatId: ChatId,
     val messageId: Long,
-    val replyMarkup: InlineKeyboardMarkup? = null
+    val replyMarkup: ReplyMarkup.InlineKeyboard? = null
 ): JsonTelegramCallable<Poll>(), HasChatId

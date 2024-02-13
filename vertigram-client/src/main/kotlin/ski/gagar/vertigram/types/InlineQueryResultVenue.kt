@@ -10,7 +10,7 @@ data class InlineQueryResultVenue(
     val foursquareType: String? = null,
     val googlePlaceId: String? = null,
     val googlePlaceType: String? = null,
-    val replyMarkup: InlineKeyboardMarkup? = null,
+    val replyMarkup: ReplyMarkup.InlineKeyboard? = null,
     val inputMessageContent: InputMessageContent? = null,
     val thumbnailUrl: String? = null,
     val thumbnailWidth: Int? = null,

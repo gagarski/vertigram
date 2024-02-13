@@ -13,14 +13,13 @@ import ski.gagar.vertigram.markup.toRichText
 import ski.gagar.vertigram.methods.editMessageReplyMarkup
 import ski.gagar.vertigram.methods.editMessageText
 import ski.gagar.vertigram.methods.sendMessage
-import ski.gagar.vertigram.types.richtext.RichText
 import ski.gagar.vertigram.tools.isCommandForBot
 import ski.gagar.vertigram.tools.verticles.address.VertigramAddress
 import ski.gagar.vertigram.types.CallbackQuery
-import ski.gagar.vertigram.types.InlineKeyboardMarkup
 import ski.gagar.vertigram.types.Me
 import ski.gagar.vertigram.types.Message
 import ski.gagar.vertigram.types.ReplyMarkup
+import ski.gagar.vertigram.types.richtext.RichText
 import ski.gagar.vertigram.types.util.toChatId
 import ski.gagar.vertigram.verticles.TelegramVerticle
 import ski.gagar.vertigram.verticles.address.VxUtilAddress
@@ -181,7 +180,7 @@ abstract class AbstractTelegramDialogVerticle : AbstractHierarchyVerticle() {
         become(state, HistoryBehavior.SKIP)
     }
 
-    protected suspend fun sendOrEdit(text: RichText, buttons: InlineKeyboardMarkup? = null, forceSend: Boolean = false) {
+    protected suspend fun sendOrEdit(text: RichText, buttons: ReplyMarkup.InlineKeyboard? = null, forceSend: Boolean = false) {
         if (forceSend) {
             resetKnownMessage()
         }
@@ -290,7 +289,7 @@ abstract class AbstractTelegramDialogVerticle : AbstractHierarchyVerticle() {
         }
 
         protected suspend fun sendOrEdit(
-            text: RichText, buttons: InlineKeyboardMarkup? = null, forceSend: Boolean = false
+            text: RichText, buttons: ReplyMarkup.InlineKeyboard? = null, forceSend: Boolean = false
         ) {
             v.sendOrEdit(text, buttons, forceSend)
         }

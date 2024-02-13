@@ -9,7 +9,7 @@ data class InlineQueryResultDocument(
     val documentUrl: String,
     val mimeType: String,
     val description: String? = null,
-    val replyMarkup: InlineKeyboardMarkup? = null,
+    val replyMarkup: ReplyMarkup.InlineKeyboard? = null,
     val inputMessageContent: InputMessageContent? = null,
     val thumbnailUrl: String? = null,
     val thumbnailWidth: Int? = null,

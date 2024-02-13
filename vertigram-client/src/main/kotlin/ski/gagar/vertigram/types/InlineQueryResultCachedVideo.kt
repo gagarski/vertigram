@@ -8,7 +8,7 @@ data class InlineQueryResultCachedVideo(
     val caption: String? = null,
     val parseMode: ParseMode? = null,
     val captionEntities: List<MessageEntity>? = null,
-    val replyMarkup: InlineKeyboardMarkup? = null,
+    val replyMarkup: ReplyMarkup.InlineKeyboard? = null,
     val inputMessageContent: InputMessageContent? = null
 ) : InlineQueryResult {
     override val type: InlineQueryResultType = InlineQueryResultType.VIDEO

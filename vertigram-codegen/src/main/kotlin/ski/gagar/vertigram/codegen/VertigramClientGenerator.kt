@@ -482,7 +482,7 @@ class VertigramClientGenerator : AbstractProcessor() {
         private val WRAP_CONFIGS = listOf(
             WrapConfig(
                 triggerParam = "caption",
-                wrapper = ClassName("ski.gagar.vertigram.richtext", "RichText"),
+                wrapper = ClassName("ski.gagar.vertigram.types.richtext", "RichText"),
                 wrapperParam = "richCaption",
                 wrapperParamMapping = mapOf(
                     "caption" to "text",
@@ -492,7 +492,7 @@ class VertigramClientGenerator : AbstractProcessor() {
             ),
             WrapConfig(
                 triggerParam = "text",
-                wrapper = ClassName("ski.gagar.vertigram.richtext", "RichText"),
+                wrapper = ClassName("ski.gagar.vertigram.types.richtext", "RichText"),
                 wrapperParam = "richText",
                 wrapperParamMapping = mapOf(
                     "text" to "text",
@@ -502,7 +502,7 @@ class VertigramClientGenerator : AbstractProcessor() {
             ),
             WrapConfig(
                 triggerParam = "quote",
-                wrapper = ClassName("ski.gagar.vertigram.richtext", "RichText"),
+                wrapper = ClassName("ski.gagar.vertigram.types.richtext", "RichText"),
                 wrapperParam = "richQuote",
                 wrapperParamMapping = mapOf(
                     "quote" to "text",
@@ -512,7 +512,7 @@ class VertigramClientGenerator : AbstractProcessor() {
             ),
             WrapConfig(
                 triggerParam = "explanation",
-                wrapper = ClassName("ski.gagar.vertigram.richtext", "RichText"),
+                wrapper = ClassName("ski.gagar.vertigram.types.richtext", "RichText"),
                 wrapperParam = "richExplanation",
                 wrapperParamMapping = mapOf(
                     "explanation" to "text",

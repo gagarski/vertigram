@@ -11,7 +11,7 @@ data class InlineQueryResultAudio(
     val captionEntities: List<MessageEntity>? = null,
     val performer: String? = null,
     val audioDuration: Duration? = null,
-    val replyMarkup: InlineKeyboardMarkup? = null,
+    val replyMarkup: ReplyMarkup.InlineKeyboard? = null,
     val inputMessageContent: InputMessageContent? = null
 ) : InlineQueryResult {
     override val type: InlineQueryResultType = InlineQueryResultType.AUDIO

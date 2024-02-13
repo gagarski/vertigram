@@ -56,7 +56,7 @@ data class Message(
     val videoChatEnded: VideoChatEnded? = null,
     val videoChatParticipantsInvited: VideoChatParticipantsInvited? = null,
     val webAppData: WebAppData? = null,
-    val replyMarkup: InlineKeyboardMarkup? = null,
+    val replyMarkup: ReplyMarkup.InlineKeyboard? = null,
     @get:JvmName("getIsTopicMessage")
     val isTopicMessage: Boolean = false,
     val forumTopicCreated: ForumTopicCreated? = null,

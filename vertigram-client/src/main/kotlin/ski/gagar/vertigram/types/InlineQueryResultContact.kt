@@ -7,7 +7,7 @@ data class InlineQueryResultContact(
     val lastName: String? = null,
     val userId: Long? = null,
     val vcard: String? = null,
-    val replyMarkup: InlineKeyboardMarkup? = null,
+    val replyMarkup: ReplyMarkup.InlineKeyboard? = null,
     val inputMessageContent: InputMessageContent? = null,
     val thumbnailUrl: String? = null,
     val thumbnailWidth: Int? = null,

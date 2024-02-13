@@ -10,7 +10,7 @@ data class InlineQueryResultVoice(
     val parseMode: ParseMode? = null,
     val captionEntities: List<MessageEntity>? = null,
     val voiceDuration: Duration? = null,
-    val replyMarkup: InlineKeyboardMarkup? = null,
+    val replyMarkup: ReplyMarkup.InlineKeyboard? = null,
     val inputMessageContent: InputMessageContent? = null
 ) : InlineQueryResult {
     override val type: InlineQueryResultType = InlineQueryResultType.VOICE

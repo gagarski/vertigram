@@ -11,7 +11,7 @@ data class InlineQueryResultLocation(
     val livePeriod: Duration? = null,
     val heading: Int? = null,
     val proximityAlertRadius: Int? = null,
-    val replyMarkup: InlineKeyboardMarkup? = null,
+    val replyMarkup: ReplyMarkup.InlineKeyboard? = null,
     val inputMessageContent: InputMessageContent? = null,
     val thumbnailUrl: String? = null,
     val thumbnailWidth: Int? = null,

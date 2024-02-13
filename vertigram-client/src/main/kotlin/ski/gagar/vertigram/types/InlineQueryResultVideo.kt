@@ -15,7 +15,7 @@ data class InlineQueryResultVideo(
     val videoHeight: Int? = null,
     val videoDuration: Duration? = null,
     val description: String? = null,
-    val replyMarkup: InlineKeyboardMarkup? = null,
+    val replyMarkup: ReplyMarkup.InlineKeyboard? = null,
     val inputMessageContent: InputMessageContent? = null
 ) : InlineQueryResult {
     override val type: InlineQueryResultType = InlineQueryResultType.VIDEO

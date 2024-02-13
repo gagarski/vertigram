@@ -6,10 +6,10 @@ import ski.gagar.vertigram.annotations.TelegramMedia
 import ski.gagar.vertigram.annotations.TelegramMethod
 import ski.gagar.vertigram.throttling.HasChatId
 import ski.gagar.vertigram.throttling.Throttled
-import ski.gagar.vertigram.types.util.ChatId
-import ski.gagar.vertigram.types.InlineKeyboardMarkup
 import ski.gagar.vertigram.types.InputMedia
 import ski.gagar.vertigram.types.Message
+import ski.gagar.vertigram.types.ReplyMarkup
+import ski.gagar.vertigram.types.util.ChatId
 import ski.gagar.vertigram.util.NoPosArgs
 
 /**
@@ -36,7 +36,7 @@ sealed interface EditMessageMedia {
         val inlineMessageId: Long,
         @TelegramMedia
         val media: InputMedia,
-        val replyMarkup: InlineKeyboardMarkup? = null
+        val replyMarkup: ReplyMarkup.InlineKeyboard? = null
     ) : EditMessageMedia, MultipartTelegramCallable<Boolean>()
 
     /**
@@ -56,6 +56,6 @@ sealed interface EditMessageMedia {
         val messageId: Long,
         @TelegramMedia
         val media: InputMedia,
-        val replyMarkup: InlineKeyboardMarkup? = null
+        val replyMarkup: ReplyMarkup.InlineKeyboard? = null
     ) : EditMessageMedia, HasChatId, MultipartTelegramCallable<Message>()
 }

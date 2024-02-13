@@ -1,6 +1,16 @@
 package ski.gagar.vertigram.types
 
+import com.fasterxml.jackson.annotation.JsonIgnore
+import ski.gagar.vertigram.util.NoPosArgs
+
+/**
+ * Telegram [ExternalReplyInfo](https://core.telegram.org/bots/api#externalreplyinfo) type.
+ *
+ * For up-to-date documentation please consult the official Telegram docs.
+ */
 data class ExternalReplyInfo(
+    @JsonIgnore
+    private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
     val origin: MessageOrigin,
     val chat: Chat? = null,
     val messageId: Long? = null,

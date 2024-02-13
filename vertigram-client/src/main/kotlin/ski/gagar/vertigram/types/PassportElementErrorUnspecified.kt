@@ -1,7 +1,7 @@
 package ski.gagar.vertigram.types
 
 data class PassportElementErrorUnspecified(
-    val type: EncryptedPassportElementType,
+    val type: EncryptedPassportElement.Type,
     val elementHash: String,
     val message: String
 ) : PassportElementError {

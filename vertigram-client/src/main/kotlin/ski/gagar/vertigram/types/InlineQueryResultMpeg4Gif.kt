@@ -14,7 +14,7 @@ data class InlineQueryResultMpeg4Gif(
     val caption: String? = null,
     val parseMode: ParseMode? = null,
     val captionEntities: List<MessageEntity>? = null,
-    val replyMarkup: InlineKeyboardMarkup? = null,
+    val replyMarkup: ReplyMarkup.InlineKeyboard? = null,
     val inputMessageContent: InputMessageContent? = null
 ) : InlineQueryResult {
     override val type: InlineQueryResultType = InlineQueryResultType.MPEG4_GIF

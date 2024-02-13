@@ -5,9 +5,9 @@ import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.annotations.TelegramMethod
 import ski.gagar.vertigram.throttling.HasChatId
 import ski.gagar.vertigram.throttling.Throttled
-import ski.gagar.vertigram.types.util.ChatId
-import ski.gagar.vertigram.types.InlineKeyboardMarkup
 import ski.gagar.vertigram.types.Message
+import ski.gagar.vertigram.types.ReplyMarkup
+import ski.gagar.vertigram.types.util.ChatId
 import ski.gagar.vertigram.util.NoPosArgs
 
 /**
@@ -32,7 +32,7 @@ sealed interface EditMessageReplyMarkup {
         @JsonIgnore
         private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
         val inlineMessageId: Long,
-        val replyMarkup: InlineKeyboardMarkup? = null
+        val replyMarkup: ReplyMarkup.InlineKeyboard? = null
     ) : EditMessageReplyMarkup, JsonTelegramCallable<Boolean>()
 
     /**
@@ -50,6 +50,6 @@ sealed interface EditMessageReplyMarkup {
     data class ChatMessage internal constructor(
         override val chatId: ChatId,
         val messageId: Long,
-        val replyMarkup: InlineKeyboardMarkup? = null
+        val replyMarkup: ReplyMarkup.InlineKeyboard? = null
     ) : EditMessageReplyMarkup, HasChatId, JsonTelegramCallable<Message>()
 }

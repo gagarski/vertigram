@@ -4,7 +4,7 @@ data class InlineQueryResultArticle(
     val id: String,
     val title: String,
     val inputMessageContent: InputMessageContent,
-    val replyMarkup: InlineKeyboardMarkup? = null,
+    val replyMarkup: ReplyMarkup.InlineKeyboard? = null,
     val url: String? = null,
     val hideUrl: Boolean = false,
     val description: String? = null,
