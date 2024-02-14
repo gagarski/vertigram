@@ -9,6 +9,8 @@ import ski.gagar.vertigram.util.NoPosArgs
 /**
  * Telegram [answerPreCheckoutQuery](https://core.telegram.org/bots/api#answerprecheckoutquery) method.
  *
+ * Subtypes (which are nested) are two mutually-exclusive cases: OK and error.
+ *
  * For up-to-date documentation please consult the official Telegram docs.
  */
 sealed class AnswerPreCheckoutQuery : JsonTelegramCallable<Boolean>() {

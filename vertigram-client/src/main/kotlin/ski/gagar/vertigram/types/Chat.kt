@@ -43,7 +43,7 @@ data class Chat(
         val lastName: String? = null,
         @get:JvmName("getIsForum")
         val isForum: Boolean = false,
-        val photo: ChatPhoto? = null,
+        val photo: Photo? = null,
         val activeUserNames: List<String>? = null,
         val availableReactions: List<ReactionType>? = null,
         val accentColorId: Int,
@@ -70,7 +70,7 @@ data class Chat(
         val stickerSetName: String? = null,
         val canSetStickerSet: Boolean = false,
         val linkedChatId: Long? = null,
-        val location: ChatLocation? = null,
+        val location: Chat.Location? = null,
     ) {
         /**
          * [AccentColor] color enum value with given [accentColorId], or null if the id is unknown
@@ -85,6 +85,34 @@ data class Chat(
         val profileAccentColor: ProfileAccentColor?
             get() = ProfileAccentColor.byId[accentColorId]
     }
+
+
+    /**
+     * Telegram [ChatPhoto](https://core.telegram.org/bots/api#chatphoto) type.
+     *
+     * For up-to-date documentation please consult the official Telegram docs.
+     */
+    data class Photo(
+        @JsonIgnore
+        private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+        val smallFileId: String,
+        val smallFileUniqueId: String,
+        val bigFileId: String,
+        val bigFileUniqueId: String
+    )
+
+    /**
+     * Telegram [ChatLocation](https://core.telegram.org/bots/api#chatlocation) type.
+     *
+     * For up-to-date documentation please consult the official Telegram docs.
+     */
+    data class Location(
+        @JsonIgnore
+        private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+        val location: Location,
+        val address: String
+    )
+
 
     enum class Type(val group: Boolean) {
         @JsonProperty("private")

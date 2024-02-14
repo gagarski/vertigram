@@ -5,7 +5,6 @@ import ski.gagar.vertigram.throttling.HasChatId
 import ski.gagar.vertigram.throttling.Throttled
 import ski.gagar.vertigram.types.util.ChatId
 import ski.gagar.vertigram.types.ForumTopic
-import ski.gagar.vertigram.types.ForumTopicColor
 import ski.gagar.vertigram.util.NoPosArgs
 
 /**
@@ -19,6 +18,6 @@ data class CreateForumTopic(
     private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
     override val chatId: ChatId,
     val name: String,
-    val iconColor: ForumTopicColor? = null,
+    val iconColor: ForumTopic.Color? = null,
     val iconCustomEmojiId: String? = null
 ) : JsonTelegramCallable<ForumTopic>(), HasChatId

@@ -4,13 +4,15 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.annotations.TelegramMethod
 import ski.gagar.vertigram.throttling.HasChatId
-import ski.gagar.vertigram.types.util.ChatId
 import ski.gagar.vertigram.types.ChatInviteLink
+import ski.gagar.vertigram.types.util.ChatId
 import ski.gagar.vertigram.util.NoPosArgs
 import java.time.Instant
 
 /**
  * Telegram [createChatInviteLink](https://core.telegram.org/bots/api#createchatinvitelink) method.
+ *
+ * Subtypes (which are nested) are two mutually-exclusive cases: invite link with member limit and with join request.
  *
  * For up-to-date documentation please consult the official Telegram docs.
  */

@@ -5,16 +5,19 @@ import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.annotations.TelegramMethod
 import ski.gagar.vertigram.throttling.HasChatId
 import ski.gagar.vertigram.throttling.Throttled
-import ski.gagar.vertigram.types.util.ChatId
 import ski.gagar.vertigram.types.LinkPreviewOptions
 import ski.gagar.vertigram.types.Message
 import ski.gagar.vertigram.types.MessageEntity
 import ski.gagar.vertigram.types.ParseMode
 import ski.gagar.vertigram.types.ReplyMarkup
+import ski.gagar.vertigram.types.util.ChatId
 import ski.gagar.vertigram.util.NoPosArgs
 
 /**
  * Telegram [editMessageText](https://core.telegram.org/bots/api#editmessagetext) method.
+ *
+ * Subtypes (which are nested) are two mutually-exclusive cases: for inline message and for chat message.
+ * Note the different return types in these cases.
  *
  * For up-to-date documentation please consult the official Telegram docs.
  */
@@ -35,9 +38,9 @@ sealed interface EditMessageText {
         @JsonIgnore
         private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
         val inlineMessageId: Long,
-        val text: String,
-        val parseMode: ParseMode? = null,
-        val entities: List<MessageEntity>? = null,
+        @PublishedApi internal val text: String,
+        @PublishedApi internal val parseMode: ParseMode? = null,
+        @PublishedApi internal val entities: List<MessageEntity>? = null,
         val linkPreviewOptions: LinkPreviewOptions? = null,
         val replyMarkup: ReplyMarkup? = null
     ) : EditMessageText, JsonTelegramCallable<Message>()
@@ -57,9 +60,9 @@ sealed interface EditMessageText {
     data class ChatMessage internal constructor(
         override val chatId: ChatId,
         val messageId: Long,
-        val text: String,
-        val parseMode: ParseMode? = null,
-        val entities: List<MessageEntity>? = null,
+        @PublishedApi internal val text: String,
+        @PublishedApi internal val parseMode: ParseMode? = null,
+        @PublishedApi internal val entities: List<MessageEntity>? = null,
         val linkPreviewOptions: LinkPreviewOptions? = null,
         val replyMarkup: ReplyMarkup? = null
     ) : EditMessageText, HasChatId, JsonTelegramCallable<Message>()

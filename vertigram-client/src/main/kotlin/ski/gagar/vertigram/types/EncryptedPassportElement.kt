@@ -1,14 +1,37 @@
 package ski.gagar.vertigram.types
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.annotation.JsonSubTypes
+import com.fasterxml.jackson.annotation.JsonTypeInfo
 import ski.gagar.vertigram.util.NoPosArgs
 
 /**
  * Telegram [EncryptedPassportElement](https://core.telegram.org/bots/api#encryptedpassportelement) type.
  *
+ * Subtypes are introduced to represent document types for [type], given each of them has its own set
+ * of mandatory an optional fields described [here](https://core.telegram.org/passport#fields).
+ *
  * For up-to-date documentation please consult the official Telegram docs.
  */
+@JsonIgnoreProperties(value = ["type"])
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
+@JsonSubTypes(
+    JsonSubTypes.Type(value = EncryptedPassportElement.PersonalDetails::class, name = EncryptedPassportElement.Type.PERSONAL_DETAILS_STR),
+    JsonSubTypes.Type(value = EncryptedPassportElement.Passport::class, name = EncryptedPassportElement.Type.PASSPORT_STR),
+    JsonSubTypes.Type(value = EncryptedPassportElement.DriverLicense::class, name = EncryptedPassportElement.Type.DRIVER_LICENSE_STR),
+    JsonSubTypes.Type(value = EncryptedPassportElement.IdentityCard::class, name = EncryptedPassportElement.Type.IDENTITY_CARD_STR),
+    JsonSubTypes.Type(value = EncryptedPassportElement.InternalPassport::class, name = EncryptedPassportElement.Type.INTERNAL_PASSPORT_STR),
+    JsonSubTypes.Type(value = EncryptedPassportElement.Address::class, name = EncryptedPassportElement.Type.ADDRESS_STR),
+    JsonSubTypes.Type(value = EncryptedPassportElement.UtilityBill::class, name = EncryptedPassportElement.Type.UTILITY_BILL_STR),
+    JsonSubTypes.Type(value = EncryptedPassportElement.BankStatement::class, name = EncryptedPassportElement.Type.BANK_STATEMENT_STR),
+    JsonSubTypes.Type(value = EncryptedPassportElement.RentalAgreement::class, name = EncryptedPassportElement.Type.RENTAL_AGREEMENT_STR),
+    JsonSubTypes.Type(value = EncryptedPassportElement.PassportRegistration::class, name = EncryptedPassportElement.Type.PASSPORT_REGISTRATION_STR),
+    JsonSubTypes.Type(value = EncryptedPassportElement.TemporaryRegistration::class, name = EncryptedPassportElement.Type.TEMPORARY_REGISTRATION_STR),
+    JsonSubTypes.Type(value = EncryptedPassportElement.PhoneNumber::class, name = EncryptedPassportElement.Type.PHONE_NUMBER_STR),
+    JsonSubTypes.Type(value = EncryptedPassportElement.Email::class, name = EncryptedPassportElement.Type.EMAIL_STR),
+)
 interface EncryptedPassportElement {
     val type: Type
 

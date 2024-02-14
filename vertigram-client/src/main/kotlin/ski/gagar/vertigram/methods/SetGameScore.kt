@@ -9,6 +9,9 @@ import ski.gagar.vertigram.types.Message
 /**
  * Telegram [setGameScore](https://core.telegram.org/bots/api#setgamescore) method.
  *
+ * Subtypes (which are nested) are two mutually-exclusive cases: for inline message and for chat message.
+ * Note the different return types in these cases.
+ *
  * For up-to-date documentation please consult the official Telegram docs.
  */
 sealed interface SetGameScore {

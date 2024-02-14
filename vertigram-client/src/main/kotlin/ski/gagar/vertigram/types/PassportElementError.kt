@@ -1,8 +1,10 @@
 package ski.gagar.vertigram.types
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 
+@JsonIgnoreProperties(value = ["type"])
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "source")
 @JsonSubTypes(
     JsonSubTypes.Type(value = PassportElementErrorDataField::class, name = PassportElementErrorSource.DATA_FIELD_STR),
@@ -16,6 +18,6 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo
     JsonSubTypes.Type(value = PassportElementErrorUnspecified::class, name = PassportElementErrorSource.UNSPECIFIED_STR),
 )
 sealed interface PassportElementError {
-    abstract val source: PassportElementErrorSource
+    val source: PassportElementErrorSource
 }
 

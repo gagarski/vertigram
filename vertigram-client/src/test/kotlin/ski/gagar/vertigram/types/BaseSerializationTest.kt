@@ -8,8 +8,12 @@ import org.junit.jupiter.api.Assertions
 import ski.gagar.vertigram.util.json.TELEGRAM_JSON_MAPPER
 
 
-
-abstract class BaseTypeTest {
+/**
+ * A base class for tests that preform checks for serializability/deserializability of objects.
+ *
+ * It's recommended to have such cases for all types which are supposed to be deserialized using supertypes
+ */
+abstract class BaseSerializationTest {
     fun assertSerializable(obj: Any, type: Class<*>, mapper: ObjectMapper, mapperName: String = "unknown") {
         Assertions.assertEquals(obj, mapper.readValue(mapper.writeValueAsString(obj), type),
             "Serialization check failed for mapper $mapperName")

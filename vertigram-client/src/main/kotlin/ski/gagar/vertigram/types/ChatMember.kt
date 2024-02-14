@@ -1,6 +1,7 @@
 package ski.gagar.vertigram.types
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
@@ -11,8 +12,13 @@ import java.time.Instant
 /**
  * Telegram [ChatMember](https://core.telegram.org/bots/api#chatmember) type.
  *
+ * Subtypes (which are nested) represent the subtypes, described by Telegram docs with more concise
+ * names given they are nested into [ChatMember] class. The rule here is the following:
+ * `ChatMemberXxx` Telegram type becomes `ChatMember.Xxx`
+ *
  * For up-to-date documentation please consult the official Telegram docs.
  */
+@JsonIgnoreProperties(value = ["status"])
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "status")
 @JsonSubTypes(
     JsonSubTypes.Type(value = ChatMember.Owner::class, name = ChatMember.Status.OWNER_STR),
@@ -76,7 +82,7 @@ sealed interface ChatMember {
          * If [Instant.EPOCH], then the user is banned forever
          * Use [ski.gagar.vertigram.types.util.orEpoch] if you want to initialize it from nullable [Instant]
          */
-        private val untilDate: Instant
+        @PublishedApi internal val untilDate: Instant
     ) : ChatMember {
         override val status: Status = Status.BANNED
         @JsonIgnore
@@ -165,7 +171,7 @@ sealed interface ChatMember {
          * If [Instant.EPOCH], then the user is banned forever
          * Use [ski.gagar.vertigram.types.util.orEpoch] if you want to initialize it from nullable [Instant]
          */
-        private val untilDate: Instant,
+        @PublishedApi internal val untilDate: Instant,
         val canManageTopics: Boolean = false
     ) : ChatMember {
         override val status: Status = Status.RESTRICTED
@@ -173,6 +179,9 @@ sealed interface ChatMember {
         val until: Instant? = untilDate.nullIfEpoch()
     }
 
+    /**
+     * A value for [ChatMember.status] field
+     */
     enum class Status {
         @JsonProperty(OWNER_STR)
         OWNER,

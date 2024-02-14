@@ -6,8 +6,17 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo
 import ski.gagar.vertigram.util.NoPosArgs
 
 /**
- * Telegram [ReplyMarkup](https://core.telegram.org/bots/api#replymarkup) type.
+ * A common supertype for the following Telegram types:
+ *  - [InlineKeyboardMarkup](https://core.telegram.org/bots/api#inlinekeyboardmarkup) — [ReplyMarkup.InlineKeyboard]
+ *  - [ReplyKeyboardMarkup](https://core.telegram.org/bots/api#replykeyboardmarkup) — [ReplyMarkup.Keyboard]
+ *  - [ReplyKeyboardRemove](https://core.telegram.org/bots/api#replykeyboardremove) — [ReplyMarkup.KeyboardRemove]
+ *  - [ForceReply](https://core.telegram.org/bots/api#forcereply) — [ReplyMarkup.ForceReply]
  *
+ *  This type is not explicitly present in Telegram docs, yet it's necessary where the typical "or"
+ *  combination of the mentioned types is used.
+ *
+ * All the types, related to reply markup are nested (on one or few levels) inside this class.
+ * More concise name is given where possible, given the fact that the class are nested to their related type.
  * For up-to-date documentation please consult the official Telegram docs.
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.DEDUCTION)
@@ -21,10 +30,12 @@ sealed interface ReplyMarkup {
     /**
      * Telegram [InlineKeyboardMarkup](https://core.telegram.org/bots/api#inlinekeyboardmarkup) type.
      *
+     * The original type is split into subtypes given "You __must__ use exactly one of the optional fields."
+     * condition, each of the subclasses represent the case of respecting field being set.
+     *
      * For up-to-date documentation please consult the official Telegram docs.
      *
-     * Consider using [ski.gagar.vertigram.markup.keyboard] for building the button layout.
-     *
+     * Consider using [ski.gagar.vertigram.markup.inlineKeyboard] for building the button layout.
      */
     data class InlineKeyboard(
         @JsonIgnore
@@ -34,46 +45,174 @@ sealed interface ReplyMarkup {
         /**
          * Telegram [InlineKeyboardButton](https://core.telegram.org/bots/api#inlinekeyboardbutton) type.
          *
+         * The original type is split into subtypes given "You __must__ use exactly one of the optional fields."
+         * condition, each of the subclasses represent the case of respecting field being set.
+         *
          * For up-to-date documentation please consult the official Telegram docs.
          */
-        data class Button(
-            @JsonIgnore
-            private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
-            val text: String,
-            val url: String? = null,
-            val callbackData: String? = null,
-            val webApp: WebAppInfo? = null,
-            val loginUrl: LoginUrl? = null,
-            val switchInlineQuery: String? = null,
-            val switchInlineQueryCurrentChat: String? = null,
-            val switchInlineQueryChosenChat: SwitchInlineQueryChosenChat? = null,
-            val callbackGame: CallbackGame? = null,
-            val pay: Boolean = false
-        ) {
+        @JsonTypeInfo(use = JsonTypeInfo.Id.DEDUCTION, defaultImpl = Button.Text::class)
+        @JsonSubTypes(
+            JsonSubTypes.Type(value = Button.Text::class),
+            JsonSubTypes.Type(value = Button.Url::class),
+            JsonSubTypes.Type(value = Button.Callback::class),
+            JsonSubTypes.Type(value = Button.WebApp::class),
+            JsonSubTypes.Type(value = Button.Login::class),
+            JsonSubTypes.Type(value = Button.SwitchInline::class),
+            JsonSubTypes.Type(value = Button.SwitchInlineCurrentChat::class),
+            JsonSubTypes.Type(value = Button.SwitchInlineChosenChat::class),
+            JsonSubTypes.Type(value = Button.Game::class),
+            JsonSubTypes.Type(value = Button.Pay::class),
+
+        )
+        sealed interface Button {
             /**
-             * Telegram [SwitchInlineQueryChosenChat](https://core.telegram.org/bots/api#switchinlinequerychosenchat) type.
-             *
-             * For up-to-date documentation please consult the official Telegram docs.
+             * Case when no optional fields are specified
              */
-            data class SwitchInlineQueryChosenChat(
+            data class Text(
                 @JsonIgnore
                 private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
-                val query: String? = null,
-                val allowUserChats: Boolean = false,
-                val allowBotChats: Boolean = false,
-                val allowGroupChats: Boolean = false,
-                val allowChannelChats: Boolean = false
-            )
+                val text: String
+            ) : Button
 
+            /**
+             * Case when [url] is specified
+             */
+            data class Url(
+                @JsonIgnore
+                private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+                val text: String,
+                val url: String
+            ) : Button
+
+            /**
+             * Case when [callbackData] is specified
+             */
+            data class Callback(
+                @JsonIgnore
+                private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+                val text: String,
+                val callbackData: String
+            ) : Button
+
+            /**
+             * Case when [webApp] is specified
+             */
+            data class WebApp(
+                @JsonIgnore
+                private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+                val text: String,
+                val webApp: WebAppInfo
+            ) : Button
+
+            /**
+             * Case when [loginUrl] is specified
+             */
+            data class Login(
+                @JsonIgnore
+                private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+                val text: String,
+                val loginUrl: Payload
+            ) : Button {
+                /**
+                 * Telegram [LoginUrl](https://core.telegram.org/bots/api#loginurl) type.
+                 *
+                 * For up-to-date documentation please consult the official Telegram docs.
+                 */
+                data class Payload(
+                    @JsonIgnore
+                    private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+                    val url: String,
+                    val forwardText: String? = null,
+                    val botUsername: String? = null,
+                    val requestWriteAccess: Boolean = false
+                )
+            }
+
+            /**
+             * Case when [switchInlineQuery] is set
+             */
+            data class SwitchInline(
+                @JsonIgnore
+                private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+                val text: String,
+                val switchInlineQuery: String,
+            ) : Button
+
+            /**
+             * Case when [switchInlineQueryCurrentChat] is set
+             */
+            data class SwitchInlineCurrentChat(
+                @JsonIgnore
+                private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+                val text: String,
+                val switchInlineQueryCurrentChat: String
+            ) : Button
+
+            /**
+             * Case when [switchInlineQueryChosenChat] is set
+             */
+            data class SwitchInlineChosenChat(
+                @JsonIgnore
+                private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+                val text: String,
+                val switchInlineQueryChosenChat: Payload
+            ) : Button {
+                /**
+                 * Telegram [SwitchInlineQueryChosenChat](https://core.telegram.org/bots/api#switchinlinequerychosenchat) type.
+                 *
+                 * For up-to-date documentation please consult the official Telegram docs.
+                 */
+                data class Payload(
+                    @JsonIgnore
+                    private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+                    val query: String? = null,
+                    val allowUserChats: Boolean = false,
+                    val allowBotChats: Boolean = false,
+                    val allowGroupChats: Boolean = false,
+                    val allowChannelChats: Boolean = false
+                )
+            }
+
+            /**
+             * Case when [callbackGame] is set
+             */
+            data class Game(
+                @JsonIgnore
+                private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+                val text: String,
+                val callbackGame: Payload
+            ) : Button {
+                /**
+                 * Telegram [CallbackGame](https://core.telegram.org/bots/api#callbackgame) type.
+                 *
+                 * For up-to-date documentation please consult the official Telegram docs.
+                 */
+                data object Payload
+            }
+
+            /**
+             * Case when [pay] is set to `true`
+             */
+            data class Pay(
+                @JsonIgnore
+                private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+                val text: String
+            ) : Button {
+                val pay: Boolean = true
+            }
         }
     }
+
 
     /**
      * Telegram [ReplyKeyboardMarkup](https://core.telegram.org/bots/api#replykeyboardmarkup) type.
      *
-     * For up-to-date documentation please consult the official Telegram docs.
+     * The original type is split into subtypes given "You __must__ use exactly one of the optional fields."
+     * condition, each of the subclasses represent the case of respecting field being set.
      *
      * Consider using [ski.gagar.vertigram.markup.keyboard] for building the button layout.
+     *
+     * For up-to-date documentation please consult the official Telegram docs.
      *
      */
     data class Keyboard(
@@ -103,6 +242,9 @@ sealed interface ReplyMarkup {
             JsonSubTypes.Type(value = Button.WebApp::class),
         )
         sealed interface Button {
+            /**
+             * Case when no optional fields are set
+             */
             data class Text(
                 @JsonIgnore
                 private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
@@ -206,7 +348,7 @@ sealed interface ReplyMarkup {
             }
 
             /**
-             * Case when [requestLocation] is specified
+             * Case when [webApp] is specified
              */
             data class WebApp(
                 @JsonIgnore

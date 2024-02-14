@@ -29,7 +29,7 @@ data class ExternalReplyInfo(
     val dice: Dice? = null,
     val game: Game? = null,
     val giveaway: Giveaway? = null,
-    val giveawayWinners: GiveawayWinners? = null,
+    val giveawayWinners: Giveaway.Winners? = null,
     val invoice: Invoice? = null,
     val location: Location? = null,
     val poll: Poll? = null,

@@ -59,14 +59,14 @@ data class Message(
     val replyMarkup: ReplyMarkup.InlineKeyboard? = null,
     @get:JvmName("getIsTopicMessage")
     val isTopicMessage: Boolean = false,
-    val forumTopicCreated: ForumTopicCreated? = null,
-    val forumTopicClosed: ForumTopicClosed? = null,
-    val forumTopicReopened: ForumTopicReopened? = null,
+    val forumTopicCreated: ForumTopic.Created? = null,
+    val forumTopicClosed: ForumTopic.Closed? = null,
+    val forumTopicReopened: ForumTopic.Reopened? = null,
     // Since Telegram Bot API 6.4
     val hasMediaSpoiler: Boolean = false,
-    val forumTopicEdited: ForumTopicEdited? = null,
-    val generalForumTopicHidden: GeneralForumTopicHidden? = null,
-    val generalForumTopicUndhidden: GeneralForumTopicUnhidden? = null,
+    val forumTopicEdited: ForumTopic.Edited? = null,
+    val generalForumTopicHidden: ForumTopic.GeneralHidden? = null,
+    val generalForumTopicUndhidden: ForumTopic.GeneralUnhidden? = null,
     val writeAccessAllowed: WriteAccessAllowed? = null,
     // Since Telegram Bot API 6.5
     val chatShared: ChatShared? = null,
@@ -77,9 +77,9 @@ data class Message(
     val quote: TextQuote? = null,
     val linkPreviewOptions: LinkPreviewOptions? = null,
     val usersShared: UsersShared? = null,
-    val giveawayCreated: GiveawayCreated? = null,
+    val giveawayCreated: Giveaway.Created? = null,
     val giveaway: Giveaway? = null,
-    val giveawayWinners: GiveawayWinners? = null,
-    val giveawayCompleted: GiveawayCompleted? = null,
+    val giveawayWinners: Giveaway.Winners? = null,
+    val giveawayCompleted: Giveaway.Completed? = null,
     val forwardOrigin: MessageOrigin? = null
 )

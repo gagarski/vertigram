@@ -1,8 +1,11 @@
 package ski.gagar.vertigram.types
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 
+
+@JsonIgnoreProperties(value = ["type"])
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
 @JsonSubTypes(
     JsonSubTypes.Type(value = MessageOriginUser::class, name = MessageOriginType.USER_STR),

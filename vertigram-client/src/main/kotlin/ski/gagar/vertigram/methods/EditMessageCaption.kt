@@ -5,15 +5,18 @@ import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.annotations.TelegramMethod
 import ski.gagar.vertigram.throttling.HasChatId
 import ski.gagar.vertigram.throttling.Throttled
-import ski.gagar.vertigram.types.util.ChatId
 import ski.gagar.vertigram.types.Message
 import ski.gagar.vertigram.types.MessageEntity
 import ski.gagar.vertigram.types.ParseMode
 import ski.gagar.vertigram.types.ReplyMarkup
+import ski.gagar.vertigram.types.util.ChatId
 import ski.gagar.vertigram.util.NoPosArgs
 
 /**
  * Telegram [editMessageCaption](https://core.telegram.org/bots/api#editmessagecaption) method.
+
+ * Subtypes (which are nested) are two mutually-exclusive cases: for inline message and for chat message.
+ * Note the different return types in these cases.
  *
  * For up-to-date documentation please consult the official Telegram docs.
  */

@@ -17,15 +17,15 @@ import kotlinx.html.visit
 import ski.gagar.vertigram.types.MessageEntity
 import ski.gagar.vertigram.types.MessageEntityType
 import ski.gagar.vertigram.types.User
-import ski.gagar.vertigram.types.richtext.MarkdownText
+import ski.gagar.vertigram.types.richtext.MarkdownV2Text
 import ski.gagar.vertigram.types.richtext.TextWithEntities
 
 fun String.toRichText() = TextWithEntities(this)
 
 fun textMarkdown(init: RichTextRoot.() -> Unit) =
-    MarkdownText(RichTextRoot().apply(init).toMarkdownString())
+    MarkdownV2Text(RichTextRoot().apply(init).toMarkdownString())
 fun textHtml(init: RichTextRoot.() -> Unit) =
-    MarkdownText(RichTextRoot().apply(init).toHtmlString())
+    MarkdownV2Text(RichTextRoot().apply(init).toHtmlString())
 fun textWithEntities(init: RichTextRoot.() -> Unit) =
     RichTextRoot().apply(init).toTextWithEntities()
 

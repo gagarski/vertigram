@@ -4,12 +4,15 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.annotations.TelegramMethod
 import ski.gagar.vertigram.throttling.HasChatId
-import ski.gagar.vertigram.types.util.ChatId
 import ski.gagar.vertigram.types.ReplyMarkup
+import ski.gagar.vertigram.types.util.ChatId
 import ski.gagar.vertigram.util.NoPosArgs
 
 /**
  * Telegram [stopMessageLiveLocation](https://core.telegram.org/bots/api#stopmessagelivelocation) method.
+ *
+ * Subtypes (which are nested) are two mutually-exclusive cases: for inline message and for chat message.
+ * Note the different return types in these cases.
  *
  * For up-to-date documentation please consult the official Telegram docs.
  */

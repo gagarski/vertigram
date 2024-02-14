@@ -1,8 +1,6 @@
 package ski.gagar.vertigram.markup
 
-import ski.gagar.vertigram.types.CallbackGame
 import ski.gagar.vertigram.types.ChatAdministratorRights
-import ski.gagar.vertigram.types.LoginUrl
 import ski.gagar.vertigram.types.PollType
 import ski.gagar.vertigram.types.ReplyMarkup
 import ski.gagar.vertigram.types.WebAppInfo
@@ -76,32 +74,177 @@ class InlineKeyboardMarkupRowBuilder {
     private val buttons = mutableListOf<ReplyMarkup.InlineKeyboard.Button>()
 
     /**
-     * Add [ReplyMarkup.InlineKeyboard.Button] to current row
+     * Add simple text button
+     *
+     * @see ReplyMarkup.InlineKeyboard.Button.Text
      */
-    fun button(
+    fun text(
+        text: String
+    ) {
+        buttons.add(
+            ReplyMarkup.InlineKeyboard.Button.Text(text = text)
+        )
+    }
+
+    /**
+     * Add button with URL
+     *
+     * @see ReplyMarkup.InlineKeyboard.Button.Url
+     */
+    fun url(
+        text: String,
+        url: String,
+    ) {
+        buttons.add(
+            ReplyMarkup.InlineKeyboard.Button.Url(text = text, url = url)
+        )
+    }
+
+    /**
+     * Add button with callback data
+     *
+     * @see ReplyMarkup.InlineKeyboard.Button.Callback
+     */
+    fun callback(
+        text: String,
+        callbackData: String
+    ) {
+        buttons.add(
+            ReplyMarkup.InlineKeyboard.Button.Callback(text = text, callbackData = callbackData)
+        )
+    }
+
+    /**
+     * Add Web-app button
+     *
+     * @see ReplyMarkup.InlineKeyboard.Button.WebApp
+     */
+    fun webApp(
+        text: String,
+        webApp: WebAppInfo
+    ) {
+        buttons.add(
+            ReplyMarkup.InlineKeyboard.Button.WebApp(text = text, webApp = webApp)
+        )
+    }
+
+    /**
+     * Add login button
+     *
+     * @see ReplyMarkup.InlineKeyboard.Button.Login
+     */
+    fun login(
         @Suppress("UNUSED_PARAMETER")
         noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
         text: String,
-        url: String? = null,
-        loginUrl: LoginUrl? = null,
-        callbackData: String? = null,
-        webApp: WebAppInfo? = null,
-        switchInlineQuery: String? = null,
-        switchInlineQueryCurrentChat: String? = null,
-        callbackGame: CallbackGame? = null,
-        pay: Boolean = false
+        url: String,
+        forwardText: String? = null,
+        botUsername: String? = null,
+        requestWriteAccess: Boolean = false
     ) {
         buttons.add(
-            ReplyMarkup.InlineKeyboard.Button(
+            ReplyMarkup.InlineKeyboard.Button.Login(
                 text = text,
-                url = url,
-                loginUrl = loginUrl,
-                callbackData = callbackData,
-                webApp = webApp,
-                switchInlineQuery = switchInlineQuery,
-                switchInlineQueryCurrentChat = switchInlineQueryCurrentChat,
-                callbackGame = callbackGame,
-                pay = pay
+                loginUrl = ReplyMarkup.InlineKeyboard.Button.Login.Payload(
+                    url = url,
+                    forwardText = forwardText,
+                    botUsername = botUsername,
+                    requestWriteAccess = requestWriteAccess
+                )
+            )
+        )
+    }
+
+    /**
+     * Add switch inline button
+     *
+     * @see ReplyMarkup.InlineKeyboard.Button.SwitchInline
+     */
+    fun switchInline(
+        text: String,
+        switchInlineQuery: String
+    ) {
+        buttons.add(
+            ReplyMarkup.InlineKeyboard.Button.SwitchInline(
+                text = text,
+                switchInlineQuery = switchInlineQuery
+            )
+        )
+    }
+
+    /**
+     * Add switch inline button with current chat
+     *
+     * @see ReplyMarkup.InlineKeyboard.Button.SwitchInlineCurrentChat
+     */
+    fun switchInlineCurrentChat(
+        text: String,
+        switchInlineQueryCurrentChat: String
+    ) {
+        buttons.add(
+            ReplyMarkup.InlineKeyboard.Button.SwitchInlineCurrentChat(
+                text = text,
+                switchInlineQueryCurrentChat = switchInlineQueryCurrentChat
+            )
+        )
+    }
+
+    /**
+     * Add switch inline button with chosen chat
+     *
+     * @see ReplyMarkup.InlineKeyboard.Button.SwitchInlineCurrentChat
+     */
+    fun switchInlineChosenChat(
+        @Suppress("UNUSED_PARAMETER")
+        noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+        text: String,
+        query: String? = null,
+        allowUserChats: Boolean = false,
+        allowBotChats: Boolean = false,
+        allowGroupChats: Boolean = false,
+        allowChannelChats: Boolean = false
+    ) {
+        buttons.add(
+            ReplyMarkup.InlineKeyboard.Button.SwitchInlineChosenChat(
+                text = text,
+                switchInlineQueryChosenChat = ReplyMarkup.InlineKeyboard.Button.SwitchInlineChosenChat.Payload(
+                    query = query,
+                    allowUserChats = allowUserChats,
+                    allowBotChats = allowBotChats,
+                    allowGroupChats = allowGroupChats,
+                    allowChannelChats = allowChannelChats
+                )
+            )
+        )
+    }
+
+    /**
+     * Add game button
+     *
+     * @see ReplyMarkup.InlineKeyboard.Button.Game
+     */
+    fun game(
+        text: String
+    ) {
+        buttons.add(
+            ReplyMarkup.InlineKeyboard.Button.Game(
+                text = text,
+                callbackGame = ReplyMarkup.InlineKeyboard.Button.Game.Payload
+            )
+        )
+    }
+
+    /**
+     * Add pay button
+     *
+     * @see ReplyMarkup.InlineKeyboard.Button.Game
+     */
+    fun pay(
+        text: String
+    ) {
+        buttons.add(
+            ReplyMarkup.InlineKeyboard.Button.Pay(
+                text = text
             )
         )
     }
@@ -330,13 +473,13 @@ class ReplyKeyboardMarkupBuilder {
 private fun inlineKeyboardSample() {
     inlineKeyboard {
         row {
-            button(text = "Button 1")
-            button(text = "Button 2", url = "https://example.com")
+            text(text = "Button 1")
+            url(text = "Button 2", url = "https://example.com")
         }
 
         row {
-            button(text = "Button 3")
-            button(text = "Button 4", callbackData = "callback")
+            switchInline(text = "Button 3", switchInlineQuery = "bla")
+            callback(text = "Button 4", callbackData = "qweqwe")
         }
     }
 }

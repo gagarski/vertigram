@@ -9,6 +9,8 @@ import ski.gagar.vertigram.util.NoPosArgs
 /**
  * Telegram [answerShippingQuery](https://core.telegram.org/bots/api#answershippingquery) method.
  *
+ * Subtypes (which are nested) are two mutually-exclusive cases: OK and error.
+ *
  * For up-to-date documentation please consult the official Telegram docs.
  */
 sealed class AnswerShippingQuery : JsonTelegramCallable<Boolean>() {

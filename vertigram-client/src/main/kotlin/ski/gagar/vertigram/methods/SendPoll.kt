@@ -5,13 +5,13 @@ import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.annotations.TelegramMethod
 import ski.gagar.vertigram.throttling.HasChatId
 import ski.gagar.vertigram.throttling.Throttled
-import ski.gagar.vertigram.types.util.ChatId
 import ski.gagar.vertigram.types.Message
 import ski.gagar.vertigram.types.MessageEntity
 import ski.gagar.vertigram.types.ParseMode
 import ski.gagar.vertigram.types.PollType
 import ski.gagar.vertigram.types.ReplyMarkup
 import ski.gagar.vertigram.types.ReplyParameters
+import ski.gagar.vertigram.types.util.ChatId
 import ski.gagar.vertigram.util.NoPosArgs
 import java.time.Duration
 import java.time.Instant
@@ -21,6 +21,10 @@ import java.time.Instant
  *
  * Telegram method is divided into two virtual methods: sendPoll and sendQuiz,
  * each of them has a separate cases regarding close date options.
+ * The method name is changed for quiz polls because the parameter names do
+ * not represent the quiz nature of the poll naturally.
+ *
+ * Each case has multiple mutually-exclusive cases for different auto-closure settings.
  *
  * For up-to-date documentation please consult the official Telegram docs.
  */
@@ -166,9 +170,9 @@ sealed class SendPoll : JsonTelegramCallable<Message>(), HasChatId {
             @get:JvmName("getIsAnonymous")
             val isAnonymous: Boolean = Defaults.isAnonymous,
             val correctOptionId: Int,
-            val explanation: String? = null,
-            val explanationParseMode: ParseMode? = null,
-            val explanationEntities: List<MessageEntity>? = null,
+            @PublishedApi internal val explanation: String? = null,
+            @PublishedApi internal val explanationParseMode: ParseMode? = null,
+            @PublishedApi internal val explanationEntities: List<MessageEntity>? = null,
             val openPeriod: Duration,
             val disableNotification: Boolean = false,
             val protectContent: Boolean = false,
@@ -207,9 +211,9 @@ sealed class SendPoll : JsonTelegramCallable<Message>(), HasChatId {
             @get:JvmName("getIsAnonymous")
             val isAnonymous: Boolean = Defaults.isAnonymous,
             val correctOptionId: Int,
-            val explanation: String? = null,
-            val explanationParseMode: ParseMode? = null,
-            val explanationEntities: List<MessageEntity>? = null,
+            @PublishedApi internal val explanation: String? = null,
+            @PublishedApi internal val explanationParseMode: ParseMode? = null,
+            @PublishedApi internal val explanationEntities: List<MessageEntity>? = null,
             val closeDate: Instant,
             val disableNotification: Boolean = false,
             val protectContent: Boolean = false,
@@ -248,9 +252,9 @@ sealed class SendPoll : JsonTelegramCallable<Message>(), HasChatId {
             @get:JvmName("getIsAnonymous")
             val isAnonymous: Boolean = Defaults.isAnonymous,
             val correctOptionId: Int,
-            val explanation: String? = null,
-            val explanationParseMode: ParseMode? = null,
-            val explanationEntities: List<MessageEntity>? = null,
+            @PublishedApi internal val explanation: String? = null,
+            @PublishedApi internal val explanationParseMode: ParseMode? = null,
+            @PublishedApi internal val explanationEntities: List<MessageEntity>? = null,
             @get:JvmName("getIsClosed")
             val isClosed: Boolean? = null,
             val disableNotification: Boolean = false,
