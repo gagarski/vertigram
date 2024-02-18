@@ -1,7 +1,7 @@
 package ski.gagar.vertigram.methods
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import ski.gagar.vertigram.types.InlineQueryResult
+import ski.gagar.vertigram.types.InlineQuery
 import ski.gagar.vertigram.types.SentWebAppMessage
 import ski.gagar.vertigram.util.NoPosArgs
 
@@ -14,5 +14,5 @@ data class AnswerWebAppQuery(
     @JsonIgnore
     private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
     val webAppQueryId: String,
-    val result: List<InlineQueryResult>
+    val result: List<InlineQuery.Result>
 ) : JsonTelegramCallable<SentWebAppMessage>()

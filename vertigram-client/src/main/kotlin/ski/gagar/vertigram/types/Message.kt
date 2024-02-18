@@ -42,7 +42,7 @@ data class Message(
     val groupChatCreated: Boolean = false,
     val supergroupChatCreated: Boolean = false,
     val channelChatCreated: Boolean = false,
-    val messageAutoDeleteTimerChanged: Boolean = false,
+    val messageAutoDeleteTimerChanged: MessageAutoDeleteTimerChanged? = null,
     val migrateToChatId: Long? = null,
     val migrateFromChatId: Long? = null,
     val pinnedMessage: Message? = null,

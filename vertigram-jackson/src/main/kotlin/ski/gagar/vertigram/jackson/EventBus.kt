@@ -13,6 +13,7 @@ import io.vertx.core.json.JsonObject
 import io.vertx.core.json.jackson.DatabindCodec
 import io.vertx.kotlin.coroutines.CoroutineVerticle
 import io.vertx.kotlin.coroutines.await
+import io.vertx.kotlin.coroutines.coAwait
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.slf4j.MDCContext
 import ski.gagar.vertigram.coroMdcWith
@@ -80,7 +81,7 @@ suspend inline fun <Argument, Result> EventBus.requestJsonAwait(
     options: DeliveryOptions = DeliveryOptions()
 ): Result {
     val reply: Reply<Result> =
-        request<JsonObject>(address, JsonObject.mapFrom(RequestWrapper(value)), options).await()
+        request<JsonObject>(address, JsonObject.mapFrom(RequestWrapper(value)), options).coAwait()
             .body()
             .mapTo(TYPE_FACTORY.constructParametricType(Reply::class.java, resultJavaType))
 

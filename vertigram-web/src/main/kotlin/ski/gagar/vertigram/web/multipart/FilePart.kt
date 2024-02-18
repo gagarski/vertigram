@@ -3,7 +3,7 @@ package ski.gagar.vertigram.web.multipart
 import io.netty.handler.codec.http.HttpHeaderNames
 import io.netty.handler.codec.http.HttpHeaderValues
 import io.vertx.core.file.AsyncFile
-import io.vertx.kotlin.coroutines.await
+import io.vertx.kotlin.coroutines.coAwait
 import ski.gagar.vertigram.io.ReadStreamWrapper
 
 class FilePart(name: String,
@@ -23,9 +23,9 @@ class FilePart(name: String,
         val f = fileProvider()
 
         try {
-            return f.size().await()
+            return f.size().coAwait()
         } finally {
-            f.close().await()
+            f.close().coAwait()
         }
     }
 

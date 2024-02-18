@@ -6,7 +6,7 @@ import io.vertx.core.buffer.Buffer
 import io.vertx.core.streams.ReadStream
 import io.vertx.ext.web.client.HttpRequest
 import io.vertx.ext.web.client.HttpResponse
-import io.vertx.kotlin.coroutines.await
+import io.vertx.kotlin.coroutines.coAwait
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.coroutineScope
 import org.apache.commons.lang3.RandomStringUtils
@@ -58,7 +58,7 @@ class MultipartForm(val parts: List<Part>) {
             }
 
         }
-        return@coroutineScope req.sendStream(stream(this@coroutineScope)).await()
+        return@coroutineScope req.sendStream(stream(this@coroutineScope)).coAwait()
     }
 
 

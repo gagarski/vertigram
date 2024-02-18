@@ -1,7 +1,6 @@
 package ski.gagar.vertigram.types
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
@@ -23,17 +22,8 @@ data class ChatBoost(
     val expirationDate: Instant,
     val source: Source
 ) {
-    /**
-     * Telegram [ChatBoostSource](https://core.telegram.org/bots/api#chatboostsource) type.
-     *
-     * Subtypes (which are nested) represent the subtypes, described by Telegram docs with more
-     * names given they are nested into [ChatBoost.Source] class. The rule here is the following:
-     * `ChatBoostSourceXxx` Telegram type becomes `ChatBoost.Source.Xxx`
-     *
-     * For up-to-date documentation please consult the official Telegram docs.
-     */
-    @JsonIgnoreProperties(value = ["source"])
-    @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "source")
+
+    @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "source", include = JsonTypeInfo.As.EXISTING_PROPERTY)
     @JsonSubTypes(
         JsonSubTypes.Type(value = Source.Premium::class, name = ChatBoost.Source.Type.PREMIUM_STR),
         JsonSubTypes.Type(value = Source.GiftCode::class, name = ChatBoost.Source.Type.GIFT_CODE_STR),

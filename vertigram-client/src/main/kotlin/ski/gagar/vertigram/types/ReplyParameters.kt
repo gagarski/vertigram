@@ -16,4 +16,6 @@ data class ReplyParameters internal constructor(
     val quoteParseMode: ParseMode? = null,
     val quoteEntities: List<MessageEntity>? = null,
     val quotePosition: Int? = null
-)
+) {
+    companion object
+}

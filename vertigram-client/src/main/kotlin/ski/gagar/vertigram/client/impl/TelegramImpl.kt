@@ -10,7 +10,7 @@ import io.vertx.ext.web.client.HttpResponse
 import io.vertx.ext.web.client.WebClient
 import io.vertx.ext.web.client.WebClientOptions
 import io.vertx.ext.web.codec.BodyCodec
-import io.vertx.kotlin.coroutines.await
+import io.vertx.kotlin.coroutines.coAwait
 import ski.gagar.vertigram.lazy
 import ski.gagar.vertigram.logger
 import ski.gagar.vertigram.methods.JsonTelegramCallable
@@ -101,7 +101,7 @@ internal class TelegramImpl(
         longPoll: Boolean = false
     ): Pair<HttpResponse<*>, Any?> {
         logger.lazy.trace { "Calling $method with $obj" }
-        val resp = client(method, longPoll, false).sendJson(obj, mapper).await()
+        val resp = client(method, longPoll, false).sendJson(obj, mapper).coAwait()
         return resp to resp.jsonBody<Any>(type, mapper).also {
             logger.lazy.trace { "Received response $it" }
         }
@@ -203,11 +203,11 @@ internal class TelegramImpl(
     suspend fun downloadFile(path: String, outputPath: String) {
         val f = fs.open(outputPath, OpenOptions().apply {
             isTruncateExisting = true
-        }).await()
+        }).coAwait()
         val resp =
-            downloadClient.getAbs("${options.tgBase}/file/bot$token/${path}").`as`(BodyCodec.pipe(f)).send().await()
+            downloadClient.getAbs("${options.tgBase}/file/bot$token/${path}").`as`(BodyCodec.pipe(f)).send().coAwait()
         if (resp.statusCode() != 200) {
-            fs.delete(outputPath).await()
+            fs.delete(outputPath).coAwait()
             // TODO try to get a response from file and parse it
             throw TelegramDownloadException.create(resp.statusCode(), path)
         }

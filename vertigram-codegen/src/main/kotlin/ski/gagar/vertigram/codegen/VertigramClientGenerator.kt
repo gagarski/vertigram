@@ -1,5 +1,6 @@
 package ski.gagar.vertigram.codegen
 
+import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.BOOLEAN
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.DelicateKotlinPoetApi
@@ -177,6 +178,7 @@ class VertigramClientGenerator : AbstractProcessor() {
         addKdoc("Auto-generated function, please see [%T] docs.", className)
     }
 
+
     private fun pseudoConstructor(
         clazz: TypeSpec,
         className: ClassName,
@@ -185,11 +187,19 @@ class VertigramClientGenerator : AbstractProcessor() {
         if (!anno.generatePseudoConstructor)
             return null
 
-        val constructorName = anno.pseudoConstructorName
-        val declName = constructorName.ifEmpty { null }
-        val name = declName
-            ?: clazz.name
-            ?: throw IllegalStateException("Was not able to detect method name for $className. Is it anonymous?")
+        val consName = anno.pseudoConstructorName.ifEmpty { null }
+
+        val name = when {
+            null != consName -> consName
+            className.simpleNames.size == 1 -> className.simpleName
+            else -> "invoke"
+        }
+
+        val receiver = when {
+            null != consName -> null
+            className.simpleNames.size == 1 -> null
+            else -> className.simpleNames.joinToString(".") + ".Companion"
+        }
 
         val constructor = clazz.primaryConstructor
             ?: throw IllegalStateException("Cannot add parameters to ${this}, ${clazz.name} has no primary constructor")
@@ -200,6 +210,12 @@ class VertigramClientGenerator : AbstractProcessor() {
         }
         return FunSpec.builder(name)
             .returns(className)
+            .apply {
+                receiver?.let {
+                    addModifiers(KModifier.OPERATOR)
+                    receiver(ClassName(className.packageName, it))
+                }
+            }
             .apply {
                 val actuallyWrapped = mutableSetOf<String>()
                 addParametersFromPrimaryConstructor(clazz, className, actuallyWrapped, anno)
@@ -217,12 +233,6 @@ class VertigramClientGenerator : AbstractProcessor() {
     ): List<PropertySpec> {
         if (!anno.generateRichTextWrappers)
             return listOf()
-
-        val constructorName = anno.pseudoConstructorName
-        val declName = constructorName.ifEmpty { null }
-        val name = declName
-            ?: clazz.name
-            ?: throw IllegalStateException("Was not able to detect method name for $className. Is it anonymous?")
 
         val constructor = clazz.primaryConstructor
             ?: throw IllegalStateException("Cannot add parameters to ${this}, ${clazz.name} has no primary constructor")
@@ -398,6 +408,7 @@ class VertigramClientGenerator : AbstractProcessor() {
                     } else if (param.type == BOOLEAN) {
                         defaultValue("false")
                     } else if (param.type == ClassName("ski.gagar.vertigram.util", "NoPosArgs")) {
+                        addAnnotation(AnnotationSpec.builder(ClassName("kotlin", "Suppress")).addMember("\"UNUSED_PARAMETER\"").build())
                         defaultValue("ski.gagar.vertigram.util.NoPosArgs.INSTANCE")
                     }
                 }

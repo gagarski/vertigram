@@ -2,7 +2,7 @@ package ski.gagar.vertigram.verticles.children
 
 import io.vertx.core.DeploymentOptions
 import io.vertx.core.Verticle
-import io.vertx.kotlin.coroutines.await
+import io.vertx.kotlin.coroutines.coAwait
 import ski.gagar.vertigram.jackson.jsonConsumer
 import ski.gagar.vertigram.jackson.publishJson
 import ski.gagar.vertigram.lazy
@@ -59,7 +59,7 @@ abstract class AbstractHierarchyVerticle : ErrorLoggingCoroutineVerticle() {
 
     protected suspend fun deployChild(verticle: Verticle,
                                       deploymentOptions: DeploymentOptions = DeploymentOptions()): String {
-        val id = vertx.deployVerticle(verticle, deploymentOptions).await()
+        val id = vertx.deployVerticle(verticle, deploymentOptions).coAwait()
         children.add(id)
         return id
     }

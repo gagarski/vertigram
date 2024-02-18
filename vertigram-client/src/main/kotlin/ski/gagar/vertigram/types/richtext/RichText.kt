@@ -1,7 +1,6 @@
 package ski.gagar.vertigram.types.richtext
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 import ski.gagar.vertigram.types.MessageEntity
@@ -18,12 +17,11 @@ import ski.gagar.vertigram.types.ParseMode
  *  There is currently no builder for [MarkdownText] because it's a deprecated format, however it's still supported.
  */
 @Suppress("DEPRECATION")
-@JsonIgnoreProperties(value = ["parseMode"])
 @JsonTypeInfo(
     use = JsonTypeInfo.Id.NAME,
-    include = JsonTypeInfo.As.PROPERTY,
     property = "parseMode",
-    defaultImpl = TextWithEntities::class
+    defaultImpl = TextWithEntities::class,
+    include = JsonTypeInfo.As.EXISTING_PROPERTY
 )
 @JsonSubTypes(
     JsonSubTypes.Type(value = MarkdownText::class, name = ParseMode.MARKDOWN_STR),

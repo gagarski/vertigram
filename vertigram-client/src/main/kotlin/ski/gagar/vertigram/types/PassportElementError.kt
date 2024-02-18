@@ -1,11 +1,9 @@
 package ski.gagar.vertigram.types
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 
-@JsonIgnoreProperties(value = ["type"])
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "source")
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "source", include = JsonTypeInfo.As.EXISTING_PROPERTY)
 @JsonSubTypes(
     JsonSubTypes.Type(value = PassportElementErrorDataField::class, name = PassportElementErrorSource.DATA_FIELD_STR),
     JsonSubTypes.Type(value = PassportElementErrorFrontSide::class, name = PassportElementErrorSource.FRONT_SIDE_STR),

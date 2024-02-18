@@ -1,7 +1,6 @@
 package ski.gagar.vertigram.types
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
@@ -15,8 +14,7 @@ import ski.gagar.vertigram.util.NoPosArgs
  *
  * For up-to-date documentation please consult the official Telegram docs.
  */
-@JsonIgnoreProperties(value = ["type"])
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", include = JsonTypeInfo.As.EXISTING_PROPERTY)
 @JsonSubTypes(
     JsonSubTypes.Type(value = EncryptedPassportElement.PersonalDetails::class, name = EncryptedPassportElement.Type.PERSONAL_DETAILS_STR),
     JsonSubTypes.Type(value = EncryptedPassportElement.Passport::class, name = EncryptedPassportElement.Type.PASSPORT_STR),

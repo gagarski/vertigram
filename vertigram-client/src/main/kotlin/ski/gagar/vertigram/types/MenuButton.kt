@@ -1,11 +1,9 @@
 package ski.gagar.vertigram.types
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 
-@JsonIgnoreProperties(value = ["type"])
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", include = JsonTypeInfo.As.EXISTING_PROPERTY)
 @JsonSubTypes(
     JsonSubTypes.Type(value = MenuButtonCommands::class, name = MenuButtonType.COMMANDS_STR),
     JsonSubTypes.Type(value = MenuButtonWebApp::class, name = MenuButtonType.WEB_APP_STR),

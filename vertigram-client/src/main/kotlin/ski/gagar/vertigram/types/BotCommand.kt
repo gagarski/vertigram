@@ -1,7 +1,6 @@
 package ski.gagar.vertigram.types
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
@@ -28,8 +27,7 @@ data class BotCommand(
      *
      * For up-to-date documentation please consult the official Telegram docs.
      */
-    @JsonIgnoreProperties(value = ["type"])
-    @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
+    @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", include = JsonTypeInfo.As.EXISTING_PROPERTY)
     @JsonSubTypes(
         JsonSubTypes.Type(value = Scope.Default::class, name = Scope.Type.DEFAULT_STR),
         JsonSubTypes.Type(value = Scope.AllPrivateChats::class, name = Scope.Type.ALL_PRIVATE_CHATS_STR),

@@ -5,6 +5,7 @@ import io.vertx.core.WorkerExecutor
 import io.vertx.core.impl.cpu.CpuCoreSensor
 import io.vertx.kotlin.coroutines.CoroutineVerticle
 import io.vertx.kotlin.coroutines.await
+import io.vertx.kotlin.coroutines.coAwait
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
@@ -74,7 +75,7 @@ class Database(
                     .locations(*locations.toTypedArray())
                     .load()
                     .migrate()
-            }).await()
+            }).coAwait()
         }
 
         suspend fun initDs(vertx: Vertx, name: String, config: DbConfig, migrate: Boolean = true): DataSource {

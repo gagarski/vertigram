@@ -1,7 +1,6 @@
 package ski.gagar.vertigram.types
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
@@ -9,17 +8,8 @@ import ski.gagar.vertigram.types.util.nullIfEpoch
 import ski.gagar.vertigram.util.NoPosArgs
 import java.time.Instant
 
-/**
- * Telegram [ChatMember](https://core.telegram.org/bots/api#chatmember) type.
- *
- * Subtypes (which are nested) represent the subtypes, described by Telegram docs with more concise
- * names given they are nested into [ChatMember] class. The rule here is the following:
- * `ChatMemberXxx` Telegram type becomes `ChatMember.Xxx`
- *
- * For up-to-date documentation please consult the official Telegram docs.
- */
-@JsonIgnoreProperties(value = ["status"])
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "status")
+
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "status", include = JsonTypeInfo.As.EXISTING_PROPERTY)
 @JsonSubTypes(
     JsonSubTypes.Type(value = ChatMember.Owner::class, name = ChatMember.Status.OWNER_STR),
     JsonSubTypes.Type(value = ChatMember.Administrator::class, name = ChatMember.Status.ADMINISTRATOR_STR),
