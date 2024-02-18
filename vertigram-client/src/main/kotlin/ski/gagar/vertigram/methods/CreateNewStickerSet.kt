@@ -2,7 +2,7 @@ package ski.gagar.vertigram.methods
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import ski.gagar.vertigram.annotations.TelegramMedia
-import ski.gagar.vertigram.types.InputSticker
+import ski.gagar.vertigram.types.InputMedia
 import ski.gagar.vertigram.types.StickerFormat
 import ski.gagar.vertigram.types.StickerType
 import ski.gagar.vertigram.util.NoPosArgs
@@ -19,7 +19,7 @@ data class CreateNewStickerSet(
     val name: String,
     val title: String,
     @TelegramMedia
-    val stickers: List<InputSticker>,
+    val stickers: List<InputMedia.Sticker>,
     val stickerFormat: StickerFormat,
     val stickerType: StickerType? = null,
     val needsRepainting: Boolean = false

@@ -4,8 +4,8 @@ import ski.gagar.vertigram.jackson.suspendJsonConsumer
 import ski.gagar.vertigram.tools.isCommandForBot
 import ski.gagar.vertigram.tools.isForwarded
 import ski.gagar.vertigram.tools.verticles.address.VertigramAddress
-import ski.gagar.vertigram.types.Me
 import ski.gagar.vertigram.types.Message
+import ski.gagar.vertigram.types.User
 import ski.gagar.vertigram.verticles.ErrorLoggingCoroutineVerticle
 
 abstract class AbstractSimpleCommandVerticle : ErrorLoggingCoroutineVerticle() {
@@ -27,5 +27,5 @@ abstract class AbstractSimpleCommandVerticle : ErrorLoggingCoroutineVerticle() {
         respond(msg)
     }
 
-    protected abstract val me: Me?
+    protected abstract val me: User.Me?
 }

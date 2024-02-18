@@ -14,7 +14,7 @@ import ski.gagar.vertigram.logback.asString
 import ski.gagar.vertigram.logback.bypassEventBusAppenderSuspend
 import ski.gagar.vertigram.markup.textMarkdown
 import ski.gagar.vertigram.methods.sendMessage
-import ski.gagar.vertigram.types.Me
+import ski.gagar.vertigram.types.User
 import ski.gagar.vertigram.types.util.toChatId
 import ski.gagar.vertigram.verticles.ErrorLoggingCoroutineVerticle
 import ski.gagar.vertigram.verticles.Named
@@ -249,7 +249,7 @@ class TelegramLoggingVerticle : ErrorLoggingCoroutineVerticle() {
         val chatId: Long,
         val accumulationPeriod: Duration? = Duration.ofMinutes(5),
         val tgOptions: DirectTelegram.Options = DirectTelegram.Options(pools = THIN_POOLS),
-        val me: Me? = null,
+        val me: User.Me? = null,
         val listenAddress: String = DEFAULT_LISTEN_ADDRESS
     )
 

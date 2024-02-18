@@ -3,7 +3,10 @@ package ski.gagar.vertigram.types.attachments
 import io.vertx.core.Vertx
 import ski.gagar.vertigram.web.multipart.FieldPart
 
-data class UrlAttachment(val url: String) : Attachment {
+/**
+ * An implementation of [Attachment] allowing to attach URL of file id.
+ */
+data class StringAttachment(val url: String) : Attachment {
     override fun getReference(referredField: String) = this
 
     override fun getReferredPart(field: String, vertx: Vertx): Nothing? = null

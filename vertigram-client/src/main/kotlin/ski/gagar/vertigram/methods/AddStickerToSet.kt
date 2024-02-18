@@ -1,9 +1,9 @@
 package ski.gagar.vertigram.methods
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import ski.gagar.vertigram.types.InputSticker
-import ski.gagar.vertigram.util.NoPosArgs
 import ski.gagar.vertigram.annotations.TelegramMedia
+import ski.gagar.vertigram.types.InputMedia
+import ski.gagar.vertigram.util.NoPosArgs
 
 /**
  * Telegram [addStickerToSet](https://core.telegram.org/bots/api#addstickertoset) method.
@@ -16,5 +16,5 @@ data class AddStickerToSet(
     val userId: Long,
     val name: String,
     @TelegramMedia
-    val sticker: InputSticker
+    val sticker: InputMedia.Sticker
 ) : MultipartTelegramCallable<Boolean>()

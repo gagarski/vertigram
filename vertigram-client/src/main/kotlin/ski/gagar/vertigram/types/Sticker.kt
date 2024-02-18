@@ -1,4 +1,8 @@
 package ski.gagar.vertigram.types
+
+import com.fasterxml.jackson.annotation.JsonIgnore
+import ski.gagar.vertigram.util.NoPosArgs
+
 data class Sticker(
     val fileId: String,
     val fileUniqueId: String,
@@ -18,4 +22,19 @@ data class Sticker(
     val fileSize: Long? = null,
     // Since Bot API 6.6
     val needsRepainting: Boolean = false
-)
+) {
+    /**
+     * Telegram [MaskPosition](https://core.telegram.org/bots/api#maskposition) type.
+     *
+     * For up-to-date documentation please consult the official Telegram docs.
+     */
+    data class MaskPosition(
+        @JsonIgnore
+        private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+        val point: String,
+        val xShift: Double,
+        val yShift: Double,
+        val scale: Double
+    )
+
+}

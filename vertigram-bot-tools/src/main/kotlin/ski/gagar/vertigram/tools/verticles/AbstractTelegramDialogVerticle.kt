@@ -16,9 +16,9 @@ import ski.gagar.vertigram.methods.sendMessage
 import ski.gagar.vertigram.tools.isCommandForBot
 import ski.gagar.vertigram.tools.verticles.address.VertigramAddress
 import ski.gagar.vertigram.types.CallbackQuery
-import ski.gagar.vertigram.types.Me
 import ski.gagar.vertigram.types.Message
 import ski.gagar.vertigram.types.ReplyMarkup
+import ski.gagar.vertigram.types.User
 import ski.gagar.vertigram.types.richtext.RichText
 import ski.gagar.vertigram.types.util.toChatId
 import ski.gagar.vertigram.verticles.TelegramVerticle
@@ -29,7 +29,7 @@ import ski.gagar.vertigram.verticles.children.messages.DeathReason
 import java.time.Duration
 
 abstract class AbstractTelegramDialogVerticle : AbstractHierarchyVerticle() {
-    protected open val me: Me? = null
+    protected open val me: User.Me? = null
     open val tgVAddressBase = TelegramVerticle.Config.DEFAULT_BASE_ADDRESS
 
     abstract val chatId: Long

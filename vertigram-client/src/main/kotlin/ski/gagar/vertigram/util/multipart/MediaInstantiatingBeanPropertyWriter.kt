@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.databind.SerializerProvider
 import com.fasterxml.jackson.databind.ser.BeanPropertyWriter
 import ski.gagar.vertigram.types.InputMedia
-import ski.gagar.vertigram.types.InputSticker
 import ski.gagar.vertigram.types.attachments.Attachment
 
 internal class MediaInstantiatingBeanPropertyWriter(delegate: BeanPropertyWriter) : BeanPropertyWriter(delegate) {
@@ -34,10 +33,10 @@ internal class MediaInstantiatingBeanPropertyWriter(delegate: BeanPropertyWriter
     }
 
     private fun processSingleSticker(
-        value: InputSticker,
+        value: InputMedia.Sticker,
         deferred: MutableMap<String, AttachmentInfo>,
         index: Int? = null
-    ): InputSticker {
+    ): InputMedia.Sticker {
         val indexStr = index?.let {
             "_$it"
         }
@@ -68,14 +67,14 @@ internal class MediaInstantiatingBeanPropertyWriter(delegate: BeanPropertyWriter
             is InputMedia -> {
                 processSingleMedia(value, deferredAttachments)
             }
-            is InputSticker -> {
+            is InputMedia.Sticker -> {
                 processSingleSticker(value, deferredAttachments)
             }
             is Collection<*> -> {
                 value.withIndex().map { (index, it) ->
                     when (it) {
                         is InputMedia -> processSingleMedia(it, deferredAttachments, index)
-                        is InputSticker -> processSingleSticker(it, deferredAttachments, index)
+                        is InputMedia.Sticker -> processSingleSticker(it, deferredAttachments, index)
                         else -> it
                     }
                 }.toList()

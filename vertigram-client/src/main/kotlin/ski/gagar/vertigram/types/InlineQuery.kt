@@ -31,11 +31,9 @@ data class InlineQuery(
 
     /**
      * Telegram [InputMessageContent](https://core.telegram.org/bots/api#inputtextmessagecontent) type.
-
      * Subtypes (which are nested) represent the subtypes, described by Telegram docs with more
      * names given they are nested into [InlineQuery.InputMessageContent] class. The rule here is the following:
      * `InputXxxMessageContent` Telegram type becomes `InlineQuery.InputMessageContent.Xxx`.
-
      * For up-to-date documentation please consult the official Telegram docs.
      */
     @JsonTypeInfo(use = JsonTypeInfo.Id.DEDUCTION,
