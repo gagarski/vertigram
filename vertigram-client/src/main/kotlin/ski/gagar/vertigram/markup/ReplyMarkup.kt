@@ -1,7 +1,7 @@
 package ski.gagar.vertigram.markup
 
 import ski.gagar.vertigram.types.ChatAdministratorRights
-import ski.gagar.vertigram.types.PollType
+import ski.gagar.vertigram.types.Poll
 import ski.gagar.vertigram.types.ReplyMarkup
 import ski.gagar.vertigram.types.WebAppInfo
 import ski.gagar.vertigram.util.NoPosArgs
@@ -380,7 +380,7 @@ class ReplyKeyboardMarkupRowBuilder {
      *
      * @see [ReplyMarkup.Keyboard.Button.RequestPoll]
      */
-    fun requestPoll(text: String, pollType: PollType) {
+    fun requestPoll(text: String, pollType: Poll.Type) {
         buttons.add(
             ReplyMarkup.Keyboard.Button.RequestPoll(
                 text = text,
@@ -397,7 +397,7 @@ class ReplyKeyboardMarkupRowBuilder {
      * @see [ReplyMarkup.Keyboard.Button.RequestPoll]
      */
     fun requestPoll(text: String) {
-        requestPoll(text, PollType.REGULAR)
+        requestPoll(text, Poll.Type.REGULAR)
     }
 
     /**
@@ -406,7 +406,7 @@ class ReplyKeyboardMarkupRowBuilder {
      * @see [ReplyMarkup.Keyboard.Button.RequestPoll]
      */
     fun requestQuiz(text: String) {
-        requestPoll(text, PollType.QUIZ)
+        requestPoll(text, Poll.Type.QUIZ)
     }
 
     /**

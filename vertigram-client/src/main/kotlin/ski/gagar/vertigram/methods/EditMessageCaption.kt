@@ -22,6 +22,7 @@ import ski.gagar.vertigram.util.NoPosArgs
  * For up-to-date documentation please consult the official Telegram docs.
  */
 sealed interface EditMessageCaption : HasOptionalRichCaption {
+    val replyMarkup: ReplyMarkup?
     /**
      * Inline message case
      */
@@ -41,7 +42,7 @@ sealed interface EditMessageCaption : HasOptionalRichCaption {
         override val caption: String? = null,
         override val parseMode: ParseMode? = null,
         override val captionEntities: List<MessageEntity>? = null,
-        val replyMarkup: ReplyMarkup? = null
+        override val replyMarkup: ReplyMarkup? = null
     ) : EditMessageCaption, JsonTelegramCallable<Boolean>()
 
     /**
@@ -64,6 +65,6 @@ sealed interface EditMessageCaption : HasOptionalRichCaption {
         override val caption: String? = null,
         override val parseMode: ParseMode? = null,
         override val captionEntities: List<MessageEntity>? = null,
-        val replyMarkup: ReplyMarkup? = null
+        override val replyMarkup: ReplyMarkup? = null
     ) : EditMessageCaption, HasChatId, JsonTelegramCallable<Message>()
 }

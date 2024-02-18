@@ -17,6 +17,7 @@ import ski.gagar.vertigram.util.NoPosArgs
  * For up-to-date documentation please consult the official Telegram docs.
  */
 sealed interface StopMessageLiveLocation {
+    val replyMarkup: ReplyMarkup?
     /**
      * Inline message case
      */
@@ -32,7 +33,7 @@ sealed interface StopMessageLiveLocation {
         @JsonIgnore
         private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
         val inlineMessageId: String,
-        val replyMarkup: ReplyMarkup? = null
+        override val replyMarkup: ReplyMarkup? = null
     ) : JsonTelegramCallable<Boolean>(), StopMessageLiveLocation
 
     /**
@@ -51,7 +52,7 @@ sealed interface StopMessageLiveLocation {
         private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
         override val chatId: ChatId,
         val messageId: Long,
-        val replyMarkup: ReplyMarkup? = null
+        override val replyMarkup: ReplyMarkup? = null
     ) : JsonTelegramCallable<Boolean>(), StopMessageLiveLocation, HasChatId
 
 

@@ -16,6 +16,7 @@ import ski.gagar.vertigram.util.NoPosArgs
  * For up-to-date documentation please consult the official Telegram docs.
  */
 sealed class GetGameHighScores : JsonTelegramCallable<List<GameHighScore>>() {
+    abstract val userId: Long
     /**
      * Inline message case
      */
@@ -30,7 +31,7 @@ sealed class GetGameHighScores : JsonTelegramCallable<List<GameHighScore>>() {
     data class InlineMessage internal constructor(
         @JsonIgnore
         private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
-        val userId: Long,
+        override val userId: Long,
         val inlineMessageId: String
     ) : GetGameHighScores()
 
@@ -48,7 +49,7 @@ sealed class GetGameHighScores : JsonTelegramCallable<List<GameHighScore>>() {
     data class ChatMessage internal constructor(
         @JsonIgnore
         private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
-        val userId: Long,
+        override val userId: Long,
         override val chatId: Long,
         val messageId: Long,
     ) : GetGameHighScores(), HasChatIdLong

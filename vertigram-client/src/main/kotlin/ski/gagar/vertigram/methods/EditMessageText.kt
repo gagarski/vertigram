@@ -23,6 +23,8 @@ import ski.gagar.vertigram.util.NoPosArgs
  * For up-to-date documentation please consult the official Telegram docs.
  */
 sealed interface EditMessageText : HasRichText {
+    val linkPreviewOptions: LinkPreviewOptions?
+    val replyMarkup: ReplyMarkup?
     /**
      * Inline message case
      */
@@ -42,8 +44,8 @@ sealed interface EditMessageText : HasRichText {
         override val text: String,
         override val parseMode: ParseMode? = null,
         override val entities: List<MessageEntity>? = null,
-        val linkPreviewOptions: LinkPreviewOptions? = null,
-        val replyMarkup: ReplyMarkup? = null
+        override val linkPreviewOptions: LinkPreviewOptions? = null,
+        override val replyMarkup: ReplyMarkup? = null
     ) : EditMessageText, JsonTelegramCallable<Message>()
 
     /**
@@ -64,7 +66,7 @@ sealed interface EditMessageText : HasRichText {
         override val text: String,
         override val parseMode: ParseMode? = null,
         override val entities: List<MessageEntity>? = null,
-        val linkPreviewOptions: LinkPreviewOptions? = null,
-        val replyMarkup: ReplyMarkup? = null
+        override val linkPreviewOptions: LinkPreviewOptions? = null,
+        override val replyMarkup: ReplyMarkup? = null
     ) : EditMessageText, HasChatId, JsonTelegramCallable<Message>()
 }

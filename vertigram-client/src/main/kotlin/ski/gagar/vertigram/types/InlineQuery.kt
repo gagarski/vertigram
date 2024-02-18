@@ -209,6 +209,7 @@ data class InlineQuery(
     @JsonTypeResolver(TypeResolverWithDeductionBuilder::class)
     sealed interface Result {
         val type: Type
+        val id: String
 
         /**
          * Telegram [InlineQueryResultsButton](https://core.telegram.org/bots/api#inlinequeryresultsbutton) type.
@@ -237,7 +238,7 @@ data class InlineQuery(
         data class Article internal constructor(
             @JsonIgnore
             private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
-            val id: String,
+            override val id: String,
             val title: String,
             val inputMessageContent: InputMessageContent,
             val replyMarkup: ReplyMarkup.InlineKeyboard? = null,
@@ -265,7 +266,7 @@ data class InlineQuery(
         data class Audio internal constructor(
             @JsonIgnore
             private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
-            val id: String,
+            override val id: String,
             val audioUrl: String,
             val title: String,
             override val caption: String? = null,
@@ -290,7 +291,7 @@ data class InlineQuery(
             data class Cached internal constructor(
                 @JsonIgnore
                 private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
-                val id: String,
+                override val id: String,
                 val audioFileId: String,
                 override val caption: String? = null,
                 override val parseMode: ParseMode? = null,
@@ -315,7 +316,7 @@ data class InlineQuery(
         data class Contact(
             @JsonIgnore
             private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
-            val id: String,
+            override val id: String,
             val phoneNumber: String,
             val firstName: String,
             val lastName: String? = null,
@@ -342,7 +343,7 @@ data class InlineQuery(
         data class Document internal constructor(
             @JsonIgnore
             private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
-            val id: String,
+            override val id: String,
             val title: String,
             override val caption: String? = null,
             override val parseMode: ParseMode? = null,
@@ -370,7 +371,7 @@ data class InlineQuery(
             data class Cached internal constructor(
                 @JsonIgnore
                 private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
-                val id: String,
+                override val id: String,
                 val title: String,
                 val documentFileId: String,
                 val description: String? = null,
@@ -396,7 +397,7 @@ data class InlineQuery(
         data class Game(
             @JsonIgnore
             private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
-            val id: String,
+            override val id: String,
             val gameShortName: String,
             val replyMarkup: ReplyMarkup.InlineKeyboard? = null
         ) : Result {
@@ -415,7 +416,7 @@ data class InlineQuery(
         data class Gif internal constructor(
             @JsonIgnore
             private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
-            val id: String,
+            override val id: String,
             val gifUrl: String,
             val gifWidth: Int? = null,
             val gifHeight: Int? = null,
@@ -443,7 +444,7 @@ data class InlineQuery(
             data class Cached internal constructor(
                 @JsonIgnore
                 private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
-                val id: String,
+                override val id: String,
                 val gifFileId: String,
                 val title: String? = null,
                 override val caption: String? = null,
@@ -468,7 +469,7 @@ data class InlineQuery(
         data class Location(
             @JsonIgnore
             private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
-            val id: String,
+            override val id: String,
             val latitude: Double,
             val longitude: Double,
             val title: String,
@@ -498,7 +499,7 @@ data class InlineQuery(
         data class Mpeg4Gif internal constructor(
             @JsonIgnore
             private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
-            val id: String,
+            override val id: String,
             val mpeg4Url: String,
             val mpeg4Width: Int? = null,
             val mpeg4Height: Int? = null,
@@ -526,7 +527,7 @@ data class InlineQuery(
             data class Cached internal constructor(
                 @JsonIgnore
                 private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
-                val id: String,
+                override val id: String,
                 val mpeg4FileId: String,
                 val title: String? = null,
                 override val caption: String? = null,
@@ -556,7 +557,7 @@ data class InlineQuery(
         data class Photo internal constructor(
             @JsonIgnore
             private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
-            val id: String,
+            override val id: String,
             val photoUrl: String,
             val thumbnailUrl: String,
             val photoWidth: Int? = null,
@@ -584,7 +585,7 @@ data class InlineQuery(
             data class Cached internal constructor(
                 @JsonIgnore
                 private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
-                val id: String,
+                override val id: String,
                 val photoFileId: String,
                 val title: String? = null,
                 val description: String? = null,
@@ -615,7 +616,7 @@ data class InlineQuery(
             data class Cached internal constructor(
                 @JsonIgnore
                 private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
-                val id: String,
+                override val id: String,
                 val stickerFileId: String,
                 val replyMarkup: ReplyMarkup.InlineKeyboard? = null,
                 val inputMessageContent: InputMessageContent? = null
@@ -634,7 +635,7 @@ data class InlineQuery(
         data class Venue internal constructor(
             @JsonIgnore
             private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
-            val id: String,
+            override val id: String,
             val latitude: Double,
             val longitude: Double,
             val title: String,
@@ -664,7 +665,7 @@ data class InlineQuery(
         data class Video internal constructor(
             @JsonIgnore
             private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
-            val id: String,
+            override val id: String,
             val videoUrl: String,
             val mimeType: String,
             val thumbnailUrl: String,
@@ -693,7 +694,7 @@ data class InlineQuery(
             data class Cached internal constructor(
                 @JsonIgnore
                 private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
-                val id: String,
+                override val id: String,
                 val videoFileId: String,
                 val title: String,
                 val description: String? = null,
@@ -723,7 +724,7 @@ data class InlineQuery(
         data class Voice internal constructor(
             @JsonIgnore
             private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
-            val id: String,
+            override val id: String,
             val voiceUrl: String,
             val title: String,
             override val caption: String? = null,
@@ -747,7 +748,7 @@ data class InlineQuery(
             data class Cached internal constructor(
                 @JsonIgnore
                 private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
-                val id: String,
+                override val id: String,
                 val voiceFileId: String,
                 val title: String,
                 override val caption: String? = null,

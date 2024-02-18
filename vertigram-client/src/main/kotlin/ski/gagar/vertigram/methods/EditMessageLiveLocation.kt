@@ -19,6 +19,12 @@ import ski.gagar.vertigram.util.NoPosArgs
  * For up-to-date documentation please consult the official Telegram docs.
  */
 sealed interface EditMessageLiveLocation {
+    val latitude: Double
+    val longitude: Double
+    val horizontalAccuracy: Double?
+    val heading: Int?
+    val proximityAlertRadius: Int?
+    val replyMarkup: ReplyMarkup?
     /**
      * Inline message case
      */
@@ -35,12 +41,12 @@ sealed interface EditMessageLiveLocation {
         @JsonIgnore
         private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
         val inlineMessageId: String,
-        val latitude: Double,
-        val longitude: Double,
-        val horizontalAccuracy: Double? = null,
-        val heading: Int? = null,
-        val proximityAlertRadius: Int? = null,
-        val replyMarkup: ReplyMarkup? = null
+        override val latitude: Double,
+        override val longitude: Double,
+        override val horizontalAccuracy: Double? = null,
+        override val heading: Int? = null,
+        override val proximityAlertRadius: Int? = null,
+        override val replyMarkup: ReplyMarkup? = null
     ) : EditMessageLiveLocation, JsonTelegramCallable<Boolean>()
 
     /**
@@ -60,11 +66,11 @@ sealed interface EditMessageLiveLocation {
         private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
         override val chatId: ChatId,
         val messageId: Long,
-        val latitude: Double,
-        val longitude: Double,
-        val horizontalAccuracy: Double? = null,
-        val heading: Int? = null,
-        val proximityAlertRadius: Int? = null,
-        val replyMarkup: ReplyMarkup? = null
+        override val latitude: Double,
+        override val longitude: Double,
+        override val horizontalAccuracy: Double? = null,
+        override val heading: Int? = null,
+        override val proximityAlertRadius: Int? = null,
+        override val replyMarkup: ReplyMarkup? = null
     ) : EditMessageLiveLocation, HasChatId, JsonTelegramCallable<Message>()
 }

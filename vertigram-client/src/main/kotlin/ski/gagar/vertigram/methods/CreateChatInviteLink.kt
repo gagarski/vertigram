@@ -17,6 +17,9 @@ import java.time.Instant
  * For up-to-date documentation please consult the official Telegram docs.
  */
 sealed class CreateChatInviteLink : JsonTelegramCallable<ChatInviteLink>(), HasChatId {
+    abstract val name: String?
+    abstract val expireDate: Instant?
+    abstract val createsJoinRequest: Boolean
     /**
      * Case when [memberLimit] is specified, implies that [createsJoinRequest] is false
      */
@@ -32,11 +35,11 @@ sealed class CreateChatInviteLink : JsonTelegramCallable<ChatInviteLink>(), HasC
         @JsonIgnore
         private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
         override val chatId: ChatId,
-        val name: String? = null,
-        val expireDate: Instant? = null,
+        override val name: String? = null,
+        override val expireDate: Instant? = null,
         val memberLimit: Int
     ) : CreateChatInviteLink() {
-        val createsJoinRequest: Boolean = false
+        override val createsJoinRequest: Boolean = false
     }
 
     /**
@@ -54,9 +57,9 @@ sealed class CreateChatInviteLink : JsonTelegramCallable<ChatInviteLink>(), HasC
         @JsonIgnore
         private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
         override val chatId: ChatId,
-        val name: String? = null,
-        val expireDate: Instant? = null,
-        val createsJoinRequest: Boolean = false
+        override val name: String? = null,
+        override val expireDate: Instant? = null,
+        override val createsJoinRequest: Boolean = false
     ) : CreateChatInviteLink()
 
 }

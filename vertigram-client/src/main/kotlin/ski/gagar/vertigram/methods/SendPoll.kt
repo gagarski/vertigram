@@ -8,7 +8,7 @@ import ski.gagar.vertigram.throttling.Throttled
 import ski.gagar.vertigram.types.Message
 import ski.gagar.vertigram.types.MessageEntity
 import ski.gagar.vertigram.types.ParseMode
-import ski.gagar.vertigram.types.PollType
+import ski.gagar.vertigram.types.Poll
 import ski.gagar.vertigram.types.ReplyMarkup
 import ski.gagar.vertigram.types.ReplyParameters
 import ski.gagar.vertigram.types.richtext.HasOptionalRichExplanation
@@ -29,7 +29,20 @@ import java.time.Instant
  *
  * For up-to-date documentation please consult the official Telegram docs.
  */
+@Suppress("INAPPLICABLE_JVM_NAME")
 sealed class SendPoll : JsonTelegramCallable<Message>(), HasChatId {
+    abstract val messageThreadId: Long?
+    abstract val question: String
+    abstract val options: List<String>
+    abstract val isAnonymous: Boolean
+    abstract val allowsMultipleAnswers: Boolean
+    abstract val disableNotification: Boolean
+    abstract val protectContent: Boolean
+    abstract val replyParameters: ReplyParameters?
+    abstract val replyMarkup: ReplyMarkup?
+    abstract val type: Poll.Type
+    @get:JvmName("getIsClosed")
+    abstract val isClosed: Boolean
     /**
      * Cases for regular poll
      */
@@ -50,21 +63,22 @@ sealed class SendPoll : JsonTelegramCallable<Message>(), HasChatId {
             @JsonIgnore
             private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
             override val chatId: ChatId,
-            val messageThreadId: Long? = null,
-            val question: String,
-            val options: List<String>,
+            override val messageThreadId: Long? = null,
+            override val question: String,
+            override val options: List<String>,
             @get:JvmName("getIsAnonymous")
-            val isAnonymous: Boolean = Defaults.isAnonymous,
-            val allowsMultipleAnswers: Boolean = false,
+            override val isAnonymous: Boolean = Defaults.isAnonymous,
+            override val allowsMultipleAnswers: Boolean = false,
             val openPeriod: Duration,
-            val disableNotification: Boolean = false,
-            val protectContent: Boolean = false,
-            val replyParameters: ReplyParameters? = null,
-            val replyMarkup: ReplyMarkup? = null
+            override val disableNotification: Boolean = false,
+            override val protectContent: Boolean = false,
+            override val replyParameters: ReplyParameters? = null,
+            override val replyMarkup: ReplyMarkup? = null,
+
         ) : Regular() {
-            val type = PollType.REGULAR
+            override val type = Poll.Type.REGULAR
             @get:JvmName("getIsClosed")
-            val isClosed = false
+            override val isClosed: Boolean = false
 
             object Defaults {
                 const val isAnonymous: Boolean = true
@@ -87,21 +101,21 @@ sealed class SendPoll : JsonTelegramCallable<Message>(), HasChatId {
             @JsonIgnore
             private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
             override val chatId: ChatId,
-            val messageThreadId: Long? = null,
-            val question: String,
-            val options: List<String>,
+            override val messageThreadId: Long? = null,
+            override val question: String,
+            override val options: List<String>,
             @get:JvmName("getIsAnonymous")
-            val isAnonymous: Boolean = Defaults.isAnonymous,
-            val allowsMultipleAnswers: Boolean = false,
+            override val isAnonymous: Boolean = Defaults.isAnonymous,
+            override val allowsMultipleAnswers: Boolean = false,
             val closeDate: Instant,
-            val disableNotification: Boolean = false,
-            val protectContent: Boolean = false,
-            val replyParameters: ReplyParameters? = null,
-            val replyMarkup: ReplyMarkup? = null
+            override val disableNotification: Boolean = false,
+            override val protectContent: Boolean = false,
+            override val replyParameters: ReplyParameters? = null,
+            override val replyMarkup: ReplyMarkup? = null
         ) : Regular() {
-            val type = PollType.REGULAR
+            override val type = Poll.Type.REGULAR
             @get:JvmName("getIsClosed")
-            val isClosed = false
+            override val isClosed = false
 
             object Defaults {
                 const val isAnonymous: Boolean = true
@@ -124,20 +138,19 @@ sealed class SendPoll : JsonTelegramCallable<Message>(), HasChatId {
             @JsonIgnore
             private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
             override val chatId: ChatId,
-            val messageThreadId: Long? = null,
-            val question: String,
-            val options: List<String>,
+            override val messageThreadId: Long? = null,
+            override val question: String,
+            override val options: List<String>,
             @get:JvmName("getIsAnonymous")
-            val isAnonymous: Boolean = Defaults.isAnonymous,
-            val allowsMultipleAnswers: Boolean = false,
-            @get:JvmName("getIsClosed")
-            val isClosed: Boolean? = null,
-            val disableNotification: Boolean = false,
-            val protectContent: Boolean = false,
-            val replyParameters: ReplyParameters? = null,
-            val replyMarkup: ReplyMarkup? = null
+            override val isAnonymous: Boolean = Defaults.isAnonymous,
+            override val allowsMultipleAnswers: Boolean = false,
+            override val isClosed: Boolean = false,
+            override val disableNotification: Boolean = false,
+            override val protectContent: Boolean = false,
+            override val replyParameters: ReplyParameters? = null,
+            override val replyMarkup: ReplyMarkup? = null
         ) : Regular() {
-            val type = PollType.REGULAR
+            override val type = Poll.Type.REGULAR
 
             object Defaults {
                 const val isAnonymous: Boolean = true
@@ -165,25 +178,25 @@ sealed class SendPoll : JsonTelegramCallable<Message>(), HasChatId {
             @JsonIgnore
             private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
             override val chatId: ChatId,
-            val messageThreadId: Long? = null,
-            val question: String,
-            val options: List<String>,
+            override val messageThreadId: Long? = null,
+            override val question: String,
+            override val options: List<String>,
             @get:JvmName("getIsAnonymous")
-            val isAnonymous: Boolean = Defaults.isAnonymous,
+            override val isAnonymous: Boolean = Defaults.isAnonymous,
             val correctOptionId: Int,
             override val explanation: String? = null,
             override val explanationParseMode: ParseMode? = null,
             override val explanationEntities: List<MessageEntity>? = null,
             val openPeriod: Duration,
-            val disableNotification: Boolean = false,
-            val protectContent: Boolean = false,
-            val replyParameters: ReplyParameters? = null,
-            val replyMarkup: ReplyMarkup? = null
+            override val disableNotification: Boolean = false,
+            override val protectContent: Boolean = false,
+            override val replyParameters: ReplyParameters? = null,
+            override val replyMarkup: ReplyMarkup? = null
         ) : Quiz() {
-            val type = PollType.QUIZ
+            override val type = Poll.Type.QUIZ
             @get:JvmName("getIsClosed")
-            val isClosed = false
-            val allowsMultipleAnswers: Boolean = false
+            override val isClosed = false
+            override val allowsMultipleAnswers: Boolean = false
 
             object Defaults {
                 const val isAnonymous: Boolean = true
@@ -206,25 +219,25 @@ sealed class SendPoll : JsonTelegramCallable<Message>(), HasChatId {
             @JsonIgnore
             private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
             override val chatId: ChatId,
-            val messageThreadId: Long? = null,
-            val question: String,
-            val options: List<String>,
+            override val messageThreadId: Long? = null,
+            override val question: String,
+            override val options: List<String>,
             @get:JvmName("getIsAnonymous")
-            val isAnonymous: Boolean = Defaults.isAnonymous,
+            override val isAnonymous: Boolean = Defaults.isAnonymous,
             val correctOptionId: Int,
             override val explanation: String? = null,
             override val explanationParseMode: ParseMode? = null,
             override val explanationEntities: List<MessageEntity>? = null,
             val closeDate: Instant,
-            val disableNotification: Boolean = false,
-            val protectContent: Boolean = false,
-            val replyParameters: ReplyParameters? = null,
-            val replyMarkup: ReplyMarkup? = null
+            override val disableNotification: Boolean = false,
+            override val protectContent: Boolean = false,
+            override val replyParameters: ReplyParameters? = null,
+            override val replyMarkup: ReplyMarkup? = null
         ) : Quiz() {
-            val type = PollType.QUIZ
+            override val type = Poll.Type.QUIZ
             @get:JvmName("getIsClosed")
-            val isClosed = false
-            val allowsMultipleAnswers: Boolean = false
+            override val isClosed = false
+            override val allowsMultipleAnswers: Boolean = false
 
             object Defaults {
                 const val isAnonymous: Boolean = true
@@ -247,28 +260,29 @@ sealed class SendPoll : JsonTelegramCallable<Message>(), HasChatId {
             @JsonIgnore
             private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
             override val chatId: ChatId,
-            val messageThreadId: Long? = null,
-            val question: String,
-            val options: List<String>,
+            override val messageThreadId: Long? = null,
+            override val question: String,
+            override val options: List<String>,
             @get:JvmName("getIsAnonymous")
-            val isAnonymous: Boolean = Defaults.isAnonymous,
+            override val isAnonymous: Boolean = Defaults.isAnonymous,
             val correctOptionId: Int,
             override val explanation: String? = null,
             override val explanationParseMode: ParseMode? = null,
             override val explanationEntities: List<MessageEntity>? = null,
             @get:JvmName("getIsClosed")
-            val isClosed: Boolean? = null,
-            val disableNotification: Boolean = false,
-            val protectContent: Boolean = false,
-            val replyParameters: ReplyParameters? = null,
-            val replyMarkup: ReplyMarkup? = null
+            override val isClosed: Boolean = false,
+            override val disableNotification: Boolean = false,
+            override val protectContent: Boolean = false,
+            override val replyParameters: ReplyParameters? = null,
+            override val replyMarkup: ReplyMarkup? = null
         ) : Quiz() {
-            val type = PollType.QUIZ
-            val allowsMultipleAnswers: Boolean = false
+            override val type = Poll.Type.QUIZ
+            override val allowsMultipleAnswers: Boolean = false
 
             object Defaults {
                 const val isAnonymous: Boolean = true
             }
         }
     }
+
 }

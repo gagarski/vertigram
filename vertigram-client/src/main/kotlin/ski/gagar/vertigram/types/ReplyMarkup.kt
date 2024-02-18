@@ -343,7 +343,7 @@ sealed interface ReplyMarkup {
                 data class Payload(
                     @JsonIgnore
                     private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
-                    val type: PollType? = null
+                    val type: Poll.Type? = null
                 )
             }
 

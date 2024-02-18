@@ -31,7 +31,7 @@ data class ChatBoost(
     )
     sealed interface Source {
         val source: Type
-
+        val user: User
         /**
          * Telegram [ChatBoostSourceGiftCode](https://core.telegram.org/bots/api#chatboostsourcegiftcode) type.
          *
@@ -40,7 +40,7 @@ data class ChatBoost(
         data class GiftCode(
             @JsonIgnore
             private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
-            val user: User
+            override val user: User
         ) : Source {
             override val source: Type = Type.GIFT_CODE
         }
@@ -54,7 +54,7 @@ data class ChatBoost(
             @JsonIgnore
             private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
             val giveAwayMessageId: Long,
-            val user: User,
+            override val user: User,
             @get:JvmName("getIsUnclaimed")
             val isUnclaimed: Boolean = false
         ) : Source {
@@ -69,7 +69,7 @@ data class ChatBoost(
         data class Premium(
             @JsonIgnore
             private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
-            val user: User
+            override val user: User
         ) : Source {
             override val source: Type = Type.PREMIUM
         }

@@ -3,6 +3,7 @@ package ski.gagar.vertigram.methods
 import com.fasterxml.jackson.annotation.JsonIgnore
 import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.annotations.TelegramMethod
+import ski.gagar.vertigram.throttling.HasChatId
 import ski.gagar.vertigram.types.ChatInviteLink
 import ski.gagar.vertigram.types.util.ChatId
 import ski.gagar.vertigram.util.NoPosArgs
@@ -15,7 +16,11 @@ import java.time.Instant
  *
  * For up-to-date documentation please consult the official Telegram docs.
  */
-sealed class EditChatInviteLink : JsonTelegramCallable<ChatInviteLink>() {
+sealed class EditChatInviteLink : JsonTelegramCallable<ChatInviteLink>(), HasChatId {
+    abstract val inviteLink: String
+    abstract val name: String?
+    abstract val expireDate: Instant?
+    abstract val createsJoinRequest: Boolean
     /**
      * Case when [memberLimit] is specified, implies that [createsJoinRequest] is false
      */
@@ -31,12 +36,12 @@ sealed class EditChatInviteLink : JsonTelegramCallable<ChatInviteLink>() {
         @JsonIgnore
         private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
         override val chatId: ChatId,
-        val inviteLink: String,
-        val name: String? = null,
-        val expireDate: Instant? = null,
+        override val inviteLink: String,
+        override val name: String? = null,
+        override val expireDate: Instant? = null,
         val memberLimit: Int,
-    ) : CreateChatInviteLink() {
-        val createsJoinRequest: Boolean = false
+    ) : EditChatInviteLink() {
+        override val createsJoinRequest: Boolean = false
     }
 
     /**
@@ -54,9 +59,10 @@ sealed class EditChatInviteLink : JsonTelegramCallable<ChatInviteLink>() {
         @JsonIgnore
         private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
         override val chatId: ChatId,
-        val name: String? = null,
-        val expireDate: Instant? = null,
-        val createsJoinRequest: Boolean = false
-    ) : CreateChatInviteLink()
+        override val inviteLink: String,
+        override val name: String? = null,
+        override val expireDate: Instant? = null,
+        override val createsJoinRequest: Boolean = false
+    ) : EditChatInviteLink()
 
 }

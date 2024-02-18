@@ -14,6 +14,7 @@ import ski.gagar.vertigram.util.NoPosArgs
  * For up-to-date documentation please consult the official Telegram docs.
  */
 sealed class AnswerShippingQuery : JsonTelegramCallable<Boolean>() {
+    abstract val shippingQueryId: String
     /**
      * Case when ok is true
      */
@@ -28,7 +29,7 @@ sealed class AnswerShippingQuery : JsonTelegramCallable<Boolean>() {
     data class Ok internal constructor(
         @JsonIgnore
         private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
-        val shippingQueryId: String,
+        override val shippingQueryId: String,
         val shippingOptions: List<ShippingOption>
     ) : AnswerShippingQuery() {
         val ok: Boolean = true
@@ -48,7 +49,7 @@ sealed class AnswerShippingQuery : JsonTelegramCallable<Boolean>() {
     data class Error internal constructor(
         @JsonIgnore
         private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
-        val shippingQueryId: String,
+        override val shippingQueryId: String,
         val errorMessage: String
     ) : AnswerShippingQuery() {
         val ok: Boolean = false

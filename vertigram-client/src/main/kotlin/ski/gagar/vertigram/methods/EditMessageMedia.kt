@@ -21,6 +21,8 @@ import ski.gagar.vertigram.util.NoPosArgs
  * For up-to-date documentation please consult the official Telegram docs.
  */
 sealed interface EditMessageMedia {
+    val media: InputMedia
+    val replyMarkup: ReplyMarkup.InlineKeyboard?
     /**
      * Inline message case
      */
@@ -38,8 +40,8 @@ sealed interface EditMessageMedia {
         private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
         val inlineMessageId: Long,
         @TelegramMedia
-        val media: InputMedia,
-        val replyMarkup: ReplyMarkup.InlineKeyboard? = null
+        override val media: InputMedia,
+        override val replyMarkup: ReplyMarkup.InlineKeyboard? = null
     ) : EditMessageMedia, MultipartTelegramCallable<Boolean>()
 
     /**
@@ -58,7 +60,7 @@ sealed interface EditMessageMedia {
         override val chatId: ChatId,
         val messageId: Long,
         @TelegramMedia
-        val media: InputMedia,
-        val replyMarkup: ReplyMarkup.InlineKeyboard? = null
+        override val media: InputMedia,
+        override val replyMarkup: ReplyMarkup.InlineKeyboard? = null
     ) : EditMessageMedia, HasChatId, MultipartTelegramCallable<Message>()
 }

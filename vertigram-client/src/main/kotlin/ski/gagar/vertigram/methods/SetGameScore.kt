@@ -15,6 +15,10 @@ import ski.gagar.vertigram.types.Message
  * For up-to-date documentation please consult the official Telegram docs.
  */
 sealed interface SetGameScore {
+    val userId: Long
+    val score: Int
+    val force: Boolean
+    val disableEditMessage: Boolean
     /**
      * Inline message case
      */
@@ -28,10 +32,10 @@ sealed interface SetGameScore {
     )
     @Throttled
     data class InlineMessage internal constructor(
-        val userId: Long,
-        val score: Int,
-        val force: Boolean = false,
-        val disableEditMessage: Boolean = false,
+        override val userId: Long,
+        override val score: Int,
+        override val force: Boolean = false,
+        override val disableEditMessage: Boolean = false,
         val inlineMessageId: Long
     ) : SetGameScore, JsonTelegramCallable<Boolean>()
 
@@ -48,10 +52,10 @@ sealed interface SetGameScore {
     )
     @Throttled
     data class ChatMessage internal constructor(
-        val userId: Long,
-        val score: Int,
-        val force: Boolean = false,
-        val disableEditMessage: Boolean = false,
+        override val userId: Long,
+        override val score: Int,
+        override val force: Boolean = false,
+        override val disableEditMessage: Boolean = false,
         override val chatId: Long,
         val messageId: Long
     ) : SetGameScore, HasChatIdLong, JsonTelegramCallable<Message>()
