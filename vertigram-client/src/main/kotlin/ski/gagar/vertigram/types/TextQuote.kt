@@ -1,9 +1,11 @@
 package ski.gagar.vertigram.types
 
+import ski.gagar.vertigram.types.richtext.HasOptionalTextWithEntities
+
 data class TextQuote(
-    val text: String,
+    override val text: String,
     val position: Int,
-    val entities: List<MessageEntity>? = null,
+    override val entities: List<MessageEntity>? = null,
     @get:JvmName("getIsManual")
     val isManual: Boolean = false
-)
+) : HasOptionalTextWithEntities

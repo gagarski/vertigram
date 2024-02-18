@@ -66,5 +66,5 @@ sealed interface EditMessageLiveLocation {
         val heading: Int? = null,
         val proximityAlertRadius: Int? = null,
         val replyMarkup: ReplyMarkup? = null
-    ) : EditMessageCaption, HasChatId, JsonTelegramCallable<Message>()
+    ) : EditMessageLiveLocation, HasChatId, JsonTelegramCallable<Message>()
 }

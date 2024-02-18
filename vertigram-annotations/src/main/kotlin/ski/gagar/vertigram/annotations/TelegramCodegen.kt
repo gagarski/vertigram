@@ -53,5 +53,5 @@ annotation class TelegramCodegen(
     /**
      * Generate wrapper getter for ...unwrapped params for rich text
      */
-    val generateRichTextWrappers: Boolean = true,
+    val wrapRichText: Boolean = true,
 )

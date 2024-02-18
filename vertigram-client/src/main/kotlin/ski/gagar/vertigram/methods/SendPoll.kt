@@ -11,6 +11,7 @@ import ski.gagar.vertigram.types.ParseMode
 import ski.gagar.vertigram.types.PollType
 import ski.gagar.vertigram.types.ReplyMarkup
 import ski.gagar.vertigram.types.ReplyParameters
+import ski.gagar.vertigram.types.richtext.HasOptionalRichExplanation
 import ski.gagar.vertigram.types.util.ChatId
 import ski.gagar.vertigram.util.NoPosArgs
 import java.time.Duration
@@ -147,7 +148,7 @@ sealed class SendPoll : JsonTelegramCallable<Message>(), HasChatId {
     /**
      * Cases for quiz
      */
-    sealed class Quiz : SendPoll() {
+    sealed class Quiz : SendPoll(), HasOptionalRichExplanation {
         /**
          * Case with [openPeriod] field
          */
@@ -170,9 +171,9 @@ sealed class SendPoll : JsonTelegramCallable<Message>(), HasChatId {
             @get:JvmName("getIsAnonymous")
             val isAnonymous: Boolean = Defaults.isAnonymous,
             val correctOptionId: Int,
-            @PublishedApi internal val explanation: String? = null,
-            @PublishedApi internal val explanationParseMode: ParseMode? = null,
-            @PublishedApi internal val explanationEntities: List<MessageEntity>? = null,
+            override val explanation: String? = null,
+            override val explanationParseMode: ParseMode? = null,
+            override val explanationEntities: List<MessageEntity>? = null,
             val openPeriod: Duration,
             val disableNotification: Boolean = false,
             val protectContent: Boolean = false,
@@ -211,9 +212,9 @@ sealed class SendPoll : JsonTelegramCallable<Message>(), HasChatId {
             @get:JvmName("getIsAnonymous")
             val isAnonymous: Boolean = Defaults.isAnonymous,
             val correctOptionId: Int,
-            @PublishedApi internal val explanation: String? = null,
-            @PublishedApi internal val explanationParseMode: ParseMode? = null,
-            @PublishedApi internal val explanationEntities: List<MessageEntity>? = null,
+            override val explanation: String? = null,
+            override val explanationParseMode: ParseMode? = null,
+            override val explanationEntities: List<MessageEntity>? = null,
             val closeDate: Instant,
             val disableNotification: Boolean = false,
             val protectContent: Boolean = false,
@@ -252,9 +253,9 @@ sealed class SendPoll : JsonTelegramCallable<Message>(), HasChatId {
             @get:JvmName("getIsAnonymous")
             val isAnonymous: Boolean = Defaults.isAnonymous,
             val correctOptionId: Int,
-            @PublishedApi internal val explanation: String? = null,
-            @PublishedApi internal val explanationParseMode: ParseMode? = null,
-            @PublishedApi internal val explanationEntities: List<MessageEntity>? = null,
+            override val explanation: String? = null,
+            override val explanationParseMode: ParseMode? = null,
+            override val explanationEntities: List<MessageEntity>? = null,
             @get:JvmName("getIsClosed")
             val isClosed: Boolean? = null,
             val disableNotification: Boolean = false,

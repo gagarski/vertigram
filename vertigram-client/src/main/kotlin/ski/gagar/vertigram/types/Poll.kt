@@ -1,5 +1,6 @@
 package ski.gagar.vertigram.types
 
+import ski.gagar.vertigram.types.richtext.HasOptionalExplanationWithEntities
 import java.time.Duration
 import java.time.Instant
 
@@ -15,8 +16,8 @@ data class Poll(
     val type: PollType,
     val allowsMultipleAnswers: Boolean = false,
     val correctOptionId: Int? = null,
-    val explanation: String? = null,
-    val explanationEntities: List<MessageEntity>? = null,
+    override val explanation: String? = null,
+    override val explanationEntities: List<MessageEntity>? = null,
     val openPeriod: Duration? = null,
     val closeDate: Instant? = null
-)
+) : HasOptionalExplanationWithEntities

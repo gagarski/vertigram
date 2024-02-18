@@ -11,7 +11,7 @@ import java.time.Duration
  * For up-to-date documentation please consult the official Telegram docs.
  */
 @TelegramCodegen(
-    generateRichTextWrappers = false
+    wrapRichText = false
 )
 data class AnswerCallbackQuery(
     @JsonIgnore

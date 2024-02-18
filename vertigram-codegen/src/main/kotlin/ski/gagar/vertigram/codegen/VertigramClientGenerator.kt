@@ -9,7 +9,6 @@ import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.KModifier
 import com.squareup.kotlinpoet.ParameterSpec
 import com.squareup.kotlinpoet.ParameterizedTypeName
-import com.squareup.kotlinpoet.PropertySpec
 import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.TypeSpec
 import com.squareup.kotlinpoet.asClassName
@@ -91,10 +90,6 @@ class VertigramClientGenerator : AbstractProcessor() {
             FileSpec.builder(className.packageName, TG_CONSTRUCTORS)
         }
 
-        val richTextWrappersFile = fileSpecBuilders.computeIfAbsent(FileSpecBuilderKey(className.packageName, TG_RICH_TEXT_WRAPPERS)) {
-            FileSpec.builder(className.packageName, TG_RICH_TEXT_WRAPPERS)
-        }
-
         when (typeSpec.kind) {
             TypeSpec.Kind.OBJECT -> {
                 val method = kotlinMethodForObject(typeSpec, className, annotation, typeInfos)
@@ -110,11 +105,6 @@ class VertigramClientGenerator : AbstractProcessor() {
 
                 constructor?.let { constructorsFile.addFunction(it) }
 
-                val richTextWrappers = richTextWrappers(typeSpec, className, annotation)
-
-                for (w in richTextWrappers) {
-                    richTextWrappersFile.addProperty(w)
-                }
             }
             else -> throw IllegalStateException("$className has a kind ${typeSpec.kind} which is not supported")
 
@@ -226,74 +216,6 @@ class VertigramClientGenerator : AbstractProcessor() {
             .build()
     }
 
-    private fun richTextWrappers(
-        clazz: TypeSpec,
-        className: ClassName,
-        anno: TelegramCodegen
-    ): List<PropertySpec> {
-        if (!anno.generateRichTextWrappers)
-            return listOf()
-
-        val constructor = clazz.primaryConstructor
-            ?: throw IllegalStateException("Cannot add parameters to ${this}, ${clazz.name} has no primary constructor")
-
-
-
-        val wrappers = sequence {
-            for (param in constructor.parameters) {
-                val wrapperConf = WRAP_CONFIGS_BY_TRIGGER[param.name] ?: continue
-
-                val argsFormat = sequence {
-                    for ((_, _) in wrapperConf.wrapperParamMapping) {
-                        yield("%N = %N")
-                    }
-                }.joinToString(", ")
-
-                val args = sequence {
-                    for ((from, to) in wrapperConf.wrapperParamMapping) {
-                        yield(to)
-                        yield(from)
-                    }
-                }.toList().toTypedArray()
-
-                val propSpec = if (!param.type.isNullable) {
-                    PropertySpec.builder(wrapperConf.wrapperParam, wrapperConf.wrapper)
-                        .receiver(className)
-                        .getter(
-                            FunSpec.getterBuilder()
-                                .addStatement("""
-                                    return %T($argsFormat)
-                                    """.trimIndent(),
-                                    wrapperConf.wrapper,
-                                    *args
-                                ).build()
-                        )
-                        .build()
-                } else {
-                    PropertySpec.builder(wrapperConf.wrapperParam, wrapperConf.wrapper.copy(true))
-                        .receiver(className)
-                        .getter(
-                            FunSpec.getterBuilder()
-                                .addStatement("""
-                                    %N ?: return null 
-                                """.trimIndent(), wrapperConf.triggerParam)
-                                .addStatement("""
-                                    return %T($argsFormat)
-                                    """.trimIndent(),
-                                    wrapperConf.wrapper,
-                                    *args
-                                ).build()
-                        )
-                        .build()
-                }
-
-                yield(propSpec)
-            }
-        }
-
-        return wrappers.toList()
-    }
-
     private fun FunSpec.Builder.addParametersFromPrimaryConstructor(
         clazz: TypeSpec,
         className: ClassName,
@@ -310,7 +232,7 @@ class VertigramClientGenerator : AbstractProcessor() {
         val alreadyWrapped = mutableSetOf<String>()
 
         for (param in constructor.parameters) {
-            val wrapConfig = if (anno.generateRichTextWrappers) WRAP_CONFIGS_BY_TRIGGER[param.name] else null
+            val wrapConfig = if (anno.wrapRichText) WRAP_CONFIGS_BY_TRIGGER[param.name] else null
 
             if (param.name in alreadyWrapped) {
                 continue
@@ -488,7 +410,6 @@ class VertigramClientGenerator : AbstractProcessor() {
         private val NO_POS_ARGS_TYPE = ClassName("ski.gagar.vertigram.util", "NoPosArgs")
         private const val TG_METHODS = "TelegramMethods"
         private const val TG_CONSTRUCTORS = "TelegramConstructors"
-        private const val TG_RICH_TEXT_WRAPPERS = "TelegramRichTextWrappers"
 
         private val WRAP_CONFIGS = listOf(
             WrapConfig(

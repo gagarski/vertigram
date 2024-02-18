@@ -10,6 +10,7 @@ import ski.gagar.vertigram.types.Message
 import ski.gagar.vertigram.types.MessageEntity
 import ski.gagar.vertigram.types.ParseMode
 import ski.gagar.vertigram.types.ReplyMarkup
+import ski.gagar.vertigram.types.richtext.HasRichText
 import ski.gagar.vertigram.types.util.ChatId
 import ski.gagar.vertigram.util.NoPosArgs
 
@@ -21,7 +22,7 @@ import ski.gagar.vertigram.util.NoPosArgs
  *
  * For up-to-date documentation please consult the official Telegram docs.
  */
-sealed interface EditMessageText {
+sealed interface EditMessageText : HasRichText {
     /**
      * Inline message case
      */
@@ -38,9 +39,9 @@ sealed interface EditMessageText {
         @JsonIgnore
         private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
         val inlineMessageId: Long,
-        @PublishedApi internal val text: String,
-        @PublishedApi internal val parseMode: ParseMode? = null,
-        @PublishedApi internal val entities: List<MessageEntity>? = null,
+        override val text: String,
+        override val parseMode: ParseMode? = null,
+        override val entities: List<MessageEntity>? = null,
         val linkPreviewOptions: LinkPreviewOptions? = null,
         val replyMarkup: ReplyMarkup? = null
     ) : EditMessageText, JsonTelegramCallable<Message>()
@@ -60,9 +61,9 @@ sealed interface EditMessageText {
     data class ChatMessage internal constructor(
         override val chatId: ChatId,
         val messageId: Long,
-        @PublishedApi internal val text: String,
-        @PublishedApi internal val parseMode: ParseMode? = null,
-        @PublishedApi internal val entities: List<MessageEntity>? = null,
+        override val text: String,
+        override val parseMode: ParseMode? = null,
+        override val entities: List<MessageEntity>? = null,
         val linkPreviewOptions: LinkPreviewOptions? = null,
         val replyMarkup: ReplyMarkup? = null
     ) : EditMessageText, HasChatId, JsonTelegramCallable<Message>()

@@ -1,5 +1,7 @@
 package ski.gagar.vertigram.types
 
+import ski.gagar.vertigram.types.richtext.HasOptionalCaptionWithEntities
+import ski.gagar.vertigram.types.richtext.HasOptionalTextWithEntities
 import java.time.Instant
 
 data class Message(
@@ -16,8 +18,8 @@ data class Message(
     val hasProtectedContent: Boolean = false,
     val mediaGroupId: String? = null,
     val authorSignature: String? = null,
-    val text: String? = null,
-    val entities: List<MessageEntity>? = null,
+    override val text: String? = null,
+    override val entities: List<MessageEntity>? = null,
     val animation: Animation? = null,
     val audio: Audio? = null,
     val document: Document? = null,
@@ -26,8 +28,8 @@ data class Message(
     val video: Video? = null,
     val videoNote: VideoNote? = null,
     val voice: Voice? = null,
-    val caption: String? = null,
-    val captionEntities: List<MessageEntity>? = null,
+    override val caption: String? = null,
+    override val captionEntities: List<MessageEntity>? = null,
     val contact: Contact? = null,
     val dice: Dice? = null,
     val game: Game? = null,
@@ -82,4 +84,4 @@ data class Message(
     val giveawayWinners: Giveaway.Winners? = null,
     val giveawayCompleted: Giveaway.Completed? = null,
     val forwardOrigin: MessageOrigin? = null
-)
+) : HasOptionalTextWithEntities, HasOptionalCaptionWithEntities

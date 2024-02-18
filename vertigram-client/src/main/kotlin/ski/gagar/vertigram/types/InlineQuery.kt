@@ -7,6 +7,9 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo
 import com.fasterxml.jackson.databind.annotation.JsonTypeResolver
 import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.jackson.typing.TypeResolverWithDeductionBuilder
+import ski.gagar.vertigram.types.richtext.HasOptionalRichCaption
+import ski.gagar.vertigram.types.richtext.HasRichText
+import ski.gagar.vertigram.types.richtext.RichText
 import ski.gagar.vertigram.util.NoPosArgs
 import java.time.Duration
 
@@ -51,14 +54,40 @@ data class InlineQuery(
          *
          * For up-to-date documentation please consult the official Telegram docs.
          */
-        data class Text(
+        @TelegramCodegen(
+            generateMethod = false,
+            generatePseudoConstructor = true
+        )
+        data class Text internal constructor(
             @JsonIgnore
             private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
             val messageText: String,
-            val parseMode: ParseMode? = null,
-            val entities: List<MessageEntity>? = null,
+            override val parseMode: ParseMode? = null,
+            override val entities: List<MessageEntity>? = null,
             val linkPreviewOptions: LinkPreviewOptions? = null
-        ) : InputMessageContent
+        ) : InputMessageContent, HasRichText {
+            @JsonIgnore
+            override val text = messageText
+
+            companion object {
+                /**
+                 * Manually generated pseudo-constructor.
+                 *
+                 * This is the only case when text parameter is named [messageText] instead of `text`,
+                 * therefore code generation is not working yet
+                 */
+                operator fun invoke(
+                    noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+                    richText: RichText,
+                    linkPreviewOptions: LinkPreviewOptions? = null
+                ) = Text(
+                    messageText = richText.text,
+                    parseMode = richText.parseMode,
+                    entities = richText.entities,
+                    linkPreviewOptions = linkPreviewOptions
+                )
+            }
+        }
 
         /**
          * Telegram [InputLocationMessageContent](https://core.telegram.org/bots/api#inputlocationmessagecontent) type.
@@ -239,14 +268,14 @@ data class InlineQuery(
             val id: String,
             val audioUrl: String,
             val title: String,
-            val caption: String? = null,
-            val parseMode: ParseMode? = null,
-            val captionEntities: List<MessageEntity>? = null,
+            override val caption: String? = null,
+            override val parseMode: ParseMode? = null,
+            override val captionEntities: List<MessageEntity>? = null,
             val performer: String? = null,
             val audioDuration: Duration? = null,
             val replyMarkup: ReplyMarkup.InlineKeyboard? = null,
             val inputMessageContent: InputMessageContent? = null
-        ) : Result {
+        ) : Result, HasOptionalRichCaption {
             override val type: Type = Type.AUDIO
 
             /**
@@ -263,12 +292,12 @@ data class InlineQuery(
                 private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
                 val id: String,
                 val audioFileId: String,
-                val caption: String? = null,
-                val parseMode: ParseMode? = null,
-                val captionEntities: List<MessageEntity>? = null,
+                override val caption: String? = null,
+                override val parseMode: ParseMode? = null,
+                override val captionEntities: List<MessageEntity>? = null,
                 val replyMarkup: ReplyMarkup.InlineKeyboard? = null,
                 val inputMessageContent: InputMessageContent? = null
-            ) : Result {
+            ) : Result, HasOptionalRichCaption {
                 override val type: Type = Type.AUDIO
 
                 companion object
@@ -315,9 +344,9 @@ data class InlineQuery(
             private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
             val id: String,
             val title: String,
-            val caption: String? = null,
-            val parseMode: ParseMode? = null,
-            val captionEntities: List<MessageEntity>? = null,
+            override val caption: String? = null,
+            override val parseMode: ParseMode? = null,
+            override val captionEntities: List<MessageEntity>? = null,
             val documentUrl: String,
             val mimeType: String,
             val description: String? = null,
@@ -326,7 +355,7 @@ data class InlineQuery(
             val thumbnailUrl: String? = null,
             val thumbnailWidth: Int? = null,
             val thumbnailHeight: Int? = null
-        ) : Result {
+        ) : Result, HasOptionalRichCaption {
             override val type: Type = Type.DOCUMENT
 
             /**
@@ -345,12 +374,12 @@ data class InlineQuery(
                 val title: String,
                 val documentFileId: String,
                 val description: String? = null,
-                val caption: String? = null,
-                val parseMode: ParseMode? = null,
-                val captionEntities: List<MessageEntity>? = null,
+                override val caption: String? = null,
+                override val parseMode: ParseMode? = null,
+                override val captionEntities: List<MessageEntity>? = null,
                 val replyMarkup: ReplyMarkup.InlineKeyboard? = null,
                 val inputMessageContent: InputMessageContent? = null
-            ) : Result {
+            ) : Result, HasOptionalRichCaption {
                 override val type: Type = Type.DOCUMENT
 
                 companion object
@@ -394,12 +423,12 @@ data class InlineQuery(
             val thumbnailUrl: String,
             val thumbnailMimeType: String? = null,
             val title: String? = null,
-            val caption: String? = null,
-            val parseMode: ParseMode? = null,
-            val captionEntities: List<MessageEntity>? = null,
+            override val caption: String? = null,
+            override val parseMode: ParseMode? = null,
+            override val captionEntities: List<MessageEntity>? = null,
             val replyMarkup: ReplyMarkup.InlineKeyboard? = null,
             val inputMessageContent: InputMessageContent? = null
-        ) : Result {
+        ) : Result, HasOptionalRichCaption {
             override val type: Type = Type.GIF
 
             /**
@@ -417,12 +446,12 @@ data class InlineQuery(
                 val id: String,
                 val gifFileId: String,
                 val title: String? = null,
-                val caption: String? = null,
-                val parseMode: ParseMode? = null,
-                val captionEntities: List<MessageEntity>? = null,
+                override val caption: String? = null,
+                override val parseMode: ParseMode? = null,
+                override val captionEntities: List<MessageEntity>? = null,
                 val replyMarkup: ReplyMarkup.InlineKeyboard? = null,
                 val inputMessageContent: InputMessageContent? = null
-            ) : Result {
+            ) : Result, HasOptionalRichCaption {
                 override val type: Type = Type.GIF
 
                 companion object
@@ -477,12 +506,12 @@ data class InlineQuery(
             val thumbnailUrl: String,
             val thumbnailMimeType: String? = null,
             val title: String? = null,
-            val caption: String? = null,
-            val parseMode: ParseMode? = null,
-            val captionEntities: List<MessageEntity>? = null,
+            override val caption: String? = null,
+            override val parseMode: ParseMode? = null,
+            override val captionEntities: List<MessageEntity>? = null,
             val replyMarkup: ReplyMarkup.InlineKeyboard? = null,
             val inputMessageContent: InputMessageContent? = null
-        ) : Result {
+        ) : Result, HasOptionalRichCaption {
             override val type: Type = Type.MPEG4_GIF
 
             /**
@@ -500,12 +529,12 @@ data class InlineQuery(
                 val id: String,
                 val mpeg4FileId: String,
                 val title: String? = null,
-                val caption: String? = null,
-                val parseMode: ParseMode? = null,
-                val captionEntities: List<MessageEntity>? = null,
+                override val caption: String? = null,
+                override val parseMode: ParseMode? = null,
+                override val captionEntities: List<MessageEntity>? = null,
                 val replyMarkup: ReplyMarkup.InlineKeyboard? = null,
                 val inputMessageContent: InputMessageContent? = null
-            ) : Result {
+            ) : Result, HasOptionalRichCaption {
                 override val type: Type = Type.MPEG4_GIF
 
                 companion object
@@ -534,13 +563,13 @@ data class InlineQuery(
             val photoHeight: Int? = null,
             val title: String? = null,
             val description: String? = null,
-            val caption: String? = null,
-            val parseMode: ParseMode? = null,
-            val captionEntities: List<MessageEntity>? = null,
+            override val caption: String? = null,
+            override val parseMode: ParseMode? = null,
+            override val captionEntities: List<MessageEntity>? = null,
             val replyMarkup: ReplyMarkup.InlineKeyboard? = null,
             val inputMessageContent: InputMessageContent? = null
 
-        ) : Result {
+        ) : Result, HasOptionalRichCaption {
             override val type: Type = Type.PHOTO
 
             /**
@@ -559,12 +588,12 @@ data class InlineQuery(
                 val photoFileId: String,
                 val title: String? = null,
                 val description: String? = null,
-                val caption: String? = null,
-                val parseMode: ParseMode? = null,
-                val captionEntities: List<MessageEntity>? = null,
+                override val caption: String? = null,
+                override val parseMode: ParseMode? = null,
+                override val captionEntities: List<MessageEntity>? = null,
                 val replyMarkup: ReplyMarkup.InlineKeyboard? = null,
                 val inputMessageContent: InputMessageContent? = null
-            ) : Result {
+            ) : Result, HasOptionalRichCaption {
                 override val type: Type = Type.PHOTO
 
                 companion object
@@ -640,16 +669,16 @@ data class InlineQuery(
             val mimeType: String,
             val thumbnailUrl: String,
             val title: String,
-            val caption: String? = null,
-            val parseMode: ParseMode? = null,
-            val captionEntities: List<MessageEntity>? = null,
+            override val caption: String? = null,
+            override val parseMode: ParseMode? = null,
+            override val captionEntities: List<MessageEntity>? = null,
             val videoWidth: Int? = null,
             val videoHeight: Int? = null,
             val videoDuration: Duration? = null,
             val description: String? = null,
             val replyMarkup: ReplyMarkup.InlineKeyboard? = null,
             val inputMessageContent: InputMessageContent? = null
-        ) : Result {
+        ) : Result, HasOptionalRichCaption {
             override val type: Type = Type.VIDEO
 
             /**
@@ -668,12 +697,12 @@ data class InlineQuery(
                 val videoFileId: String,
                 val title: String,
                 val description: String? = null,
-                val caption: String? = null,
-                val parseMode: ParseMode? = null,
-                val captionEntities: List<MessageEntity>? = null,
+                override val caption: String? = null,
+                override val parseMode: ParseMode? = null,
+                override val captionEntities: List<MessageEntity>? = null,
                 val replyMarkup: ReplyMarkup.InlineKeyboard? = null,
                 val inputMessageContent: InputMessageContent? = null
-            ) : Result {
+            ) : Result, HasOptionalRichCaption {
                 override val type: Type = Type.VIDEO
 
                 companion object
@@ -697,13 +726,13 @@ data class InlineQuery(
             val id: String,
             val voiceUrl: String,
             val title: String,
-            val caption: String? = null,
-            val parseMode: ParseMode? = null,
-            val captionEntities: List<MessageEntity>? = null,
+            override val caption: String? = null,
+            override val parseMode: ParseMode? = null,
+            override val captionEntities: List<MessageEntity>? = null,
             val voiceDuration: Duration? = null,
             val replyMarkup: ReplyMarkup.InlineKeyboard? = null,
             val inputMessageContent: InputMessageContent? = null
-        ) : Result {
+        ) : Result, HasOptionalRichCaption {
             override val type: Type = Type.VOICE
 
             /**
@@ -721,12 +750,12 @@ data class InlineQuery(
                 val id: String,
                 val voiceFileId: String,
                 val title: String,
-                val caption: String? = null,
-                val parseMode: ParseMode? = null,
-                val captionEntities: List<MessageEntity>? = null,
+                override val caption: String? = null,
+                override val parseMode: ParseMode? = null,
+                override val captionEntities: List<MessageEntity>? = null,
                 val replyMarkup: ReplyMarkup.InlineKeyboard? = null,
                 val inputMessageContent: InputMessageContent? = null
-            ) : Result {
+            ) : Result, HasOptionalRichCaption {
                 override val type: Type = Type.VOICE
 
                 companion object
