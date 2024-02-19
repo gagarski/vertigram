@@ -20,26 +20,6 @@ data class Giveaway(
     val premiumSubscriptionMonthCount: Int? = null
 ) {
     /**
-     * Telegram [GiveawayCompleted](https://core.telegram.org/bots/api#giveawaycompleted) type.
-     *
-     * For up-to-date documentation please consult the official Telegram docs.
-     */
-    data class Completed(
-        @JsonIgnore
-        private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
-        val winnerCount: Int,
-        val unclaimedPrizeCount: Int? = null,
-        val giveawayMessage: Message? = null
-    )
-
-    /**
-     * Telegram [GiveawayCreated](https://core.telegram.org/bots/api#giveawaycreated) type.
-     *
-     * For up-to-date documentation please consult the official Telegram docs.
-     */
-    data object Created
-
-    /**
      * Telegram [GiveawayWinners](https://core.telegram.org/bots/api#giveawaywinners) type.
      *
      * For up-to-date documentation please consult the official Telegram docs.

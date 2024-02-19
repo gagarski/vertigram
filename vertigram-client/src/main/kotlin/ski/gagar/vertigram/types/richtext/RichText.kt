@@ -1,10 +1,10 @@
 package ski.gagar.vertigram.types.richtext
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 import ski.gagar.vertigram.types.MessageEntity
-import ski.gagar.vertigram.types.ParseMode
 
 /**
  * A convenience type which replaces triples like `caption`/`captionEntities`/`parseMode` whith a type-safe wrapper.
@@ -24,10 +24,10 @@ import ski.gagar.vertigram.types.ParseMode
     include = JsonTypeInfo.As.EXISTING_PROPERTY
 )
 @JsonSubTypes(
-    JsonSubTypes.Type(value = MarkdownText::class, name = ParseMode.MARKDOWN_STR),
-    JsonSubTypes.Type(value = MarkdownV2Text::class, name = ParseMode.MARKDOWN_V2_STR),
-    JsonSubTypes.Type(value = HtmlText::class, name = ParseMode.HTML_STR),
-    JsonSubTypes.Type(value = TextWithEntities::class, name = ParseMode.HTML_STR),
+    JsonSubTypes.Type(value = MarkdownText::class, name = RichText.ParseMode.MARKDOWN_STR),
+    JsonSubTypes.Type(value = MarkdownV2Text::class, name = RichText.ParseMode.MARKDOWN_V2_STR),
+    JsonSubTypes.Type(value = HtmlText::class, name = RichText.ParseMode.HTML_STR),
+    JsonSubTypes.Type(value = TextWithEntities::class, name = RichText.ParseMode.HTML_STR),
 )
 sealed interface RichText {
     val text: String
@@ -37,6 +37,26 @@ sealed interface RichText {
     @get:JsonIgnore
     val entities: List<MessageEntity>?
         get() = null
+
+    /**
+     * Value for `...parseMode` fields.
+     */
+    enum class ParseMode {
+        @JsonProperty(MARKDOWN_STR)
+        @Deprecated("Consider using other mode", replaceWith = ReplaceWith("MARKDOWN_V2"))
+        MARKDOWN,
+        @JsonProperty(MARKDOWN_V2_STR)
+        MARKDOWN_V2,
+        @JsonProperty(HTML_STR)
+        HTML;
+
+        companion object {
+            const val MARKDOWN_STR = "Markdown"
+            const val MARKDOWN_V2_STR = "MarkdownV2"
+            const val HTML_STR = "HTML"
+        }
+    }
+
 
     companion object {
         operator fun invoke(text: String,
@@ -61,7 +81,7 @@ sealed interface RichText {
 data class MarkdownText(
     override val text: String
 ) : RichText {
-    override val parseMode: ParseMode = ParseMode.MARKDOWN
+    override val parseMode: RichText.ParseMode = RichText.ParseMode.MARKDOWN
 }
 
 /**
@@ -70,7 +90,7 @@ data class MarkdownText(
 data class MarkdownV2Text(
     override val text: String
 ) : RichText {
-    override val parseMode: ParseMode = ParseMode.MARKDOWN_V2
+    override val parseMode: RichText.ParseMode = RichText.ParseMode.MARKDOWN_V2
 }
 
 /**
@@ -79,7 +99,7 @@ data class MarkdownV2Text(
 data class HtmlText(
     override val text: String
 ) : RichText {
-    override val parseMode: ParseMode = ParseMode.HTML
+    override val parseMode: RichText.ParseMode = RichText.ParseMode.HTML
 }
 
 /**

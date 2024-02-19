@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 import ski.gagar.vertigram.types.attachments.Attachment
 import ski.gagar.vertigram.types.richtext.HasOptionalRichCaption
+import ski.gagar.vertigram.types.richtext.RichText
 import ski.gagar.vertigram.util.NoPosArgs
 import java.time.Duration
 
@@ -46,7 +47,7 @@ sealed interface InputMedia {
         override val media: Attachment,
         override val thumbnail: Attachment? = null,
         override val caption: String? = null,
-        override val parseMode: ParseMode? = null,
+        override val parseMode: RichText.ParseMode? = null,
         override val captionEntities: List<MessageEntity>? = null,
         val width: Int? = null,
         val height: Int? = null,
@@ -69,7 +70,7 @@ sealed interface InputMedia {
         override val media: Attachment,
         override val thumbnail: Attachment? = null,
         override val caption: String? = null,
-        override val parseMode: ParseMode? = null,
+        override val parseMode: RichText.ParseMode? = null,
         override val captionEntities: List<MessageEntity>? = null,
         val duration: Duration? = null,
         val performer: String? = null,
@@ -90,7 +91,7 @@ sealed interface InputMedia {
         override val media: Attachment,
         override val thumbnail: Attachment? = null,
         override val caption: String? = null,
-        override val parseMode: ParseMode? = null,
+        override val parseMode: RichText.ParseMode? = null,
         override val captionEntities: List<MessageEntity>? = null,
         val disableContentTypeDetection: Boolean = false
     ) : InputMedia, HasOptionalRichCaption {
@@ -108,7 +109,7 @@ sealed interface InputMedia {
         private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
         override val media: Attachment,
         override val caption: String? = null,
-        override val parseMode: ParseMode? = null,
+        override val parseMode: RichText.ParseMode? = null,
         override val captionEntities: List<MessageEntity>? = null,
         val hasSpoiler: Boolean = false
     ) : InputMedia, HasOptionalRichCaption {
@@ -128,7 +129,7 @@ sealed interface InputMedia {
         override val media: Attachment,
         override val thumbnail: Attachment? = null,
         override val caption: String? = null,
-        override val parseMode: ParseMode? = null,
+        override val parseMode: RichText.ParseMode? = null,
         override val captionEntities: List<MessageEntity>? = null,
         val width: Int? = null,
         val height: Int? = null,

@@ -15,7 +15,6 @@ import kotlinx.html.span
 import kotlinx.html.stream.appendHTML
 import kotlinx.html.visit
 import ski.gagar.vertigram.types.MessageEntity
-import ski.gagar.vertigram.types.MessageEntityType
 import ski.gagar.vertigram.types.User
 import ski.gagar.vertigram.types.richtext.MarkdownV2Text
 import ski.gagar.vertigram.types.richtext.TextWithEntities
@@ -56,7 +55,7 @@ class Text internal constructor(val value: String): RichTextElement() {
 
 abstract class RichTextElementWithChildren internal constructor() : RichTextElement() {
     protected val children: MutableList<RichTextElement> = mutableListOf()
-    abstract val entityType: MessageEntityType
+    abstract fun createEntity(offset: Int, length: Int): MessageEntity
 
     protected fun <T : RichTextElement> initTag(tag: T, init: T.() -> Unit = {}): T {
         tag.init()
@@ -92,7 +91,7 @@ abstract class RichTextElementWithChildren internal constructor() : RichTextElem
         val offset = currentPosition
         renderTextWithEntitiesChildren()
         val length = currentPosition - offset
-        append(offset = offset, length = length, entityType = entityType)
+        append(createEntity(offset, length))
     }
 
     open fun text(string: String) = children.add(Text(string))
@@ -162,7 +161,8 @@ class Bold internal constructor() : WrappedRichTextElementWithChildren() {
         }
     }
 
-    override val entityType: MessageEntityType = MessageEntityType.BOLD
+    override fun createEntity(offset: Int, length: Int): MessageEntity =
+        MessageEntity.Bold(offset = offset, length = length)
 
     public override fun i(init: Italic.() -> Unit) = super.i(init)
     public override fun u(init: Underline.() -> Unit) = super.u(init)
@@ -197,7 +197,8 @@ class Italic internal constructor(
         }
     }
 
-    override val entityType: MessageEntityType = MessageEntityType.ITALIC
+    override fun createEntity(offset: Int, length: Int): MessageEntity =
+        MessageEntity.Italic(offset = offset, length = length)
 
     public override fun b(init: Bold.() -> Unit) = super.b(init)
     public override fun u(init: Underline.() -> Unit) = super.u(init)
@@ -210,6 +211,8 @@ class Italic internal constructor(
 }
 
 class Underline internal constructor() : WrappedRichTextElementWithChildren() {
+    override fun createEntity(offset: Int, length: Int): MessageEntity =
+        MessageEntity.Underline(offset = offset, length = length)
     override fun markdownPrefix(builder: StringBuilder) {
         builder.append("__")
     }
@@ -219,8 +222,6 @@ class Underline internal constructor() : WrappedRichTextElementWithChildren() {
             renderHtmlChildren()
         }
     }
-
-    override val entityType: MessageEntityType = MessageEntityType.UNDERLINE
 
     public override fun b(init: Bold.() -> Unit) = super.b(init)
     public override fun i(init: Italic.() -> Unit) = initTag(
@@ -237,6 +238,9 @@ class Underline internal constructor() : WrappedRichTextElementWithChildren() {
 }
 
 class Strikethrough internal constructor(): WrappedRichTextElementWithChildren() {
+    override fun createEntity(offset: Int, length: Int): MessageEntity =
+        MessageEntity.Strikethrough(offset = offset, length = length)
+
     override fun markdownPrefix(builder: StringBuilder) {
         builder.append("~")
     }
@@ -246,8 +250,6 @@ class Strikethrough internal constructor(): WrappedRichTextElementWithChildren()
             renderHtmlChildren()
         }
     }
-
-    override val entityType: MessageEntityType = MessageEntityType.STRIKETHROUGH
 
     public override fun b(init: Bold.() -> Unit) = super.b(init)
     public override fun i(init: Italic.() -> Unit) = super.i(init)
@@ -261,7 +263,8 @@ class Strikethrough internal constructor(): WrappedRichTextElementWithChildren()
 }
 
 class Link internal constructor(private val href: String) : RichTextElementWithChildren() {
-    override val entityType: MessageEntityType = MessageEntityType.TEXT_LINK
+    override fun createEntity(offset: Int, length: Int): MessageEntity =
+        throw IllegalStateException("Do not call me")
 
     override fun StringBuilder.renderMarkdown() {
         append("[")
@@ -280,7 +283,7 @@ class Link internal constructor(private val href: String) : RichTextElementWithC
         val offset = currentPosition
         renderTextWithEntitiesChildren()
         val length = currentPosition - offset
-        append(offset = offset, length = length, entityType = entityType, url = href)
+        append(MessageEntity.TextLink(offset = offset, length = length, url = href))
     }
 
     public override fun b(init: Bold.() -> Unit) = super.b(init)
@@ -293,7 +296,8 @@ class Link internal constructor(private val href: String) : RichTextElementWithC
 }
 
 class UserMention internal constructor(private val user: User) : RichTextElementWithChildren() {
-    override val entityType: MessageEntityType = MessageEntityType.MENTION
+    override fun createEntity(offset: Int, length: Int): MessageEntity =
+        MessageEntity.Mention(offset = offset, length = length)
     private val href = "tg://user?id=${user.id}"
 
     override fun StringBuilder.renderMarkdown() {
@@ -316,13 +320,11 @@ class UserMention internal constructor(private val user: User) : RichTextElement
 
         val onlyTextChild = if (children.size == 1) children.first() as? Text else null
 
-        val entityType = if (null != user.username && onlyTextChild?.value == "@{${user.username}") {
-            MessageEntityType.MENTION
+        if (null != user.username && onlyTextChild?.value == "@{${user.username}") {
+            append(MessageEntity.Mention(offset = offset, length = length))
         } else {
-            MessageEntityType.TEXT_MENTION
+            append(MessageEntity.TextMention(offset = offset, length = length, user = user))
         }
-
-        append(offset = offset, length = length, entityType = entityType, user = user)
     }
 
     public override fun b(init: Bold.() -> Unit) = super.b(init)
@@ -349,7 +351,9 @@ class Emoji internal constructor(private val basic: String, private val customId
     }
 
     override fun TextWithEntitiesBuilder.renderTextWithEntities() {
-        append(string = basic, entityType = MessageEntityType.CUSTOM_EMOJI, customEmojiId = customId.toString())
+        append(basic) { offset, length ->
+            MessageEntity.CustomEmoji(offset = offset, length = length, customEmojiId = customId.toString())
+        }
     }
 }
 
@@ -365,7 +369,9 @@ class Code internal constructor(private val code: String) : RichTextElement() {
     }
 
     override fun TextWithEntitiesBuilder.renderTextWithEntities() {
-        append(string = code, entityType = MessageEntityType.CODE)
+        append(code) { offset, length ->
+            MessageEntity.Code(offset = offset, length = length)
+        }
     }
 }
 
@@ -396,12 +402,16 @@ class Pre internal constructor(private val code: String, private val language: S
     }
 
     override fun TextWithEntitiesBuilder.renderTextWithEntities() {
-        append(string = code, entityType = MessageEntityType.PRE, language = language)
+        append(code) { offset, length ->
+            MessageEntity.Pre(offset = offset, length = length, language = language)
+        }
     }
 }
 
 class Spoiler internal constructor() : WrappedRichTextElementWithChildren() {
-    override val entityType: MessageEntityType = MessageEntityType.SPOILER
+    override fun createEntity(offset: Int, length: Int): MessageEntity =
+        MessageEntity.Spoiler(offset = offset, length = length)
+
     override fun markdownPrefix(builder: StringBuilder) {
         builder.append("||")
     }
@@ -423,7 +433,8 @@ class Spoiler internal constructor() : WrappedRichTextElementWithChildren() {
 }
 
 class BlockQuote internal constructor() : RichTextElementWithChildren() {
-    override val entityType: MessageEntityType = MessageEntityType.BLOCKQUOTE
+    override fun createEntity(offset: Int, length: Int): MessageEntity =
+        MessageEntity.BlockQuote(offset = offset, length = length)
 
     override fun StringBuilder.renderMarkdown() {
         val childBuilder = StringBuilder("\n>")
@@ -453,8 +464,8 @@ class BlockQuote internal constructor() : RichTextElementWithChildren() {
 }
 
 class RichTextRoot internal constructor() : RichTextElementWithChildren() {
-    override val entityType: MessageEntityType
-        get() = error("Should not be called")
+    override fun createEntity(offset: Int, length: Int): MessageEntity =
+        throw IllegalStateException("Do not call me")
 
     public override fun b(init: Bold.() -> Unit) = super.b(init)
     public override fun i(init: Italic.() -> Unit) = super.i(init)
@@ -538,37 +549,19 @@ internal class TextWithEntitiesBuilder {
 
     fun append(
         string: String,
-        entityType: MessageEntityType,
-        url: String? = null,
-        user: User? = null,
-        language: String? = null,
-        customEmojiId: String? = null
+        entityCreator: (offset: Int, length: Int) -> MessageEntity
     ) {
         val start = textBuilder.length
         textBuilder.append(string)
         entitiesBuilder.add(
-            MessageEntity(
-                type = entityType, offset = start, length = string.length,
-                url = url, user = user, customEmojiId = customEmojiId
-            )
+            entityCreator(start, string.length)
         )
     }
 
     fun append(
-        offset: Int,
-        length: Int,
-        entityType: MessageEntityType,
-        url: String? = null,
-        user: User? = null,
-        language: String? = null,
-        customEmojiId: String? = null
+        entity: MessageEntity
     ) {
-        entitiesBuilder.add(
-            MessageEntity(
-                type = entityType, offset = offset, length = length,
-                url = url, user = user, customEmojiId = customEmojiId
-            )
-        )
+        entitiesBuilder.add(entity)
     }
 
     val currentPosition

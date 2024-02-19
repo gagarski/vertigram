@@ -29,7 +29,7 @@
         <junit-jupiter.version>5.10.2</junit-jupiter.version>
         <kotlinx-html.version>0.11.0</kotlinx-html.version>
         <hikari.version>5.1.0</hikari.version>
-        <jackson.version>2.16.0</jackson.version>
+        <jackson.version>2.16.1</jackson.version>
         <jooq.version>3.19.3</jooq.version>
         <kotlinx-coroutines.version>1.7.3</kotlinx-coroutines.version>
         <kotlin-stdlib.version>1.9.22</kotlin-stdlib.version>

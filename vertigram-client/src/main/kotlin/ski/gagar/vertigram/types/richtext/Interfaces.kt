@@ -1,14 +1,13 @@
 package ski.gagar.vertigram.types.richtext
 
 import ski.gagar.vertigram.types.MessageEntity
-import ski.gagar.vertigram.types.ParseMode
 
 /**
  * Interface for input types (sent TO Telegram API) that has rich text field
  */
 interface HasRichText {
     val text: String
-    val parseMode: ParseMode?
+    val parseMode: RichText.ParseMode?
     val entities: List<MessageEntity>?
 }
 
@@ -17,7 +16,7 @@ interface HasRichText {
  */
 interface HasOptionalRichCaption {
     val caption: String?
-    val parseMode: ParseMode?
+    val parseMode: RichText.ParseMode?
     val captionEntities: List<MessageEntity>?
 }
 
@@ -26,7 +25,7 @@ interface HasOptionalRichCaption {
  */
 interface HasOptionalRichExplanation {
     val explanation: String?
-    val explanationParseMode: ParseMode?
+    val explanationParseMode: RichText.ParseMode?
     val explanationEntities: List<MessageEntity>?
 }
 
@@ -35,7 +34,7 @@ interface HasOptionalRichExplanation {
  */
 interface HasOptionalRichQuote {
     val quote: String?
-    val quoteParseMode: ParseMode?
+    val quoteParseMode: RichText.ParseMode?
     val quoteEntities: List<MessageEntity>?
 }
 

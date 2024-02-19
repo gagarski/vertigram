@@ -6,5 +6,5 @@ data class MessageReactionCountUpdated(
     val chat: Chat,
     val messageId: Long,
     val date: Instant,
-    val reactions: List<ReactionType>
+    val reactions: List<ReactionCount>
 )

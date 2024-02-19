@@ -5,12 +5,11 @@ import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.annotations.TelegramMethod
 import ski.gagar.vertigram.throttling.HasChatId
 import ski.gagar.vertigram.throttling.Throttled
-import ski.gagar.vertigram.types.LinkPreviewOptions
 import ski.gagar.vertigram.types.Message
 import ski.gagar.vertigram.types.MessageEntity
-import ski.gagar.vertigram.types.ParseMode
 import ski.gagar.vertigram.types.ReplyMarkup
 import ski.gagar.vertigram.types.richtext.HasRichText
+import ski.gagar.vertigram.types.richtext.RichText
 import ski.gagar.vertigram.types.util.ChatId
 import ski.gagar.vertigram.util.NoPosArgs
 
@@ -23,7 +22,7 @@ import ski.gagar.vertigram.util.NoPosArgs
  * For up-to-date documentation please consult the official Telegram docs.
  */
 sealed interface EditMessageText : HasRichText {
-    val linkPreviewOptions: LinkPreviewOptions?
+    val linkPreviewOptions: Message.LinkPreviewOptions?
     val replyMarkup: ReplyMarkup?
     /**
      * Inline message case
@@ -42,9 +41,9 @@ sealed interface EditMessageText : HasRichText {
         private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
         val inlineMessageId: Long,
         override val text: String,
-        override val parseMode: ParseMode? = null,
+        override val parseMode: RichText.ParseMode? = null,
         override val entities: List<MessageEntity>? = null,
-        override val linkPreviewOptions: LinkPreviewOptions? = null,
+        override val linkPreviewOptions: Message.LinkPreviewOptions? = null,
         override val replyMarkup: ReplyMarkup? = null
     ) : EditMessageText, JsonTelegramCallable<Message>()
 
@@ -64,9 +63,9 @@ sealed interface EditMessageText : HasRichText {
         override val chatId: ChatId,
         val messageId: Long,
         override val text: String,
-        override val parseMode: ParseMode? = null,
+        override val parseMode: RichText.ParseMode? = null,
         override val entities: List<MessageEntity>? = null,
-        override val linkPreviewOptions: LinkPreviewOptions? = null,
+        override val linkPreviewOptions: Message.LinkPreviewOptions? = null,
         override val replyMarkup: ReplyMarkup? = null
     ) : EditMessageText, HasChatId, JsonTelegramCallable<Message>()
 }

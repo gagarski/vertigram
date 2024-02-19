@@ -6,11 +6,11 @@ import ski.gagar.vertigram.throttling.HasChatId
 import ski.gagar.vertigram.throttling.Throttled
 import ski.gagar.vertigram.types.Message
 import ski.gagar.vertigram.types.MessageEntity
-import ski.gagar.vertigram.types.ParseMode
 import ski.gagar.vertigram.types.ReplyMarkup
 import ski.gagar.vertigram.types.ReplyParameters
 import ski.gagar.vertigram.types.attachments.Attachment
 import ski.gagar.vertigram.types.richtext.HasOptionalRichCaption
+import ski.gagar.vertigram.types.richtext.RichText
 import ski.gagar.vertigram.types.util.ChatId
 import ski.gagar.vertigram.util.NoPosArgs
 
@@ -28,7 +28,7 @@ data class SendPhoto(
     @TelegramMedia
     val photo: Attachment,
     override val caption: String? = null,
-    override val parseMode: ParseMode? = null,
+    override val parseMode: RichText.ParseMode? = null,
     override val captionEntities: List<MessageEntity>? = null,
     val hasSpoiler: Boolean = false,
     val disableNotification: Boolean = false,

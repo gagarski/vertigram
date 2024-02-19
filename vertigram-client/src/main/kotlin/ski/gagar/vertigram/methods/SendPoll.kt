@@ -7,11 +7,11 @@ import ski.gagar.vertigram.throttling.HasChatId
 import ski.gagar.vertigram.throttling.Throttled
 import ski.gagar.vertigram.types.Message
 import ski.gagar.vertigram.types.MessageEntity
-import ski.gagar.vertigram.types.ParseMode
 import ski.gagar.vertigram.types.Poll
 import ski.gagar.vertigram.types.ReplyMarkup
 import ski.gagar.vertigram.types.ReplyParameters
 import ski.gagar.vertigram.types.richtext.HasOptionalRichExplanation
+import ski.gagar.vertigram.types.richtext.RichText
 import ski.gagar.vertigram.types.util.ChatId
 import ski.gagar.vertigram.util.NoPosArgs
 import java.time.Duration
@@ -185,7 +185,7 @@ sealed class SendPoll : JsonTelegramCallable<Message>(), HasChatId {
             override val isAnonymous: Boolean = Defaults.isAnonymous,
             val correctOptionId: Int,
             override val explanation: String? = null,
-            override val explanationParseMode: ParseMode? = null,
+            override val explanationParseMode: RichText.ParseMode? = null,
             override val explanationEntities: List<MessageEntity>? = null,
             val openPeriod: Duration,
             override val disableNotification: Boolean = false,
@@ -226,7 +226,7 @@ sealed class SendPoll : JsonTelegramCallable<Message>(), HasChatId {
             override val isAnonymous: Boolean = Defaults.isAnonymous,
             val correctOptionId: Int,
             override val explanation: String? = null,
-            override val explanationParseMode: ParseMode? = null,
+            override val explanationParseMode: RichText.ParseMode? = null,
             override val explanationEntities: List<MessageEntity>? = null,
             val closeDate: Instant,
             override val disableNotification: Boolean = false,
@@ -267,7 +267,7 @@ sealed class SendPoll : JsonTelegramCallable<Message>(), HasChatId {
             override val isAnonymous: Boolean = Defaults.isAnonymous,
             val correctOptionId: Int,
             override val explanation: String? = null,
-            override val explanationParseMode: ParseMode? = null,
+            override val explanationParseMode: RichText.ParseMode? = null,
             override val explanationEntities: List<MessageEntity>? = null,
             @get:JvmName("getIsClosed")
             override val isClosed: Boolean = false,

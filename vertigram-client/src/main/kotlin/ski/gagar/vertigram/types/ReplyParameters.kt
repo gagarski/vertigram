@@ -2,6 +2,7 @@ package ski.gagar.vertigram.types
 
 import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.types.richtext.HasOptionalRichQuote
+import ski.gagar.vertigram.types.richtext.RichText
 import ski.gagar.vertigram.types.util.ChatId
 
 @TelegramCodegen(
@@ -14,7 +15,7 @@ data class ReplyParameters internal constructor(
     val chatId: ChatId? = null,
     val allowSendingWithoutReply: Boolean = false,
     override val quote: String? = null,
-    override val quoteParseMode: ParseMode? = null,
+    override val quoteParseMode: RichText.ParseMode? = null,
     override val quoteEntities: List<MessageEntity>? = null,
     val quotePosition: Int? = null
 ) : HasOptionalRichQuote {

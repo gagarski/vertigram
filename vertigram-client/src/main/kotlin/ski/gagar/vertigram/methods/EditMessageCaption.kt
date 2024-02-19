@@ -7,9 +7,9 @@ import ski.gagar.vertigram.throttling.HasChatId
 import ski.gagar.vertigram.throttling.Throttled
 import ski.gagar.vertigram.types.Message
 import ski.gagar.vertigram.types.MessageEntity
-import ski.gagar.vertigram.types.ParseMode
 import ski.gagar.vertigram.types.ReplyMarkup
 import ski.gagar.vertigram.types.richtext.HasOptionalRichCaption
+import ski.gagar.vertigram.types.richtext.RichText
 import ski.gagar.vertigram.types.util.ChatId
 import ski.gagar.vertigram.util.NoPosArgs
 
@@ -40,7 +40,7 @@ sealed interface EditMessageCaption : HasOptionalRichCaption {
         private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
         val inlineMessageId: Long,
         override val caption: String? = null,
-        override val parseMode: ParseMode? = null,
+        override val parseMode: RichText.ParseMode? = null,
         override val captionEntities: List<MessageEntity>? = null,
         override val replyMarkup: ReplyMarkup? = null
     ) : EditMessageCaption, JsonTelegramCallable<Boolean>()
@@ -63,7 +63,7 @@ sealed interface EditMessageCaption : HasOptionalRichCaption {
         override val chatId: ChatId,
         val messageId: Long,
         override val caption: String? = null,
-        override val parseMode: ParseMode? = null,
+        override val parseMode: RichText.ParseMode? = null,
         override val captionEntities: List<MessageEntity>? = null,
         override val replyMarkup: ReplyMarkup? = null
     ) : EditMessageCaption, HasChatId, JsonTelegramCallable<Message>()

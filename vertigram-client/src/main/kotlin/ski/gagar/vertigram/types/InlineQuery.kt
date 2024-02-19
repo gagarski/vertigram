@@ -60,9 +60,9 @@ data class InlineQuery(
             @JsonIgnore
             private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
             val messageText: String,
-            override val parseMode: ParseMode? = null,
+            override val parseMode: RichText.ParseMode? = null,
             override val entities: List<MessageEntity>? = null,
-            val linkPreviewOptions: LinkPreviewOptions? = null
+            val linkPreviewOptions: Message.LinkPreviewOptions? = null
         ) : InputMessageContent, HasRichText {
             @JsonIgnore
             override val text = messageText
@@ -77,7 +77,7 @@ data class InlineQuery(
                 operator fun invoke(
                     noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
                     richText: RichText,
-                    linkPreviewOptions: LinkPreviewOptions? = null
+                    linkPreviewOptions: Message.LinkPreviewOptions? = null
                 ) = Text(
                     messageText = richText.text,
                     parseMode = richText.parseMode,
@@ -268,7 +268,7 @@ data class InlineQuery(
             val audioUrl: String,
             val title: String,
             override val caption: String? = null,
-            override val parseMode: ParseMode? = null,
+            override val parseMode: RichText.ParseMode? = null,
             override val captionEntities: List<MessageEntity>? = null,
             val performer: String? = null,
             val audioDuration: Duration? = null,
@@ -292,7 +292,7 @@ data class InlineQuery(
                 override val id: String,
                 val audioFileId: String,
                 override val caption: String? = null,
-                override val parseMode: ParseMode? = null,
+                override val parseMode: RichText.ParseMode? = null,
                 override val captionEntities: List<MessageEntity>? = null,
                 val replyMarkup: ReplyMarkup.InlineKeyboard? = null,
                 val inputMessageContent: InputMessageContent? = null
@@ -344,7 +344,7 @@ data class InlineQuery(
             override val id: String,
             val title: String,
             override val caption: String? = null,
-            override val parseMode: ParseMode? = null,
+            override val parseMode: RichText.ParseMode? = null,
             override val captionEntities: List<MessageEntity>? = null,
             val documentUrl: String,
             val mimeType: String,
@@ -374,7 +374,7 @@ data class InlineQuery(
                 val documentFileId: String,
                 val description: String? = null,
                 override val caption: String? = null,
-                override val parseMode: ParseMode? = null,
+                override val parseMode: RichText.ParseMode? = null,
                 override val captionEntities: List<MessageEntity>? = null,
                 val replyMarkup: ReplyMarkup.InlineKeyboard? = null,
                 val inputMessageContent: InputMessageContent? = null
@@ -423,7 +423,7 @@ data class InlineQuery(
             val thumbnailMimeType: String? = null,
             val title: String? = null,
             override val caption: String? = null,
-            override val parseMode: ParseMode? = null,
+            override val parseMode: RichText.ParseMode? = null,
             override val captionEntities: List<MessageEntity>? = null,
             val replyMarkup: ReplyMarkup.InlineKeyboard? = null,
             val inputMessageContent: InputMessageContent? = null
@@ -446,7 +446,7 @@ data class InlineQuery(
                 val gifFileId: String,
                 val title: String? = null,
                 override val caption: String? = null,
-                override val parseMode: ParseMode? = null,
+                override val parseMode: RichText.ParseMode? = null,
                 override val captionEntities: List<MessageEntity>? = null,
                 val replyMarkup: ReplyMarkup.InlineKeyboard? = null,
                 val inputMessageContent: InputMessageContent? = null
@@ -506,7 +506,7 @@ data class InlineQuery(
             val thumbnailMimeType: String? = null,
             val title: String? = null,
             override val caption: String? = null,
-            override val parseMode: ParseMode? = null,
+            override val parseMode: RichText.ParseMode? = null,
             override val captionEntities: List<MessageEntity>? = null,
             val replyMarkup: ReplyMarkup.InlineKeyboard? = null,
             val inputMessageContent: InputMessageContent? = null
@@ -529,7 +529,7 @@ data class InlineQuery(
                 val mpeg4FileId: String,
                 val title: String? = null,
                 override val caption: String? = null,
-                override val parseMode: ParseMode? = null,
+                override val parseMode: RichText.ParseMode? = null,
                 override val captionEntities: List<MessageEntity>? = null,
                 val replyMarkup: ReplyMarkup.InlineKeyboard? = null,
                 val inputMessageContent: InputMessageContent? = null
@@ -563,7 +563,7 @@ data class InlineQuery(
             val title: String? = null,
             val description: String? = null,
             override val caption: String? = null,
-            override val parseMode: ParseMode? = null,
+            override val parseMode: RichText.ParseMode? = null,
             override val captionEntities: List<MessageEntity>? = null,
             val replyMarkup: ReplyMarkup.InlineKeyboard? = null,
             val inputMessageContent: InputMessageContent? = null
@@ -588,7 +588,7 @@ data class InlineQuery(
                 val title: String? = null,
                 val description: String? = null,
                 override val caption: String? = null,
-                override val parseMode: ParseMode? = null,
+                override val parseMode: RichText.ParseMode? = null,
                 override val captionEntities: List<MessageEntity>? = null,
                 val replyMarkup: ReplyMarkup.InlineKeyboard? = null,
                 val inputMessageContent: InputMessageContent? = null
@@ -669,7 +669,7 @@ data class InlineQuery(
             val thumbnailUrl: String,
             val title: String,
             override val caption: String? = null,
-            override val parseMode: ParseMode? = null,
+            override val parseMode: RichText.ParseMode? = null,
             override val captionEntities: List<MessageEntity>? = null,
             val videoWidth: Int? = null,
             val videoHeight: Int? = null,
@@ -697,7 +697,7 @@ data class InlineQuery(
                 val title: String,
                 val description: String? = null,
                 override val caption: String? = null,
-                override val parseMode: ParseMode? = null,
+                override val parseMode: RichText.ParseMode? = null,
                 override val captionEntities: List<MessageEntity>? = null,
                 val replyMarkup: ReplyMarkup.InlineKeyboard? = null,
                 val inputMessageContent: InputMessageContent? = null
@@ -726,7 +726,7 @@ data class InlineQuery(
             val voiceUrl: String,
             val title: String,
             override val caption: String? = null,
-            override val parseMode: ParseMode? = null,
+            override val parseMode: RichText.ParseMode? = null,
             override val captionEntities: List<MessageEntity>? = null,
             val voiceDuration: Duration? = null,
             val replyMarkup: ReplyMarkup.InlineKeyboard? = null,
@@ -750,7 +750,7 @@ data class InlineQuery(
                 val voiceFileId: String,
                 val title: String,
                 override val caption: String? = null,
-                override val parseMode: ParseMode? = null,
+                override val parseMode: RichText.ParseMode? = null,
                 override val captionEntities: List<MessageEntity>? = null,
                 val replyMarkup: ReplyMarkup.InlineKeyboard? = null,
                 val inputMessageContent: InputMessageContent? = null

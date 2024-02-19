@@ -3,13 +3,12 @@ package ski.gagar.vertigram.methods
 import com.fasterxml.jackson.annotation.JsonIgnore
 import ski.gagar.vertigram.throttling.HasChatId
 import ski.gagar.vertigram.throttling.Throttled
-import ski.gagar.vertigram.types.LinkPreviewOptions
 import ski.gagar.vertigram.types.Message
 import ski.gagar.vertigram.types.MessageEntity
-import ski.gagar.vertigram.types.ParseMode
 import ski.gagar.vertigram.types.ReplyMarkup
 import ski.gagar.vertigram.types.ReplyParameters
 import ski.gagar.vertigram.types.richtext.HasRichText
+import ski.gagar.vertigram.types.richtext.RichText
 import ski.gagar.vertigram.types.util.ChatId
 import ski.gagar.vertigram.util.NoPosArgs
 
@@ -25,9 +24,9 @@ data class SendMessage(
     override val chatId: ChatId,
     val messageThreadId: Long? = null,
     override val text: String,
-    override val parseMode: ParseMode? = null,
+    override val parseMode: RichText.ParseMode? = null,
     override val entities: List<MessageEntity>? = null,
-    val linkPreviewOptions: LinkPreviewOptions? = null,
+    val linkPreviewOptions: Message.LinkPreviewOptions? = null,
     val disableNotification: Boolean = false,
     val protectContent: Boolean = false,
     val replyParameters: ReplyParameters? = null,

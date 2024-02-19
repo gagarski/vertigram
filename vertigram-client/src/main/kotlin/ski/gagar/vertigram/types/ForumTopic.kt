@@ -21,13 +21,6 @@ data class ForumTopic(
     val iconCustomEmojiId: String? = null
 ) {
     /**
-     * Telegram [ForumTopicClosed](https://core.telegram.org/bots/api#forumtopicclosed) type.
-     *
-     * For up-to-date documentation please consult the official Telegram docs.
-     */
-    data object Closed
-
-    /**
      * Value for [ski.gagar.vertigram.methods.CreateForumTopic.iconColor],
      * limited according to the Telegram docs.
      */
@@ -42,51 +35,5 @@ data class ForumTopic(
         @JsonValue
         fun toValue() = color.toInt()
     }
-
-    /**
-     * Telegram [ForumTopicCreated](https://core.telegram.org/bots/api#forumtopiccreated) type.
-     *
-     * For up-to-date documentation please consult the official Telegram docs.
-     */
-    data class Created(
-        @JsonIgnore
-        private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
-        val name: String,
-        val iconColor: RgbColor,
-        val iconCustomEmojiId: String? = null
-    )
-
-    /**
-     * Telegram [ForumTopicEdited](https://core.telegram.org/bots/api#forumtopicedited) type.
-     *
-     * For up-to-date documentation please consult the official Telegram docs.
-     */
-    data class Edited(
-        @JsonIgnore
-        private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
-        val name: String? = null,
-        val iconCustomEmojiId: String? = null
-    )
-
-    /**
-     * Telegram [ForumTopicReopened](https://core.telegram.org/bots/api#forumtopicreopened) type.
-     *
-     * For up-to-date documentation please consult the official Telegram docs.
-     */
-    data object Reopened
-
-    /**
-     * Telegram [GeneralForumTopicHidden](https://core.telegram.org/bots/api#generalforumtopichidden) type.
-     *
-     * For up-to-date documentation please consult the official Telegram docs.
-     */
-    data object GeneralHidden
-
-    /**
-     * Telegram [GeneralForumTopicUnhidden](https://core.telegram.org/bots/api#generalforumtopicunhidden) type.
-     *
-     * For up-to-date documentation please consult the official Telegram docs.
-     */
-    data object GeneralUnhidden
 
 }
