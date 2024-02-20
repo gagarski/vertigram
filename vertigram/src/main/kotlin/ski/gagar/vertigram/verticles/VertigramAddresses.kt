@@ -38,4 +38,11 @@ object VertigramAddresses {
             }!!,
             base
         )
+
+    object Dialog {
+        object Classifier {
+            const val CallbackQuery = "callbackQuery"
+            const val Message = "message"
+        }
+    }
 }

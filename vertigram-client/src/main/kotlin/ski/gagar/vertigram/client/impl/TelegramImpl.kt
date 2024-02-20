@@ -46,7 +46,6 @@ internal data class TelegramImplOptions(
     )
 }
 
-@PublishedApi
 internal class TelegramImpl(
     private val token: String,
     vertx: Vertx,

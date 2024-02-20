@@ -8,17 +8,16 @@ import ski.gagar.vertigram.jackson.requestJsonAwait
 import ski.gagar.vertigram.jackson.suspendJsonConsumer
 import ski.gagar.vertigram.markup.toRichText
 import ski.gagar.vertigram.methods.sendMessage
-import ski.gagar.vertigram.tools.verticles.address.VertigramAddress
 import ski.gagar.vertigram.types.Message
 import ski.gagar.vertigram.types.Update
 import ski.gagar.vertigram.types.util.toChatId
-import ski.gagar.vertigram.verticles.TelegramVerticle
+import ski.gagar.vertigram.verticles.VertigramAddresses
 import ski.gagar.vertigram.verticles.children.AbstractHierarchyVerticle
 import ski.gagar.vertigram.verticles.children.messages.DeathNotice
 import ski.gagar.vertigram.verticles.children.messages.DeathReason
 
 abstract class AbstractDispatchVerticle<DialogKey> : AbstractHierarchyVerticle() {
-    open val tgVAddressBase = TelegramVerticle.Config.DEFAULT_BASE_ADDRESS
+    open val tgVAddressBase = VertigramAddresses.TELEGRAM_VERTICLE_BASE
     protected val tg: Telegram by lazy {
         TgVTelegram(vertx, tgVAddressBase)
     }
@@ -36,11 +35,11 @@ abstract class AbstractDispatchVerticle<DialogKey> : AbstractHierarchyVerticle()
 
     override suspend fun start() {
         super.start()
-        suspendJsonConsumer<Message, Unit>(VertigramAddress.Message) {
+        suspendJsonConsumer<Message, Unit>(VertigramAddresses.demuxAddress(Update.Type.MESSAGE)) {
             handleMessage(it)
         }
 
-        suspendJsonConsumer<Update.CallbackQuery.Payload, Unit>(VertigramAddress.CallbackQuery) {
+        suspendJsonConsumer<Update.CallbackQuery.Payload, Unit>(VertigramAddresses.demuxAddress(Update.Type.CALLBACK_QUERY)) {
             handleCallbackQuery(it)
         }
     }

@@ -14,14 +14,13 @@ import ski.gagar.vertigram.methods.editMessageReplyMarkup
 import ski.gagar.vertigram.methods.editMessageText
 import ski.gagar.vertigram.methods.sendMessage
 import ski.gagar.vertigram.tools.isCommandForBot
-import ski.gagar.vertigram.tools.verticles.address.VertigramAddress
 import ski.gagar.vertigram.types.Message
 import ski.gagar.vertigram.types.ReplyMarkup
 import ski.gagar.vertigram.types.Update
 import ski.gagar.vertigram.types.User
 import ski.gagar.vertigram.types.richtext.RichText
 import ski.gagar.vertigram.types.util.toChatId
-import ski.gagar.vertigram.verticles.TelegramVerticle
+import ski.gagar.vertigram.verticles.VertigramAddresses
 import ski.gagar.vertigram.verticles.address.VxUtilAddress
 import ski.gagar.vertigram.verticles.children.AbstractHierarchyVerticle
 import ski.gagar.vertigram.verticles.children.messages.DeathNotice
@@ -30,14 +29,14 @@ import java.time.Duration
 
 abstract class AbstractTelegramDialogVerticle : AbstractHierarchyVerticle() {
     protected open val me: User.Me? = null
-    open val tgVAddressBase = TelegramVerticle.Config.DEFAULT_BASE_ADDRESS
+    open val tgVAddressBase = VertigramAddresses.TELEGRAM_VERTICLE_BASE
 
     abstract val chatId: Long
     abstract val initialState: State
     open val callbackQueryListenAddress: String
-        get() = VxUtilAddress.Private.withClassifier(deploymentID, VertigramAddress.Dialog.Classifier.CallbackQuery)
+        get() = VxUtilAddress.Private.withClassifier(deploymentID, VertigramAddresses.Dialog.Classifier.CallbackQuery)
     open val messageListenAddress: String
-        get() = VxUtilAddress.Private.withClassifier(deploymentID, VertigramAddress.Dialog.Classifier.Message)
+        get() = VxUtilAddress.Private.withClassifier(deploymentID, VertigramAddresses.Dialog.Classifier.Message)
 
     protected open val handleCancel: Boolean = false
     protected open val handleRollback: Boolean = false

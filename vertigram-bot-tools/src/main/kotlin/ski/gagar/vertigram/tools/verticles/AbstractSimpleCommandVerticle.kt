@@ -3,15 +3,16 @@ package ski.gagar.vertigram.tools.verticles
 import ski.gagar.vertigram.jackson.suspendJsonConsumer
 import ski.gagar.vertigram.tools.isCommandForBot
 import ski.gagar.vertigram.tools.isForwarded
-import ski.gagar.vertigram.tools.verticles.address.VertigramAddress
 import ski.gagar.vertigram.types.Message
+import ski.gagar.vertigram.types.Update
 import ski.gagar.vertigram.types.User
 import ski.gagar.vertigram.verticles.ErrorLoggingCoroutineVerticle
+import ski.gagar.vertigram.verticles.VertigramAddresses
 
 abstract class AbstractSimpleCommandVerticle : ErrorLoggingCoroutineVerticle() {
     abstract val command: String
     abstract suspend fun respond(message: Message)
-    open val listenAddress: String = VertigramAddress.Message
+    open val listenAddress: String = VertigramAddresses.demuxAddress(Update.Type.MESSAGE)
 
     override suspend fun start() {
         suspendJsonConsumer<Message, Unit>(listenAddress) { handle(it) }
