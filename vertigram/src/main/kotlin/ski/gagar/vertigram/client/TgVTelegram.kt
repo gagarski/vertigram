@@ -11,12 +11,13 @@ import ski.gagar.vertigram.types.Update
 import ski.gagar.vertigram.types.UpdateList
 import ski.gagar.vertigram.util.TELEGRAM_TYPE_FACTORY
 import ski.gagar.vertigram.verticles.TelegramVerticle
+import ski.gagar.vertigram.verticles.VertigramAddresses
 import java.time.Duration
 
 
 class TgVTelegram(
     private val vertx: Vertx,
-    private val baseAddress: String = TelegramVerticle.Config.DEFAULT_BASE_ADDRESS,
+    private val baseAddress: String = VertigramAddresses.TELEGRAM_VERTICLE_BASE,
     private val timeoutGap: Duration = Duration.ofSeconds(5)
 ) : AbstractTelegram() {
 

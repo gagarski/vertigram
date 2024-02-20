@@ -104,7 +104,7 @@ class TelegramVerticle : ErrorLoggingCoroutineVerticle() {
 
     data class Config(
         val token: String,
-        val baseAddress: String = DEFAULT_BASE_ADDRESS,
+        val baseAddress: String = VertigramAddresses.TELEGRAM_VERTICLE_BASE,
         val tgOptions: DirectTelegram.Options = DirectTelegram.Options(),
         val throttling: ThrottlingOptions? = ThrottlingOptions()
     ) {
@@ -139,19 +139,18 @@ class TelegramVerticle : ErrorLoggingCoroutineVerticle() {
             downloadFileAddress(baseAddress)
 
         companion object {
-            const val DEFAULT_BASE_ADDRESS = "ski.gagar.vertigram.telegram"
             const val GET_UPDATES = "getUpdates"
 
             private fun callAddress(methodName: String,
-                                    baseAddress: String = DEFAULT_BASE_ADDRESS,
+                                    baseAddress: String = VertigramAddresses.TELEGRAM_VERTICLE_BASE,
                                     requestType: RequestType
             ) =
                 "$baseAddress.$methodName.${requestType.postfix}"
 
-            fun updatesAddress(baseAddress: String = DEFAULT_BASE_ADDRESS) =
+            fun updatesAddress(baseAddress: String = VertigramAddresses.TELEGRAM_VERTICLE_BASE) =
                 callAddress(GET_UPDATES, baseAddress, RequestType.Json)
 
-            fun <T : TelegramCallable<*>> callAddress(clazz: Class<T>, baseAddress: String = DEFAULT_BASE_ADDRESS) =
+            fun <T : TelegramCallable<*>> callAddress(clazz: Class<T>, baseAddress: String = VertigramAddresses.TELEGRAM_VERTICLE_BASE) =
                 callAddress(
                     VertigramTypeHints.tgvAddressByClass.getOrAssert(
                         clazz
@@ -162,7 +161,7 @@ class TelegramVerticle : ErrorLoggingCoroutineVerticle() {
                     )
                 )
 
-            fun <T: TelegramCallable<*>> callAddress(obj: T, baseAddress: String = DEFAULT_BASE_ADDRESS) =
+            fun <T: TelegramCallable<*>> callAddress(obj: T, baseAddress: String = VertigramAddresses.TELEGRAM_VERTICLE_BASE) =
                 callAddress(
                     VertigramTypeHints.tgvAddressByClass.getOrAssert(
                         obj.javaClass
@@ -173,10 +172,10 @@ class TelegramVerticle : ErrorLoggingCoroutineVerticle() {
                     )
                 )
 
-            fun longPollTimeoutAddress(baseAddress: String = DEFAULT_BASE_ADDRESS) =
+            fun longPollTimeoutAddress(baseAddress: String = VertigramAddresses.TELEGRAM_VERTICLE_BASE) =
                 "$baseAddress.conf.longPollTimeout"
 
-            fun downloadFileAddress(baseAddress: String = DEFAULT_BASE_ADDRESS) =
+            fun downloadFileAddress(baseAddress: String = VertigramAddresses.TELEGRAM_VERTICLE_BASE) =
                 "$baseAddress.conf.downloadFile"
 
         }

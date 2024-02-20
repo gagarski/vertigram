@@ -14,12 +14,12 @@ import ski.gagar.vertigram.types.ParsedUpdateList
 import ski.gagar.vertigram.types.Update
 import java.time.Instant
 
-class LongPollVerticle: ErrorLoggingCoroutineVerticle() {
+class LongPoller: ErrorLoggingCoroutineVerticle() {
     private val typedConfig by lazy {
         config.mapTo<Config>()
     }
     private val tg: Telegram by lazy {
-        TgVTelegram(vertx, typedConfig.tgvAddress)
+        TgVTelegram(vertx, typedConfig.telegramAddress)
     }
 
     private var offset: Long? = null
@@ -74,14 +74,17 @@ class LongPollVerticle: ErrorLoggingCoroutineVerticle() {
             }
 
             logger.lazy.trace { "Publishing $properlyParsed" }
-            vertx.eventBus().publishJson(typedConfig.updatePublishingAddress, ParsedUpdateList(properlyParsed))
+
+            for (u in properlyParsed) {
+                vertx.eventBus().publishJson(typedConfig.updatePublishingAddress, ParsedUpdateList(properlyParsed))
+            }
 
         }
     }
 
     data class Config(
-        val tgvAddress: String = TelegramVerticle.Config.DEFAULT_BASE_ADDRESS,
-        val updatePublishingAddress: String = WebHookVerticle.Config.DEFAULT_UPDATE_PUBLISHING_ADDRESS,
+        val telegramAddress: String = VertigramAddresses.TELEGRAM_VERTICLE_BASE,
+        val updatePublishingAddress: String = VertigramAddresses.UPDATES,
         val skipMissing: Boolean = true,
         val allowedUpdates: List<Update.Type>? = null
     )

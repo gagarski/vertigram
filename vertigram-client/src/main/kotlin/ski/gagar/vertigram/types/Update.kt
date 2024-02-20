@@ -38,10 +38,10 @@ class ParsedUpdateList(private val delegate: List<Update.Parsed<*>>) : List<Upda
     JsonSubTypes.Type(value = Update.Poll::class),
     JsonSubTypes.Type(value = Update.PollAnswer::class),
     JsonSubTypes.Type(value = Update.MyChatMember::class),
-    JsonSubTypes.Type(value = Update.ChatMemberUpdated::class),
+    JsonSubTypes.Type(value = Update.ChatMember::class),
     JsonSubTypes.Type(value = Update.ChatJoinRequest::class),
-    JsonSubTypes.Type(value = Update.ChatBoostUpdated::class),
-    JsonSubTypes.Type(value = Update.ChatBoostRemoved::class),
+    JsonSubTypes.Type(value = Update.ChatBoost::class),
+    JsonSubTypes.Type(value = Update.RemovedChatBoost::class),
 //    This is INTENTIONALLY excluded from type deduction
 //    JsonSubTypes.Type(value = Update2.Malformed::class),
 )
@@ -315,25 +315,25 @@ sealed interface Update<T> {
     /**
      * Case when [myChatMember] is set
      *
-     * Intentionally reuses [ChatMemberUpdated.Payload]
+     * Intentionally reuses [ChatMember.Payload]
      */
     data class MyChatMember(
         override val updateId: Long,
-        val myChatMember: ChatMemberUpdated.Payload
-    ) : Parsed<ChatMemberUpdated.Payload> {
-        override val payload: ChatMemberUpdated.Payload = myChatMember
+        val myChatMember: ChatMember.Payload
+    ) : Parsed<Update.ChatMember.Payload> {
+        override val payload: ChatMember.Payload = myChatMember
         override val date: Instant = payload.date
 
     }
 
     /**
-     * Case when [chatMemberUpdated] is set
+     * Case when [chatMember] is set
      */
-    data class ChatMemberUpdated(
+    data class ChatMember(
         override val updateId: Long,
-        val chatMemberUpdated: Payload
-    ) : Parsed<ChatMemberUpdated.Payload> {
-        override val payload: Payload = chatMemberUpdated
+        val chatMember: Payload
+    ) : Parsed<ChatMember.Payload> {
+        override val payload: Payload = chatMember
         override val date: Instant = payload.date
 
         /**
@@ -347,8 +347,8 @@ sealed interface Update<T> {
             val chat: Chat,
             val from: User,
             val date: Instant,
-            val oldChatMember: ChatMember,
-            val newChatMember: ChatMember,
+            val oldChatMember: ski.gagar.vertigram.types.ChatMember,
+            val newChatMember: ski.gagar.vertigram.types.ChatMember,
             val inviteLink: ChatInviteLink? = null,
             val viaChatFolderInviteLink: Boolean = false
         )
@@ -382,13 +382,13 @@ sealed interface Update<T> {
     }
 
     /**
-     * Case when [chatBoostUpdated] is set
+     * Case when [chatBoost] is set
      */
-    data class ChatBoostUpdated(
+    data class ChatBoost(
         override val updateId: Long,
-        val chatBoostUpdated: Payload
-    ) : Parsed<ChatBoostUpdated.Payload> {
-        override val payload: Payload = chatBoostUpdated
+        val chatBoost: Payload
+    ) : Parsed<ChatBoost.Payload> {
+        override val payload: Payload = chatBoost
         override val date: Instant = payload.boost.addDate
 
         /**
@@ -400,17 +400,17 @@ sealed interface Update<T> {
             @JsonIgnore
             private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
             val chat: Chat,
-            val boost: ChatBoost
+            val boost: ski.gagar.vertigram.types.ChatBoost
         )
     }
 
     /**
      * Case when [chatBoostRemoved] is set
      */
-    data class ChatBoostRemoved(
+    data class RemovedChatBoost(
         override val updateId: Long,
         val chatBoostRemoved: Payload
-    ) : Parsed<ChatBoostRemoved.Payload> {
+    ) : Parsed<RemovedChatBoost.Payload> {
         override val payload: Payload = chatBoostRemoved
         override val date: Instant = payload.removeDate
 
@@ -425,7 +425,7 @@ sealed interface Update<T> {
             val chat: Chat,
             val boostId: String,
             val removeDate: Instant,
-            val source: ChatBoost.Source
+            val source: ski.gagar.vertigram.types.ChatBoost.Source
         )
     }
 

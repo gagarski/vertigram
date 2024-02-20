@@ -174,7 +174,7 @@ object UpdateSerializationTest : BaseSerializationTest() {
         assertSerializable<Update<*>>(
             Update.MyChatMember(
                 updateId = 1,
-                myChatMember = Update.ChatMemberUpdated.Payload(
+                myChatMember = Update.ChatMember.Payload(
                     chat = Chat(id = 1, type = Chat.Type.SUPERGROUP),
                     from = User(id = 1),
                     date = Instant.now().truncatedTo(ChronoUnit.SECONDS),
@@ -184,9 +184,9 @@ object UpdateSerializationTest : BaseSerializationTest() {
             )
         )
         assertSerializable<Update<*>>(
-            Update.ChatMemberUpdated(
+            Update.ChatMember(
                 updateId = 1,
-                chatMemberUpdated = Update.ChatMemberUpdated.Payload(
+                chatMember = Update.ChatMember.Payload(
                     chat = Chat(id = 1, type = Chat.Type.SUPERGROUP),
                     from = User(id = 1),
                     date = Instant.now().truncatedTo(ChronoUnit.SECONDS),
@@ -207,9 +207,9 @@ object UpdateSerializationTest : BaseSerializationTest() {
             )
         )
         assertSerializable<Update<*>>(
-            Update.ChatBoostUpdated(
+            Update.ChatBoost(
                 updateId = 1,
-                chatBoostUpdated = Update.ChatBoostUpdated.Payload(
+                chatBoost = Update.ChatBoost.Payload(
                     chat = Chat(id = 1, type = Chat.Type.SUPERGROUP),
                     boost = ChatBoost(
                         boostId = "1",
@@ -224,9 +224,9 @@ object UpdateSerializationTest : BaseSerializationTest() {
             )
         )
         assertSerializable<Update<*>>(
-            Update.ChatBoostRemoved(
+            Update.RemovedChatBoost(
                 updateId = 1,
-                chatBoostRemoved = Update.ChatBoostRemoved.Payload(
+                chatBoostRemoved = Update.RemovedChatBoost.Payload(
                     chat = Chat(id = 1, type = Chat.Type.SUPERGROUP),
                     boostId = "1",
                     removeDate = Instant.now().truncatedTo(ChronoUnit.SECONDS),

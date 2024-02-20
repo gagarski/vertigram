@@ -15,14 +15,13 @@ import ski.gagar.vertigram.logger
 import ski.gagar.vertigram.methods.deleteWebhook
 import ski.gagar.vertigram.methods.setWebhook
 import ski.gagar.vertigram.retrying
-import ski.gagar.vertigram.types.ParsedUpdateList
 import ski.gagar.vertigram.types.Update
 import ski.gagar.vertigram.util.json.TELEGRAM_JSON_MAPPER
 import ski.gagar.vertigram.web.IpNetworkAddress
 import ski.gagar.vertigram.web.RealIpLoggerHandler
 import java.util.*
 
-class WebHookVerticle : ErrorLoggingCoroutineVerticle() {
+class WebHook : ErrorLoggingCoroutineVerticle() {
     private val secret = UUID.randomUUID()
     private val typedConfig by lazy {
         config.mapTo<Config>()
@@ -74,7 +73,7 @@ class WebHookVerticle : ErrorLoggingCoroutineVerticle() {
             }
             logger.lazy.trace { "Received update $req" }
             logger.lazy.trace { "Publishing $req" }
-            vertx.eventBus().publishJson(typedConfig.updatePublishingAddress, ParsedUpdateList(listOf(req)))
+            vertx.eventBus().publishJson(typedConfig.updatePublishingAddress, listOf(req))
             context.response().end()
         }
 
@@ -98,8 +97,8 @@ class WebHookVerticle : ErrorLoggingCoroutineVerticle() {
     }
 
     data class Config(
-        val tgvAddress: String = TelegramVerticle.Config.DEFAULT_BASE_ADDRESS,
-        val updatePublishingAddress: String = DEFAULT_UPDATE_PUBLISHING_ADDRESS,
+        val tgvAddress: String = VertigramAddresses.TELEGRAM_VERTICLE_BASE,
+        val updatePublishingAddress: String = VertigramAddresses.UPDATES,
         val webHook: WebHookConfig = WebHookConfig(),
         val allowedUpdates: List<Update.Type>? = null
     ) {
