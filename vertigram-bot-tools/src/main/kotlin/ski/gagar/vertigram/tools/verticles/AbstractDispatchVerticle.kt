@@ -9,8 +9,8 @@ import ski.gagar.vertigram.jackson.suspendJsonConsumer
 import ski.gagar.vertigram.markup.toRichText
 import ski.gagar.vertigram.methods.sendMessage
 import ski.gagar.vertigram.tools.verticles.address.VertigramAddress
-import ski.gagar.vertigram.types.CallbackQuery
 import ski.gagar.vertigram.types.Message
+import ski.gagar.vertigram.types.Update
 import ski.gagar.vertigram.types.util.toChatId
 import ski.gagar.vertigram.verticles.TelegramVerticle
 import ski.gagar.vertigram.verticles.children.AbstractHierarchyVerticle
@@ -28,9 +28,9 @@ abstract class AbstractDispatchVerticle<DialogKey> : AbstractHierarchyVerticle()
     protected val dialogsInv = mutableMapOf<String, DialogKey>()
 
     protected abstract fun dialogKey(msg: Message): DialogKey?
-    protected abstract fun dialogKey(q: CallbackQuery): DialogKey?
+    protected abstract fun dialogKey(q: Update.CallbackQuery.Payload): DialogKey?
     protected abstract fun toChatId(key: DialogKey): Long?
-    protected abstract suspend fun shouldHandleCallbackQuery(q: CallbackQuery): Boolean
+    protected abstract suspend fun shouldHandleCallbackQuery(q: Update.CallbackQuery.Payload): Boolean
     protected abstract suspend fun shouldHandleMessage(msg: Message): Boolean
     protected abstract suspend fun doStart(dialogKey: DialogKey, msg: Message): DialogDescriptor?
 
@@ -40,12 +40,12 @@ abstract class AbstractDispatchVerticle<DialogKey> : AbstractHierarchyVerticle()
             handleMessage(it)
         }
 
-        suspendJsonConsumer<CallbackQuery, Unit>(VertigramAddress.CallbackQuery) {
+        suspendJsonConsumer<Update.CallbackQuery.Payload, Unit>(VertigramAddress.CallbackQuery) {
             handleCallbackQuery(it)
         }
     }
 
-    private suspend fun handleCallbackQuery(callbackQuery: CallbackQuery) {
+    private suspend fun handleCallbackQuery(callbackQuery: Update.CallbackQuery.Payload) {
         val key = dialogKey(callbackQuery) ?: return
         val child = dialogs[key] ?: return
 
@@ -83,7 +83,7 @@ abstract class AbstractDispatchVerticle<DialogKey> : AbstractHierarchyVerticle()
         )
     }
 
-    private suspend fun passCallbackQueryToOngoing(callbackQuery: CallbackQuery, desc: DialogDescriptor) {
+    private suspend fun passCallbackQueryToOngoing(callbackQuery: Update.CallbackQuery.Payload, desc: DialogDescriptor) {
         ignore(
             vertx.eventBus().requestJsonAwait(
                 desc.callbackQueryAddress,

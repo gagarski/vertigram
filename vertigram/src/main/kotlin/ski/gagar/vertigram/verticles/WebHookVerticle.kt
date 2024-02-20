@@ -15,8 +15,8 @@ import ski.gagar.vertigram.logger
 import ski.gagar.vertigram.methods.deleteWebhook
 import ski.gagar.vertigram.methods.setWebhook
 import ski.gagar.vertigram.retrying
-import ski.gagar.vertigram.types.ParsedUpdate
 import ski.gagar.vertigram.types.ParsedUpdateList
+import ski.gagar.vertigram.types.Update
 import ski.gagar.vertigram.types.UpdateType
 import ski.gagar.vertigram.util.json.TELEGRAM_JSON_MAPPER
 import ski.gagar.vertigram.web.IpNetworkAddress
@@ -60,7 +60,7 @@ class WebHookVerticle : ErrorLoggingCoroutineVerticle() {
             val json = context.body().asJsonObject()
             val req = try {
                 json.mapTo(
-                    ParsedUpdate::class.java,
+                    Update.Parsed::class.java,
                     TELEGRAM_JSON_MAPPER
                 )
             } catch (ex: Exception) {

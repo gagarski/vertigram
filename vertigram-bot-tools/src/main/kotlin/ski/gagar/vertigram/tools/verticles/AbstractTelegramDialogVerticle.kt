@@ -15,9 +15,9 @@ import ski.gagar.vertigram.methods.editMessageText
 import ski.gagar.vertigram.methods.sendMessage
 import ski.gagar.vertigram.tools.isCommandForBot
 import ski.gagar.vertigram.tools.verticles.address.VertigramAddress
-import ski.gagar.vertigram.types.CallbackQuery
 import ski.gagar.vertigram.types.Message
 import ski.gagar.vertigram.types.ReplyMarkup
+import ski.gagar.vertigram.types.Update
 import ski.gagar.vertigram.types.User
 import ski.gagar.vertigram.types.richtext.RichText
 import ski.gagar.vertigram.types.util.toChatId
@@ -77,7 +77,7 @@ abstract class AbstractTelegramDialogVerticle : AbstractHierarchyVerticle() {
         }
     }
 
-    private suspend fun handleCallbackQuery(callbackQuery: CallbackQuery) = messageHandler {
+    private suspend fun handleCallbackQuery(callbackQuery: Update.CallbackQuery.Payload) = messageHandler {
         withLock {
             if (handleCancel && callbackQuery.data == CANCEL) {
                 become(cancelState, HistoryBehavior.WIPE)
@@ -244,7 +244,7 @@ abstract class AbstractTelegramDialogVerticle : AbstractHierarchyVerticle() {
         protected suspend inline fun withLock(block: () -> Unit) {
             v.withLock(block)
         }
-        open suspend fun handleCallbackQuery(callbackQuery: CallbackQuery) {}
+        open suspend fun handleCallbackQuery(callbackQuery: Update.CallbackQuery.Payload) {}
         open suspend fun handleMessage(message: Message) {}
         open suspend fun onChildDeath(deathNotice: DeathNotice) {
             v.die(deathNotice.reason)

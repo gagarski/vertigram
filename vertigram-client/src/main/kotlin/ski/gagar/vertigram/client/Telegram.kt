@@ -11,7 +11,7 @@ interface Telegram {
         offset: Long? = null,
         limit: Int? = null,
         allowedUpdates: List<UpdateType>? = null
-    ): List<Update>
+    ): List<Update<*>>
 
     suspend fun <T> call(callable: TelegramCallable<T>): T
 

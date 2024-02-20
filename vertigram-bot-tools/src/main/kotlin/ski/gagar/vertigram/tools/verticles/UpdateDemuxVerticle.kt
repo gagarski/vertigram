@@ -2,7 +2,6 @@ package ski.gagar.vertigram.tools.verticles
 
 import kotlinx.coroutines.yield
 import ski.gagar.vertigram.jackson.mapTo
-import ski.gagar.vertigram.jackson.publishJson
 import ski.gagar.vertigram.jackson.suspendJsonConsumer
 import ski.gagar.vertigram.tools.verticles.address.VertigramAddress
 import ski.gagar.vertigram.types.ParsedUpdateList
@@ -21,37 +20,37 @@ class UpdateDemuxVerticle : ErrorLoggingCoroutineVerticle() {
         val conf = typedConf
         for (u in list) {
 
-            if (conf.addresses.message != null && u.message != null) {
-                vertx.eventBus().publishJson(conf.addresses.message, u.message)
-            }
-
-            if (conf.addresses.channelPost != null && u.channelPost != null) {
-                vertx.eventBus().publishJson(conf.addresses.channelPost, u.channelPost)
-            }
-
-            if (conf.addresses.inlineQuery != null && u.inlineQuery != null) {
-                vertx.eventBus().publishJson(conf.addresses.inlineQuery, u.inlineQuery)
-            }
-
-            if (conf.addresses.callbackQuery != null && u.callbackQuery != null) {
-                vertx.eventBus().publishJson(conf.addresses.callbackQuery, u.callbackQuery)
-            }
-
-            if (conf.addresses.chatMember != null && u.chatMember != null) {
-                vertx.eventBus().publishJson(conf.addresses.chatMember, u.chatMember)
-            }
-
-            if (conf.addresses.myChatMember != null && u.myChatMember != null) {
-                vertx.eventBus().publishJson(conf.addresses.myChatMember, u.myChatMember)
-            }
-
-            if (conf.addresses.pollAnswer != null && u.pollAnswer != null) {
-                vertx.eventBus().publishJson(conf.addresses.pollAnswer, u.pollAnswer)
-            }
-
-            if (conf.addresses.update != null) {
-                vertx.eventBus().publishJson(conf.addresses.update, u)
-            }
+//            if (conf.addresses.message != null && u.message != null) {
+//                vertx.eventBus().publishJson(conf.addresses.message, u.message)
+//            }
+//
+//            if (conf.addresses.channelPost != null && u.channelPost != null) {
+//                vertx.eventBus().publishJson(conf.addresses.channelPost, u.channelPost)
+//            }
+//
+//            if (conf.addresses.inlineQuery != null && u.inlineQuery != null) {
+//                vertx.eventBus().publishJson(conf.addresses.inlineQuery, u.inlineQuery)
+//            }
+//
+//            if (conf.addresses.callbackQuery != null && u.callbackQuery != null) {
+//                vertx.eventBus().publishJson(conf.addresses.callbackQuery, u.callbackQuery)
+//            }
+//
+//            if (conf.addresses.chatMember != null && u.chatMember != null) {
+//                vertx.eventBus().publishJson(conf.addresses.chatMember, u.chatMember)
+//            }
+//
+//            if (conf.addresses.myChatMember != null && u.myChatMember != null) {
+//                vertx.eventBus().publishJson(conf.addresses.myChatMember, u.myChatMember)
+//            }
+//
+//            if (conf.addresses.pollAnswer != null && u.pollAnswer != null) {
+//                vertx.eventBus().publishJson(conf.addresses.pollAnswer, u.pollAnswer)
+//            }
+//
+//            if (conf.addresses.update != null) {
+//                vertx.eventBus().publishJson(conf.addresses.update, u)
+//            }
 
             yield()
         }

@@ -10,9 +10,8 @@ import ski.gagar.vertigram.lazy
 import ski.gagar.vertigram.logger
 import ski.gagar.vertigram.methods.deleteWebhook
 import ski.gagar.vertigram.retrying
-import ski.gagar.vertigram.types.MalformedUpdate
-import ski.gagar.vertigram.types.ParsedUpdate
 import ski.gagar.vertigram.types.ParsedUpdateList
+import ski.gagar.vertigram.types.Update
 import ski.gagar.vertigram.types.UpdateType
 import java.time.Instant
 
@@ -62,15 +61,15 @@ class LongPollVerticle: ErrorLoggingCoroutineVerticle() {
 
             offset = lastOfAll.updateId + 1
 
-            val properlyParsed = updates.filterIsInstance<ParsedUpdate>()
-            val malformed = updates.filterIsInstance<MalformedUpdate>()
+            val properlyParsed = updates.filterIsInstance<Update.Parsed<*>>()
+            val malformed = updates.filterIsInstance<Update.Malformed>()
 
             if (malformed.isNotEmpty()) {
                 logger.lazy.error { "Skipping malformed updates $malformed" }
             }
-            val lastWithDate = properlyParsed.lastOrNull { it.message?.date != null }
+            val lastWithDate = properlyParsed.lastOrNull { it.date != null }
 
-            if (typedConfig.skipMissing && lastWithDate != null && lastWithDate.message!!.date < startDate) {
+            if (typedConfig.skipMissing && lastWithDate != null && lastWithDate.date!! < startDate) {
                 logger.lazy.trace { "Skipping $properlyParsed. These have happened before we have started." }
                 continue
             }

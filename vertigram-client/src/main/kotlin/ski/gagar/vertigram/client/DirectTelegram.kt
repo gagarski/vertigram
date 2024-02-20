@@ -8,8 +8,6 @@ import ski.gagar.vertigram.client.impl.TelegramImplOptions
 import ski.gagar.vertigram.lazy
 import ski.gagar.vertigram.logger
 import ski.gagar.vertigram.methods.TelegramCallable
-import ski.gagar.vertigram.types.MalformedUpdate
-import ski.gagar.vertigram.types.ParsedUpdate
 import ski.gagar.vertigram.types.Update
 import ski.gagar.vertigram.types.UpdateType
 import java.time.Duration
@@ -41,7 +39,7 @@ class DirectTelegram(
         impl.call(type, callable)
 
     @Suppress("DEPRECATION")
-    override suspend fun getUpdates(offset: Long?, limit: Int?, allowedUpdates: List<UpdateType>?): List<Update> =
+    override suspend fun getUpdates(offset: Long?, limit: Int?, allowedUpdates: List<UpdateType>?): List<Update<*>> =
         impl.call(
             typeFactory.constructParametricType(List::class.java, Map::class.java),
             ski.gagar.vertigram.methods.GetUpdatesRaw(
@@ -52,12 +50,17 @@ class DirectTelegram(
             ), longPoll = true
         ).mapNotNull { raw ->
             try {
-                impl.mapper.convertValue(raw, ParsedUpdate::class.java)
+                impl.mapper.convertValue(raw, Update::class.java)
             } catch (e: IllegalArgumentException) {
                 logger.lazy.error(throwable = e) {
                     "Malformed update $raw"
                 }
-                impl.mapper.convertValue(raw, MalformedUpdate::class.java)
+                val id = raw["update_id"] as? Long
+                    ?: throw IllegalArgumentException("Malformed update $raw, there is no even update_id")
+                Update.Malformed(
+                    updateId = id,
+                    malformedRawData = raw
+                )
             }
         }
 

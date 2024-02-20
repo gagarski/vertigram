@@ -36,9 +36,8 @@ class TgVTelegram(
         return longPollDeliveryOptions
     }
 
-    override suspend fun getUpdates(offset: Long?, limit: Int?, allowedUpdates: List<UpdateType>?): List<Update> =
+    override suspend fun getUpdates(offset: Long?, limit: Int?, allowedUpdates: List<UpdateType>?): List<Update<*>> =
         try {
-            @Suppress("DEPRECATION")
             vertx.eventBus().requestJsonAwait(
                 TelegramVerticle.Config.updatesAddress(baseAddress),
                 TelegramVerticle.GetUpdates(offset, limit, allowedUpdates),
