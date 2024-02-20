@@ -9,7 +9,6 @@ import ski.gagar.vertigram.jackson.requestJsonAwait
 import ski.gagar.vertigram.methods.TelegramCallable
 import ski.gagar.vertigram.types.Update
 import ski.gagar.vertigram.types.UpdateList
-import ski.gagar.vertigram.types.UpdateType
 import ski.gagar.vertigram.util.TELEGRAM_TYPE_FACTORY
 import ski.gagar.vertigram.verticles.TelegramVerticle
 import java.time.Duration
@@ -36,7 +35,7 @@ class TgVTelegram(
         return longPollDeliveryOptions
     }
 
-    override suspend fun getUpdates(offset: Long?, limit: Int?, allowedUpdates: List<UpdateType>?): List<Update<*>> =
+    override suspend fun getUpdates(offset: Long?, limit: Int?, allowedUpdates: List<Update.Type>?): List<Update<*>> =
         try {
             vertx.eventBus().requestJsonAwait(
                 TelegramVerticle.Config.updatesAddress(baseAddress),

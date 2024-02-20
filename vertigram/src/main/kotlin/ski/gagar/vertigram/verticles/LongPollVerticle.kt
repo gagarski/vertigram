@@ -12,7 +12,6 @@ import ski.gagar.vertigram.methods.deleteWebhook
 import ski.gagar.vertigram.retrying
 import ski.gagar.vertigram.types.ParsedUpdateList
 import ski.gagar.vertigram.types.Update
-import ski.gagar.vertigram.types.UpdateType
 import java.time.Instant
 
 class LongPollVerticle: ErrorLoggingCoroutineVerticle() {
@@ -84,6 +83,6 @@ class LongPollVerticle: ErrorLoggingCoroutineVerticle() {
         val tgvAddress: String = TelegramVerticle.Config.DEFAULT_BASE_ADDRESS,
         val updatePublishingAddress: String = WebHookVerticle.Config.DEFAULT_UPDATE_PUBLISHING_ADDRESS,
         val skipMissing: Boolean = true,
-        val allowedUpdates: List<UpdateType>? = null
+        val allowedUpdates: List<Update.Type>? = null
     )
 }

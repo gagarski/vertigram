@@ -9,7 +9,6 @@ import ski.gagar.vertigram.lazy
 import ski.gagar.vertigram.logger
 import ski.gagar.vertigram.methods.TelegramCallable
 import ski.gagar.vertigram.types.Update
-import ski.gagar.vertigram.types.UpdateType
 import java.time.Duration
 
 private val LONG_POLL_DEFAULT_GAP: Duration = Duration.ofSeconds(5)
@@ -39,7 +38,7 @@ class DirectTelegram(
         impl.call(type, callable)
 
     @Suppress("DEPRECATION")
-    override suspend fun getUpdates(offset: Long?, limit: Int?, allowedUpdates: List<UpdateType>?): List<Update<*>> =
+    override suspend fun getUpdates(offset: Long?, limit: Int?, allowedUpdates: List<Update.Type>?): List<Update<*>> =
         impl.call(
             typeFactory.constructParametricType(List::class.java, Map::class.java),
             ski.gagar.vertigram.methods.GetUpdatesRaw(

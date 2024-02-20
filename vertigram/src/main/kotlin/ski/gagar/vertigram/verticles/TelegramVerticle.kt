@@ -9,8 +9,8 @@ import ski.gagar.vertigram.methods.MultipartTelegramCallable
 import ski.gagar.vertigram.methods.TelegramCallable
 import ski.gagar.vertigram.throttling.ThrottlingOptions
 import ski.gagar.vertigram.throttling.ThrottlingTelegram
+import ski.gagar.vertigram.types.Update
 import ski.gagar.vertigram.types.UpdateList
-import ski.gagar.vertigram.types.UpdateType
 import ski.gagar.vertigram.use
 import ski.gagar.vertigram.util.VertigramTypeHints
 import ski.gagar.vertigram.util.getOrAssert
@@ -182,7 +182,7 @@ class TelegramVerticle : ErrorLoggingCoroutineVerticle() {
         }
     }
 
-    data class GetUpdates(val offset: Long?, val limit: Int?, val allowedUpdates: List<UpdateType>? = null)
+    data class GetUpdates(val offset: Long?, val limit: Int?, val allowedUpdates: List<Update.Type>? = null)
     object GetLongPollTimeout
     data class DownloadFile(val path: String, val outputPath: String)
 }

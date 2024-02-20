@@ -3,7 +3,7 @@ package ski.gagar.vertigram.methods
 import com.fasterxml.jackson.annotation.JsonIgnore
 import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.annotations.TelegramMethod
-import ski.gagar.vertigram.types.UpdateType
+import ski.gagar.vertigram.types.Update
 import ski.gagar.vertigram.util.NoPosArgs
 import java.time.Duration
 
@@ -32,5 +32,5 @@ internal data class GetUpdatesRaw(
     val offset: Long? = null,
     val timeout: Duration = Duration.ZERO,
     val limit: Int? = null,
-    val allowedUpdates: List<UpdateType>? = null
+    val allowedUpdates: List<Update.Type>? = null
 ) : JsonTelegramCallable<List<Map<String, Any?>>>()

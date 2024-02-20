@@ -17,7 +17,6 @@ import ski.gagar.vertigram.methods.setWebhook
 import ski.gagar.vertigram.retrying
 import ski.gagar.vertigram.types.ParsedUpdateList
 import ski.gagar.vertigram.types.Update
-import ski.gagar.vertigram.types.UpdateType
 import ski.gagar.vertigram.util.json.TELEGRAM_JSON_MAPPER
 import ski.gagar.vertigram.web.IpNetworkAddress
 import ski.gagar.vertigram.web.RealIpLoggerHandler
@@ -102,7 +101,7 @@ class WebHookVerticle : ErrorLoggingCoroutineVerticle() {
         val tgvAddress: String = TelegramVerticle.Config.DEFAULT_BASE_ADDRESS,
         val updatePublishingAddress: String = DEFAULT_UPDATE_PUBLISHING_ADDRESS,
         val webHook: WebHookConfig = WebHookConfig(),
-        val allowedUpdates: List<UpdateType>? = null
+        val allowedUpdates: List<Update.Type>? = null
     ) {
         companion object {
             const val DEFAULT_UPDATE_PUBLISHING_ADDRESS = "ski.gagar.vertigram.updates"
