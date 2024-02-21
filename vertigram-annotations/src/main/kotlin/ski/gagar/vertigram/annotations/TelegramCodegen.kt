@@ -37,6 +37,10 @@ annotation class TelegramCodegen(
      */
     val methodName: String = "",
     /**
+     * A name for the method as mentioned in Telegram docs, by default, [methodName] is used
+     */
+    val docMethodName: String = "",
+    /**
      * Should pseudo-constructor (for `DoSomething` class it's `fun DoSomething(...)`) be generated?
      *
      * Pseudo-constructors are useful only in some cases, when the desired signature of constructor

@@ -9,5 +9,6 @@ import ski.gagar.vertigram.annotations.TelegramCodegen
  */
 @TelegramCodegen(
     methodName = "closeApi",
+    docMethodName = "close"
 )
 object Close : JsonTelegramCallable<Boolean>()

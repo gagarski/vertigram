@@ -170,6 +170,7 @@ sealed class SendPoll : JsonTelegramCallable<Message>(), HasChatId {
         )
         @TelegramCodegen(
             methodName = "sendQuiz",
+            docMethodName = "sendPoll",
             generatePseudoConstructor = true,
             pseudoConstructorName = "SendQuiz"
         )
@@ -211,6 +212,7 @@ sealed class SendPoll : JsonTelegramCallable<Message>(), HasChatId {
         )
         @TelegramCodegen(
             methodName = "sendQuiz",
+            docMethodName = "sendPoll",
             generatePseudoConstructor = true,
             pseudoConstructorName = "SendQuiz"
         )
@@ -252,6 +254,7 @@ sealed class SendPoll : JsonTelegramCallable<Message>(), HasChatId {
         )
         @TelegramCodegen(
             methodName = "sendQuiz",
+            docMethodName = "sendPoll",
             generatePseudoConstructor = true,
             pseudoConstructorName = "SendQuiz"
         )
