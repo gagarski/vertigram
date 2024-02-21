@@ -2,7 +2,7 @@ package ski.gagar.vertigram.methods
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import ski.gagar.vertigram.types.util.ChatId
-import ski.gagar.vertigram.types.ReactionType
+import ski.gagar.vertigram.types.Reaction
 import ski.gagar.vertigram.util.NoPosArgs
 
 /**
@@ -15,7 +15,7 @@ data class SetMessageReaction(
     private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
     val chatId: ChatId,
     val messageId: Long,
-    val reaction: List<ReactionType>? = null,
+    val reaction: List<Reaction>? = null,
     @get:JvmName("getIsBig")
     val isBig: Boolean = false
 ) : JsonTelegramCallable<Boolean>()

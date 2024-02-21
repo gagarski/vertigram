@@ -153,7 +153,7 @@ object ReplyMarkupSerializationTest : BaseSerializationTest() {
         assertSerializable<ReplyMarkup.Keyboard.Button>(
             ReplyMarkup.Keyboard.Button.WebApp(
                 text = "Text",
-                webApp = WebAppInfo("http://example.com")
+                webApp = WebAppInfo(url = "http://example.com")
             )
         )
     }

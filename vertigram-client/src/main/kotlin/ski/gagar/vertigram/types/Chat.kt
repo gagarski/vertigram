@@ -45,7 +45,7 @@ data class Chat(
         val isForum: Boolean = false,
         val photo: Photo? = null,
         val activeUserNames: List<String>? = null,
-        val availableReactions: List<ReactionType>? = null,
+        val availableReactions: List<Reaction>? = null,
         val accentColorId: Int,
         val backgroundCustomEmojiId: Int? = null,
         val profileAccentColorId: Int? = null,

@@ -1,7 +1,7 @@
 package ski.gagar.vertigram.methods
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import ski.gagar.vertigram.types.PassportElementError
+import ski.gagar.vertigram.types.Passport
 import ski.gagar.vertigram.util.NoPosArgs
 
 /**
@@ -13,5 +13,5 @@ data class SetPassportDataErrors(
     @JsonIgnore
     private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
     val userId: Long,
-    val errors: List<PassportElementError>
+    val errors: List<Passport.ElementError>
 ) : JsonTelegramCallable<Boolean>()

@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import ski.gagar.vertigram.annotations.TelegramMedia
 import ski.gagar.vertigram.types.File
 import ski.gagar.vertigram.types.Sticker
-import ski.gagar.vertigram.types.StickerFormat
 import ski.gagar.vertigram.util.NoPosArgs
 
 /**
@@ -18,5 +17,5 @@ data class UploadStickerFile(
     val userId: Long,
     @TelegramMedia
     val sticker: Sticker,
-    val stickerFormat: StickerFormat
+    val stickerFormat: Sticker.Format
 ) : MultipartTelegramCallable<File>()

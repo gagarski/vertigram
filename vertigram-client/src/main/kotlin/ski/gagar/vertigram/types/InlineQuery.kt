@@ -75,6 +75,7 @@ data class InlineQuery(
                  * therefore code generation is not working yet
                  */
                 operator fun invoke(
+                    @Suppress("UNUSED_PARAMETER")
                     noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
                     richText: RichText,
                     linkPreviewOptions: Message.LinkPreviewOptions? = null

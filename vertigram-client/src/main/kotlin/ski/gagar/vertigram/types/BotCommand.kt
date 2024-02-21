@@ -10,6 +10,10 @@ import ski.gagar.vertigram.util.NoPosArgs
 /**
  * Telegram [BotCommand](https://core.telegram.org/bots/api#botcommand) type.
  *
+ * Subtypes (which are nested) represent the subtypes, described by Telegram docs with more
+ * names given they are nested into [BotCommand] class. The rule here is the following:
+ * `BotCommandXxx` Telegram type becomes `BotCommand.Xxx`.
+ *
  * For up-to-date documentation please consult the official Telegram docs.
  */
 data class BotCommand(

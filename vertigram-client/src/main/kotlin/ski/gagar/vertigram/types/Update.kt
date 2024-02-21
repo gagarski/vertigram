@@ -127,8 +127,8 @@ sealed interface Update<T> {
             val user: User? = null,
             val actorChat: Chat? = null,
             val date: Instant,
-            val oldReaction: List<ReactionType>,
-            val newReaction: List<ReactionType>
+            val oldReaction: List<Reaction>,
+            val newReaction: List<Reaction>
         )
     }
 
@@ -163,7 +163,7 @@ sealed interface Update<T> {
             data class ReactionCount(
                 @JsonIgnore
                 private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
-                val type: ReactionType,
+                val type: Reaction,
                 val totalCount: Int
             )
 
@@ -305,9 +305,9 @@ sealed interface Update<T> {
      */
     data class PollAnswer(
         override val updateId: Long,
-        val pollAnswer: ski.gagar.vertigram.types.PollAnswer
-    ) : Parsed<ski.gagar.vertigram.types.PollAnswer> {
-        override val payload: ski.gagar.vertigram.types.PollAnswer = pollAnswer
+        val pollAnswer: ski.gagar.vertigram.types.Poll.Answer
+    ) : Parsed<ski.gagar.vertigram.types.Poll.Answer> {
+        override val payload: ski.gagar.vertigram.types.Poll.Answer = pollAnswer
         override val date: Instant? = null
 
     }

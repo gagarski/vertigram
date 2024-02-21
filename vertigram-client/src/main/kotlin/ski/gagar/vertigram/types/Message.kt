@@ -79,7 +79,7 @@ data class Message(
     val chatShared: Service.ChatShared? = null,
     val connectedWebsite: String? = null,
     val writeAccessAllowed: Service.WriteAccessAllowed? = null,
-    val passportData: PassportData? = null,
+    val passportData: Passport.Data? = null,
     val proximityAlertTriggered: Service.ProximityAlertTriggered? = null,
     // boost_added
     val forumTopicCreated: Service.ForumTopic.Created? = null,

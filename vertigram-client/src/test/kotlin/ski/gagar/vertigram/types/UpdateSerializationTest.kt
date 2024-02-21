@@ -153,19 +153,18 @@ object UpdateSerializationTest : BaseSerializationTest() {
         assertSerializable<Update<*>>(
             Update.Poll(
                 updateId = 1,
-                poll = Poll(
+                poll = Poll.Regular(
                     id = "1",
                     question = "aaa",
                     options = listOf(),
-                    totalVoterCount = 1,
-                    type = Poll.Type.QUIZ
+                    totalVoterCount = 1
                 )
             )
         )
         assertSerializable<Update<*>>(
             Update.PollAnswer(
                 updateId = 1,
-                pollAnswer = PollAnswer(
+                pollAnswer = Poll.Answer(
                     pollId = "1",
                     optionIds = listOf()
                 )

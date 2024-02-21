@@ -22,7 +22,15 @@ data class ChatBoost(
     val expirationDate: Instant,
     val source: Source
 ) {
-
+    /**
+     * Telegram [ChatBoostSource](https://core.telegram.org/bots/api#chatboostsource) type.
+     *
+     * Subtypes (which are nested) represent the subtypes, described by Telegram docs with more
+     * names given they are nested into [ChatBoost.Source] class. The rule here is the following:
+     * `ChatBoostSourceXxx` Telegram type becomes `ChatBoost.Source.Xxx`.
+     *
+     * For up-to-date documentation please consult the official Telegram docs.
+     */
     @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "source", include = JsonTypeInfo.As.EXISTING_PROPERTY)
     @JsonSubTypes(
         JsonSubTypes.Type(value = Source.Premium::class, name = ChatBoost.Source.Type.PREMIUM_STR),

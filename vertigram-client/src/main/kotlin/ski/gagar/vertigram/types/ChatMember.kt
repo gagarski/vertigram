@@ -9,6 +9,15 @@ import ski.gagar.vertigram.util.NoPosArgs
 import java.time.Instant
 
 
+/**
+ * Telegram [ChatMember](https://core.telegram.org/bots/api#chatmember) type.
+ *
+ * Subtypes (which are nested) represent the subtypes, described by Telegram docs with more
+ * names given they are nested into [ChatMember] class. The rule here is the following:
+ * `ChatMemberXxx` Telegram type becomes `ChatMember.Xxx`.
+ *
+ * For up-to-date documentation please consult the official Telegram docs.
+ */
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "status", include = JsonTypeInfo.As.EXISTING_PROPERTY)
 @JsonSubTypes(
     JsonSubTypes.Type(value = ChatMember.Owner::class, name = ChatMember.Status.OWNER_STR),
