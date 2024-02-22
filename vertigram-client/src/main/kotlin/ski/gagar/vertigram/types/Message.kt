@@ -23,7 +23,7 @@ data class Message(
     val messageThreadId: Long? = null,
     val from: User? = null,
     val senderChat: Chat? = null,
-    // sender_boost_count
+    val senderBoostCount: Int? = null,
     val date: Instant,
     val chat: Chat,
     val forwardOrigin: Origin? = null,
@@ -34,7 +34,7 @@ data class Message(
     val replyToMessage: Message? = null,
     val externalReply: ExternalReplyInfo? = null,
     val quote: TextQuote? = null,
-    // reply_to_story
+    val replyToStory: Story? = null,
     val viaBot: User? = null,
     val editDate: Instant? = null,
     val hasProtectedContent: Boolean = false,
@@ -81,7 +81,7 @@ data class Message(
     val writeAccessAllowed: Service.WriteAccessAllowed? = null,
     val passportData: Passport.Data? = null,
     val proximityAlertTriggered: Service.ProximityAlertTriggered? = null,
-    // boost_added
+    val boostAdded: ChatBoost.Added? = null,
     val forumTopicCreated: Service.ForumTopic.Created? = null,
     val forumTopicEdited: Service.ForumTopic.Edited? = null,
     val forumTopicClosed: Service.ForumTopic.Closed? = null,

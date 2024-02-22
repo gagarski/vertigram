@@ -23,6 +23,17 @@ data class ChatBoost(
     val source: Source
 ) {
     /**
+     * Telegram [ChatBoostAdded](https://core.telegram.org/bots/api#chatboostadded) type.
+     *
+     * For up-to-date documentation please consult the official Telegram docs.
+     */
+    data class Added(
+        @JsonIgnore
+        private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+        val boostCount: Int
+    )
+
+    /**
      * Telegram [ChatBoostSource](https://core.telegram.org/bots/api#chatboostsource) type.
      *
      * Subtypes (which are nested) represent the subtypes, described by Telegram docs with more

@@ -1,5 +1,7 @@
 package ski.gagar.vertigram.methods
 
+import com.fasterxml.jackson.annotation.JsonSubTypes
+import com.fasterxml.jackson.annotation.JsonTypeInfo
 import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.annotations.TelegramMethod
 import ski.gagar.vertigram.throttling.HasChatIdLong
@@ -14,6 +16,11 @@ import ski.gagar.vertigram.types.Message
  *
  * For up-to-date documentation please consult the official Telegram docs.
  */
+@JsonTypeInfo(use = JsonTypeInfo.Id.DEDUCTION)
+@JsonSubTypes(
+    JsonSubTypes.Type(SetGameScore.InlineMessage::class),
+    JsonSubTypes.Type(SetGameScore.ChatMessage::class)
+)
 sealed interface SetGameScore {
     val userId: Long
     val score: Int
@@ -36,7 +43,7 @@ sealed interface SetGameScore {
         override val score: Int,
         override val force: Boolean = false,
         override val disableEditMessage: Boolean = false,
-        val inlineMessageId: Long
+        val inlineMessageId: String
     ) : SetGameScore, JsonTelegramCallable<Boolean>()
 
     /**

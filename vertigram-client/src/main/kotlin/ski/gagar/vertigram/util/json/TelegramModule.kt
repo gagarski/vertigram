@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.Version
 import com.fasterxml.jackson.databind.Module
 import com.fasterxml.jackson.databind.module.SimpleDeserializers
 import com.fasterxml.jackson.databind.module.SimpleSerializers
-import ski.gagar.vertigram.types.attachments.Attachment
 import java.time.Duration
 import java.time.Instant
 
@@ -25,10 +24,11 @@ internal object TelegramModule : Module() {
                 Instant::class.java,
                 UnixTimestampDeserializer()
             )
-            addDeserializer(
-                Attachment::class.java,
-                AttachmentDeserializer()
-            )
+            // Useless, fails to resolve type
+//            addDeserializer(
+//                Attachment::class.java,
+//                AttachmentDeserializer()
+//            )
             addDeserializer(
                 Duration::class.java,
                 DurationInSecondsDeserializer()

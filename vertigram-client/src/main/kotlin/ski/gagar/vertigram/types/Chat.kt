@@ -62,6 +62,7 @@ data class Chat(
         val pinnedMessage: Message? = null,
         val permissions: ChatPermissions? = null,
         val slowModeDelay: Duration? = null,
+        val unrestrictBoostCount: Int? = null,
         val messageAutoDeleteTime: Duration? = null,
         val hasAggressiveAntiSpamEnabled: Boolean? = null,
         val hasHiddenMembers: Boolean = false,
@@ -69,8 +70,9 @@ data class Chat(
         val hasVisibleHistory: Boolean = false,
         val stickerSetName: String? = null,
         val canSetStickerSet: Boolean = false,
+        val customEmojiStickerSetName: String? = null,
         val linkedChatId: Long? = null,
-        val location: Chat.Location? = null,
+        val location: Location? = null,
     ) {
         /**
          * [AccentColor] color enum value with given [accentColorId], or null if the id is unknown
@@ -109,7 +111,7 @@ data class Chat(
     data class Location(
         @JsonIgnore
         private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
-        val location: Location,
+        val location: ski.gagar.vertigram.types.Location,
         val address: String
     )
 

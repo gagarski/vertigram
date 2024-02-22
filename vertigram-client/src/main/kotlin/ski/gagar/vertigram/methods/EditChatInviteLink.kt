@@ -1,6 +1,8 @@
 package ski.gagar.vertigram.methods
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.annotation.JsonSubTypes
+import com.fasterxml.jackson.annotation.JsonTypeInfo
 import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.annotations.TelegramMethod
 import ski.gagar.vertigram.throttling.HasChatId
@@ -16,13 +18,18 @@ import java.time.Instant
  *
  * For up-to-date documentation please consult the official Telegram docs.
  */
+@JsonTypeInfo(use = JsonTypeInfo.Id.DEDUCTION)
+@JsonSubTypes(
+    JsonSubTypes.Type(EditChatInviteLink.WithMemberLimit::class),
+    JsonSubTypes.Type(EditChatInviteLink.WithJoinRequest::class)
+)
 sealed class EditChatInviteLink : JsonTelegramCallable<ChatInviteLink>(), HasChatId {
     abstract val inviteLink: String
     abstract val name: String?
     abstract val expireDate: Instant?
-    abstract val createsJoinRequest: Boolean
+
     /**
-     * Case when [memberLimit] is specified, implies that [createsJoinRequest] is false
+     * Case when [memberLimit] is specified, implies that `createsJoinRequest` is not set
      */
     @TelegramMethod(
         methodName = "editChatInviteLink"
@@ -41,7 +48,8 @@ sealed class EditChatInviteLink : JsonTelegramCallable<ChatInviteLink>(), HasCha
         override val expireDate: Instant? = null,
         val memberLimit: Int,
     ) : EditChatInviteLink() {
-        override val createsJoinRequest: Boolean = false
+        // Intentinally not passed, Telegram will treat that as false and it will help type deduction
+        // val createsJoinRequest: Boolean = false
     }
 
     /**
@@ -62,7 +70,7 @@ sealed class EditChatInviteLink : JsonTelegramCallable<ChatInviteLink>(), HasCha
         override val inviteLink: String,
         override val name: String? = null,
         override val expireDate: Instant? = null,
-        override val createsJoinRequest: Boolean = false
+        val createsJoinRequest: Boolean = false
     ) : EditChatInviteLink()
 
 }

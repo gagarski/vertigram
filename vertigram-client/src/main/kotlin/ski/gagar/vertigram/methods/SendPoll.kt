@@ -1,8 +1,12 @@
 package ski.gagar.vertigram.methods
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.annotation.JsonSubTypes
+import com.fasterxml.jackson.annotation.JsonTypeInfo
+import com.fasterxml.jackson.databind.annotation.JsonTypeResolver
 import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.annotations.TelegramMethod
+import ski.gagar.vertigram.jackson.typing.TypeResolverWithDeductionBuilder
 import ski.gagar.vertigram.throttling.HasChatId
 import ski.gagar.vertigram.throttling.Throttled
 import ski.gagar.vertigram.types.Message
@@ -30,6 +34,16 @@ import java.time.Instant
  * For up-to-date documentation please consult the official Telegram docs.
  */
 @Suppress("INAPPLICABLE_JVM_NAME")
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", include = JsonTypeInfo.As.EXISTING_PROPERTY)
+@JsonSubTypes(
+    JsonSubTypes.Type(value = SendPoll.Regular.OpenPeriod::class, name = Poll.Type.REGULAR_STR),
+    JsonSubTypes.Type(value = SendPoll.Regular.CloseDate::class, name = Poll.Type.REGULAR_STR),
+    JsonSubTypes.Type(value = SendPoll.Regular.Indefinite::class, name = Poll.Type.REGULAR_STR),
+    JsonSubTypes.Type(value = SendPoll.Quiz.OpenPeriod::class, name = Poll.Type.QUIZ_STR),
+    JsonSubTypes.Type(value = SendPoll.Quiz.CloseDate::class, name = Poll.Type.QUIZ_STR),
+    JsonSubTypes.Type(value = SendPoll.Quiz.Indefinite::class, name = Poll.Type.QUIZ_STR),
+)
+@JsonTypeResolver(TypeResolverWithDeductionBuilder::class)
 sealed class SendPoll : JsonTelegramCallable<Message>(), HasChatId {
     abstract val messageThreadId: Long?
     abstract val question: String
@@ -41,8 +55,7 @@ sealed class SendPoll : JsonTelegramCallable<Message>(), HasChatId {
     abstract val replyParameters: ReplyParameters?
     abstract val replyMarkup: ReplyMarkup?
     abstract val type: Poll.Type
-    @get:JvmName("getIsClosed")
-    abstract val isClosed: Boolean
+
     /**
      * Cases for regular poll
      */
@@ -77,8 +90,6 @@ sealed class SendPoll : JsonTelegramCallable<Message>(), HasChatId {
 
         ) : Regular() {
             override val type = Poll.Type.REGULAR
-            @get:JvmName("getIsClosed")
-            override val isClosed: Boolean = false
 
             object Defaults {
                 const val isAnonymous: Boolean = true
@@ -114,8 +125,6 @@ sealed class SendPoll : JsonTelegramCallable<Message>(), HasChatId {
             override val replyMarkup: ReplyMarkup? = null
         ) : Regular() {
             override val type = Poll.Type.REGULAR
-            @get:JvmName("getIsClosed")
-            override val isClosed = false
 
             object Defaults {
                 const val isAnonymous: Boolean = true
@@ -144,7 +153,7 @@ sealed class SendPoll : JsonTelegramCallable<Message>(), HasChatId {
             @get:JvmName("getIsAnonymous")
             override val isAnonymous: Boolean = Defaults.isAnonymous,
             override val allowsMultipleAnswers: Boolean = false,
-            override val isClosed: Boolean = false,
+            val isClosed: Boolean = false,
             override val disableNotification: Boolean = false,
             override val protectContent: Boolean = false,
             override val replyParameters: ReplyParameters? = null,
@@ -195,8 +204,6 @@ sealed class SendPoll : JsonTelegramCallable<Message>(), HasChatId {
             override val replyMarkup: ReplyMarkup? = null
         ) : Quiz() {
             override val type = Poll.Type.QUIZ
-            @get:JvmName("getIsClosed")
-            override val isClosed = false
             override val allowsMultipleAnswers: Boolean = false
 
             object Defaults {
@@ -237,8 +244,6 @@ sealed class SendPoll : JsonTelegramCallable<Message>(), HasChatId {
             override val replyMarkup: ReplyMarkup? = null
         ) : Quiz() {
             override val type = Poll.Type.QUIZ
-            @get:JvmName("getIsClosed")
-            override val isClosed = false
             override val allowsMultipleAnswers: Boolean = false
 
             object Defaults {
@@ -273,7 +278,7 @@ sealed class SendPoll : JsonTelegramCallable<Message>(), HasChatId {
             override val explanationParseMode: RichText.ParseMode? = null,
             override val explanationEntities: List<MessageEntity>? = null,
             @get:JvmName("getIsClosed")
-            override val isClosed: Boolean = false,
+            val isClosed: Boolean = false,
             override val disableNotification: Boolean = false,
             override val protectContent: Boolean = false,
             override val replyParameters: ReplyParameters? = null,

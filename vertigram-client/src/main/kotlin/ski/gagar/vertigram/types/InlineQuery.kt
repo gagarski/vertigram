@@ -195,16 +195,15 @@ data class InlineQuery(
         JsonSubTypes.Type(value = Result.Mpeg4Gif.Cached::class, name = Result.Type.MPEG4_GIF_STR),
         JsonSubTypes.Type(value = Result.Photo::class, name = Result.Type.PHOTO_STR),
         JsonSubTypes.Type(value = Result.Photo.Cached::class, name = Result.Type.PHOTO_STR),
-        // Omitted intentionaly there is no such class on telegram
+        // Omitted intentionally there is no such class on telegram
         // JsonSubTypes.Type(value = Result.Sticker::class, name = Result.Type.STICKER_STR),
         JsonSubTypes.Type(value = Result.Sticker.Cached::class, name = Result.Type.STICKER_STR),
         JsonSubTypes.Type(value = Result.Venue::class, name = Result.Type.VENUE_STR),
         JsonSubTypes.Type(value = Result.Video::class, name = Result.Type.VIDEO_STR),
         JsonSubTypes.Type(value = Result.Video.Cached::class, name = Result.Type.VIDEO_STR),
         JsonSubTypes.Type(value = Result.Voice::class, name = Result.Type.VOICE_STR),
-        JsonSubTypes.Type(value = Result.Voice.Cached::class, name = Result.Type.VOICE_STR),
-
-        )
+        JsonSubTypes.Type(value = Result.Voice.Cached::class, name = Result.Type.VOICE_STR)
+    )
     @JsonTypeResolver(TypeResolverWithDeductionBuilder::class)
     sealed interface Result {
         val type: Type

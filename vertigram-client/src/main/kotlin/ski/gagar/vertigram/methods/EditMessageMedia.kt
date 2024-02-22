@@ -1,6 +1,8 @@
 package ski.gagar.vertigram.methods
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.annotation.JsonSubTypes
+import com.fasterxml.jackson.annotation.JsonTypeInfo
 import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.annotations.TelegramMedia
 import ski.gagar.vertigram.annotations.TelegramMethod
@@ -20,6 +22,11 @@ import ski.gagar.vertigram.util.NoPosArgs
  *
  * For up-to-date documentation please consult the official Telegram docs.
  */
+@JsonTypeInfo(use = JsonTypeInfo.Id.DEDUCTION)
+@JsonSubTypes(
+    JsonSubTypes.Type(EditMessageMedia.InlineMessage::class),
+    JsonSubTypes.Type(EditMessageMedia.ChatMessage::class)
+)
 sealed interface EditMessageMedia {
     val media: InputMedia
     val replyMarkup: ReplyMarkup.InlineKeyboard?
@@ -38,7 +45,7 @@ sealed interface EditMessageMedia {
     data class InlineMessage internal constructor(
         @JsonIgnore
         private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
-        val inlineMessageId: Long,
+        val inlineMessageId: String,
         @TelegramMedia
         override val media: InputMedia,
         override val replyMarkup: ReplyMarkup.InlineKeyboard? = null

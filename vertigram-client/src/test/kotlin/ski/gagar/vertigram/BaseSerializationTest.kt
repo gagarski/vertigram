@@ -1,4 +1,4 @@
-package ski.gagar.vertigram.types
+package ski.gagar.vertigram
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
@@ -19,25 +19,32 @@ abstract class BaseSerializationTest {
             "Serialization check failed for mapper $mapperName")
     }
 
-    fun assertSerializable(obj: Any, type: Class<*>) {
+    fun assertSerializable(obj: Any, type: Class<*>, skip: Set<String>) {
         for ((mapperName, mapper) in MAPPERS) {
+            if (mapperName in skip)
+                continue
             assertSerializable(obj, type, mapper, mapperName)
         }
     }
 
-    inline fun <reified T> assertSerializable(obj: Any) {
-        assertSerializable(obj, T::class.java)
+    inline fun <reified T> assertSerializable(obj: Any, skip: Set<String> = setOf()) {
+        assertSerializable(obj, T::class.java, skip)
     }
 
     companion object {
         val MAPPERS = mapOf(
-            "telegram" to TELEGRAM_JSON_MAPPER,
-            "vanilla with modules" to ObjectMapper()
+            Mappers.TELEGRAM to TELEGRAM_JSON_MAPPER,
+            Mappers.VANILLA_WITH_MODULES to ObjectMapper()
                 .registerModule(KotlinModule.Builder().build())
                 .registerModule(JavaTimeModule()),
-            "vertx with modules" to DatabindCodec.mapper()
+            Mappers.VERTX_WITH_MODULES to DatabindCodec.mapper()
                 .registerModule(KotlinModule.Builder().build())
                 .registerModule(JavaTimeModule())
         )
+        object Mappers {
+            const val TELEGRAM = "telegram"
+            const val VANILLA_WITH_MODULES = "vanilla with modules"
+            const val VERTX_WITH_MODULES = "vanilla with modules"
+        }
     }
 }

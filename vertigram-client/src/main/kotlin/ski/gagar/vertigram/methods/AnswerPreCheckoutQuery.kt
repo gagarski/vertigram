@@ -1,6 +1,8 @@
 package ski.gagar.vertigram.methods
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.annotation.JsonSubTypes
+import com.fasterxml.jackson.annotation.JsonTypeInfo
 import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.annotations.TelegramMethod
 import ski.gagar.vertigram.util.NoPosArgs
@@ -13,6 +15,11 @@ import ski.gagar.vertigram.util.NoPosArgs
  *
  * For up-to-date documentation please consult the official Telegram docs.
  */
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "ok", include = JsonTypeInfo.As.EXISTING_PROPERTY)
+@JsonSubTypes(
+    JsonSubTypes.Type(value = AnswerPreCheckoutQuery.Ok::class, name = "true"),
+    JsonSubTypes.Type(value = AnswerPreCheckoutQuery.Error::class, name = "false")
+)
 sealed class AnswerPreCheckoutQuery : JsonTelegramCallable<Boolean>() {
     abstract val preCheckoutQueryId: String
 

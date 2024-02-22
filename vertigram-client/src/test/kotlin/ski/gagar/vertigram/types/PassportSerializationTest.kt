@@ -1,6 +1,7 @@
 package ski.gagar.vertigram.types
 
 import org.junit.jupiter.api.Test
+import ski.gagar.vertigram.BaseSerializationTest
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 

@@ -1,6 +1,8 @@
 package ski.gagar.vertigram.methods
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.annotation.JsonSubTypes
+import com.fasterxml.jackson.annotation.JsonTypeInfo
 import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.annotations.TelegramMethod
 import ski.gagar.vertigram.throttling.HasChatId
@@ -21,6 +23,11 @@ import ski.gagar.vertigram.util.NoPosArgs
  *
  * For up-to-date documentation please consult the official Telegram docs.
  */
+@JsonTypeInfo(use = JsonTypeInfo.Id.DEDUCTION)
+@JsonSubTypes(
+    JsonSubTypes.Type(EditMessageText.InlineMessage::class),
+    JsonSubTypes.Type(EditMessageText.ChatMessage::class)
+)
 sealed interface EditMessageText : HasRichText {
     val linkPreviewOptions: Message.LinkPreviewOptions?
     val replyMarkup: ReplyMarkup?
@@ -39,7 +46,7 @@ sealed interface EditMessageText : HasRichText {
     data class InlineMessage internal constructor(
         @JsonIgnore
         private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
-        val inlineMessageId: Long,
+        val inlineMessageId: String,
         override val text: String,
         override val parseMode: RichText.ParseMode? = null,
         override val entities: List<MessageEntity>? = null,
