@@ -20,9 +20,7 @@ fun defaultVertigramMapper() =
         .registerModule(KotlinModule.Builder().build())
         .registerModule(JavaTimeModule())
 
-internal val BOOTSTRAP_JSON_MAPPER = defaultVertigramMapper()
-    .copy()
-    .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+
 
 class Vertigram(
     val vertx: Vertx,
