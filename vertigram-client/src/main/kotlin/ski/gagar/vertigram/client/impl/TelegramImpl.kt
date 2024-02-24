@@ -1,11 +1,17 @@
 package ski.gagar.vertigram.client.impl
 
 import com.fasterxml.jackson.databind.JavaType
+import com.fasterxml.jackson.databind.ObjectMapper
 import io.netty.handler.codec.http.HttpHeaderNames
 import io.netty.handler.codec.http.HttpHeaderValues
 import io.vertx.core.Vertx
+import io.vertx.core.buffer.Buffer
 import io.vertx.core.file.OpenOptions
+import io.vertx.core.json.DecodeException
+import io.vertx.core.json.JsonObject
+import io.vertx.core.json.jackson.DatabindCodec
 import io.vertx.core.net.ProxyOptions
+import io.vertx.ext.web.client.HttpRequest
 import io.vertx.ext.web.client.HttpResponse
 import io.vertx.ext.web.client.WebClient
 import io.vertx.ext.web.client.WebClientOptions
@@ -25,31 +31,74 @@ import ski.gagar.vertigram.util.VertigramTypeHints
 import ski.gagar.vertigram.util.getOrAssert
 import ski.gagar.vertigram.util.json.TELEGRAM_JSON_MAPPER
 import ski.gagar.vertigram.util.multipart.telegramJsonMapperWithMultipart
-import ski.gagar.vertigram.web.jsonBody
 import ski.gagar.vertigram.web.multipart.FieldPart
 import ski.gagar.vertigram.web.multipart.MultipartForm
 import ski.gagar.vertigram.web.multipart.sendMultipartForm
-import ski.gagar.vertigram.web.sendJson
 import java.time.Duration
 
+/**
+ * Options for [TelegramImpl]
+ */
 internal data class TelegramImplOptions(
+    /**
+     * Base telegram URL
+     */
     val tgBase: String = "https://api.telegram.org",
+    /**
+     * Timeout for regular HTTP requests
+     */
     val shortPollTimeout: Duration = Duration.ofSeconds(5),
+    /**
+     * Timeout for long poll `getUpdates` HTTP requests
+     */
     val longPollTimeout: Duration = Duration.ofSeconds(60),
+    /**
+     * HTTP client pool configs
+     */
     val pools: Pools? = null
 ) {
+    /**
+     * HTTP client pool configs
+     */
     data class Pools(
+        /**
+         * Regular pool size. `null` means stick to default Vert.X value.
+         */
         val regular: Int?,
+        /**
+         * Upload pool size. `null` means stick to default Vert.X value.
+         */
         val upload: Int?,
+        /**
+         * Long-poll pool size. `null` means stick to default Vert.X value.
+         */
         val longPoll: Int?,
+        /**
+         * Download pool size. `null` means stick to default Vert.X value.
+         */
         val download: Int?
     )
 }
 
+/**
+ * Internal low-level Telegram implementation
+ */
 internal class TelegramImpl(
+    /**
+     * Auth token
+     */
     private val token: String,
+    /**
+     * [Vertx] instance
+     */
     vertx: Vertx,
+    /**
+     * Proxy options
+     */
     private val proxy: ProxyOptions? = null,
+    /**
+     * Options
+     */
     private val options: TelegramImplOptions = TelegramImplOptions()
 ) {
     private fun makeClientOptions(poolSize: Int?) =
@@ -72,9 +121,40 @@ internal class TelegramImpl(
     private val longPollClient = WebClient.create(vertx, makeClientOptions(options.pools?.longPoll))
     private val downloadClient = WebClient.create(vertx, makeClientOptions(options.pools?.download))
 
-    @PublishedApi
     internal val mapper = TELEGRAM_JSON_MAPPER
-    internal val mapperMp = telegramJsonMapperWithMultipart(mapper, vertx)
+    private val mapperMp = telegramJsonMapperWithMultipart(mapper, vertx)
+
+    private fun <T> decodeValue(str: String, type: JavaType, mapper: ObjectMapper = DatabindCodec.mapper()): T {
+        try {
+            return mapper.readValue(str, type)
+        } catch (var3: Exception) {
+            throw DecodeException("Failed to decode: " + var3.message, var3)
+        }
+
+    }
+
+    private fun <T> jsonDecoder(type: JavaType, mapper: ObjectMapper = DatabindCodec.mapper()): (Buffer) -> T {
+        return { buff -> decodeValue(buff.toString(), type, mapper) }
+    }
+
+
+    private fun jsonObjectMapFrom(obj: Any?) =
+        obj?.let {
+            JsonObject(mapper.convertValue(it, Map::class.java).uncheckedCast<Map<String, Any?>>())
+        }
+
+    private fun <T, U> HttpRequest<T>.sendJsonGeneric(obj: U) =
+        sendJsonObject(
+            jsonObjectMapFrom(
+                obj
+            )
+        )
+
+    private fun <R> HttpResponse<Buffer>.jsonBody(type: JavaType): R? {
+        val b = bodyAsBuffer()
+        return if (b != null) jsonDecoder<R>(type, mapper)(b) else null
+    }
+
 
     private fun client(longPoll: Boolean = false, upload: Boolean = false): WebClient =
         when {
@@ -100,8 +180,8 @@ internal class TelegramImpl(
         longPoll: Boolean = false
     ): Pair<HttpResponse<*>, Any?> {
         logger.lazy.trace { "Calling $method with $obj" }
-        val resp = client(method, longPoll, false).sendJson(obj, mapper).coAwait()
-        return resp to resp.jsonBody<Any>(type, mapper).also {
+        val resp = client(method, longPoll, false).sendJsonGeneric(obj).coAwait()
+        return resp to resp.jsonBody<Any>(type).also {
             logger.lazy.trace { "Received response $it" }
         }
     }
@@ -114,7 +194,7 @@ internal class TelegramImpl(
     ): Pair<HttpResponse<*>, Any?> {
         logger.lazy.trace { "Calling $method with $form (form/multipart)" }
         val resp = client(method, longPoll, !form.parts.all { it is FieldPart }).sendMultipartForm(form)
-        return resp to resp.jsonBody<Any>(type, mapper).also {
+        return resp to resp.jsonBody<Any>(type).also {
             logger.lazy.trace { "Received response $it" }
         }
     }
@@ -193,12 +273,18 @@ internal class TelegramImpl(
             mpc
         )
 
+    /**
+     * Entry point for calling methods
+     */
     suspend fun <T> call(type: JavaType, callable: TelegramCallable<T>, longPoll: Boolean = false): T =
         when (callable) {
             is JsonTelegramCallable<T> -> callJson(type, callable, longPoll)
             is MultipartTelegramCallable<T> -> callMultipart(type, callable)
         }
 
+    /**
+     * Entry point for downloading files
+     */
     suspend fun downloadFile(path: String, outputPath: String) {
         val f = fs.open(outputPath, OpenOptions().apply {
             isTruncateExisting = true
@@ -212,6 +298,9 @@ internal class TelegramImpl(
         }
     }
 
+    /**
+     * Close
+     */
     fun close() {
         regularClient.close()
         longPollClient.close()

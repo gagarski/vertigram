@@ -16,28 +16,38 @@ import kotlinx.html.stream.appendHTML
 import kotlinx.html.visit
 import ski.gagar.vertigram.types.MessageEntity
 import ski.gagar.vertigram.types.User
-import ski.gagar.vertigram.types.richtext.MarkdownV2Text
 import ski.gagar.vertigram.types.richtext.TextWithEntities
 
-fun String.toRichText() = TextWithEntities(this)
-
-fun textMarkdown(init: RichTextRoot.() -> Unit) =
-    MarkdownV2Text(RichTextRoot().apply(init).toMarkdownString())
-fun textHtml(init: RichTextRoot.() -> Unit) =
-    MarkdownV2Text(RichTextRoot().apply(init).toHtmlString())
-fun textWithEntities(init: RichTextRoot.() -> Unit) =
-    RichTextRoot().apply(init).toTextWithEntities()
-
+/**
+ * [DslMarker] for rich text markdown.
+ */
 @DslMarker
 private annotation class RichTextDslMarker
 
+/**
+ * Base class for every rich text element
+ */
 @RichTextDslMarker
 abstract class RichTextElement internal constructor() {
+    /**
+     * Render Markdown for element, string rendering is delegated to [StringBuilder]
+     */
     internal abstract fun StringBuilder.renderMarkdown()
+
+    /**
+     * Render HTML for element, string rendering is delegated to `kotlinx.html`
+     */
     internal abstract fun FlowContent.renderHtml()
+
+    /**
+     * Render text with entities for element, rendering is delegated to [TextWithEntitiesBuilder]
+     */
     internal abstract fun TextWithEntitiesBuilder.renderTextWithEntities()
 }
 
+/**
+ * Plain text
+ */
 class Text internal constructor(val value: String): RichTextElement() {
     override fun StringBuilder.renderMarkdown() {
         append(MarkdownTools.escapeText(value))
@@ -52,9 +62,21 @@ class Text internal constructor(val value: String): RichTextElement() {
     }
 }
 
-
+/**
+ * Abstract class for the element that has children.
+ *
+ * By default, all child types are protected. Override them as public in subclasses if you
+ * want specific child type for specific element type.
+ */
 abstract class RichTextElementWithChildren internal constructor() : RichTextElement() {
+    /**
+     * Children list
+     */
     protected val children: MutableList<RichTextElement> = mutableListOf()
+
+    /**
+     * Create entity when rendered in [TextWithEntities] mode
+     */
     abstract fun createEntity(offset: Int, length: Int): MessageEntity
 
     protected fun <T : RichTextElement> initTag(tag: T, init: T.() -> Unit = {}): T {
@@ -94,52 +116,131 @@ abstract class RichTextElementWithChildren internal constructor() : RichTextElem
         append(createEntity(offset, length))
     }
 
+    /**
+     * Add plain text as a child
+     */
     open fun text(string: String) = children.add(Text(string))
+
+    /**
+     * Add plain text as a child
+     */
     open operator fun String.unaryPlus() = text(this)
+
+    /**
+     * Add plain text with space as a child
+     */
     open fun space() = children.add(Text(" "))
+
+    /**
+     * Add plain text with line break as a child
+     */
     open fun br() = children.add(Text("\n"))
 
+    /**
+     * Add bold text as a child
+     */
     protected open fun b(init: Bold.() -> Unit) = initTag(Bold(), init)
+
+    /**
+     * Add italic text as a child
+     */
     protected open fun i(init: Italic.() -> Unit) = initTag(Italic(), init)
+
+    /**
+     * Add undelined text as a child
+     */
     protected open fun u(init: Underline.() -> Unit) = initTag(Underline(), init)
+
+    /**
+     * Add strikethrought text as a child
+     */
     protected open fun s(init: Strikethrough.() -> Unit) = initTag(Strikethrough(), init)
+
+    /**
+     * Add link as a child
+     */
     protected open fun a(href: String, init: Link.() -> Unit) = initTag(
         Link(
             href
         ), init)
+
+    /**
+     * Add emoji as a child
+     */
     protected open fun emoji(basic: String, customId: Long) = initTag(
         Emoji(
             basic,
             customId
         )
     )
+
+    /**
+     * Add user mention (with children) as a child
+     */
     protected open fun user(user: User, init: UserMention.() -> Unit) =
         initTag(UserMention(user), init)
+
+    /**
+     * Add user mention (with single plain text child) as a child
+     */
     protected open fun user(user: User, text: String) = initTag(UserMention(user)) { +text }
+
+    /**
+     * Add user mention (\@user) as a child
+     */
     protected open fun user(user: User) = when {
         user.username != null -> initTag(UserMention(user)) { +"@${user.username}" }
         user.fullName != null -> initTag(UserMention(user)) { +user.fullName!! }
         else -> initTag(UserMention(user)) { +"???" }
     }
 
+    /**
+     * Add soft user mention (\@user inside `code`) as a child
+     */
     protected open fun userSoft(user: User) = when {
         user.username != null -> initTag(Code("@${user.username}"))
         user.fullName != null -> initTag(Code(user.fullName!!))
         else -> initTag(Code("???"))
     }
+
+    /**
+     * Add code as a child
+     */
     protected open fun code(code: String) = initTag(Code(code))
+
+    /**
+     * Add pre-formatted text as a child
+     */
     protected open fun pre(code: String, language: String? = null) = initTag(
         Pre(
             code,
             language
         )
     )
+
+    /**
+     * Add spoiler as a child
+     */
     protected open fun spoiler(init: Spoiler.() -> Unit) = initTag(Spoiler(), init)
+
+    /**
+     * Add block quote as a child
+     */
     protected open fun blockQuote(init: BlockQuote.() -> Unit) = initTag(BlockQuote(), init)
 }
 
+/**
+ * Base class for elements which have a prefix and postfix in Markdown
+ */
 abstract class WrappedRichTextElementWithChildren internal constructor() : RichTextElementWithChildren() {
+    /**
+     * Prefix for Markdown
+     */
     abstract fun markdownPrefix(builder: StringBuilder)
+
+    /**
+     * Postfix for Markdown
+     */
     open fun markdownPostfix(builder: StringBuilder) = markdownPrefix(builder)
 
     override fun StringBuilder.renderMarkdown() {
@@ -150,6 +251,9 @@ abstract class WrappedRichTextElementWithChildren internal constructor() : RichT
 
 }
 
+/**
+ * Bold text
+ */
 class Bold internal constructor() : WrappedRichTextElementWithChildren() {
     override fun markdownPrefix(builder: StringBuilder) {
         builder.append("*")
@@ -175,6 +279,9 @@ class Bold internal constructor() : WrappedRichTextElementWithChildren() {
     public override fun spoiler(init: Spoiler.() -> Unit) = super.spoiler(init)
 }
 
+/**
+ * Italic text
+ */
 class Italic internal constructor(
     // See notes here: https://core.telegram.org/bots/api#markdownv2-style
     // We could be more smart here and add extra char only when italic is the last part of underline
@@ -210,6 +317,9 @@ class Italic internal constructor(
     public override fun spoiler(init: Spoiler.() -> Unit) = super.spoiler(init)
 }
 
+/**
+ * Underline text
+ */
 class Underline internal constructor() : WrappedRichTextElementWithChildren() {
     override fun createEntity(offset: Int, length: Int): MessageEntity =
         MessageEntity.Underline(offset = offset, length = length)
@@ -237,6 +347,9 @@ class Underline internal constructor() : WrappedRichTextElementWithChildren() {
     public override fun spoiler(init: Spoiler.() -> Unit) = super.spoiler(init)
 }
 
+/**
+ * Strikethrough text
+ */
 class Strikethrough internal constructor(): WrappedRichTextElementWithChildren() {
     override fun createEntity(offset: Int, length: Int): MessageEntity =
         MessageEntity.Strikethrough(offset = offset, length = length)
@@ -262,6 +375,9 @@ class Strikethrough internal constructor(): WrappedRichTextElementWithChildren()
     public override fun spoiler(init: Spoiler.() -> Unit) = super.spoiler(init)
 }
 
+/**
+ * Link text
+ */
 class Link internal constructor(private val href: String) : RichTextElementWithChildren() {
     override fun createEntity(offset: Int, length: Int): MessageEntity =
         throw IllegalStateException("Do not call me")
@@ -295,6 +411,9 @@ class Link internal constructor(private val href: String) : RichTextElementWithC
 
 }
 
+/**
+ * User mention
+ */
 class UserMention internal constructor(private val user: User) : RichTextElementWithChildren() {
     override fun createEntity(offset: Int, length: Int): MessageEntity =
         MessageEntity.Mention(offset = offset, length = length)
@@ -336,6 +455,9 @@ class UserMention internal constructor(private val user: User) : RichTextElement
 
 }
 
+/**
+ * Emoji
+ */
 class Emoji internal constructor(private val basic: String, private val customId: Long) : RichTextElement() {
     override fun StringBuilder.renderMarkdown() {
         append("[$basic]")
@@ -357,6 +479,9 @@ class Emoji internal constructor(private val basic: String, private val customId
     }
 }
 
+/**
+ * Code (inline)
+ */
 class Code internal constructor(private val code: String) : RichTextElement() {
     override fun StringBuilder.renderMarkdown() {
         append("`${MarkdownTools.escapeCode(code)}`")
@@ -375,6 +500,9 @@ class Code internal constructor(private val code: String) : RichTextElement() {
     }
 }
 
+/**
+ * Pre-formatted text (code block)
+ */
 class Pre internal constructor(private val code: String, private val language: String? = null) : RichTextElement() {
     override fun StringBuilder.renderMarkdown() {
         append("\n```")
@@ -408,6 +536,9 @@ class Pre internal constructor(private val code: String, private val language: S
     }
 }
 
+/**
+ * Spoiler
+ */
 class Spoiler internal constructor() : WrappedRichTextElementWithChildren() {
     override fun createEntity(offset: Int, length: Int): MessageEntity =
         MessageEntity.Spoiler(offset = offset, length = length)
@@ -432,6 +563,9 @@ class Spoiler internal constructor() : WrappedRichTextElementWithChildren() {
     public override fun user(user: User) = super.user(user)
 }
 
+/**
+ * Block quote
+ */
 class BlockQuote internal constructor() : RichTextElementWithChildren() {
     override fun createEntity(offset: Int, length: Int): MessageEntity =
         MessageEntity.BlockQuote(offset = offset, length = length)
@@ -463,6 +597,9 @@ class BlockQuote internal constructor() : RichTextElementWithChildren() {
     public override fun spoiler(init: Spoiler.() -> Unit) = super.spoiler(init)
 }
 
+/**
+ * A root for rich text.
+ */
 class RichTextRoot internal constructor() : RichTextElementWithChildren() {
     override fun createEntity(offset: Int, length: Int): MessageEntity =
         throw IllegalStateException("Do not call me")
@@ -539,7 +676,10 @@ private val User.fullName: String?
         return fullName.ifBlank { null }
     }
 
-internal class TextWithEntitiesBuilder {
+/**
+ * Low-level builder for [TextWithEntities], used in rich text builders as implementation.
+ */
+class TextWithEntitiesBuilder {
     private val textBuilder = StringBuilder()
     private val entitiesBuilder = mutableListOf<MessageEntity>()
 

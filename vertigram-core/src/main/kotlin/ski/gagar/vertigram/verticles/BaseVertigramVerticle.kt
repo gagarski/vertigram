@@ -12,7 +12,7 @@ import ski.gagar.vertigram.lazy
 import ski.gagar.vertigram.logger
 import kotlin.coroutines.CoroutineContext
 
-abstract class ErrorLoggingCoroutineVerticle : CoroutineVerticle(), Named {
+abstract class BaseVertigramVerticle : CoroutineVerticle(), Named {
     private lateinit var context: Context
 
     override val name: String by lazy {

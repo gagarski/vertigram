@@ -23,10 +23,10 @@ import ski.gagar.vertigram.web.multipart.MultipartForm
  *
  * This class intends to support [ski.gagar.vertigram.types.InputMedia] fields (both single and lists) and
  * [ski.gagar.vertigram.types.attachments.Attachment] fields to attach files. Such fields should be annotated
- * with [TgMedia] annotation to be properly handled (TODO: maybe lift this requirement).
+ * with [ski.gagar.vertigram.annotations.TelegramMedia] annotation to be properly handled.
  *
  * This mapper is built on top of regular [ObjectMapper] and should be working "almost as JSON" on multipart part
- * of serialization. However there are some known limitations:
+ * of serialization. However, there are some known limitations:
  *  - [com.fasterxml.jackson.annotation.JsonAnyGetter] is not supported
  *  - [com.fasterxml.jackson.annotation.JsonFilter] is not supported
  *  - Top level objects which are not using [BeanSerializer] are not supported

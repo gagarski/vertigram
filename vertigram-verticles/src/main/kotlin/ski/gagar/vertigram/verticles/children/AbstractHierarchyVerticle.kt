@@ -7,12 +7,12 @@ import ski.gagar.vertigram.jackson.jsonConsumer
 import ski.gagar.vertigram.jackson.publishJson
 import ski.gagar.vertigram.lazy
 import ski.gagar.vertigram.logger
-import ski.gagar.vertigram.verticles.ErrorLoggingCoroutineVerticle
+import ski.gagar.vertigram.verticles.BaseVertigramVerticle
 import ski.gagar.vertigram.verticles.children.messages.DeathNotice
 import ski.gagar.vertigram.verticles.children.messages.DeathReason
 import java.util.*
 
-abstract class AbstractHierarchyVerticle : ErrorLoggingCoroutineVerticle() {
+abstract class AbstractHierarchyVerticle : BaseVertigramVerticle() {
     private val children = mutableSetOf<String>()
     private var deathReason: DeathReason? = null
 

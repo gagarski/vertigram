@@ -7,6 +7,9 @@ import com.fasterxml.jackson.databind.module.SimpleSerializers
 import java.time.Duration
 import java.time.Instant
 
+/**
+ * Jackson modules that defines serializers and serializers for some standard types in Telegram-specific format
+ */
 internal object TelegramModule : Module() {
     override fun getModuleName(): String = "TelegramModule"
 
@@ -14,21 +17,16 @@ internal object TelegramModule : Module() {
 
     override fun setupModule(context: SetupContext) {
         context.addSerializers(SimpleSerializers().apply {
-            addSerializer(UnixTimestampSerializer())
             addSerializer(AttachmentSerializer())
             addSerializer(UrlAttachmentSerializer())
             addSerializer(DurationInSecondsSerializer())
+            addSerializer(UnixTimestampSerializer())
         })
         context.addDeserializers(SimpleDeserializers().apply {
             addDeserializer(
                 Instant::class.java,
                 UnixTimestampDeserializer()
             )
-            // Useless, fails to resolve type
-//            addDeserializer(
-//                Attachment::class.java,
-//                AttachmentDeserializer()
-//            )
             addDeserializer(
                 Duration::class.java,
                 DurationInSecondsDeserializer()

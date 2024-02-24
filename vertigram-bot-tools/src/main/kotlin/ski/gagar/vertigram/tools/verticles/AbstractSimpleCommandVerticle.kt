@@ -6,10 +6,10 @@ import ski.gagar.vertigram.tools.isForwarded
 import ski.gagar.vertigram.types.Message
 import ski.gagar.vertigram.types.Update
 import ski.gagar.vertigram.types.User
-import ski.gagar.vertigram.verticles.ErrorLoggingCoroutineVerticle
+import ski.gagar.vertigram.verticles.BaseVertigramVerticle
 import ski.gagar.vertigram.verticles.VertigramAddresses
 
-abstract class AbstractSimpleCommandVerticle : ErrorLoggingCoroutineVerticle() {
+abstract class AbstractSimpleCommandVerticle : BaseVertigramVerticle() {
     abstract val command: String
     abstract suspend fun respond(message: Message)
     open val listenAddress: String = VertigramAddresses.demuxAddress(Update.Type.MESSAGE)

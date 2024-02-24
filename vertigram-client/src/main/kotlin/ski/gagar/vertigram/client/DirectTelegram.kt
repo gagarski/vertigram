@@ -13,9 +13,25 @@ import java.time.Duration
 
 private val LONG_POLL_DEFAULT_GAP: Duration = Duration.ofSeconds(5)
 
+/**
+ * Telegram client that uses direct HTTP connections.
+ *
+ * This implementation keeps HTTP connection pools open until it is closed.
+ * This should be considered a "heavy" client, which means you probably should consider
+ * sharing it across your app. The implemntation is thread-safe.
+ */
 class DirectTelegram(
+    /**
+     * Auth token
+     */
     token: String,
+    /**
+     * Vertx instance
+     */
     vertx: Vertx,
+    /**
+     * Options
+     */
     private val options: Options = Options()
 ) : AbstractTelegram(), AutoCloseable {
     private val impl: TelegramImpl =
@@ -26,15 +42,16 @@ class DirectTelegram(
             TelegramImplOptions(
                 tgBase = options.tgBase,
                 shortPollTimeout = options.shortPollTimeout,
-                longPollTimeout = options.longPollTimeout
+                longPollTimeout = options.longPollTimeout,
+                pools = options.pools.toImpl()
             )
         )
 
      override suspend fun <T> call(
-        type: JavaType,
-        callable: TelegramCallable<T>
+         resultType: JavaType,
+         callable: TelegramCallable<T>
     ): T =
-        impl.call(type, callable)
+        impl.call(resultType, callable)
 
     @Suppress("DEPRECATION")
     override suspend fun getUpdates(offset: Long?, limit: Int?, allowedUpdates: List<Update.Type>?): List<Update<*>> =
@@ -70,19 +87,54 @@ class DirectTelegram(
         impl.close()
     }
 
+    /**
+     * [DirectTelegram] options
+     */
     data class Options(
+        /**
+         * Base URL
+         */
         val tgBase: String = "https://api.telegram.org",
+        /**
+         * Timeout for regular HTTP requests
+         */
         val shortPollTimeout: Duration = Duration.ofSeconds(5),
+        /**
+         * Timeout for long poll `getUpdates` HTTP requests
+         */
         val longPollTimeout: Duration = Duration.ofSeconds(60),
+        /**
+         * A value for `timeout` parameter for getUpdates method.
+         *
+         * By default, a value, slightly less than HTTP timeout for long-poll requests ([longPollTimeout])
+         */
         val getUpdatesTimeoutParam: Duration = longPollTimeout - LONG_POLL_DEFAULT_GAP,
+        /**
+         * HTTP proxy options
+         */
         val proxy: ProxyOptions? = null,
+        /**
+         * Connection pool options
+         */
         val pools: Pools? = null
 
     ) {
         data class Pools(
+            /**
+             * Regular pool size. `null` means stick to default Vert.X value.
+             */
             val regular: Int?,
+            /**
+             * Upload pool size. `null` means stick to default Vert.X value.
+             */
             val upload: Int?,
+            /**
+             * Long-poll pool size. `null` means stick to default Vert.X value.
+             */
             val longPoll: Int?,
+            /**
+             * Download pool size. `null` means stick to default Vert.X value.
+             */
             val download: Int?
         )
     }

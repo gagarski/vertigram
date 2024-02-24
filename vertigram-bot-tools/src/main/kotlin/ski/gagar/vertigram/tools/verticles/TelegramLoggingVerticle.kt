@@ -16,11 +16,11 @@ import ski.gagar.vertigram.markup.textMarkdown
 import ski.gagar.vertigram.methods.sendMessage
 import ski.gagar.vertigram.types.User
 import ski.gagar.vertigram.types.util.toChatId
-import ski.gagar.vertigram.verticles.ErrorLoggingCoroutineVerticle
+import ski.gagar.vertigram.verticles.BaseVertigramVerticle
 import ski.gagar.vertigram.verticles.Named
 import java.time.Duration
 
-class TelegramLoggingVerticle : ErrorLoggingCoroutineVerticle() {
+class TelegramLoggingVerticle : BaseVertigramVerticle() {
     private val typedConf: Config by lazy {
         config.mapTo()
     }

@@ -5,7 +5,7 @@ import ski.gagar.vertigram.jackson.publishJson
 import ski.gagar.vertigram.jackson.suspendJsonConsumer
 import ski.gagar.vertigram.types.Update
 
-class UpdateDispatcher : ErrorLoggingCoroutineVerticle() {
+class UpdateDispatcher : BaseVertigramVerticle() {
     private val typedConf: Config by lazy {
         config.mapTo()
     }

@@ -8,7 +8,18 @@ import com.fasterxml.jackson.databind.ser.BeanSerializer
 import ski.gagar.vertigram.annotations.TelegramMedia
 import ski.gagar.vertigram.types.attachments.Attachment
 
+/**
+ * Extends [BeanSerializer] to support multipart for [ski.gagar.vertigram.client.DirectTelegram] purposes.
+ *
+ * @see serializeToMultipart
+ */
 internal class BeanSerializerWithMultipart(delegate: BeanSerializer) : BeanSerializer(delegate) {
+    /**
+     * Resolves all [Attachment] in the [bean]. Serialization results is written to [gen]
+     * (which is treated as map on upper level).
+     *
+     * @return deferred attachments
+     */
     fun serializeToMultipart(bean: Any, gen: JsonGenerator, provider: SerializerProvider): Map<String, AttachmentInfo> {
         if (_objectIdWriter != null) {
             throw IllegalStateException("_objectIdWriter is not supported")

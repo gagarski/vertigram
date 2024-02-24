@@ -13,7 +13,7 @@ import ski.gagar.vertigram.retrying
 import ski.gagar.vertigram.types.Update
 import java.time.Instant
 
-class LongPoller: ErrorLoggingCoroutineVerticle() {
+class LongPoller: BaseVertigramVerticle() {
     private val typedConfig by lazy {
         config.mapTo<Config>()
     }

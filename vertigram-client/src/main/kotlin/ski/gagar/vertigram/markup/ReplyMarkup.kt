@@ -6,60 +6,6 @@ import ski.gagar.vertigram.types.ReplyMarkup
 import ski.gagar.vertigram.types.WebAppInfo
 import ski.gagar.vertigram.util.NoPosArgs
 
-/**
- * A builder for [ReplyMarkup.InlineKeyboard].
- *
- * @sample inlineKeyboardSample
- */
-fun inlineKeyboard(init: InlineKeyboardMarkupBuilder.() -> Unit): ReplyMarkup.InlineKeyboard {
-    val bld = InlineKeyboardMarkupBuilder()
-    bld.init()
-    return bld.build()
-}
-
-/**
- * A builder for [ReplyMarkup.Keyboard].
- *
- * Payloads for button types are unwrapped.
- *
- * @sample keyboardSample
- */
-fun keyboard(
-    @Suppress("UNUSED_PARAMETER")
-    noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
-    isPersistent: Boolean = false,
-    resizeKeyboard: Boolean = false,
-    oneTimeKeyboard: Boolean = false,
-    inputFieldPlaceholder: String? = null,
-    selective: Boolean = false,
-    init: ReplyKeyboardMarkupBuilder.() -> Unit
-): ReplyMarkup.Keyboard {
-    val bld = ReplyKeyboardMarkupBuilder()
-    bld.init()
-    return bld.build(
-        isPersistent = isPersistent,
-        resizeKeyboard = resizeKeyboard,
-        oneTimeKeyboard = oneTimeKeyboard,
-        inputFieldPlaceholder = inputFieldPlaceholder,
-        selective = selective
-    )
-}
-
-/**
- * A builder for [ReplyMarkup.KeyboardRemove]
- */
-fun keyboardRemove(selective: Boolean) = ReplyMarkup.KeyboardRemove(selective = selective)
-
-/**
- * A builder for [ReplyMarkup.ForceReply]
- */
-fun forceReply(inputFieldPlaceholder: String? = null,
-               selective: Boolean) =
-    ReplyMarkup.ForceReply(
-        inputFieldPlaceholder = inputFieldPlaceholder,
-        selective = selective
-    )
-
 @DslMarker
 private annotation class InlineKeyboardMarkupDslMarker
 

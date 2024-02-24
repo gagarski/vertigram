@@ -5,7 +5,11 @@ import com.fasterxml.jackson.databind.JsonSerializer
 import com.fasterxml.jackson.databind.SerializerProvider
 import com.fasterxml.jackson.databind.jsontype.TypeSerializer
 import ski.gagar.vertigram.types.attachments.StringAttachment
+import java.time.Instant
 
+/**
+ * Deserializes [Instant] as UNIX time in seconds, used in [TELEGRAM_JSON_MAPPER].
+ */
 internal class UrlAttachmentSerializer : JsonSerializer<StringAttachment>() {
     override fun serialize(value: StringAttachment, gen: JsonGenerator, serializers: SerializerProvider) =
         gen.writeString(value.url)

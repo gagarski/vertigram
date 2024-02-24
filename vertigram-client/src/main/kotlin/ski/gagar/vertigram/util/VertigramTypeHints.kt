@@ -1,6 +1,7 @@
 package ski.gagar.vertigram.util
 
 import com.fasterxml.jackson.databind.JavaType
+import com.fasterxml.jackson.databind.type.TypeFactory
 import org.apache.commons.lang3.StringUtils
 import org.reflections.Reflections
 import ski.gagar.vertigram.annotations.TelegramMethod
@@ -19,7 +20,7 @@ import java.lang.reflect.TypeVariable
 /**
  * Type factory from [TELEGRAM_JSON_MAPPER]
  */
-val TELEGRAM_TYPE_FACTORY = TELEGRAM_JSON_MAPPER.typeFactory
+val TELEGRAM_TYPE_FACTORY: TypeFactory = TELEGRAM_JSON_MAPPER.typeFactory
 
 /**
  * Response type for `this`.

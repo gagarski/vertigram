@@ -21,7 +21,7 @@ import ski.gagar.vertigram.web.IpNetworkAddress
 import ski.gagar.vertigram.web.RealIpLoggerHandler
 import java.util.*
 
-class WebHook : ErrorLoggingCoroutineVerticle() {
+class WebHook : BaseVertigramVerticle() {
     private val secret = UUID.randomUUID()
     private val typedConfig by lazy {
         config.mapTo<Config>()

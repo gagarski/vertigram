@@ -49,13 +49,13 @@ class TgVTelegram(
         }
 
     @Suppress("UNCHECKED_CAST")
-    override suspend fun <T> call(type: JavaType, callable: TelegramCallable<T>): T =
+    override suspend fun <T> call(resultType: JavaType, callable: TelegramCallable<T>): T =
         try {
             vertx.eventBus()
                 .requestJsonAwait<TelegramCallable<T>, Any?>(
                     TelegramVerticle.Config.callAddress(callable, baseAddress),
                     callable,
-                    type
+                    resultType
                 ) as T
         } catch (ex: ReplyException) {
             ex.unwrap()

@@ -15,7 +15,7 @@ import ski.gagar.vertigram.use
 import ski.gagar.vertigram.util.VertigramTypeHints
 import ski.gagar.vertigram.util.getOrAssert
 
-class TelegramVerticle : ErrorLoggingCoroutineVerticle() {
+class TelegramVerticle : BaseVertigramVerticle() {
     private val typedConfig by lazy {
         config.mapTo<Config>()
     }

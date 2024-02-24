@@ -6,6 +6,9 @@ import com.fasterxml.jackson.databind.ser.BeanPropertyWriter
 import ski.gagar.vertigram.types.InputMedia
 import ski.gagar.vertigram.types.attachments.Attachment
 
+/**
+ * [BeanPropertyWriter] sub-class for [ObjectMapperWithMultipart]
+ */
 internal class MediaInstantiatingBeanPropertyWriter(delegate: BeanPropertyWriter) : BeanPropertyWriter(delegate) {
     private fun processSingleMedia(
         value: InputMedia,
