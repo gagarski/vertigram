@@ -10,7 +10,6 @@ import ski.gagar.vertigram.lazy
 import ski.gagar.vertigram.logger
 import ski.gagar.vertigram.methods.deleteWebhook
 import ski.gagar.vertigram.retrying
-import ski.gagar.vertigram.types.ParsedUpdateList
 import ski.gagar.vertigram.types.Update
 import java.time.Instant
 
@@ -76,7 +75,7 @@ class LongPoller: ErrorLoggingCoroutineVerticle() {
             logger.lazy.trace { "Publishing $properlyParsed" }
 
             for (u in properlyParsed) {
-                vertx.eventBus().publishJson(typedConfig.updatePublishingAddress, ParsedUpdateList(properlyParsed))
+                vertx.eventBus().publishJson(typedConfig.updatePublishingAddress, u)
             }
 
         }

@@ -45,7 +45,6 @@ data class User(
     @Suppress("INAPPLICABLE_JVM_NAME")
     data class Me(
         override val id: Long,
-        @get:JvmName("getIsBot")
         override val firstName: String? = null,
         override val lastName: String? = null,
         override val username: String? = null,

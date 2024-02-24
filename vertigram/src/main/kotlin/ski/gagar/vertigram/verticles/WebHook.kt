@@ -73,7 +73,7 @@ class WebHook : ErrorLoggingCoroutineVerticle() {
             }
             logger.lazy.trace { "Received update $req" }
             logger.lazy.trace { "Publishing $req" }
-            vertx.eventBus().publishJson(typedConfig.updatePublishingAddress, listOf(req))
+            vertx.eventBus().publishJson(typedConfig.updatePublishingAddress, req)
             context.response().end()
         }
 

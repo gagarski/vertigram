@@ -92,7 +92,7 @@ private fun getTgCallables() =
  * Get consumer address for `TelegramVerticle`
  */
 private val <T> Class<T>.tgvAddress: String
-    get() = getAnnotation(TelegramMethod::class.java).verticleConsumerName.ifEmpty { simpleName.uncapitalizeDotSeparated() }
+    get() = getAnnotation(TelegramMethod::class.java).verticleConsumerName.ifEmpty { name.uncapitalizeDotSeparated() }
 
 /**
  * Do [StringUtils.uncapitalize] on each part of string, separated by dot.
