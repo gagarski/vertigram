@@ -9,6 +9,22 @@ import java.time.Duration
 import java.time.Instant
 
 /**
+ * Common interface for [Chat] and [Chat.Verbose]
+ */
+interface IChat {
+    val id: Long
+    val type: Chat.Type
+    val title: String?
+    val username: String?
+    val firstName: String?
+    val lastName: String?
+    @Suppress("INAPPLICABLE_JVM_NAME")
+
+    @get:JvmName("getIsForum")
+    val isForum: Boolean
+}
+
+/**
  * Telegram [Chat](https://core.telegram.org/bots/api#chat) type.
  *
  * This class represents a part of original Telegram type, which is not marked with
@@ -19,15 +35,15 @@ import java.time.Instant
 data class Chat(
     @JsonIgnore
     private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
-    val id: Long,
-    val type: Type,
-    val title: String? = null,
-    val username: String? = null,
-    val firstName: String? = null,
-    val lastName: String? = null,
+    override val id: Long,
+    override val type: Type,
+    override val title: String? = null,
+    override val username: String? = null,
+    override val firstName: String? = null,
+    override val lastName: String? = null,
     @get:JvmName("getIsForum")
-    val isForum: Boolean = false
-) {
+    override val isForum: Boolean = false
+) : IChat {
     /**
      * The verbose Telegram [Chat](https://core.telegram.org/bots/api#chat) type, representing the data
      * returned from [ski.gagar.vertigram.methods.GetChat]
@@ -35,14 +51,14 @@ data class Chat(
     data class Verbose(
         @JsonIgnore
         private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
-        val id: Long,
-        val type: Type,
-        val title: String? = null,
-        val username: String? = null,
-        val firstName: String? = null,
-        val lastName: String? = null,
+        override val id: Long,
+        override val type: Type,
+        override val title: String? = null,
+        override val username: String? = null,
+        override val firstName: String? = null,
+        override val lastName: String? = null,
         @get:JvmName("getIsForum")
-        val isForum: Boolean = false,
+        override val isForum: Boolean = false,
         val photo: Photo? = null,
         val activeUserNames: List<String>? = null,
         val availableReactions: List<Reaction>? = null,
@@ -73,7 +89,7 @@ data class Chat(
         val customEmojiStickerSetName: String? = null,
         val linkedChatId: Long? = null,
         val location: Location? = null,
-    ) {
+    ) : IChat{
         /**
          * [AccentColor] color enum value with given [accentColorId], or null if the id is unknown
          */

@@ -179,7 +179,7 @@ abstract class AbstractTelegramDialogVerticle : AbstractHierarchyVerticle() {
         become(state, HistoryBehavior.SKIP)
     }
 
-    protected suspend fun sendOrEdit(text: RichText, buttons: ReplyMarkup.InlineKeyboard? = null, forceSend: Boolean = false) {
+    protected suspend fun sendOrEdit(richText: RichText, buttons: ReplyMarkup.InlineKeyboard? = null, forceSend: Boolean = false) {
         if (forceSend) {
             resetKnownMessage()
         }
@@ -199,18 +199,18 @@ abstract class AbstractTelegramDialogVerticle : AbstractHierarchyVerticle() {
         if (null == msgInfo) {
             val msgId = tg.sendMessage(
                 chatId = chatId.toChatId(),
-                richText = text,
+                richText = richText,
                 replyMarkup = buttons
             ).messageId
-            this.msgInfo = MsgInfo(msgId, buttons != null, text.toString(), buttons)
-        } else if (text.toString() != msgInfo.text || buttons != msgInfo.markup) {
+            this.msgInfo = MsgInfo(msgId, buttons != null, richText.toString(), buttons)
+        } else if (richText.toString() != msgInfo.text || buttons != msgInfo.markup) {
             val msgId = tg.editMessageText(
                 chatId = chatId.toChatId(),
                 messageId = msgInfo.id,
-                richText = text,
+                richText = richText,
                 replyMarkup = buttons
             ).messageId
-            this.msgInfo = MsgInfo(msgId, buttons != null, text.toString(), buttons)
+            this.msgInfo = MsgInfo(msgId, buttons != null, richText.toString(), buttons)
         }
     }
 
@@ -288,9 +288,9 @@ abstract class AbstractTelegramDialogVerticle : AbstractHierarchyVerticle() {
         }
 
         protected suspend fun sendOrEdit(
-            text: RichText, buttons: ReplyMarkup.InlineKeyboard? = null, forceSend: Boolean = false
+            richText: RichText, buttons: ReplyMarkup.InlineKeyboard? = null, forceSend: Boolean = false
         ) {
-            v.sendOrEdit(text, buttons, forceSend)
+            v.sendOrEdit(richText, buttons, forceSend)
         }
 
         protected val tg: Telegram
