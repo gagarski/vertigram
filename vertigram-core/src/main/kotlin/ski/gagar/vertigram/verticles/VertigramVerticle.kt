@@ -118,13 +118,17 @@ abstract class VertigramVerticle<Config> : CoroutineVerticle(), Named {
     )
 
     data class BareBonesConfig(
-        val vertigramName: String
-    )
+        override val vertigramName: String
+    ) : HasVertigramName
 
     data class ConfigWrapper<Config>(
-        val vertigramName: String,
+        override val vertigramName: String,
         val config: Config
-    )
+    ) : HasVertigramName
+
+    interface HasVertigramName {
+        val vertigramName: String
+    }
 
     private data class ConfigHolder<T>(val config: T)
 
