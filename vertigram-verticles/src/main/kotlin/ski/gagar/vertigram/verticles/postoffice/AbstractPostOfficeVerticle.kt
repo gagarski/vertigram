@@ -117,7 +117,7 @@ abstract class AbstractPostOfficeVerticle<
         }
     }
 
-    private fun unsubscribeSingle(req: SubscriptionInfo<Discriminator>, discriminator: Discriminator) {
+    private fun unsubscribeSingle(req: AbstractPostOfficeVerticle.SubscriptionInfo<Discriminator>, discriminator: Discriminator) {
         (subscriptions[discriminator] ?: mutableSetOf()).remove(req)
     }
 
