@@ -14,7 +14,7 @@ import ski.gagar.vertigram.types.Update
 import java.time.Instant
 
 class LongPoller: VertigramVerticle<LongPoller.Config>() {
-    override val typeReference: TypeReference<Config> = typeReference()
+    override val configTypeReference: TypeReference<Config> = typeReference()
     private val tg: Telegram by lazy {
         TgVTelegram(vertigram, typedConfig.telegramAddress)
     }

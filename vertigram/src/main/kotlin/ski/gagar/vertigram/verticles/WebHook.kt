@@ -23,7 +23,7 @@ import ski.gagar.vertigram.web.RealIpLoggerHandler
 import java.util.*
 
 class WebHook : VertigramVerticle<WebHook.Config>() {
-    override val typeReference: TypeReference<Config> = typeReference()
+    override val configTypeReference: TypeReference<Config> = typeReference()
     private val secret = UUID.randomUUID()
     private val tg: Telegram by lazy {
         TgVTelegram(vertigram, typedConfig.tgvAddress)

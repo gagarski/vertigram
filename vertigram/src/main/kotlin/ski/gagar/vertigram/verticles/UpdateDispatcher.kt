@@ -5,7 +5,7 @@ import ski.gagar.vertigram.jackson.typeReference
 import ski.gagar.vertigram.types.Update
 
 class UpdateDispatcher : VertigramVerticle<UpdateDispatcher.Config>() {
-    override val typeReference: TypeReference<Config> = typeReference()
+    override val configTypeReference: TypeReference<Config> = typeReference()
 
     override suspend fun start() {
         consumer<Update<*>, Unit>(typedConfig.addresses.listen) { dispatch(it) }

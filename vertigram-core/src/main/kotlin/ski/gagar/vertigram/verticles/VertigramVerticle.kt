@@ -26,10 +26,12 @@ internal val BOOTSTRAP_JSON_MAPPER = defaultVertigramMapper()
     .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
 
 abstract class VertigramVerticle<Config> : CoroutineVerticle(), Named {
-    protected abstract val typeReference: TypeReference<Config>
-
     lateinit var vertigram: Vertigram
         private set
+
+    protected abstract val configTypeReference: TypeReference<Config>
+    @Suppress("LeakingThis")
+    protected open val configJavaType: JavaType = vertigram.objectMapper.constructType(configTypeReference.type)
 
     private lateinit var context: Context
 
@@ -58,7 +60,7 @@ abstract class VertigramVerticle<Config> : CoroutineVerticle(), Named {
         val bareBonesConfig = config.mapTo<BareBonesConfig>(BOOTSTRAP_JSON_MAPPER)
         vertigram = vertx.getVertigram(bareBonesConfig.vertigramName)
         val theConfig = config.getJsonObject("config")
-        configHolder = ConfigHolder(theConfig.mapTo(typeReference, vertigram.objectMapper))
+        configHolder = ConfigHolder(theConfig.mapTo(configJavaType, vertigram.objectMapper))
     }
 
     inline fun <RequestPayload, Result> consumerNonReified(

@@ -21,7 +21,7 @@ import ski.gagar.vertigram.verticles.VertigramVerticle
 import java.time.Duration
 
 class TelegramLoggingVerticle : VertigramVerticle<TelegramLoggingVerticle.Config>() {
-    override val typeReference: TypeReference<Config> = typeReference()
+    override val configTypeReference: TypeReference<Config> = typeReference()
     private lateinit var tg: Telegram
 
     private var acc: MutableMap<Level, Int>? = null

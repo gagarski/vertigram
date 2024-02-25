@@ -15,7 +15,7 @@ import ski.gagar.vertigram.util.VertigramTypeHints
 import ski.gagar.vertigram.util.getOrAssert
 
 class TelegramVerticle : VertigramVerticle<TelegramVerticle.Config>() {
-    override val typeReference: TypeReference<Config> = typeReference()
+    override val configTypeReference: TypeReference<Config> = typeReference()
     private lateinit var tg: Telegram
 
     override suspend fun start() {

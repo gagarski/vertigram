@@ -6,18 +6,14 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import io.vertx.core.json.JsonObject
 import ski.gagar.vertigram.uncheckedCast
 
+inline fun <reified T> JsonObject.mapTo(mapper: ObjectMapper): T =
+    mapTo(mapper.constructType(typeReference<T>().type), mapper)
 
 fun <T> JsonObject.mapTo(clazz: Class<T>, mapper: ObjectMapper): T =
     mapper.convertValue(this.map, clazz)
 
-inline fun <reified T> JsonObject.mapTo(mapper: ObjectMapper): T =
-    mapTo(typeReference<T>(), mapper)
-
 fun <T> JsonObject.mapTo(type: JavaType, mapper: ObjectMapper): T =
     mapper.convertValue(this.map, type)
-
-fun <T> JsonObject.mapTo(typeRef: TypeReference<T>, mapper: ObjectMapper): T =
-    mapper.convertValue(this.map, typeRef)
 
 
 fun <T> T?.toJsonObject(mapper: ObjectMapper) = this?.let {
