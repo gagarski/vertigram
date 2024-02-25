@@ -13,7 +13,7 @@ import ski.gagar.vertigram.verticles.children.AbstractHierarchyVerticle
 import ski.gagar.vertigram.verticles.children.messages.DeathNotice
 import ski.gagar.vertigram.verticles.children.messages.DeathReason
 
-abstract class AbstractDispatchVerticle<Config, DialogKey> : AbstractHierarchyVerticle<Config>() {
+abstract class AbstractDispatchVerticle<Config : AbstractDispatchVerticle.Config, DialogKey> : AbstractHierarchyVerticle<Config>() {
     open val tgVAddressBase = VertigramAddresses.TELEGRAM_VERTICLE_BASE
     protected val tg: Telegram by lazy {
         TgVTelegram(vertigram, tgVAddressBase)
@@ -32,11 +32,11 @@ abstract class AbstractDispatchVerticle<Config, DialogKey> : AbstractHierarchyVe
 
     override suspend fun start() {
         super.start()
-        consumer<Message, Unit>(VertigramAddresses.demuxAddress(Update.Type.MESSAGE)) {
+        consumer<Message, Unit>(VertigramAddresses.demuxAddress(Update.Type.MESSAGE, typedConfig.baseAddress)) {
             handleMessage(it)
         }
 
-        consumer<Update.CallbackQuery.Payload, Unit>(VertigramAddresses.demuxAddress(Update.Type.CALLBACK_QUERY)) {
+        consumer<Update.CallbackQuery.Payload, Unit>(VertigramAddresses.demuxAddress(Update.Type.CALLBACK_QUERY, typedConfig.baseAddress)) {
             handleCallbackQuery(it)
         }
     }
@@ -103,4 +103,8 @@ abstract class AbstractDispatchVerticle<Config, DialogKey> : AbstractHierarchyVe
 
     data class DialogDescriptor(val id: String, val messageAddress: String, val callbackQueryAddress: String)
 
+    interface Config {
+        val baseAddress: String
+            get() = VertigramAddresses.DEMUX_BASE
+    }
 }

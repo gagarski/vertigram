@@ -94,7 +94,7 @@ class Vertigram(
             )
             return raw.createConsumer(address.address) { msg: Message<JsonObject> ->
                 coroScope.launch(MDCContext(coroScope.coroMdcWith(CONSUMER_ADDRESS_MDC to address.address))) {
-                    val reqW: Request<RequestPayload> = msg.body()!!.mapTo(reqWrapperType)
+                    val reqW: Request<RequestPayload> = msg.body()!!.mapTo(reqWrapperType, objectMapper)
 
                     try {
                         msg.replyWithSuccess(function(reqW.payload), this@Vertigram, replyOptions)
@@ -206,7 +206,7 @@ class Vertigram(
                 )
                     .coAwait()
                     .body()
-                    .mapTo(replyType)
+                    .mapTo(replyType, objectMapper)
 
             when (reply) {
                 is Reply.Error<*> -> reply.doThrow()
