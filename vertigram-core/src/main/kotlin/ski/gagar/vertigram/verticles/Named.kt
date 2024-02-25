@@ -1,5 +1,8 @@
 package ski.gagar.vertigram.verticles
 
+/**
+ * An entity with name
+ */
 interface Named {
     val name: String
 

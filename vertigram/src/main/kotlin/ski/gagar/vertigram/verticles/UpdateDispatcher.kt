@@ -1,22 +1,20 @@
 package ski.gagar.vertigram.verticles
 
-import ski.gagar.vertigram.jackson.mapTo
-import ski.gagar.vertigram.jackson.publishJson
-import ski.gagar.vertigram.jackson.suspendJsonConsumer
+import com.fasterxml.jackson.core.type.TypeReference
+import ski.gagar.vertigram.jackson.typeReference
 import ski.gagar.vertigram.types.Update
 
-class UpdateDispatcher : BaseVertigramVerticle() {
-    private val typedConf: Config by lazy {
-        config.mapTo()
-    }
+class UpdateDispatcher : VertigramVerticle<UpdateDispatcher.Config>() {
+    override val typeReference: TypeReference<Config> = typeReference()
+
     override suspend fun start() {
-        suspendJsonConsumer<Update<*>, Unit>(typedConf.addresses.listen) { dispatch(it) }
+        consumer<Update<*>, Unit>(typedConfig.addresses.listen) { dispatch(it) }
     }
 
     private fun dispatch(update: Update<*>) {
-        val conf = typedConf
+        val conf = typedConfig
 
-        vertx.eventBus().publishJson(VertigramAddresses.demuxAddress(update, conf.addresses.publishBase), update.payload)
+        vertigram.eventBus.publish(VertigramAddresses.demuxAddress(update, conf.addresses.publishBase), update.payload)
     }
 
     data class Config(

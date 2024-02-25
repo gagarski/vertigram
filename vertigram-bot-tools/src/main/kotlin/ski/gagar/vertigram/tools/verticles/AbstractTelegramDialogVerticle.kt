@@ -6,7 +6,6 @@ import kotlinx.coroutines.sync.withLock
 import ski.gagar.vertigram.client.Telegram
 import ski.gagar.vertigram.client.TgVTelegram
 import ski.gagar.vertigram.coroutines.setTimerNonCancellable
-import ski.gagar.vertigram.jackson.suspendJsonConsumer
 import ski.gagar.vertigram.lazy
 import ski.gagar.vertigram.logger
 import ski.gagar.vertigram.markup.toRichText
@@ -27,7 +26,7 @@ import ski.gagar.vertigram.verticles.children.messages.DeathNotice
 import ski.gagar.vertigram.verticles.children.messages.DeathReason
 import java.time.Duration
 
-abstract class AbstractTelegramDialogVerticle : AbstractHierarchyVerticle() {
+abstract class AbstractTelegramDialogVerticle<Config> : AbstractHierarchyVerticle<Config>() {
     protected open val me: User.Me? = null
     open val tgVAddressBase = VertigramAddresses.TELEGRAM_VERTICLE_BASE
 
@@ -52,7 +51,7 @@ abstract class AbstractTelegramDialogVerticle : AbstractHierarchyVerticle() {
     internal val mutex = Mutex()
 
     protected val tg: Telegram by lazy {
-        TgVTelegram(vertx, tgVAddressBase)
+        TgVTelegram(vertigram, tgVAddressBase)
     }
 
     protected var state: State? = null
@@ -63,8 +62,8 @@ abstract class AbstractTelegramDialogVerticle : AbstractHierarchyVerticle() {
     override suspend fun start() {
         super.start()
         becomeWithLock(initialState, defaultHistoryBehavior)
-        suspendJsonConsumer(callbackQueryListenAddress, function = ::handleCallbackQuery)
-        suspendJsonConsumer(messageListenAddress, function = ::handleMessage)
+        consumer(callbackQueryListenAddress, function = ::handleCallbackQuery)
+        consumer(messageListenAddress, function = ::handleMessage)
         scheduleTimeout()
     }
 
@@ -239,7 +238,7 @@ abstract class AbstractTelegramDialogVerticle : AbstractHierarchyVerticle() {
         super.beforeDeath(reason)
     }
 
-    abstract class State(@PublishedApi internal val v: AbstractTelegramDialogVerticle) {
+    abstract class State(@PublishedApi internal val v: AbstractTelegramDialogVerticle<*>) {
         protected suspend inline fun withLock(block: () -> Unit) {
             v.withLock(block)
         }
@@ -312,40 +311,40 @@ abstract class AbstractTelegramDialogVerticle : AbstractHierarchyVerticle() {
     protected fun checkmarkDone(): State = CheckmarkDone(this)
     protected fun silentDone(): State = SilentDone(this)
 
-    private class YawnTimeout(private val verticle: AbstractTelegramDialogVerticle) : State(verticle) {
+    private class YawnTimeout(private val verticle: AbstractTelegramDialogVerticle<*>) : State(verticle) {
         override suspend fun sideEffect() {
             sendOrEdit("\uD83E\uDD71".toRichText())
             verticle.timeout()
         }
     }
 
-    private class SilentTimeout(private val verticle: AbstractTelegramDialogVerticle) : State(verticle) {
+    private class SilentTimeout(private val verticle: AbstractTelegramDialogVerticle<*>) : State(verticle) {
         override suspend fun sideEffect() {
             verticle.timeout()
         }
     }
 
-    private class CrossCancelled(private val verticle: AbstractTelegramDialogVerticle) : State(verticle) {
+    private class CrossCancelled(private val verticle: AbstractTelegramDialogVerticle<*>) : State(verticle) {
         override suspend fun sideEffect() {
             sendOrEdit("❌".toRichText())
             cancel()
         }
     }
 
-    private class SilentCancelled(private val verticle: AbstractTelegramDialogVerticle) : State(verticle) {
+    private class SilentCancelled(private val verticle: AbstractTelegramDialogVerticle<*>) : State(verticle) {
         override suspend fun sideEffect() {
             cancel()
         }
     }
 
-    private class CheckmarkDone(private val verticle: AbstractTelegramDialogVerticle) : State(verticle) {
+    private class CheckmarkDone(private val verticle: AbstractTelegramDialogVerticle<*>) : State(verticle) {
         override suspend fun sideEffect() {
             sendOrEdit("✅".toRichText())
             complete()
         }
     }
 
-    private class SilentDone(private val verticle: AbstractTelegramDialogVerticle) : State(verticle) {
+    private class SilentDone(private val verticle: AbstractTelegramDialogVerticle<*>) : State(verticle) {
         override suspend fun sideEffect() {
             complete()
         }

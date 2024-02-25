@@ -1,11 +1,11 @@
 package ski.gagar.vertigram.verticles
 
+import com.fasterxml.jackson.core.type.TypeReference
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import ski.gagar.vertigram.client.Telegram
 import ski.gagar.vertigram.client.TgVTelegram
-import ski.gagar.vertigram.jackson.mapTo
-import ski.gagar.vertigram.jackson.publishJson
+import ski.gagar.vertigram.jackson.typeReference
 import ski.gagar.vertigram.lazy
 import ski.gagar.vertigram.logger
 import ski.gagar.vertigram.methods.deleteWebhook
@@ -13,12 +13,10 @@ import ski.gagar.vertigram.retrying
 import ski.gagar.vertigram.types.Update
 import java.time.Instant
 
-class LongPoller: BaseVertigramVerticle() {
-    private val typedConfig by lazy {
-        config.mapTo<Config>()
-    }
+class LongPoller: VertigramVerticle<LongPoller.Config>() {
+    override val typeReference: TypeReference<Config> = typeReference()
     private val tg: Telegram by lazy {
-        TgVTelegram(vertx, typedConfig.telegramAddress)
+        TgVTelegram(vertigram, typedConfig.telegramAddress)
     }
 
     private var offset: Long? = null
@@ -75,7 +73,7 @@ class LongPoller: BaseVertigramVerticle() {
             logger.lazy.trace { "Publishing $properlyParsed" }
 
             for (u in properlyParsed) {
-                vertx.eventBus().publishJson(typedConfig.updatePublishingAddress, u)
+                vertigram.eventBus.publish(typedConfig.updatePublishingAddress, u)
             }
 
         }

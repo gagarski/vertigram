@@ -27,10 +27,6 @@ abstract class VertigramVerticle<Config> : BaseVertigramVerticle() {
         val config: Config
     )
 
-    data class BareBonesConfig(
-        val vertigramName: String
-    )
-
     private data class ConfigHolder<T>(val config: T)
 
 }

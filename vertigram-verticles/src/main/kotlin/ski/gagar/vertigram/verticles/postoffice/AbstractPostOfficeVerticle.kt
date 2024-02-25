@@ -1,10 +1,9 @@
 package ski.gagar.vertigram.verticles.postoffice
 
+import com.fasterxml.jackson.core.type.TypeReference
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import ski.gagar.vertigram.jackson.publishJson
-import ski.gagar.vertigram.jackson.suspendJsonConsumer
 import ski.gagar.vertigram.lazy
 import ski.gagar.vertigram.logger
 import ski.gagar.vertigram.verticles.address.VxUtilAddress
@@ -14,16 +13,17 @@ import java.time.Instant
 import java.util.*
 
 abstract class AbstractPostOfficeVerticle<
+        C,
         M,
         D: AbstractPostOfficeVerticle.Discriminator,
-        S : AbstractPostOfficeVerticle.SubscriptionInfo<D>> : AbstractHierarchyVerticle() {
+        S : AbstractPostOfficeVerticle.SubscriptionInfo<D>> : AbstractHierarchyVerticle<C>() {
     abstract val incomingAddress: String
     open val subscribeAddress: String
         get() = VxUtilAddress.Private.withClassifier(deploymentID, VxUtilAddress.PostOffice.Classifier.Subscribe)
     open val unsubscribeAddress: String
         get() = VxUtilAddress.Private.withClassifier(deploymentID, VxUtilAddress.PostOffice.Classifier.Unsubscribe)
-    abstract val messageClass: Class<M>
-    abstract val subInfoClass: Class<S>
+    abstract val messageTypeRef: TypeReference<M>
+    abstract val subInfoTypeRef: TypeReference<S>
 
     abstract val storagePeriod: Duration
     open val cleanupPeriod: Duration
@@ -48,23 +48,20 @@ abstract class AbstractPostOfficeVerticle<
             }
         }
 
-        suspendJsonConsumer(
-            requestClass = messageClass,
-            resultClass = Unit::class.java,
+        consumerNonReified(
+            requestJavaType = vertigram.objectMapper.constructType(messageTypeRef.type),
             address = incomingAddress,
             function = this::handleMessage
         )
 
-        suspendJsonConsumer(
-            requestClass = subInfoClass,
-            resultClass = Unit::class.java,
+        consumerNonReified(
+            requestJavaType = vertigram.objectMapper.constructType(subInfoTypeRef.type),
             address = subscribeAddress,
             function = this::handleSubscribe
         )
 
-        suspendJsonConsumer(
-            requestClass = subInfoClass,
-            resultClass = Unit::class.java,
+        consumerNonReified(
+            requestJavaType = vertigram.objectMapper.constructType(subInfoTypeRef.type),
             address = unsubscribeAddress,
             function = this::handleUnsubscribe
         )
@@ -182,7 +179,7 @@ abstract class AbstractPostOfficeVerticle<
         logger.lazy.debug {
             "Passing $envelope to $subscription"
         }
-        vertx.eventBus().publishJson(subscription.address, envelope.message)
+        vertigram.eventBus.publish(subscription.address, envelope.message)
         receipts.getOrPut(envelope.id) { mutableSetOf() }.add(envelope.receipt(subscription.address))
     }
 

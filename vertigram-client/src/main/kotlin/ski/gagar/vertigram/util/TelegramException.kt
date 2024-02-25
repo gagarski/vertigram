@@ -4,13 +4,12 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 import io.vertx.core.http.impl.headers.HeadersMultiMap
-import ski.gagar.vertigram.jackson.BadRequest
+import ski.gagar.vertigram.eventbus.exceptions.VertigramException
 import ski.gagar.vertigram.methods.TelegramCallable
 import ski.gagar.vertigram.toMultiMap
 
 
-@JsonIgnoreProperties("message", "suppressed", "localizedMessage")
-abstract class TelegramException(str: String) : Exception(str)
+abstract class TelegramException(str: String) : VertigramException(str)
 
 abstract class TelegramCallException(
     val status: Int,
@@ -49,7 +48,7 @@ class TelegramCallClientException(
     @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@class")
     call: TelegramCallable<*>,
     responseHeaders: Map<String, List<String>>
-) : TelegramCallException(status, ok, description, call, responseHeaders), BadRequest
+) : TelegramCallException(status, ok, description, call, responseHeaders)
 
 class TelegramCallServerException(
     status: Int,
@@ -72,9 +71,8 @@ abstract class TelegramDownloadException(val status: Int, val path: String) : Te
     }
 }
 
-class TelegramDownloadClientException(status: Int, path: String) : TelegramDownloadException(status, path), BadRequest
+class TelegramDownloadClientException(status: Int, path: String) : TelegramDownloadException(status, path)
 class TelegramDownloadServerException(status: Int, path: String) : TelegramDownloadException(status, path)
 
 @JsonIgnoreProperties("message")
-data class TelegramNoFilePathException(val id: String) : TelegramException("getFile did not return a file path for $id"),
-    BadRequest
+data class TelegramNoFilePathException(val id: String) : TelegramException("getFile did not return a file path for $id")

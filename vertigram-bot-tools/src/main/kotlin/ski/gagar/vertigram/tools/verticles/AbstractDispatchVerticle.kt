@@ -3,9 +3,6 @@ package ski.gagar.vertigram.tools.verticles
 import kotlinx.coroutines.launch
 import ski.gagar.vertigram.client.Telegram
 import ski.gagar.vertigram.client.TgVTelegram
-import ski.gagar.vertigram.ignore
-import ski.gagar.vertigram.jackson.requestJsonAwait
-import ski.gagar.vertigram.jackson.suspendJsonConsumer
 import ski.gagar.vertigram.markup.toRichText
 import ski.gagar.vertigram.methods.sendMessage
 import ski.gagar.vertigram.types.Message
@@ -16,10 +13,10 @@ import ski.gagar.vertigram.verticles.children.AbstractHierarchyVerticle
 import ski.gagar.vertigram.verticles.children.messages.DeathNotice
 import ski.gagar.vertigram.verticles.children.messages.DeathReason
 
-abstract class AbstractDispatchVerticle<DialogKey> : AbstractHierarchyVerticle() {
+abstract class AbstractDispatchVerticle<Config, DialogKey> : AbstractHierarchyVerticle<Config>() {
     open val tgVAddressBase = VertigramAddresses.TELEGRAM_VERTICLE_BASE
     protected val tg: Telegram by lazy {
-        TgVTelegram(vertx, tgVAddressBase)
+        TgVTelegram(vertigram, tgVAddressBase)
     }
 
 
@@ -35,11 +32,11 @@ abstract class AbstractDispatchVerticle<DialogKey> : AbstractHierarchyVerticle()
 
     override suspend fun start() {
         super.start()
-        suspendJsonConsumer<Message, Unit>(VertigramAddresses.demuxAddress(Update.Type.MESSAGE)) {
+        consumer<Message, Unit>(VertigramAddresses.demuxAddress(Update.Type.MESSAGE)) {
             handleMessage(it)
         }
 
-        suspendJsonConsumer<Update.CallbackQuery.Payload, Unit>(VertigramAddresses.demuxAddress(Update.Type.CALLBACK_QUERY)) {
+        consumer<Update.CallbackQuery.Payload, Unit>(VertigramAddresses.demuxAddress(Update.Type.CALLBACK_QUERY)) {
             handleCallbackQuery(it)
         }
     }
@@ -74,20 +71,16 @@ abstract class AbstractDispatchVerticle<DialogKey> : AbstractHierarchyVerticle()
     }
 
     private suspend fun passMessageToOngoing(message: Message, desc: DialogDescriptor) {
-        ignore(
-            vertx.eventBus().requestJsonAwait(
-                desc.messageAddress,
-                message
-            )
+        vertigram.eventBus.send(
+            desc.messageAddress,
+            message
         )
     }
 
     private suspend fun passCallbackQueryToOngoing(callbackQuery: Update.CallbackQuery.Payload, desc: DialogDescriptor) {
-        ignore(
-            vertx.eventBus().requestJsonAwait(
-                desc.callbackQueryAddress,
-                callbackQuery
-            )
+        vertigram.eventBus.send(
+            desc.callbackQueryAddress,
+            callbackQuery
         )
     }
 

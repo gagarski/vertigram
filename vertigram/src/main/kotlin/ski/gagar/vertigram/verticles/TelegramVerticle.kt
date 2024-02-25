@@ -1,9 +1,9 @@
 package ski.gagar.vertigram.verticles
 
+import com.fasterxml.jackson.core.type.TypeReference
 import ski.gagar.vertigram.client.DirectTelegram
 import ski.gagar.vertigram.client.Telegram
-import ski.gagar.vertigram.jackson.mapTo
-import ski.gagar.vertigram.jackson.suspendJsonConsumer
+import ski.gagar.vertigram.jackson.typeReference
 import ski.gagar.vertigram.methods.JsonTelegramCallable
 import ski.gagar.vertigram.methods.MultipartTelegramCallable
 import ski.gagar.vertigram.methods.TelegramCallable
@@ -11,14 +11,11 @@ import ski.gagar.vertigram.throttling.ThrottlingOptions
 import ski.gagar.vertigram.throttling.ThrottlingTelegram
 import ski.gagar.vertigram.types.Update
 import ski.gagar.vertigram.types.UpdateList
-import ski.gagar.vertigram.use
 import ski.gagar.vertigram.util.VertigramTypeHints
 import ski.gagar.vertigram.util.getOrAssert
 
-class TelegramVerticle : BaseVertigramVerticle() {
-    private val typedConfig by lazy {
-        config.mapTo<Config>()
-    }
+class TelegramVerticle : VertigramVerticle<TelegramVerticle.Config>() {
+    override val typeReference: TypeReference<Config> = typeReference()
     private lateinit var tg: Telegram
 
     override suspend fun start() {
@@ -34,14 +31,14 @@ class TelegramVerticle : BaseVertigramVerticle() {
             ThrottlingTelegram(vertx, directTg, throttling)
         }
 
-        suspendJsonConsumer(
+        consumer(
             typedConfig.updatesAddress(), function = ::handleGetUpdates
         )
 
         for ((tgvAddress, requestType) in VertigramTypeHints.Json.requestTypeByTgvAddress) {
             if (tgvAddress in VertigramTypeHints.doNotGenerateInTgVerticleAddresses)
                 continue
-            suspendJsonConsumer(
+            consumer(
                 typedConfig.callAddress(tgvAddress,
                     RequestType.Json
                 ),
@@ -54,7 +51,7 @@ class TelegramVerticle : BaseVertigramVerticle() {
         for ((tgvAddress, requestType) in VertigramTypeHints.Multipart.requestTypeByTgvAddress) {
             if (tgvAddress in VertigramTypeHints.doNotGenerateInTgVerticleAddresses)
                 continue
-            suspendJsonConsumer(
+            consumer(
                 typedConfig.callAddress(tgvAddress,
                     RequestType.Multipart
                 ),
@@ -64,8 +61,8 @@ class TelegramVerticle : BaseVertigramVerticle() {
             }
         }
 
-        suspendJsonConsumer(typedConfig.longPollTimeoutAddress(), function = ::handleLongPollTimeout)
-        suspendJsonConsumer(typedConfig.downloadFileAddress(), function = ::handleDownloadFile)
+        consumer(typedConfig.longPollTimeoutAddress(), function = ::handleLongPollTimeout)
+        consumer(typedConfig.downloadFileAddress(), function = ::handleDownloadFile)
     }
 
     override suspend fun stop() {
@@ -78,7 +75,9 @@ class TelegramVerticle : BaseVertigramVerticle() {
     private suspend fun handleGetUpdates(msg: GetUpdates) =
         UpdateList(tg.getUpdates(limit = msg.limit, offset = msg.offset, allowedUpdates = msg.allowedUpdates))
 
-    private fun handleLongPollTimeout(msg: GetLongPollTimeout) = typedConfig.tgOptions.longPollTimeout.also { use(msg) }
+    private fun handleLongPollTimeout(
+        @Suppress("UNUSED_PARAMETER") msg: GetLongPollTimeout
+    ) = typedConfig.tgOptions.longPollTimeout
 
     private suspend fun handleDownloadFile(msg: DownloadFile) = tg.downloadFile(msg.path, msg.outputPath)
 

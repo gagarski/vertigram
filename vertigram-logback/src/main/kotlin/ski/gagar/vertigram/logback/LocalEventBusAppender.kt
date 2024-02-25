@@ -1,38 +1,38 @@
 package ski.gagar.vertigram.logback
 
 import ch.qos.logback.classic.LoggerContext
-import io.vertx.core.Vertx
 import kotlinx.coroutines.slf4j.MDCContext
 import kotlinx.coroutines.withContext
 import org.slf4j.LoggerFactory
 import org.slf4j.MDC
+import ski.gagar.vertigram.Vertigram
 import ski.gagar.vertigram.lazy
 import ski.gagar.vertigram.logger
 import ski.gagar.vertigram.uncheckedCast
 import java.util.concurrent.atomic.AtomicReference
 
 class LocalEventBusAppender : AbstractEventBusAppender() {
-    private var vertx_: AtomicReference<Vertx?> = AtomicReference(null)
+    private var vertigram_: AtomicReference<Vertigram?> = AtomicReference(null)
 
-    override val vertx: Vertx?
-        get() = vertx_.get()
+    override val vertigram: Vertigram?
+        get() = vertigram_.get()
 
-    fun attachVertx(vertx: Vertx) {
-        vertx_.set(vertx)
+    fun attachVertigram(vertigram: Vertigram) {
+        vertigram_.set(vertigram)
     }
 }
 
-fun Vertx.attachEventBusAppender(appender: LocalEventBusAppender) {
-    appender.attachVertx(this)
+fun Vertigram.attachEventBusAppender(appender: LocalEventBusAppender) {
+    appender.attachVertigram(this)
 }
 
-fun Vertx.attachEventBusLogging() {
+fun Vertigram.attachEventBusLogging() {
     val cxt = LoggerFactory.getILoggerFactory().uncheckedCast<LoggerContext>()
     var attached = false
     for (logger in cxt.loggerList) {
         for (appender in logger.iteratorForAppenders()) {
             if (appender is LocalEventBusAppender) {
-                appender.attachVertx(this)
+                appender.attachVertigram(this)
                 attached = true
             }
         }

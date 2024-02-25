@@ -1,5 +1,6 @@
 package ski.gagar.vertigram.verticles
 
+import com.fasterxml.jackson.core.type.TypeReference
 import io.netty.handler.codec.http.HttpResponseStatus
 import io.vertx.core.http.HttpServer
 import io.vertx.ext.web.Router
@@ -9,7 +10,7 @@ import ski.gagar.vertigram.client.Telegram
 import ski.gagar.vertigram.client.TgVTelegram
 import ski.gagar.vertigram.config.WebHookConfig
 import ski.gagar.vertigram.jackson.mapTo
-import ski.gagar.vertigram.jackson.publishJson
+import ski.gagar.vertigram.jackson.typeReference
 import ski.gagar.vertigram.lazy
 import ski.gagar.vertigram.logger
 import ski.gagar.vertigram.methods.deleteWebhook
@@ -21,13 +22,11 @@ import ski.gagar.vertigram.web.IpNetworkAddress
 import ski.gagar.vertigram.web.RealIpLoggerHandler
 import java.util.*
 
-class WebHook : BaseVertigramVerticle() {
+class WebHook : VertigramVerticle<WebHook.Config>() {
+    override val typeReference: TypeReference<Config> = typeReference()
     private val secret = UUID.randomUUID()
-    private val typedConfig by lazy {
-        config.mapTo<Config>()
-    }
     private val tg: Telegram by lazy {
-        TgVTelegram(vertx, typedConfig.tgvAddress)
+        TgVTelegram(vertigram, typedConfig.tgvAddress)
     }
 
     private lateinit var server: HttpServer
@@ -73,7 +72,7 @@ class WebHook : BaseVertigramVerticle() {
             }
             logger.lazy.trace { "Received update $req" }
             logger.lazy.trace { "Publishing $req" }
-            vertx.eventBus().publishJson(typedConfig.updatePublishingAddress, req)
+            vertigram.eventBus.publish(typedConfig.updatePublishingAddress, req)
             context.response().end()
         }
 

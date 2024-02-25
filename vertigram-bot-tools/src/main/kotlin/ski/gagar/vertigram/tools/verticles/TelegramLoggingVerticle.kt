@@ -1,13 +1,13 @@
 package ski.gagar.vertigram.tools.verticles
 
+import com.fasterxml.jackson.core.type.TypeReference
 import kotlinx.coroutines.Job
+import ski.gagar.vertigram.Vertigram
 import ski.gagar.vertigram.client.DirectTelegram
 import ski.gagar.vertigram.client.THIN_POOLS
 import ski.gagar.vertigram.client.Telegram
 import ski.gagar.vertigram.coroutines.setTimerNonCancellable
-import ski.gagar.vertigram.jackson.CONSUMER_ADDRESS_MDC
-import ski.gagar.vertigram.jackson.mapTo
-import ski.gagar.vertigram.jackson.suspendJsonConsumer
+import ski.gagar.vertigram.jackson.typeReference
 import ski.gagar.vertigram.logback.Level
 import ski.gagar.vertigram.logback.LogEvent
 import ski.gagar.vertigram.logback.asString
@@ -16,23 +16,20 @@ import ski.gagar.vertigram.markup.textMarkdown
 import ski.gagar.vertigram.methods.sendMessage
 import ski.gagar.vertigram.types.User
 import ski.gagar.vertigram.types.util.toChatId
-import ski.gagar.vertigram.verticles.BaseVertigramVerticle
 import ski.gagar.vertigram.verticles.Named
+import ski.gagar.vertigram.verticles.VertigramVerticle
 import java.time.Duration
 
-class TelegramLoggingVerticle : BaseVertigramVerticle() {
-    private val typedConf: Config by lazy {
-        config.mapTo()
-    }
-
+class TelegramLoggingVerticle : VertigramVerticle<TelegramLoggingVerticle.Config>() {
+    override val typeReference: TypeReference<Config> = typeReference()
     private lateinit var tg: Telegram
 
     private var acc: MutableMap<Level, Int>? = null
     private var timer: Job? = null
     override suspend fun start() {
-        tg = DirectTelegram(typedConf.token, vertx, typedConf.tgOptions)
+        tg = DirectTelegram(typedConfig.token, vertx, typedConfig.tgOptions)
 
-        suspendJsonConsumer<LogEvent, Unit>(typedConf.listenAddress) {
+        consumer<LogEvent, Unit>(typedConfig.listenAddress) {
             handleLogEvent(it)
         }
     }
@@ -54,7 +51,7 @@ class TelegramLoggingVerticle : BaseVertigramVerticle() {
             var msgSent = 0
 
             tg.sendMessage(
-                chatId = typedConf.chatId.toChatId(),
+                chatId = typedConfig.chatId.toChatId(),
                 richText = textMarkdown {
                     +log.level.emoji
                     +" "
@@ -63,7 +60,7 @@ class TelegramLoggingVerticle : BaseVertigramVerticle() {
                     }
                     br()
 
-                    typedConf.me?.let {
+                    typedConfig.me?.let {
                         b {
                             +"Bot: "
                         }
@@ -94,7 +91,7 @@ class TelegramLoggingVerticle : BaseVertigramVerticle() {
                         br()
                     }
 
-                    val address = log.mdcMap[CONSUMER_ADDRESS_MDC]
+                    val address = log.mdcMap[Vertigram.CONSUMER_ADDRESS_MDC]
 
                     if (null != address) {
                         b {
@@ -131,7 +128,7 @@ class TelegramLoggingVerticle : BaseVertigramVerticle() {
             suspend fun flush(force: Boolean = false): Boolean {
                 if (force || msgSent < MAX_SEQ_MESSAGES - 1) {
                     tg.sendMessage(
-                        chatId = typedConf.chatId.toChatId(),
+                        chatId = typedConfig.chatId.toChatId(),
                         richText = textMarkdown {
                             pre(buf.trimEnd('\n').toString())
                         }
@@ -141,7 +138,7 @@ class TelegramLoggingVerticle : BaseVertigramVerticle() {
                     return false
                 } else {
                     tg.sendMessage(
-                        chatId = typedConf.chatId.toChatId(),
+                        chatId = typedConfig.chatId.toChatId(),
                         richText = textMarkdown {
                             pre(TRUNCATED)
                         }
@@ -179,10 +176,10 @@ class TelegramLoggingVerticle : BaseVertigramVerticle() {
         }
 
         tg.sendMessage(
-            chatId = typedConf.chatId.toChatId(),
+            chatId = typedConfig.chatId.toChatId(),
             richText = textMarkdown {
-                +"For the last ${typedConf.accumulationPeriod} the following log events occurred"
-                typedConf.me?.let {
+                +"For the last ${typedConfig.accumulationPeriod} the following log events occurred"
+                typedConfig.me?.let {
                     +" in @${it.username}"
                 }
                 +":"
@@ -201,7 +198,7 @@ class TelegramLoggingVerticle : BaseVertigramVerticle() {
     }
 
     private suspend fun startAccumulating() {
-        val period = typedConf.accumulationPeriod
+        val period = typedConfig.accumulationPeriod
         if (null == period || Duration.ZERO == period) {
             return
         }

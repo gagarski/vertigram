@@ -1,8 +1,10 @@
 package ski.gagar.vertigram.verticles
 
 import com.fasterxml.jackson.databind.DeserializationFeature
+import com.fasterxml.jackson.databind.JavaType
 import io.vertx.core.Context
 import io.vertx.core.Vertx
+import io.vertx.core.eventbus.DeliveryOptions
 import io.vertx.kotlin.coroutines.CoroutineVerticle
 import io.vertx.kotlin.coroutines.dispatcher
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -13,6 +15,7 @@ import ski.gagar.vertigram.coroutines.VerticleName
 import ski.gagar.vertigram.defaultVertigramMapper
 import ski.gagar.vertigram.getVertigram
 import ski.gagar.vertigram.jackson.mapTo
+import ski.gagar.vertigram.jackson.typeReference
 import ski.gagar.vertigram.lazy
 import ski.gagar.vertigram.logger
 import kotlin.coroutines.CoroutineContext
@@ -48,6 +51,58 @@ abstract class BaseVertigramVerticle : CoroutineVerticle(), Named {
         val bareBonesConfig = config.mapTo<BareBonesConfig>(BOOTSTRAP_JSON_MAPPER)
         vertigram = vertx.getVertigram(bareBonesConfig.vertigramName)
     }
+
+    inline fun <RequestPayload, Result> consumerNonReified(
+        address: String,
+        replyOptions: DeliveryOptions = DeliveryOptions(),
+        requestJavaType: JavaType,
+        crossinline function: suspend (RequestPayload) -> Result
+    ) = vertigram.eventBus.consumerNonReified(
+        coroScope = this,
+        address = address,
+        replyOptions = replyOptions,
+        requestJavaType = requestJavaType,
+        function = function
+    )
+
+    inline fun <reified RequestPayload, Result> consumer(
+        address: String,
+        replyOptions: DeliveryOptions = DeliveryOptions(),
+        requestJavaType: JavaType = vertigram.objectMapper.typeFactory.constructType(typeReference<RequestPayload>().type),
+        crossinline function: suspend (RequestPayload) -> Result
+    ) = vertigram.eventBus.consumer(
+        coroScope = this,
+        address = address,
+        replyOptions = replyOptions,
+        requestJavaType = requestJavaType,
+        function = function
+    )
+
+    inline fun <RequestPayload, Result> localConsumerNonReified(
+        address: String,
+        replyOptions: DeliveryOptions = DeliveryOptions(),
+        requestJavaType: JavaType,
+        crossinline function: suspend (RequestPayload) -> Result
+    ) = vertigram.eventBus.localConsumerNonReified(
+        coroScope = this,
+        address = address,
+        replyOptions = replyOptions,
+        requestJavaType = requestJavaType,
+        function = function
+    )
+
+    inline fun <reified RequestPayload, Result> localConsumer(
+        address: String,
+        replyOptions: DeliveryOptions = DeliveryOptions(),
+        requestJavaType: JavaType = vertigram.objectMapper.typeFactory.constructType(typeReference<RequestPayload>().type),
+        crossinline function: suspend (RequestPayload) -> Result
+    ) = vertigram.eventBus.localConsumer(
+        coroScope = this,
+        address = address,
+        replyOptions = replyOptions,
+        requestJavaType = requestJavaType,
+        function = function
+    )
 
     data class BareBonesConfig(
         val vertigramName: String

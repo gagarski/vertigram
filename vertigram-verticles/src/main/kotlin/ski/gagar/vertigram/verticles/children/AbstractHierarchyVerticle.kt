@@ -1,18 +1,15 @@
 package ski.gagar.vertigram.verticles.children
 
 import io.vertx.core.DeploymentOptions
-import io.vertx.core.Verticle
 import io.vertx.kotlin.coroutines.coAwait
-import ski.gagar.vertigram.jackson.jsonConsumer
-import ski.gagar.vertigram.jackson.publishJson
 import ski.gagar.vertigram.lazy
 import ski.gagar.vertigram.logger
-import ski.gagar.vertigram.verticles.BaseVertigramVerticle
+import ski.gagar.vertigram.verticles.VertigramVerticle
 import ski.gagar.vertigram.verticles.children.messages.DeathNotice
 import ski.gagar.vertigram.verticles.children.messages.DeathReason
 import java.util.*
 
-abstract class AbstractHierarchyVerticle : BaseVertigramVerticle() {
+abstract class AbstractHierarchyVerticle<Config> : VertigramVerticle<Config>() {
     private val children = mutableSetOf<String>()
     private var deathReason: DeathReason? = null
 
@@ -24,11 +21,11 @@ abstract class AbstractHierarchyVerticle : BaseVertigramVerticle() {
         logger.lazy.debug {
             "$name: adding handleDeathNotice handler on $DEATH_NOTICE_ADDRESS"
         }
-        jsonConsumer(DEATH_NOTICE_ADDRESS, function = ::handleDeathNotice)
+        consumer(DEATH_NOTICE_ADDRESS, function = ::handleDeathNotice)
         logger.lazy.debug {
             "$name: adding handleParentDeathNotice handler on ${parentDeathNoticeAddress(deploymentID)}"
         }
-        jsonConsumer(parentDeathNoticeAddress(deploymentID), function = ::handleParentDeathNotice)
+        consumer(parentDeathNoticeAddress(deploymentID), function = ::handleParentDeathNotice)
     }
 
 
@@ -37,12 +34,12 @@ abstract class AbstractHierarchyVerticle : BaseVertigramVerticle() {
         logger.lazy.debug {
             "$name: publishing $notice to $DEATH_NOTICE_ADDRESS"
         }
-        vertx.eventBus().publishJson(DEATH_NOTICE_ADDRESS, notice)
+        vertigram.eventBus.publish(DEATH_NOTICE_ADDRESS, notice)
         for (child in children) {
             logger.lazy.debug {
                 "$name: publishing $notice to ${parentDeathNoticeAddress(child)}"
             }
-            vertx.eventBus().publishJson(parentDeathNoticeAddress(child), notice)
+            vertigram.eventBus.publish(parentDeathNoticeAddress(child), notice)
         }
     }
 
@@ -57,7 +54,7 @@ abstract class AbstractHierarchyVerticle : BaseVertigramVerticle() {
 
     protected open fun beforeDeath(reason: DeathReason) {}
 
-    protected suspend fun deployChild(verticle: Verticle,
+    protected suspend fun deployChild(verticle: VertigramVerticle<*>,
                                       deploymentOptions: DeploymentOptions = DeploymentOptions()): String {
         val id = vertx.deployVerticle(verticle, deploymentOptions).coAwait()
         children.add(id)
