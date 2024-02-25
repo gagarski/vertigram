@@ -59,8 +59,10 @@ abstract class VertigramVerticle<Config> : CoroutineVerticle(), Named {
         this.context = context
         val bareBonesConfig = config.mapTo<BareBonesConfig>(BOOTSTRAP_JSON_MAPPER)
         vertigram = vertx.getVertigram(bareBonesConfig.vertigramName)
-        val theConfig = config.getJsonObject("config")
-        configHolder = ConfigHolder(theConfig.mapTo(configJavaType, vertigram.objectMapper))
+        val wrapper = config.mapTo<ConfigWrapper<Config>>(
+            vertigram.objectMapper.typeFactory.constructParametricType(ConfigWrapper::class.java, configJavaType), vertigram.objectMapper
+        )
+        configHolder = ConfigHolder(wrapper.config)
     }
 
     inline fun <RequestPayload, Result> consumerNonReified(
