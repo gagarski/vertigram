@@ -13,17 +13,17 @@ import java.time.Instant
 import java.util.*
 
 abstract class AbstractPostOfficeVerticle<
-        C,
-        M,
-        D: AbstractPostOfficeVerticle.Discriminator,
-        S : AbstractPostOfficeVerticle.SubscriptionInfo<D>> : AbstractHierarchyVerticle<C>() {
+        Config,
+        Message,
+        Discriminator: AbstractPostOfficeVerticle.Discriminator,
+        SubscriptionInfo : AbstractPostOfficeVerticle.SubscriptionInfo<Discriminator>> : AbstractHierarchyVerticle<Config>() {
     abstract val incomingAddress: String
     open val subscribeAddress: String
         get() = VxUtilAddress.Private.withClassifier(deploymentID, VxUtilAddress.PostOffice.Classifier.Subscribe)
     open val unsubscribeAddress: String
         get() = VxUtilAddress.Private.withClassifier(deploymentID, VxUtilAddress.PostOffice.Classifier.Unsubscribe)
-    abstract val messageTypeRef: TypeReference<M>
-    abstract val subInfoTypeRef: TypeReference<S>
+    abstract val messageTypeRef: TypeReference<Message>
+    abstract val subInfoTypeRef: TypeReference<SubscriptionInfo>
 
     abstract val storagePeriod: Duration
     open val cleanupPeriod: Duration
@@ -31,14 +31,14 @@ abstract class AbstractPostOfficeVerticle<
 
     protected val stateMutex: Mutex = Mutex()
 
-    private val mailboxes: MutableMap<D, MutableList<Envelope>> = mutableMapOf()
-    private val subscriptions: MutableMap<D, MutableSet<S>> = mutableMapOf()
+    private val mailboxes: MutableMap<Discriminator, MutableList<Envelope>> = mutableMapOf()
+    private val subscriptions: MutableMap<Discriminator, MutableSet<SubscriptionInfo>> = mutableMapOf()
     private val receipts: MutableMap<String, MutableSet<Receipt>> = mutableMapOf()
 
-    abstract fun discriminate(msg: M): D
-    open suspend fun shouldAcceptMessage(msg: M): Boolean = true
-    open suspend fun shouldAllowSubscribe(sub: S): Boolean = true
-    open suspend fun shouldPassMessageToSubscriber(msg: M, sub: S): Boolean = true
+    abstract fun discriminate(msg: Message): Discriminator
+    open suspend fun shouldAcceptMessage(msg: Message): Boolean = true
+    open suspend fun shouldAllowSubscribe(sub: SubscriptionInfo): Boolean = true
+    open suspend fun shouldPassMessageToSubscriber(msg: Message, sub: SubscriptionInfo): Boolean = true
 
 
     override suspend fun start() {
@@ -67,7 +67,7 @@ abstract class AbstractPostOfficeVerticle<
         )
     }
 
-    private suspend fun handleMessage(msg: M) = messageHandler {
+    private suspend fun handleMessage(msg: Message) = messageHandler {
         stateMutex.withLock {
             logger.lazy.debug {
                 "Post office $name got message $msg"
@@ -89,7 +89,7 @@ abstract class AbstractPostOfficeVerticle<
         }
     }
 
-    private suspend fun handleSubscribe(subscriptionRequest: S) = messageHandler {
+    private suspend fun handleSubscribe(subscriptionRequest: SubscriptionInfo) = messageHandler {
         stateMutex.withLock {
             val discriminator = subscriptionRequest.discriminator
             logger.lazy.debug {
@@ -110,14 +110,14 @@ abstract class AbstractPostOfficeVerticle<
         }
     }
 
-    private suspend fun handleUnsubscribe(subscriptionRequest: S) = messageHandler {
+    private suspend fun handleUnsubscribe(subscriptionRequest: SubscriptionInfo) = messageHandler {
         stateMutex.withLock {
             val d = subscriptionRequest.discriminator
             unsubscribeSingle(subscriptionRequest, d)
         }
     }
 
-    private fun unsubscribeSingle(req: SubscriptionInfo<D>, discriminator: D) {
+    private fun unsubscribeSingle(req: SubscriptionInfo<Discriminator>, discriminator: Discriminator) {
         (subscriptions[discriminator] ?: mutableSetOf()).remove(req)
     }
 
@@ -156,13 +156,13 @@ abstract class AbstractPostOfficeVerticle<
         }
     }
 
-    private suspend fun passAllEnvelopesToSubscriber(discriminator: Discriminator, subscription: S) {
+    private suspend fun passAllEnvelopesToSubscriber(discriminator: Discriminator, subscription: SubscriptionInfo) {
         for (envelope in mailboxes[discriminator] ?: setOf()) {
             passEnvelopeToSubscriber(envelope, subscription)
         }
     }
 
-    private suspend fun passEnvelopeToSubscriber(envelope: Envelope, subscription: S) {
+    private suspend fun passEnvelopeToSubscriber(envelope: Envelope, subscription: SubscriptionInfo) {
         if (envelope.receipt(subscription.address) in (receipts[envelope.id] ?: setOf())) {
             logger.lazy.debug {
                 "Post office $name is skipping passing $envelope to $subscription because it has already received it before"
@@ -191,7 +191,7 @@ abstract class AbstractPostOfficeVerticle<
     }
 
     private data class Receipt(val id: String, val address: String)
-    private inner class Envelope(val message: M, val arrivalDate: Instant = Instant.now(),
+    private inner class Envelope(val message: Message, val arrivalDate: Instant = Instant.now(),
                                  val id: String  = UUID.randomUUID().toString()) {
         fun receipt(address: String) = Receipt(id, address)
 

@@ -34,7 +34,6 @@
 
     <modules>
         <module>vertigram-core</module>
-        <module>vertigram-jackson</module>
         <module>vertigram-jooq</module>
         <module>vertigram-logback</module>
         <module>vertigram</module>

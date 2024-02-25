@@ -95,10 +95,7 @@
         </dependency>
         <dependency>
             <groupId>ski.gagar.vertigram</groupId>
-            <artifactId>vertigram-core</artifactId></dependency>
-        <dependency>
-            <groupId>ski.gagar.vertigram</groupId>
-            <artifactId>vertigram-jackson</artifactId>
+            <artifactId>vertigram-core</artifactId>
         </dependency>
         <dependency>
             <groupId>ski.gagar.vertigram</groupId>

@@ -213,11 +213,6 @@
             </dependency>
             <dependency>
                 <groupId>ski.gagar.vertigram</groupId>
-                <artifactId>vertigram-jackson</artifactId>
-                <version>1.0.0-alpha41-SNAPSHOT</version>
-            </dependency>
-            <dependency>
-                <groupId>ski.gagar.vertigram</groupId>
                 <artifactId>vertigram-jooq</artifactId>
                 <version>1.0.0-alpha41-SNAPSHOT</version>
             </dependency>
