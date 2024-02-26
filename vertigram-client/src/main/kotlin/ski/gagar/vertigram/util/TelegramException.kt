@@ -1,7 +1,6 @@
 package ski.gagar.vertigram.util
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 import io.vertx.core.http.impl.headers.HeadersMultiMap
 import ski.gagar.vertigram.eventbus.exceptions.VertigramException
@@ -74,5 +73,4 @@ abstract class TelegramDownloadException(val status: Int, val path: String) : Te
 class TelegramDownloadClientException(status: Int, path: String) : TelegramDownloadException(status, path)
 class TelegramDownloadServerException(status: Int, path: String) : TelegramDownloadException(status, path)
 
-@JsonIgnoreProperties("message")
 data class TelegramNoFilePathException(val id: String) : TelegramException("getFile did not return a file path for $id")
