@@ -10,7 +10,7 @@
         <relativePath>../vertigram-parent-internal</relativePath>
     </parent>
 
-    <artifactId>vertigram-client</artifactId>
+    <artifactId>vertigram-telegram-client</artifactId>
     <name>Vertigram Client</name>
     <description>Telegram client for Vert.x</description>
 

@@ -203,7 +203,7 @@
             </dependency>
             <dependency>
                 <groupId>ski.gagar.vertigram</groupId>
-                <artifactId>vertigram-client</artifactId>
+                <artifactId>vertigram-telegram-client</artifactId>
                 <version>1.0.0-alpha41-SNAPSHOT</version>
             </dependency>
             <dependency>

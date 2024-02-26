@@ -92,7 +92,7 @@
         </dependency>
         <dependency>
             <groupId>ski.gagar.vertigram</groupId>
-            <artifactId>vertigram-client</artifactId>
+            <artifactId>vertigram-telegram-client</artifactId>
         </dependency>
         <dependency>
             <groupId>ski.gagar.vertigram</groupId>

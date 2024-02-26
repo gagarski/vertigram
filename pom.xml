@@ -46,7 +46,7 @@
         <module>vertigram-bom</module>
         <module>vertigram-parent-internal</module>
         <module>vertigram-parent</module>
-        <module>vertigram-client</module>
+        <module>vertigram-telegram-client</module>
     </modules>
 
     <build>
