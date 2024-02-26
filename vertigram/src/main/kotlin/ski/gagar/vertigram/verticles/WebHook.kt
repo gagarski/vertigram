@@ -7,7 +7,7 @@ import io.vertx.ext.web.Router
 import io.vertx.ext.web.handler.BodyHandler
 import kotlinx.coroutines.delay
 import ski.gagar.vertigram.client.Telegram
-import ski.gagar.vertigram.client.TgVTelegram
+import ski.gagar.vertigram.client.ThinTelegram
 import ski.gagar.vertigram.config.WebHookConfig
 import ski.gagar.vertigram.jackson.mapTo
 import ski.gagar.vertigram.jackson.typeReference
@@ -26,7 +26,7 @@ class WebHook : VertigramVerticle<WebHook.Config>() {
     override val configTypeReference: TypeReference<Config> = typeReference()
     private val secret = UUID.randomUUID()
     private val tg: Telegram by lazy {
-        TgVTelegram(vertigram, typedConfig.tgvAddress)
+        ThinTelegram(vertigram, typedConfig.tgvAddress)
     }
 
     private lateinit var server: HttpServer

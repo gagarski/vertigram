@@ -4,7 +4,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import ski.gagar.vertigram.client.Telegram
-import ski.gagar.vertigram.client.TgVTelegram
+import ski.gagar.vertigram.client.ThinTelegram
 import ski.gagar.vertigram.coroutines.setTimerNonCancellable
 import ski.gagar.vertigram.lazy
 import ski.gagar.vertigram.logger
@@ -51,7 +51,7 @@ abstract class AbstractTelegramDialogVerticle<Config> : AbstractHierarchyVerticl
     internal val mutex = Mutex()
 
     protected val tg: Telegram by lazy {
-        TgVTelegram(vertigram, tgVAddressBase)
+        ThinTelegram(vertigram, tgVAddressBase)
     }
 
     protected var state: State? = null

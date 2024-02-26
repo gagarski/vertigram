@@ -2,7 +2,7 @@ package ski.gagar.vertigram.tools.verticles
 
 import kotlinx.coroutines.launch
 import ski.gagar.vertigram.client.Telegram
-import ski.gagar.vertigram.client.TgVTelegram
+import ski.gagar.vertigram.client.ThinTelegram
 import ski.gagar.vertigram.markup.toRichText
 import ski.gagar.vertigram.methods.sendMessage
 import ski.gagar.vertigram.types.Message
@@ -16,7 +16,7 @@ import ski.gagar.vertigram.verticles.children.messages.DeathReason
 abstract class AbstractDispatchVerticle<Config : AbstractDispatchVerticle.Config, DialogKey> : AbstractHierarchyVerticle<Config>() {
     open val tgVAddressBase = VertigramAddresses.TELEGRAM_VERTICLE_BASE
     protected val tg: Telegram by lazy {
-        TgVTelegram(vertigram, tgVAddressBase)
+        ThinTelegram(vertigram, tgVAddressBase)
     }
 
 

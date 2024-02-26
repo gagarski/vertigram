@@ -12,7 +12,7 @@ import ski.gagar.vertigram.verticles.VertigramAddresses
 import java.time.Duration
 
 
-class TgVTelegram(
+class ThinTelegram(
     private val vertigram: Vertigram,
     private val baseAddress: String = VertigramAddresses.TELEGRAM_VERTICLE_BASE,
     private val timeoutGap: Duration = Duration.ofSeconds(5)

@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import ski.gagar.vertigram.client.Telegram
-import ski.gagar.vertigram.client.TgVTelegram
+import ski.gagar.vertigram.client.ThinTelegram
 import ski.gagar.vertigram.jackson.typeReference
 import ski.gagar.vertigram.lazy
 import ski.gagar.vertigram.logger
@@ -16,7 +16,7 @@ import java.time.Instant
 class LongPoller: VertigramVerticle<LongPoller.Config>() {
     override val configTypeReference: TypeReference<Config> = typeReference()
     private val tg: Telegram by lazy {
-        TgVTelegram(vertigram, typedConfig.telegramAddress)
+        ThinTelegram(vertigram, typedConfig.telegramAddress)
     }
 
     private var offset: Long? = null
