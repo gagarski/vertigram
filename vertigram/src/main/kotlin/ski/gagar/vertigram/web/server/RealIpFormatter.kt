@@ -1,4 +1,4 @@
-package ski.gagar.vertigram.web
+package ski.gagar.vertigram.web.server
 
 import io.vertx.core.http.HttpServerRequest
 import io.vertx.core.http.HttpVersion

@@ -18,8 +18,8 @@ import ski.gagar.vertigram.methods.setWebhook
 import ski.gagar.vertigram.retrying
 import ski.gagar.vertigram.types.Update
 import ski.gagar.vertigram.util.json.TELEGRAM_JSON_MAPPER
-import ski.gagar.vertigram.web.IpNetworkAddress
-import ski.gagar.vertigram.web.RealIpLoggerHandler
+import ski.gagar.vertigram.web.server.IpNetworkAddress
+import ski.gagar.vertigram.web.server.RealIpLoggerHandler
 import java.util.*
 
 class WebHook : VertigramVerticle<WebHook.Config>() {
@@ -40,9 +40,11 @@ class WebHook : VertigramVerticle<WebHook.Config>() {
         logger.lazy.info { "Staring $javaClass server..." }
         server = vertx.createHttpServer()
         val router = Router.router(vertx)
-        router.route().handler(RealIpLoggerHandler(
+        router.route().handler(
+            RealIpLoggerHandler(
             trustedNetworks = typedConfig.webHook.proxy?.trustedNetworks?.map { IpNetworkAddress(it) }?.toSet() ?: setOf(),
-            trustDomainSockets = typedConfig.webHook.proxy?.trustDomainSockets ?: false))
+            trustDomainSockets = typedConfig.webHook.proxy?.trustDomainSockets ?: false)
+        )
         router.route().handler(BodyHandler.create())
 
         val addr =

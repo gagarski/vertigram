@@ -37,7 +37,6 @@
         <module>vertigram-jooq</module>
         <module>vertigram-logback</module>
         <module>vertigram</module>
-        <module>vertigram-web</module>
 
         <module>vertigram-annotations</module>
         <module>vertigram-codegen</module>

@@ -104,10 +104,6 @@
         </dependency>
         <dependency>
             <groupId>ski.gagar.vertigram</groupId>
-            <artifactId>vertigram-web</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>ski.gagar.vertigram</groupId>
             <artifactId>vertigram-annotations</artifactId>
         </dependency>
     </dependencies>
