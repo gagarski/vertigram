@@ -11,7 +11,7 @@ import java.time.Instant
  */
 data class Giveaway(
     val chats: List<Chat>,
-    val winnerSelectionDate: Instant,
+    val winnersSelectionDate: Instant,
     val winnerCount: Int,
     val onlyNewMembers: Boolean = false,
     val hasPublicWinners: Boolean = false,
