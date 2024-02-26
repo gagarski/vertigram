@@ -7,7 +7,6 @@ import com.fasterxml.jackson.module.kotlin.KotlinModule
 import io.vertx.core.Handler
 import io.vertx.core.Vertx
 import io.vertx.core.eventbus.DeliveryOptions
-import io.vertx.core.eventbus.EventBus
 import io.vertx.core.eventbus.Message
 import io.vertx.core.eventbus.MessageConsumer
 import io.vertx.core.json.JsonObject
@@ -26,7 +25,7 @@ import ski.gagar.vertigram.eventbus.messages.replyWithThrowable
 import ski.gagar.vertigram.jackson.mapTo
 import ski.gagar.vertigram.jackson.toJsonObject
 import ski.gagar.vertigram.jackson.typeReference
-import ski.gagar.vertigram.verticles.VertigramVerticle
+import ski.gagar.vertigram.verticles.common.VertigramVerticle
 
 const val VERTIGRAMS = "ski.gagar.vertigram.vertigrams"
 

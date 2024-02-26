@@ -1,4 +1,4 @@
-package ski.gagar.vertigram.types
+package ski.gagar.vertigram.telegram.types
 
 import org.junit.jupiter.api.Test
 import ski.gagar.vertigram.BaseSerializationTest

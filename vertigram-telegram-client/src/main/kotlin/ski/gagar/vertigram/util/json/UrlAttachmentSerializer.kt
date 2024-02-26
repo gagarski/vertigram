@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.databind.JsonSerializer
 import com.fasterxml.jackson.databind.SerializerProvider
 import com.fasterxml.jackson.databind.jsontype.TypeSerializer
-import ski.gagar.vertigram.types.attachments.StringAttachment
+import ski.gagar.vertigram.telegram.types.attachments.StringAttachment
 import java.time.Instant
 
 /**

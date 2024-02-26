@@ -40,8 +40,6 @@
 
         <module>vertigram-annotations</module>
         <module>vertigram-codegen</module>
-        <module>vertigram-verticles</module>
-        <module>vertigram-bot-tools</module>
         <module>vertigram-bom</module>
         <module>vertigram-parent-internal</module>
         <module>vertigram-parent</module>

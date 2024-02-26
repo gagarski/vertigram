@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.databind.JsonMappingException
 import com.fasterxml.jackson.databind.JsonSerializer
 import com.fasterxml.jackson.databind.SerializerProvider
-import ski.gagar.vertigram.types.attachments.Attachment
+import ski.gagar.vertigram.telegram.types.attachments.Attachment
 
 /**
  * Dummy serializer for [Attachment] to detect bugs with [Attachment] instantiation

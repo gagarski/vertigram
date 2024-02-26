@@ -1,8 +1,8 @@
-package ski.gagar.vertigram.types
+package ski.gagar.vertigram.telegram.types
 
 import org.junit.jupiter.api.Test
 import ski.gagar.vertigram.BaseSerializationTest
-import ski.gagar.vertigram.types.util.orEpoch
+import ski.gagar.vertigram.telegram.types.util.orEpoch
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 

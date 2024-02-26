@@ -223,22 +223,12 @@
             </dependency>
             <dependency>
                 <groupId>ski.gagar.vertigram</groupId>
-                <artifactId>vertigram-verticles</artifactId>
-                <version>1.0.0-alpha41-SNAPSHOT</version>
-            </dependency>
-            <dependency>
-                <groupId>ski.gagar.vertigram</groupId>
                 <artifactId>vertigram</artifactId>
                 <version>1.0.0-alpha41-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>ski.gagar.vertigram</groupId>
                 <artifactId>vertigram-annotations</artifactId>
-                <version>1.0.0-alpha41-SNAPSHOT</version>
-            </dependency>
-            <dependency>
-                <groupId>ski.gagar.vertigram</groupId>
-                <artifactId>vertigram-bot-tools</artifactId>
                 <version>1.0.0-alpha41-SNAPSHOT</version>
             </dependency>
         </dependencies>

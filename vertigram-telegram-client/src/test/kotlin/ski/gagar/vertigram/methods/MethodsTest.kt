@@ -1,11 +1,11 @@
-package ski.gagar.vertigram.methods
+package ski.gagar.vertigram.telegram.methods
 
 import org.junit.jupiter.api.Test
 import ski.gagar.vertigram.BaseSerializationTest
-import ski.gagar.vertigram.types.InputMedia
-import ski.gagar.vertigram.types.attachments.Attachment
-import ski.gagar.vertigram.types.attachments.fileId
-import ski.gagar.vertigram.types.util.toChatId
+import ski.gagar.vertigram.telegram.types.InputMedia
+import ski.gagar.vertigram.telegram.types.attachments.Attachment
+import ski.gagar.vertigram.telegram.types.attachments.fileId
+import ski.gagar.vertigram.telegram.types.util.toChatId
 import java.time.Duration
 import java.time.Instant
 import java.time.temporal.ChronoUnit

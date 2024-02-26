@@ -44,6 +44,10 @@
             <artifactId>vertigram-core</artifactId>
         </dependency>
         <dependency>
+            <groupId>ski.gagar.vertigram</groupId>
+            <artifactId>vertigram-telegram-client</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.jetbrains.kotlinx</groupId>
             <artifactId>kotlinx-coroutines-slf4j</artifactId>
         </dependency>

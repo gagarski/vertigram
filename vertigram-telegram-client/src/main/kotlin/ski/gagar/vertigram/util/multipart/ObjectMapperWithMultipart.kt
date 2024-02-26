@@ -21,8 +21,8 @@ import ski.gagar.vertigram.web.multipart.MultipartForm
  * Multipart format is only applied on the top level, nested entities are serialized to JSON and inserted
  * to the form as a form field.
  *
- * This class intends to support [ski.gagar.vertigram.types.InputMedia] fields (both single and lists) and
- * [ski.gagar.vertigram.types.attachments.Attachment] fields to attach files. Such fields should be annotated
+ * This class intends to support [ski.gagar.vertigram.telegram.types.InputMedia] fields (both single and lists) and
+ * [ski.gagar.vertigram.telegram.types.attachments.Attachment] fields to attach files. Such fields should be annotated
  * with [ski.gagar.vertigram.annotations.TelegramMedia] annotation to be properly handled.
  *
  * This mapper is built on top of regular [ObjectMapper] and should be working "almost as JSON" on multipart part

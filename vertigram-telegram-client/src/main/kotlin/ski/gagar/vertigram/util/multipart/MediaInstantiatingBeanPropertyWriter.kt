@@ -3,8 +3,8 @@ package ski.gagar.vertigram.util.multipart
 import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.databind.SerializerProvider
 import com.fasterxml.jackson.databind.ser.BeanPropertyWriter
-import ski.gagar.vertigram.types.InputMedia
-import ski.gagar.vertigram.types.attachments.Attachment
+import ski.gagar.vertigram.telegram.types.InputMedia
+import ski.gagar.vertigram.telegram.types.attachments.Attachment
 
 /**
  * [BeanPropertyWriter] sub-class for [ObjectMapperWithMultipart]

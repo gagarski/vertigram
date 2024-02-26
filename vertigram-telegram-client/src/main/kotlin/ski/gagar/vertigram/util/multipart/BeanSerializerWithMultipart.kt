@@ -5,11 +5,11 @@ import com.fasterxml.jackson.databind.JsonMappingException
 import com.fasterxml.jackson.databind.SerializerProvider
 import com.fasterxml.jackson.databind.ser.BeanPropertyWriter
 import com.fasterxml.jackson.databind.ser.BeanSerializer
-import ski.gagar.vertigram.annotations.TelegramMedia
-import ski.gagar.vertigram.types.attachments.Attachment
+import ski.gagar.vertigram.telegram.annotations.TelegramMedia
+import ski.gagar.vertigram.telegram.types.attachments.Attachment
 
 /**
- * Extends [BeanSerializer] to support multipart for [ski.gagar.vertigram.client.DirectTelegram] purposes.
+ * Extends [BeanSerializer] to support multipart for [ski.gagar.vertigram.telegram.client.DirectTelegram] purposes.
  *
  * @see serializeToMultipart
  */
@@ -44,7 +44,7 @@ internal class BeanSerializerWithMultipart(delegate: BeanSerializer) : BeanSeria
             val deferredMedia = mutableMapOf<String, AttachmentInfo>()
             for (prop in props) {
                 prop?.let {
-                    if (null != prop.getAnnotation(TelegramMedia::class.java)) {
+                    if (null != prop.getAnnotation(ski.gagar.vertigram.telegram.annotations.TelegramMedia::class.java)) {
                         deferredMedia.putAll(MediaInstantiatingBeanPropertyWriter(prop).serializeMedia(bean, gen, provider))
                     } else {
                         prop.serializeAsField(bean, gen, provider)

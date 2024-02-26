@@ -130,7 +130,7 @@ class VertigramClientGenerator : AbstractProcessor() {
 
         return FunSpec.builder(name)
             .addModifiers(KModifier.SUSPEND)
-            .receiver(ClassName("ski.gagar.vertigram.client", "Telegram"))
+            .receiver(ClassName("ski.gagar.vertigram.telegram.client", "Telegram"))
             .returns(returnType)
             .addMethodKdoc(telegramName, className)
             .addStatement("return call(%T)", className)
@@ -159,7 +159,7 @@ class VertigramClientGenerator : AbstractProcessor() {
 
         return FunSpec.builder(name)
             .addModifiers(KModifier.SUSPEND)
-            .receiver(ClassName("ski.gagar.vertigram.client", "Telegram"))
+            .receiver(ClassName("ski.gagar.vertigram.telegram.client", "Telegram"))
             .returns(returnType)
             .apply {
                 val actuallyWrapped = mutableSetOf<String>()
@@ -416,8 +416,8 @@ class VertigramClientGenerator : AbstractProcessor() {
 
     companion object {
         private val SUPERTYPES = setOf(
-            "ski.gagar.vertigram.methods.JsonTelegramCallable",
-            "ski.gagar.vertigram.methods.MultipartTelegramCallable"
+            "ski.gagar.vertigram.telegram.methods.JsonTelegramCallable",
+            "ski.gagar.vertigram.telegram.methods.MultipartTelegramCallable"
         )
         private val ROOT_CLASSES = setOf(
             ClassName("java.lang", "Object"),
@@ -431,7 +431,7 @@ class VertigramClientGenerator : AbstractProcessor() {
         private val WRAP_CONFIGS = listOf(
             WrapConfig(
                 triggerParam = "caption",
-                wrapper = ClassName("ski.gagar.vertigram.types.richtext", "RichText"),
+                wrapper = ClassName("ski.gagar.vertigram.telegram.types.richtext", "RichText"),
                 wrapperParam = "richCaption",
                 wrapperParamMapping = mapOf(
                     "caption" to "text",
@@ -441,7 +441,7 @@ class VertigramClientGenerator : AbstractProcessor() {
             ),
             WrapConfig(
                 triggerParam = "text",
-                wrapper = ClassName("ski.gagar.vertigram.types.richtext", "RichText"),
+                wrapper = ClassName("ski.gagar.vertigram.telegram.types.richtext", "RichText"),
                 wrapperParam = "richText",
                 wrapperParamMapping = mapOf(
                     "text" to "text",
@@ -451,7 +451,7 @@ class VertigramClientGenerator : AbstractProcessor() {
             ),
             WrapConfig(
                 triggerParam = "quote",
-                wrapper = ClassName("ski.gagar.vertigram.types.richtext", "RichText"),
+                wrapper = ClassName("ski.gagar.vertigram.telegram.types.richtext", "RichText"),
                 wrapperParam = "richQuote",
                 wrapperParamMapping = mapOf(
                     "quote" to "text",
@@ -461,7 +461,7 @@ class VertigramClientGenerator : AbstractProcessor() {
             ),
             WrapConfig(
                 triggerParam = "explanation",
-                wrapper = ClassName("ski.gagar.vertigram.types.richtext", "RichText"),
+                wrapper = ClassName("ski.gagar.vertigram.telegram.types.richtext", "RichText"),
                 wrapperParam = "richExplanation",
                 wrapperParamMapping = mapOf(
                     "explanation" to "text",
