@@ -25,13 +25,8 @@ import ski.gagar.vertigram.verticles.telegram.address.TelegramAddress
  * The spawned verticle can maintain its state given the condition that it receives messages only for a single dialog.
  */
 abstract class AbstractDispatchVerticle<Config : AbstractDispatchVerticle.Config, DialogKey> : AbstractHierarchyVerticle<Config>() {
-    /**
-     * [TelegramVerticle] base address
-     */
-    open val tgVAddressBase = TelegramAddress.TELEGRAM_VERTICLE_BASE
-
     protected val tg: Telegram by lazy {
-        ThinTelegram(vertigram, tgVAddressBase)
+        ThinTelegram(vertigram, typedConfig.verticleAddress)
     }
 
 
@@ -120,5 +115,6 @@ abstract class AbstractDispatchVerticle<Config : AbstractDispatchVerticle.Config
 
     interface Config {
         val baseAddress: String
+        val verticleAddress: String
     }
 }
