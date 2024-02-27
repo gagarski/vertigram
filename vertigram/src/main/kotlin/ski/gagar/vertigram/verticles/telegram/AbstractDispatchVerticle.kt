@@ -29,15 +29,56 @@ abstract class AbstractDispatchVerticle<Config : AbstractDispatchVerticle.Config
         ThinTelegram(vertigram, typedConfig.verticleAddress)
     }
 
-
+    /**
+     * [DialogKey] to [DialogDescriptor] map
+     */
     protected val dialogs = mutableMapOf<DialogKey, DialogDescriptor>()
+
+    /**
+     * [io.vertx.kotlin.coroutines.CoroutineVerticle.deploymentID] to [DialogKey] map
+     */
     protected val dialogsInv = mutableMapOf<String, DialogKey>()
 
+    /**
+     * Create [DialogKey] from incoming [Message]
+     *
+     * To be overridden by subclass.
+     */
     protected abstract fun dialogKey(msg: Message): DialogKey?
+
+    /**
+     * Create [DialogKey] from incoming [Update.CallbackQuery.Payload]
+     *
+     * To be overridden by subclass.
+     */
     protected abstract fun dialogKey(q: Update.CallbackQuery.Payload): DialogKey?
+
+    /**
+     * Exctract chat id from [DialogKey].
+     *
+     * To be overridden by subclass.
+     */
     protected abstract fun toChatId(key: DialogKey): Long?
+
+    /**
+     * Should [q] be handled.
+     *
+     * To be overridden by subclass.
+     */
     protected abstract suspend fun shouldHandleCallbackQuery(q: Update.CallbackQuery.Payload): Boolean
+
+    /**
+     * Should [msg] be handled
+     *
+     * To be overridden by subclass.
+     */
     protected abstract suspend fun shouldHandleMessage(msg: Message): Boolean
+
+    /**
+     * Deploy a verticle to dispatch updates to and return [DialogDescriptor]
+     *
+     * To be overridden by subclass.
+     */
     protected abstract suspend fun doStart(dialogKey: DialogKey, msg: Message): DialogDescriptor?
 
     override suspend fun start() {
@@ -80,14 +121,14 @@ abstract class AbstractDispatchVerticle<Config : AbstractDispatchVerticle.Config
         dialogsInv[desc.id] = dialogKey
     }
 
-    private suspend fun passMessageToOngoing(message: Message, desc: DialogDescriptor) {
+    private fun passMessageToOngoing(message: Message, desc: DialogDescriptor) {
         vertigram.eventBus.send(
             desc.messageAddress,
             message
         )
     }
 
-    private suspend fun passCallbackQueryToOngoing(callbackQuery: Update.CallbackQuery.Payload, desc: DialogDescriptor) {
+    private fun passCallbackQueryToOngoing(callbackQuery: Update.CallbackQuery.Payload, desc: DialogDescriptor) {
         vertigram.eventBus.send(
             desc.callbackQueryAddress,
             callbackQuery
@@ -111,10 +152,23 @@ abstract class AbstractDispatchVerticle<Config : AbstractDispatchVerticle.Config
         dialogs.remove(key)
     }
 
+    /**
+     * Dialog descriptor returned by [doStart]
+     */
     data class DialogDescriptor(val id: String, val messageAddress: String, val callbackQueryAddress: String)
 
+    /**
+     * Base interface for verticle configuration
+     */
     interface Config {
+        /**
+         * Base address to receive demultiplexed updates
+         */
         val baseAddress: String
+
+        /**
+         * Telegram verticle base address
+         */
         val verticleAddress: String
     }
 }

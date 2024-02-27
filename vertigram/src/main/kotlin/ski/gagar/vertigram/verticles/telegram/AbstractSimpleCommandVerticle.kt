@@ -8,8 +8,22 @@ import ski.gagar.vertigram.telegram.types.util.isCommandForBot
 import ski.gagar.vertigram.verticles.common.VertigramVerticle
 import ski.gagar.vertigram.verticles.telegram.address.TelegramAddress
 
+/**
+ * Handle a command without saving any state
+ */
 abstract class AbstractSimpleCommandVerticle<Config : AbstractSimpleCommandVerticle.Config> : VertigramVerticle<Config>() {
+    /**
+     * Command to handle (/command or /command@me).
+     *
+     * To be overridden by subclass.
+     */
     abstract val command: String
+
+    /**
+     * Respond to the message with command.
+     *
+     * To be overridden by subclass.
+     */
     abstract suspend fun respond(message: Message)
     open val listenAddress: String
         get() = TelegramAddress.demuxAddress(Update.Type.MESSAGE, typedConfig.baseAddress)
@@ -28,8 +42,18 @@ abstract class AbstractSimpleCommandVerticle<Config : AbstractSimpleCommandVerti
         respond(msg)
     }
 
+    /**
+     * Base interface for configuration
+     */
     interface Config {
+        /**
+         * Bot user information, returned by `getMe` method.
+         */
         val me: User.Me?
+
+        /**
+         * Base address to receive demultiplexed updates
+         */
         val baseAddress: String
     }
 }
