@@ -3,17 +3,40 @@ package ski.gagar.vertigram.verticles.telegram.address
 import org.apache.commons.lang3.StringUtils
 import ski.gagar.vertigram.telegram.types.Update
 
+/**
+ * A root object for resolving addresses for Telegram-related Vertigram verticles
+ */
 object TelegramAddress {
+    /**
+     * Default updates publishing address
+     */
     const val UPDATES = "ski.gagar.vertigram.telegram.updates"
+
+    /**
+     * Default publishing address base for demultiplexed updates (i.e. with fields extracted)
+     */
     const val DEMUX_BASE = "ski.gagar.vertigram.telegram.demux"
+
+    /**
+     * Default base address for Telegram verticle
+     */
     const val TELEGRAM_VERTICLE_BASE = "ski.gagar.vertigram.telegram.verticle"
 
+    /**
+     * Get demultiplexed address from [className] and [base] address
+     */
     private fun demuxAddress(className: String, base: String) =
         "${base}.${StringUtils.uncapitalize(className)}"
 
+    /**
+     * Get demultiplexed address from [update] object and [base] address
+     */
     fun demuxAddress(update: Update<*>, base: String = DEMUX_BASE) =
         demuxAddress(update.javaClass.simpleName, base)
 
+    /**
+     * Get demultiplexed address from update [type] and [base] address
+     */
     fun demuxAddress(type: Update.Type, base: String = DEMUX_BASE) =
         demuxAddress(
             when (type) {
@@ -39,9 +62,22 @@ object TelegramAddress {
             base
         )
 
+    /**
+     * Addresses for [ski.gagar.vertigram.verticles.telegram.AbstractTelegramDialogVerticle]
+     */
     object Dialog {
+        /**
+         * Classifiers for private addresses
+         */
         object Classifier {
+            /**
+             * Callback query classifier
+             */
             const val CallbackQuery = "callbackQuery"
+
+            /**
+             * Message classifier
+             */
             const val Message = "message"
         }
     }

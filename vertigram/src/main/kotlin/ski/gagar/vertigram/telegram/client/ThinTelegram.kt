@@ -11,10 +11,24 @@ import ski.gagar.vertigram.verticles.telegram.TelegramVerticle
 import ski.gagar.vertigram.verticles.telegram.address.TelegramAddress
 import java.time.Duration
 
-
+/**
+ * A [Telegram] implementation using [TelegramVerticle] for making requests.
+ */
 class ThinTelegram(
+    /**
+     * [Vertigram] instance
+     */
     private val vertigram: Vertigram,
+    /**
+     * Base address for sending [Vertigram.EventBus.request]
+     */
     private val baseAddress: String = TelegramAddress.TELEGRAM_VERTICLE_BASE,
+    /**
+     * A gap for [DeliveryOptions.timeout] when doing long-poll for [getUpdates].
+     *
+     * The [Vertigram.EventBus.request] for [getUpdates] will time out after long poll timeout set by berticle +
+     * [timeoutGap]
+     */
     private val timeoutGap: Duration = Duration.ofSeconds(5)
 ) : AbstractTelegram() {
 

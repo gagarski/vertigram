@@ -13,8 +13,23 @@ import ski.gagar.vertigram.verticles.common.messages.DeathNotice
 import ski.gagar.vertigram.verticles.common.messages.DeathReason
 import ski.gagar.vertigram.verticles.telegram.address.TelegramAddress
 
+/**
+ * A verticle that does message dispatching to child verticles unique for given [DialogKey].
+ *
+ * Can be useful together with [AbstractTelegramDialogVerticle].
+ *
+ * For each [DialogKey] (e.g. `chatId`+`userId`) this verticle will spawn a child
+ * (spawning should be implemented by subclass in [doStart]). If there is already a child with given [DialogKey],
+ * it will pass the message or callback query to it.
+ *
+ * The spawned verticle can maintain its state given the condition that it receives messages only for a single dialog.
+ */
 abstract class AbstractDispatchVerticle<Config : AbstractDispatchVerticle.Config, DialogKey> : AbstractHierarchyVerticle<Config>() {
+    /**
+     * [TelegramVerticle] base address
+     */
     open val tgVAddressBase = TelegramAddress.TELEGRAM_VERTICLE_BASE
+
     protected val tg: Telegram by lazy {
         ThinTelegram(vertigram, tgVAddressBase)
     }

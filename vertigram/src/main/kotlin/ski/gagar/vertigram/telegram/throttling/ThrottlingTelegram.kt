@@ -5,14 +5,14 @@ import io.netty.handler.codec.http.HttpResponseStatus
 import io.vertx.core.Vertx
 import kotlinx.coroutines.delay
 import org.reflections.Reflections
-import ski.gagar.vertigram.util.lazy
-import ski.gagar.vertigram.util.logger
 import ski.gagar.vertigram.telegram.client.DirectTelegram
 import ski.gagar.vertigram.telegram.client.Telegram
 import ski.gagar.vertigram.telegram.exceptions.TelegramCallException
 import ski.gagar.vertigram.telegram.methods.TelegramCallable
 import ski.gagar.vertigram.telegram.types.util.ChatId
 import ski.gagar.vertigram.telegram.types.util.toChatId
+import ski.gagar.vertigram.util.lazy
+import ski.gagar.vertigram.util.logger
 import java.time.Duration
 import java.time.Instant
 import java.util.*
@@ -22,6 +22,15 @@ private val MINUTE = Duration.ofMinutes(1)
 private val CLEANUP_PERIOD = MINUTE.dividedBy(2)
 private val CLEANUP_RETENTION = Duration.ofMinutes(1) + Duration.ofSeconds(15)
 
+/**
+ * Throttling implementation of [Telegram].
+ *
+ * On every method call it will do the following:
+ *  - just throw [RateLimitExceededException] if you hit 429 from Telegram API
+ *  - for non-[Throttled] method just call it
+ *  - if the limits (global and per-chat) are not yet hit for [Throttled] method, just call it and register the call
+ *  - if the limits are hit, then wait at most `maxWait` period or throw [RateLimitExceededException] if the wait will be too long
+ */
 class ThrottlingTelegram(
     private val vertx: Vertx,
     private val delegate: DirectTelegram,
