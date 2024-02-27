@@ -7,6 +7,8 @@ import io.vertx.kotlin.coroutines.dispatcher
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import org.slf4j.Logger
+import ski.gagar.vertigram.util.lazy
+import ski.gagar.vertigram.util.logger
 import kotlin.system.exitProcess
 
 fun <T> Vertx.runBlocking(block: suspend Vertx.() -> T) {
@@ -46,6 +48,6 @@ fun DeploymentOptions.setTypedConfig(obj: Any): DeploymentOptions =
     setConfig(JsonObject.mapFrom(obj))
 
 
-fun Vertx.logUnhandledExceptions(logger: Logger = ski.gagar.vertigram.logger): Vertx = exceptionHandler {
+fun Vertx.logUnhandledExceptions(logger: Logger = ski.gagar.vertigram.util.logger): Vertx = exceptionHandler {
     logger.lazy.error(throwable = it) { "Unhandled exception" }
 }

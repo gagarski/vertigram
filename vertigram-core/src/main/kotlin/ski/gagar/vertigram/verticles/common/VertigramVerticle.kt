@@ -1,7 +1,6 @@
 package ski.gagar.vertigram.verticles.common
 
 import com.fasterxml.jackson.core.type.TypeReference
-import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.JavaType
 import io.vertx.core.Context
 import io.vertx.core.Vertx
@@ -13,25 +12,19 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.slf4j.MDCContext
 import ski.gagar.vertigram.Vertigram
 import ski.gagar.vertigram.coroutines.VerticleName
-import ski.gagar.vertigram.defaultVertigramMapper
 import ski.gagar.vertigram.getVertigram
 import ski.gagar.vertigram.jackson.mapTo
 import ski.gagar.vertigram.jackson.typeReference
-import ski.gagar.vertigram.lazy
-import ski.gagar.vertigram.logger
+import ski.gagar.vertigram.util.lazy
+import ski.gagar.vertigram.util.logger
 import kotlin.coroutines.CoroutineContext
 
-internal val BOOTSTRAP_JSON_MAPPER = defaultVertigramMapper()
-    .copy()
-    .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
 
 abstract class VertigramVerticle<Config> : CoroutineVerticle() {
     lateinit var vertigram: Vertigram
         private set
 
     protected abstract val configTypeReference: TypeReference<Config>
-    @Suppress("LeakingThis")
-    protected open val configJavaType: JavaType = vertigram.objectMapper.constructType(configTypeReference.type)
 
     private lateinit var context: Context
 
@@ -57,10 +50,9 @@ abstract class VertigramVerticle<Config> : CoroutineVerticle() {
     override fun init(vertx: Vertx, context: Context) {
         super.init(vertx, context)
         this.context = context
-        val bareBonesConfig = config.mapTo<BareBonesConfig>(BOOTSTRAP_JSON_MAPPER)
-        vertigram = vertx.getVertigram(bareBonesConfig.vertigramName)
+        vertigram = vertx.getVertigram(config.getString("vertigramName"))
         val wrapper = config.mapTo<ConfigWrapper<Config>>(
-            vertigram.objectMapper.typeFactory.constructParametricType(ConfigWrapper::class.java, configJavaType), vertigram.objectMapper
+            vertigram.objectMapper.typeFactory.constructParametricType(ConfigWrapper::class.java, vertigram.objectMapper.constructType(configTypeReference.type)), vertigram.objectMapper
         )
         configHolder = ConfigHolder(wrapper.config)
     }

@@ -37,13 +37,13 @@
         <module>vertigram-jooq</module>
         <module>vertigram-logback</module>
         <module>vertigram</module>
-
         <module>vertigram-annotations</module>
         <module>vertigram-codegen</module>
         <module>vertigram-bom</module>
         <module>vertigram-parent-internal</module>
         <module>vertigram-parent</module>
         <module>vertigram-telegram-client</module>
+        <module>vertigram-util</module>
     </modules>
 
     <build>

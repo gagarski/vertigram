@@ -11,8 +11,8 @@ import ski.gagar.vertigram.telegram.client.ThinTelegram
 import ski.gagar.vertigram.verticles.telegram.config.WebHookConfig
 import ski.gagar.vertigram.jackson.mapTo
 import ski.gagar.vertigram.jackson.typeReference
-import ski.gagar.vertigram.lazy
-import ski.gagar.vertigram.logger
+import ski.gagar.vertigram.util.lazy
+import ski.gagar.vertigram.util.logger
 import ski.gagar.vertigram.telegram.methods.deleteWebhook
 import ski.gagar.vertigram.telegram.methods.setWebhook
 import ski.gagar.vertigram.retrying

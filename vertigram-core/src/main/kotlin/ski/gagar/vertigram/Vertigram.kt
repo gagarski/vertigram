@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.JavaType
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.KotlinModule
-import io.vertx.core.Handler
 import io.vertx.core.Vertx
 import io.vertx.core.eventbus.DeliveryOptions
 import io.vertx.core.eventbus.Message
@@ -25,7 +24,11 @@ import ski.gagar.vertigram.eventbus.messages.replyWithThrowable
 import ski.gagar.vertigram.jackson.mapTo
 import ski.gagar.vertigram.jackson.toJsonObject
 import ski.gagar.vertigram.jackson.typeReference
+import ski.gagar.vertigram.services.VertigramInitializer
+import ski.gagar.vertigram.util.coroMdcWith
 import ski.gagar.vertigram.verticles.common.VertigramVerticle
+import java.util.*
+
 
 const val VERTIGRAMS = "ski.gagar.vertigram.vertigrams"
 
@@ -46,13 +49,11 @@ class Vertigram(
 
     fun <T> deploymentOptions(config: T) = DeploymentOptions(this, config)
 
-    suspend fun <T> deployVerticle(verticle: VertigramVerticle<T>, deploymentOptions: DeploymentOptions<T>) {
+    suspend fun <T> deployVerticle(verticle: VertigramVerticle<T>, deploymentOptions: DeploymentOptions<T>) =
         vertx.deployVerticle(verticle, deploymentOptions).coAwait()
-    }
 
-    suspend fun deployVerticle(verticle: VertigramVerticle<Unit?>) {
+    suspend fun deployVerticle(verticle: VertigramVerticle<Unit?>) =
         vertx.deployVerticle(verticle, DeploymentOptions(this)).coAwait()
-    }
 
     @PublishedApi
     @JvmInline
@@ -70,29 +71,28 @@ class Vertigram(
                                      value: RequestPayload,
                                      options: DeliveryOptions = DeliveryOptions()
         ): io.vertx.core.eventbus.EventBus =
-            raw.publish(vertigramAddress(address).address, Request(value), options)
+            raw.publish(vertigramAddress(address).address, Request(value).toJsonObject(objectMapper), options)
 
         fun <RequestPayload> send(address: String,
                                   value: RequestPayload,
                                   options: DeliveryOptions = DeliveryOptions()
         ): io.vertx.core.eventbus.EventBus =
-            raw.send(vertigramAddress(address).address, Request(value), options)
+            raw.send(vertigramAddress(address).address, Request(value).toJsonObject(objectMapper), options)
 
         @PublishedApi
-        internal inline fun <RequestPayload, Result> consumerGenericNonReified(
+        internal inline fun <RequestPayload, Result> consumerNonReified(
             coroScope: CoroutineScope,
-            address: VertigramAddress,
+            address: String,
             replyOptions: DeliveryOptions = DeliveryOptions(),
             requestJavaType: JavaType,
-            createConsumer: io.vertx.core.eventbus.EventBus.(address: String, handler: Handler<Message<JsonObject>>) -> MessageConsumer<JsonObject>,
             crossinline function: suspend (RequestPayload) -> Result
         ) : MessageConsumer<JsonObject> {
             val reqWrapperType = objectMapper.typeFactory.constructParametricType(
                 Request::class.java,
                 requestJavaType
             )
-            return raw.createConsumer(address.address) { msg: Message<JsonObject> ->
-                coroScope.launch(MDCContext(coroScope.coroMdcWith(CONSUMER_ADDRESS_MDC to address.address))) {
+            return raw.consumer(vertigramAddress(address).address) { msg: Message<JsonObject> ->
+                coroScope.launch(MDCContext(coroScope.coroMdcWith(CONSUMER_ADDRESS_MDC to vertigramAddress(address).address))) {
                     val reqW: Request<RequestPayload> = msg.body()!!.mapTo(reqWrapperType, objectMapper)
 
                     try {
@@ -110,37 +110,34 @@ class Vertigram(
         }
 
         @PublishedApi
-        internal inline fun <reified RequestPayload, Result> consumerGeneric(
-            coroScope: CoroutineScope,
-            address: VertigramAddress,
-            replyOptions: DeliveryOptions = DeliveryOptions(),
-            requestJavaType: JavaType = objectMapper.typeFactory.constructType(typeReference<RequestPayload>().type),
-            createConsumer: io.vertx.core.eventbus.EventBus.(address: String, handler: Handler<Message<JsonObject>>) -> MessageConsumer<JsonObject>,
-            crossinline function: suspend (RequestPayload) -> Result
-        ) : MessageConsumer<JsonObject> =
-            consumerGenericNonReified(
-                coroScope = coroScope,
-                address = address,
-                replyOptions = replyOptions,
-                requestJavaType = requestJavaType,
-                createConsumer = createConsumer,
-                function = function
-            )
-
-        inline fun <RequestPayload, Result> consumerNonReified(
+        internal inline fun <RequestPayload, Result> localConsumerNonReified(
             coroScope: CoroutineScope,
             address: String,
             replyOptions: DeliveryOptions = DeliveryOptions(),
             requestJavaType: JavaType,
             crossinline function: suspend (RequestPayload) -> Result
-        ) = consumerGenericNonReified(
-            coroScope = coroScope,
-            address = vertigramAddress(address),
-            replyOptions = replyOptions,
-            requestJavaType = requestJavaType,
-            createConsumer = { addr, c: Handler<Message<JsonObject>> -> consumer(addr, c) },
-            function = function
-        )
+        ) : MessageConsumer<JsonObject> {
+            val reqWrapperType = objectMapper.typeFactory.constructParametricType(
+                Request::class.java,
+                requestJavaType
+            )
+            return raw.localConsumer(vertigramAddress(address).address) { msg: Message<JsonObject> ->
+                coroScope.launch(MDCContext(coroScope.coroMdcWith(CONSUMER_ADDRESS_MDC to vertigramAddress(address).address))) {
+                    val reqW: Request<RequestPayload> = msg.body()!!.mapTo(reqWrapperType, objectMapper)
+
+                    try {
+                        msg.replyWithSuccess(function(reqW.payload), this@Vertigram, replyOptions)
+                    } catch (t: Throwable) {
+                        msg.replyWithThrowable<RequestPayload>(t, this@Vertigram, replyOptions)
+                        when (t) {
+                            is VertigramInternalException -> throw t
+                            is VertigramException -> {}
+                            else -> throw t
+                        }
+                    }
+                }
+            }
+        }
 
         inline fun <reified RequestPayload, Result> consumer(
             coroScope: CoroutineScope,
@@ -148,27 +145,11 @@ class Vertigram(
             replyOptions: DeliveryOptions = DeliveryOptions(),
             requestJavaType: JavaType = objectMapper.typeFactory.constructType(typeReference<RequestPayload>().type),
             crossinline function: suspend (RequestPayload) -> Result
-        ) = consumerGeneric(
+        ) = consumerNonReified(
             coroScope = coroScope,
-            address = vertigramAddress(address),
+            address = address,
             replyOptions = replyOptions,
             requestJavaType = requestJavaType,
-            createConsumer = { addr, c: Handler<Message<JsonObject>> -> consumer(addr, c) },
-            function = function
-        )
-
-        inline fun <RequestPayload, Result> localConsumerNonReified(
-            coroScope: CoroutineScope,
-            address: String,
-            replyOptions: DeliveryOptions = DeliveryOptions(),
-            requestJavaType: JavaType,
-            crossinline function: suspend (RequestPayload) -> Result
-        ) = consumerGenericNonReified(
-            coroScope = coroScope,
-            address = vertigramAddress(address),
-            replyOptions = replyOptions,
-            requestJavaType = requestJavaType,
-            createConsumer = { addr, c: Handler<Message<JsonObject>> -> localConsumer(addr, c) },
             function = function
         )
 
@@ -178,12 +159,11 @@ class Vertigram(
             replyOptions: DeliveryOptions = DeliveryOptions(),
             requestJavaType: JavaType = objectMapper.typeFactory.constructType(typeReference<RequestPayload>().type),
             crossinline function: suspend (RequestPayload) -> Result
-        ) = consumerGeneric(
+        ) = localConsumerNonReified(
             coroScope = coroScope,
-            address = vertigramAddress(address),
+            address = address,
             replyOptions = replyOptions,
             requestJavaType = requestJavaType,
-            createConsumer = { addr, c: Handler<Message<JsonObject>> -> localConsumer(addr, c) },
             function = function
         )
 
@@ -257,9 +237,16 @@ fun Vertx.attachVertigram(config: Vertigram.Config = Vertigram.Config()): Vertig
     sharedData().getLocalMap<String, Vertigram>(VERTIGRAMS)
         .compute(config.name) { _, old ->
             if (old != null)
-                throw IllegalStateException("The data source with this name is already present")
+                throw IllegalStateException("Vertigram ${config.name} is already attached")
 
-            Vertigram(this, config)
+            Vertigram(this, config).apply {
+                ServiceLoader.load(VertigramInitializer::class.java).forEach {
+                    with (it) {
+                        initialize()
+                    }
+                }
+            }
+
         }!!
 
 fun Vertx.detachVertigram(name: String = Vertigram.Config.DEFAULT_NAME) =

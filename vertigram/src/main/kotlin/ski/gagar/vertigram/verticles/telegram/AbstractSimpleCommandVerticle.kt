@@ -11,7 +11,8 @@ import ski.gagar.vertigram.verticles.telegram.address.TelegramAddress
 abstract class AbstractSimpleCommandVerticle<Config : AbstractSimpleCommandVerticle.Config> : VertigramVerticle<Config>() {
     abstract val command: String
     abstract suspend fun respond(message: Message)
-    open val listenAddress: String = TelegramAddress.demuxAddress(Update.Type.MESSAGE, typedConfig.baseAddress)
+    open val listenAddress: String
+        get() = TelegramAddress.demuxAddress(Update.Type.MESSAGE, typedConfig.baseAddress)
 
     override suspend fun start() {
         consumer<Message, Unit>(listenAddress) { handle(it) }
@@ -30,6 +31,5 @@ abstract class AbstractSimpleCommandVerticle<Config : AbstractSimpleCommandVerti
     interface Config {
         val me: User.Me?
         val baseAddress: String
-            get() = TelegramAddress.DEMUX_BASE
     }
 }

@@ -5,8 +5,8 @@ import io.netty.handler.codec.http.HttpResponseStatus
 import io.vertx.core.Vertx
 import kotlinx.coroutines.delay
 import org.reflections.Reflections
-import ski.gagar.vertigram.lazy
-import ski.gagar.vertigram.logger
+import ski.gagar.vertigram.util.lazy
+import ski.gagar.vertigram.util.logger
 import ski.gagar.vertigram.telegram.client.DirectTelegram
 import ski.gagar.vertigram.telegram.client.Telegram
 import ski.gagar.vertigram.telegram.exceptions.TelegramCallException

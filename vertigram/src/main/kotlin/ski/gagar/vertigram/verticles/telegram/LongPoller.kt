@@ -6,8 +6,8 @@ import kotlinx.coroutines.launch
 import ski.gagar.vertigram.telegram.client.Telegram
 import ski.gagar.vertigram.telegram.client.ThinTelegram
 import ski.gagar.vertigram.jackson.typeReference
-import ski.gagar.vertigram.lazy
-import ski.gagar.vertigram.logger
+import ski.gagar.vertigram.util.lazy
+import ski.gagar.vertigram.util.logger
 import ski.gagar.vertigram.telegram.methods.deleteWebhook
 import ski.gagar.vertigram.retrying
 import ski.gagar.vertigram.telegram.types.Update

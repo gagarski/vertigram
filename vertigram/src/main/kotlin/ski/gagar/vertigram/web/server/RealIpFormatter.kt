@@ -7,8 +7,8 @@ import io.vertx.ext.web.handler.LoggerFormat
 import io.vertx.ext.web.handler.LoggerFormatter
 import io.vertx.ext.web.handler.LoggerHandler
 import io.vertx.ext.web.impl.Utils
-import ski.gagar.vertigram.lazy
-import ski.gagar.vertigram.logger
+import ski.gagar.vertigram.util.lazy
+import ski.gagar.vertigram.util.logger
 
 class RealIpFormatter(private val immediate: Boolean = false,
                       private val trustedNetworks: Set<IpNetworkAddress> = setOf(),

@@ -1,4 +1,4 @@
-package ski.gagar.vertigram
+package ski.gagar.vertigram.util
 
 import io.vertx.core.Handler
 import io.vertx.core.Vertx

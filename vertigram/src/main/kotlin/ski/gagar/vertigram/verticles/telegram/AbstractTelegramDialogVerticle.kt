@@ -6,8 +6,8 @@ import kotlinx.coroutines.sync.withLock
 import ski.gagar.vertigram.telegram.client.Telegram
 import ski.gagar.vertigram.telegram.client.ThinTelegram
 import ski.gagar.vertigram.coroutines.setTimerNonCancellable
-import ski.gagar.vertigram.lazy
-import ski.gagar.vertigram.logger
+import ski.gagar.vertigram.util.lazy
+import ski.gagar.vertigram.util.logger
 import ski.gagar.vertigram.telegram.markup.toRichText
 import ski.gagar.vertigram.telegram.methods.editMessageReplyMarkup
 import ski.gagar.vertigram.telegram.methods.editMessageText

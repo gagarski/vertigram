@@ -105,6 +105,5 @@ abstract class AbstractDispatchVerticle<Config : AbstractDispatchVerticle.Config
 
     interface Config {
         val baseAddress: String
-            get() = TelegramAddress.DEMUX_BASE
     }
 }

@@ -1,9 +1,8 @@
 package ski.gagar.vertigram.verticles.common
 
-import io.vertx.core.DeploymentOptions
-import io.vertx.kotlin.coroutines.coAwait
-import ski.gagar.vertigram.lazy
-import ski.gagar.vertigram.logger
+import ski.gagar.vertigram.Vertigram
+import ski.gagar.vertigram.util.lazy
+import ski.gagar.vertigram.util.logger
 import ski.gagar.vertigram.verticles.common.messages.DeathNotice
 import ski.gagar.vertigram.verticles.common.messages.DeathReason
 import java.util.*
@@ -53,9 +52,15 @@ abstract class AbstractHierarchyVerticle<Config> : VertigramVerticle<Config>() {
 
     protected open fun beforeDeath(reason: DeathReason) {}
 
-    protected suspend fun deployChild(verticle: VertigramVerticle<*>,
-                                      deploymentOptions: DeploymentOptions = DeploymentOptions()): String {
-        val id = vertx.deployVerticle(verticle, deploymentOptions).coAwait()
+    protected suspend fun <T> deployChild(verticle: VertigramVerticle<T>,
+                                          config: T): String {
+        val id = vertigram.deployVerticle(verticle, Vertigram.DeploymentOptions(vertigram, config))
+        children.add(id)
+        return id
+    }
+
+    protected suspend fun deployChild(verticle: VertigramVerticle<Unit?>): String {
+        val id = vertigram.deployVerticle(verticle)
         children.add(id)
         return id
     }

@@ -4,7 +4,6 @@ import io.vertx.core.Vertx
 import io.vertx.core.WorkerExecutor
 import io.vertx.core.impl.cpu.CpuCoreSensor
 import io.vertx.kotlin.coroutines.CoroutineVerticle
-import io.vertx.kotlin.coroutines.await
 import io.vertx.kotlin.coroutines.coAwait
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.coroutineScope
@@ -15,9 +14,9 @@ import org.jooq.DSLContext
 import org.jooq.impl.DSL
 import org.jooq.impl.transactionResultInt
 import org.jooq.tools.jdbc.JDBCUtils
-import ski.gagar.vertigram.lazy
-import ski.gagar.vertigram.logger
-import ski.gagar.vertigram.workerExecutorDispatcher
+import ski.gagar.vertigram.util.lazy
+import ski.gagar.vertigram.util.logger
+import ski.gagar.vertigram.util.workerExecutorDispatcher
 import java.io.Closeable
 import java.util.concurrent.Callable
 import javax.sql.DataSource

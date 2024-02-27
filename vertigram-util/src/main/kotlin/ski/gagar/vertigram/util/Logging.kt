@@ -1,4 +1,4 @@
-package ski.gagar.vertigram
+package ski.gagar.vertigram.util
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.slf4j.MDCContext

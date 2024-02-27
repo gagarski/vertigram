@@ -4,8 +4,8 @@ import com.fasterxml.jackson.core.type.TypeReference
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import ski.gagar.vertigram.lazy
-import ski.gagar.vertigram.logger
+import ski.gagar.vertigram.util.lazy
+import ski.gagar.vertigram.util.logger
 import ski.gagar.vertigram.verticles.common.address.VertigramCommonAddress
 import java.time.Duration
 import java.time.Instant

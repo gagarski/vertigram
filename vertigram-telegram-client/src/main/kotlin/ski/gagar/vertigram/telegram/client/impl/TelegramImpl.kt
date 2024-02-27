@@ -17,8 +17,8 @@ import io.vertx.ext.web.client.WebClient
 import io.vertx.ext.web.client.WebClientOptions
 import io.vertx.ext.web.codec.BodyCodec
 import io.vertx.kotlin.coroutines.coAwait
-import ski.gagar.vertigram.lazy
-import ski.gagar.vertigram.logger
+import ski.gagar.vertigram.util.lazy
+import ski.gagar.vertigram.util.logger
 import ski.gagar.vertigram.telegram.methods.JsonTelegramCallable
 import ski.gagar.vertigram.telegram.methods.MultipartTelegramCallable
 import ski.gagar.vertigram.telegram.methods.TelegramCallable

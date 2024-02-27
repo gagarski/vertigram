@@ -5,10 +5,10 @@ import io.vertx.core.Vertx
 import io.vertx.core.net.ProxyOptions
 import ski.gagar.vertigram.telegram.client.impl.TelegramImpl
 import ski.gagar.vertigram.telegram.client.impl.TelegramImplOptions
-import ski.gagar.vertigram.lazy
-import ski.gagar.vertigram.logger
 import ski.gagar.vertigram.telegram.methods.TelegramCallable
 import ski.gagar.vertigram.telegram.types.Update
+import ski.gagar.vertigram.util.lazy
+import ski.gagar.vertigram.util.logger
 import java.time.Duration
 
 private val LONG_POLL_DEFAULT_GAP: Duration = Duration.ofSeconds(5)
@@ -148,6 +148,6 @@ private fun DirectTelegram.Options.Pools?.toImpl() = TelegramImplOptions.Pools(
 )
 
 
-val THIN_POOLS = DirectTelegram.Options.Pools(1, 0, 0, 0)
+val THIN_POOLS = DirectTelegram.Options.Pools(1, 1, 1, 1)
 fun DirectTelegram.Options?.withDefaultThinPool() =
     this?.copy(pools = pools ?: THIN_POOLS) ?: DirectTelegram.Options(pools = THIN_POOLS)
