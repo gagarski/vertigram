@@ -197,7 +197,8 @@ class Vertigram(
     class Config(
         val name: String = DEFAULT_NAME,
         val objectMapper: ObjectMapper = defaultVertigramMapper(),
-        val hideInternalExceptions: Boolean = true
+        val hideInternalExceptions: Boolean = true,
+        val initializers: List<VertigramInitializer>? = null
     ) {
         companion object {
             const val DEFAULT_NAME = "default"
@@ -240,7 +241,8 @@ fun Vertx.attachVertigram(config: Vertigram.Config = Vertigram.Config()): Vertig
                 throw IllegalStateException("Vertigram ${config.name} is already attached")
 
             Vertigram(this, config).apply {
-                ServiceLoader.load(VertigramInitializer::class.java).forEach {
+                val initializers = config.initializers ?: ServiceLoader.load(VertigramInitializer::class.java)
+                for (it in initializers) {
                     with (it) {
                         initialize()
                     }
