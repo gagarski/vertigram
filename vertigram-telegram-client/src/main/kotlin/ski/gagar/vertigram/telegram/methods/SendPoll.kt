@@ -5,8 +5,8 @@ import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 import com.fasterxml.jackson.databind.annotation.JsonTypeResolver
 import ski.gagar.vertigram.annotations.TelegramCodegen
-import ski.gagar.vertigram.telegram.annotations.TelegramMethod
 import ski.gagar.vertigram.jackson.typing.TypeResolverWithDeductionBuilder
+import ski.gagar.vertigram.telegram.annotations.TelegramMethod
 import ski.gagar.vertigram.telegram.throttling.HasChatId
 import ski.gagar.vertigram.telegram.throttling.Throttled
 import ski.gagar.vertigram.telegram.types.Message
@@ -59,7 +59,7 @@ sealed class SendPoll : JsonTelegramCallable<Message>(), HasChatId {
     /**
      * Cases for regular poll
      */
-    @ski.gagar.vertigram.telegram.annotations.TelegramMethod(
+    @TelegramMethod(
         methodName = "sendPoll"
     )
     @TelegramCodegen(
@@ -99,7 +99,7 @@ sealed class SendPoll : JsonTelegramCallable<Message>(), HasChatId {
         /**
          * Case with [closeDate] field
          */
-        @ski.gagar.vertigram.telegram.annotations.TelegramMethod(
+        @TelegramMethod(
             methodName = "sendPoll"
         )
         @TelegramCodegen(
@@ -134,7 +134,7 @@ sealed class SendPoll : JsonTelegramCallable<Message>(), HasChatId {
         /**
          * Case with no openPeriod and closeDate field
          */
-        @ski.gagar.vertigram.telegram.annotations.TelegramMethod(
+        @TelegramMethod(
             methodName = "sendPoll"
         )
         @TelegramCodegen(
@@ -174,7 +174,7 @@ sealed class SendPoll : JsonTelegramCallable<Message>(), HasChatId {
         /**
          * Case with [openPeriod] field
          */
-        @ski.gagar.vertigram.telegram.annotations.TelegramMethod(
+        @TelegramMethod(
             methodName = "sendPoll"
         )
         @TelegramCodegen(
@@ -214,7 +214,7 @@ sealed class SendPoll : JsonTelegramCallable<Message>(), HasChatId {
         /**
          * Case with [closeDate] field
          */
-        @ski.gagar.vertigram.telegram.annotations.TelegramMethod(
+        @TelegramMethod(
             methodName = "sendPoll"
         )
         @TelegramCodegen(
@@ -254,7 +254,7 @@ sealed class SendPoll : JsonTelegramCallable<Message>(), HasChatId {
         /**
          * Case with no openPeriod and closeDate field
          */
-        @ski.gagar.vertigram.telegram.annotations.TelegramMethod(
+        @TelegramMethod(
             methodName = "sendPoll"
         )
         @TelegramCodegen(

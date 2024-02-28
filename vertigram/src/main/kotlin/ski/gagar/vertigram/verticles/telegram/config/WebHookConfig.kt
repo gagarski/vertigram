@@ -1,5 +1,7 @@
 package ski.gagar.vertigram.verticles.telegram.config
 
+import com.fasterxml.jackson.annotation.JsonIgnore
+
 /**
  * Configuration of the web-hook itself.
  *
@@ -29,7 +31,7 @@ data class WebHookConfig(
      * Reverse proxy configuration
      */
     val proxy: Proxy? = null
-) {
+) : UpdateReceiverConfig {
     /**
      * Reverse proxy configuration (value for [proxy])
      */
@@ -47,4 +49,7 @@ data class WebHookConfig(
          */
         val trustedNetworks: Set<String> = setOf()
     )
+
+    @JsonIgnore
+    override val type: UpdateReceiverConfig.Type = UpdateReceiverConfig.Type.WEB_HOOK
 }

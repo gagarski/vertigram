@@ -28,7 +28,7 @@ sealed interface StopMessageLiveLocation {
     /**
      * Inline message case
      */
-    @ski.gagar.vertigram.telegram.annotations.TelegramMethod(
+    @TelegramMethod(
         methodName = "stopMessageLiveLocation"
     )
     @TelegramCodegen(
@@ -46,7 +46,7 @@ sealed interface StopMessageLiveLocation {
     /**
      * Chat message case
      */
-    @ski.gagar.vertigram.telegram.annotations.TelegramMethod(
+    @TelegramMethod(
         methodName = "stopMessageLiveLocation"
     )
     @TelegramCodegen(

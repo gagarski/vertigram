@@ -15,6 +15,6 @@ data class SetStickerSetThumbnail(
     private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
     val name: String,
     val userId: Long,
-    @ski.gagar.vertigram.telegram.annotations.TelegramMedia
+    @TelegramMedia
     val thumbnail: Attachment? = null
 ) : MultipartTelegramCallable<Boolean>()

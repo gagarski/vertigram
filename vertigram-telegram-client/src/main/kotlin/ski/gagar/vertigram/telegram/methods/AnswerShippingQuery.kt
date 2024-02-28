@@ -25,7 +25,7 @@ sealed class AnswerShippingQuery : JsonTelegramCallable<Boolean>() {
     /**
      * Case when ok is true
      */
-    @ski.gagar.vertigram.telegram.annotations.TelegramMethod(
+    @TelegramMethod(
         methodName = "answerShippingQuery"
     )
     @TelegramCodegen(
@@ -45,7 +45,7 @@ sealed class AnswerShippingQuery : JsonTelegramCallable<Boolean>() {
     /**
      * Case when ok is false
      */
-    @ski.gagar.vertigram.telegram.annotations.TelegramMethod(
+    @TelegramMethod(
         methodName = "answerShippingQuery"
     )
     @TelegramCodegen(

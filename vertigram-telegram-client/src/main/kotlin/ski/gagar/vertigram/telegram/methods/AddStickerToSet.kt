@@ -1,6 +1,7 @@
 package ski.gagar.vertigram.telegram.methods
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import ski.gagar.vertigram.telegram.annotations.TelegramMedia
 import ski.gagar.vertigram.telegram.types.InputMedia
 import ski.gagar.vertigram.util.NoPosArgs
 
@@ -14,6 +15,6 @@ data class AddStickerToSet(
     private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
     val userId: Long,
     val name: String,
-    @ski.gagar.vertigram.telegram.annotations.TelegramMedia
+    @TelegramMedia
     val sticker: InputMedia.Sticker
 ) : MultipartTelegramCallable<Boolean>()

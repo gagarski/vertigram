@@ -3,19 +3,25 @@ package ski.gagar.vertigram.verticles.telegram
 import com.fasterxml.jackson.core.type.TypeReference
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import ski.gagar.vertigram.jackson.typeReference
+import ski.gagar.vertigram.retrying
 import ski.gagar.vertigram.telegram.client.Telegram
 import ski.gagar.vertigram.telegram.client.ThinTelegram
-import ski.gagar.vertigram.jackson.typeReference
+import ski.gagar.vertigram.telegram.methods.deleteWebhook
+import ski.gagar.vertigram.telegram.types.Update
 import ski.gagar.vertigram.util.lazy
 import ski.gagar.vertigram.util.logger
-import ski.gagar.vertigram.telegram.methods.deleteWebhook
-import ski.gagar.vertigram.retrying
-import ski.gagar.vertigram.telegram.types.Update
-import ski.gagar.vertigram.verticles.common.VertigramVerticle
+import ski.gagar.vertigram.verticles.telegram.LongPoller.Config
 import ski.gagar.vertigram.verticles.telegram.address.TelegramAddress
 import java.time.Instant
 
-class LongPoller: VertigramVerticle<LongPoller.Config>() {
+/**
+ * An update receiver using [long-polling](https://core.telegram.org/bots/api#getupdates) mechanism.
+ *
+ * It **publishes** [Update] object received from long polling to [Config.updatePublishingAddress]
+ * using [ski.gagar.vertigram.Vertigram] protocol on top of Vertx event bus
+ */
+class LongPoller : UpdateReceiver<LongPoller.Config>() {
     override val configTypeReference: TypeReference<Config> = typeReference()
     private val tg: Telegram by lazy {
         ThinTelegram(vertigram, typedConfig.telegramAddress)
@@ -67,7 +73,7 @@ class LongPoller: VertigramVerticle<LongPoller.Config>() {
             }
             val lastWithDate = properlyParsed.lastOrNull { it.date != null }
 
-            if (typedConfig.skipMissing && lastWithDate != null && lastWithDate.date!! < startDate) {
+            if (typedConfig.skipMissed && lastWithDate != null && lastWithDate.date!! < startDate) {
                 logger.lazy.trace { "Skipping $properlyParsed. These have happened before we have started." }
                 continue
             }
@@ -82,9 +88,21 @@ class LongPoller: VertigramVerticle<LongPoller.Config>() {
     }
 
     data class Config(
-        val telegramAddress: String = TelegramAddress.TELEGRAM_VERTICLE_BASE,
-        val updatePublishingAddress: String = TelegramAddress.UPDATES,
-        val skipMissing: Boolean = true,
-        val allowedUpdates: List<Update.Type>? = null
-    )
+        /**
+         * Allowed updates as passed to `getUpdates`
+         */
+        override val allowedUpdates: List<Update.Type>,
+        /**
+         * Telegram Verticle base address
+         */
+        override val telegramAddress: String = TelegramAddress.TELEGRAM_VERTICLE_BASE,
+        /**
+         * An address to publish updates
+         */
+        override val updatePublishingAddress: String = TelegramAddress.UPDATES,
+        /**
+         * Skip the updates which happened before the [LongPoller] has started.
+         */
+        override val skipMissed: Boolean = true
+    ) : UpdateReceiver.Config
 }

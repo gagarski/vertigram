@@ -35,7 +35,7 @@ sealed interface EditMessageLiveLocation {
     /**
      * Inline message case
      */
-    @ski.gagar.vertigram.telegram.annotations.TelegramMethod(
+    @TelegramMethod(
         methodName = "editMessageLiveLocation"
     )
     @TelegramCodegen(
@@ -59,7 +59,7 @@ sealed interface EditMessageLiveLocation {
     /**
      * Chat message case
      */
-    @ski.gagar.vertigram.telegram.annotations.TelegramMethod(
+    @TelegramMethod(
         methodName = "editMessageLiveLocation"
     )
     @TelegramCodegen(

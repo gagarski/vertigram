@@ -10,21 +10,17 @@ class UpdateDispatcher : VertigramVerticle<UpdateDispatcher.Config>() {
     override val configTypeReference: TypeReference<Config> = typeReference()
 
     override suspend fun start() {
-        consumer<Update<*>, Unit>(typedConfig.addresses.listen) { dispatch(it) }
+        consumer<Update<*>, Unit>(typedConfig.listen) { dispatch(it) }
     }
 
     private fun dispatch(update: Update<*>) {
         val conf = typedConfig
 
-        vertigram.eventBus.publish(TelegramAddress.demuxAddress(update, conf.addresses.publishBase), update.payload)
+        vertigram.eventBus.publish(TelegramAddress.demuxAddress(update, conf.publishBase), update.payload)
     }
 
     data class Config(
-        val addresses: Addresses = Addresses()
-    ) {
-        data class Addresses(
-            val listen: String = TelegramAddress.UPDATES,
-            val publishBase: String = TelegramAddress.DEMUX_BASE
-        )
-    }
+        val listen: String = TelegramAddress.UPDATES,
+        val publishBase: String = TelegramAddress.DEMUX_BASE
+    )
 }

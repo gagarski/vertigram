@@ -54,7 +54,7 @@ class DirectTelegram(
         impl.call(resultType, callable)
 
     @Suppress("DEPRECATION")
-    override suspend fun getUpdates(offset: Long?, limit: Int?, allowedUpdates: List<Update.Type>?): List<Update<*>> =
+    override suspend fun getUpdates(offset: Long?, limit: Int?, allowedUpdates: List<Update.Type>): List<Update<*>> =
         impl.call(
             typeFactory.constructParametricType(List::class.java, Map::class.java),
             ski.gagar.vertigram.telegram.methods.GetUpdatesRaw(

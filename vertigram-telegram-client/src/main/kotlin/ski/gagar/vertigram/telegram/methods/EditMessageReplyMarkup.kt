@@ -30,7 +30,7 @@ sealed interface EditMessageReplyMarkup {
     /**
      * Inline message case
      */
-    @ski.gagar.vertigram.telegram.annotations.TelegramMethod(
+    @TelegramMethod(
         methodName = "editMessageReplyMarkup"
     )
     @TelegramCodegen(
@@ -49,7 +49,7 @@ sealed interface EditMessageReplyMarkup {
     /**
      * Chat message case
      */
-    @ski.gagar.vertigram.telegram.annotations.TelegramMethod(
+    @TelegramMethod(
         methodName = "editMessageReplyMarkup"
     )
     @TelegramCodegen(

@@ -26,12 +26,12 @@ data class SendVideo(
     private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
     override val chatId: ChatId,
     val messageThreadId: Long? = null,
-    @ski.gagar.vertigram.telegram.annotations.TelegramMedia
+    @TelegramMedia
     val video: Attachment,
     val duration: Duration? = null,
     val width: Int? = null,
     val height: Int? = null,
-    @ski.gagar.vertigram.telegram.annotations.TelegramMedia
+    @TelegramMedia
     val thumbnail: Attachment? = null,
     override val caption: String? = null,
     override val parseMode: RichText.ParseMode? = null,

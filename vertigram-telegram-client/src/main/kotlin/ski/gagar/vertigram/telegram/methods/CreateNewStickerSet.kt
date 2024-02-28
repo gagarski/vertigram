@@ -17,7 +17,7 @@ data class CreateNewStickerSet(
     val userId: Long,
     val name: String,
     val title: String,
-    @ski.gagar.vertigram.telegram.annotations.TelegramMedia
+    @TelegramMedia
     val stickers: List<InputMedia.Sticker>,
     val stickerFormat: Sticker.Format,
     val stickerType: Sticker.Type? = null,

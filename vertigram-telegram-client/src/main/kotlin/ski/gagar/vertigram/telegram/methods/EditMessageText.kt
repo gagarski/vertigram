@@ -34,7 +34,7 @@ sealed interface EditMessageText : HasRichText {
     /**
      * Inline message case
      */
-    @ski.gagar.vertigram.telegram.annotations.TelegramMethod(
+    @TelegramMethod(
         methodName = "editMessageText"
     )
     @TelegramCodegen(
@@ -57,7 +57,7 @@ sealed interface EditMessageText : HasRichText {
     /**
      * Chat message case
      */
-    @ski.gagar.vertigram.telegram.annotations.TelegramMethod(
+    @TelegramMethod(
         methodName = "editMessageText"
     )
     @TelegramCodegen(

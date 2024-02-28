@@ -26,7 +26,7 @@ data class SendAudio(
     private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
     override val chatId: ChatId,
     val messageThreadId: Long? = null,
-    @ski.gagar.vertigram.telegram.annotations.TelegramMedia
+    @TelegramMedia
     val audio: Attachment,
     override val caption: String? = null,
     override val parseMode: RichText.ParseMode? = null,

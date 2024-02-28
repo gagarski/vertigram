@@ -4,11 +4,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import ski.gagar.vertigram.telegram.annotations.TelegramMedia
 import ski.gagar.vertigram.telegram.throttling.HasChatId
 import ski.gagar.vertigram.telegram.throttling.Throttled
-import ski.gagar.vertigram.telegram.types.util.ChatId
 import ski.gagar.vertigram.telegram.types.Message
 import ski.gagar.vertigram.telegram.types.ReplyMarkup
 import ski.gagar.vertigram.telegram.types.ReplyParameters
 import ski.gagar.vertigram.telegram.types.attachments.Attachment
+import ski.gagar.vertigram.telegram.types.util.ChatId
 import ski.gagar.vertigram.util.NoPosArgs
 import java.time.Duration
 
@@ -23,11 +23,11 @@ data class SendVideoNote(
     private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
     override val chatId: ChatId,
     val messageThreadId: Long? = null,
-    @ski.gagar.vertigram.telegram.annotations.TelegramMedia
+    @TelegramMedia
     val videoNote: Attachment,
     val duration: Duration? = null,
     val length: Int? = null,
-    @ski.gagar.vertigram.telegram.annotations.TelegramMedia
+    @TelegramMedia
     val thumbnail: Attachment? = null,
     val disableNotification: Boolean = false,
     val protectContent: Boolean = false,

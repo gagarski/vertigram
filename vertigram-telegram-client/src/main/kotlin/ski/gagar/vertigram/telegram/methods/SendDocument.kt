@@ -25,9 +25,9 @@ data class SendDocument(
     private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
     override val chatId: ChatId,
     val messageThreadId: Long? = null,
-    @ski.gagar.vertigram.telegram.annotations.TelegramMedia
+    @TelegramMedia
     val document: Attachment,
-    @ski.gagar.vertigram.telegram.annotations.TelegramMedia
+    @TelegramMedia
     val thumbnail: Attachment? = null,
     override val caption: String? = null,
     override val parseMode: RichText.ParseMode? = null,

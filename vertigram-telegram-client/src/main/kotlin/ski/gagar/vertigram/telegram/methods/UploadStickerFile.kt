@@ -15,7 +15,7 @@ data class UploadStickerFile(
     @JsonIgnore
     private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
     val userId: Long,
-    @ski.gagar.vertigram.telegram.annotations.TelegramMedia
+    @TelegramMedia
     val sticker: Sticker,
     val stickerFormat: Sticker.Format
 ) : MultipartTelegramCallable<File>()

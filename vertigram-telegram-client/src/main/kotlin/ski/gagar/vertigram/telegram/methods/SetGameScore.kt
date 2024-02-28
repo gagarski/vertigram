@@ -29,7 +29,7 @@ sealed interface SetGameScore {
     /**
      * Inline message case
      */
-    @ski.gagar.vertigram.telegram.annotations.TelegramMethod(
+    @TelegramMethod(
         methodName = "setGameScore"
     )
     @TelegramCodegen(
@@ -49,7 +49,7 @@ sealed interface SetGameScore {
     /**
      * Chat message case
      */
-    @ski.gagar.vertigram.telegram.annotations.TelegramMethod(
+    @TelegramMethod(
         methodName = "setGameScore"
     )
     @TelegramCodegen(

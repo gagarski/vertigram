@@ -52,8 +52,13 @@ class Vertigram(
     suspend fun <T> deployVerticle(verticle: VertigramVerticle<T>, deploymentOptions: DeploymentOptions<T>) =
         vertx.deployVerticle(verticle, deploymentOptions).coAwait()
 
+    suspend fun <T> deployVerticle(verticle: VertigramVerticle<T>, config: T) =
+        vertx.deployVerticle(verticle, DeploymentOptions(this, config)).coAwait()
+
     suspend fun deployVerticle(verticle: VertigramVerticle<Unit?>) =
         vertx.deployVerticle(verticle, DeploymentOptions(this)).coAwait()
+
+    suspend fun undeploy(deploymentId: String) = vertx.undeploy(deploymentId).coAwait()
 
     @PublishedApi
     @JvmInline

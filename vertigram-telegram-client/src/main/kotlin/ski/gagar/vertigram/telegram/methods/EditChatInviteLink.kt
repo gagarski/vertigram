@@ -31,7 +31,7 @@ sealed class EditChatInviteLink : JsonTelegramCallable<ChatInviteLink>(), HasCha
     /**
      * Case when [memberLimit] is specified, implies that `createsJoinRequest` is not set
      */
-    @ski.gagar.vertigram.telegram.annotations.TelegramMethod(
+    @TelegramMethod(
         methodName = "editChatInviteLink"
     )
     @TelegramCodegen(
@@ -55,7 +55,7 @@ sealed class EditChatInviteLink : JsonTelegramCallable<ChatInviteLink>(), HasCha
     /**
      * Case when [memberLimit] is missing, [createsJoinRequest] is specified explicitly
      */
-    @ski.gagar.vertigram.telegram.annotations.TelegramMethod(
+    @TelegramMethod(
         methodName = "editChatInviteLink"
     )
     @TelegramCodegen(

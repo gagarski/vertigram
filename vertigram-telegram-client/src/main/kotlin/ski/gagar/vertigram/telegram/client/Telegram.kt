@@ -1,9 +1,9 @@
 package ski.gagar.vertigram.telegram.client
 
+import ski.gagar.vertigram.telegram.exceptions.TelegramNoFilePathException
 import ski.gagar.vertigram.telegram.methods.TelegramCallable
 import ski.gagar.vertigram.telegram.methods.getFile
 import ski.gagar.vertigram.telegram.types.Update
-import ski.gagar.vertigram.telegram.exceptions.TelegramNoFilePathException
 
 /**
  * Telegram client interface.
@@ -22,7 +22,7 @@ interface Telegram {
     suspend fun getUpdates(
         offset: Long? = null,
         limit: Int? = null,
-        allowedUpdates: List<Update.Type>? = null
+        allowedUpdates: List<Update.Type>
     ): List<Update<*>>
 
     /**

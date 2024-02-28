@@ -27,7 +27,7 @@ sealed class GetGameHighScores : JsonTelegramCallable<List<GameHighScore>>() {
     /**
      * Inline message case
      */
-    @ski.gagar.vertigram.telegram.annotations.TelegramMethod(
+    @TelegramMethod(
         methodName = "getGameHighScores"
     )
     @TelegramCodegen(
@@ -45,7 +45,7 @@ sealed class GetGameHighScores : JsonTelegramCallable<List<GameHighScore>>() {
     /**
      * Chat message case
      */
-    @ski.gagar.vertigram.telegram.annotations.TelegramMethod(
+    @TelegramMethod(
         methodName = "getGameHighScores"
     )
     @TelegramCodegen(

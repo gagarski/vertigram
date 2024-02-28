@@ -15,7 +15,7 @@ data class SetWebhook(
     @JsonIgnore
     private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
     val url: String,
-    @ski.gagar.vertigram.telegram.annotations.TelegramMedia
+    @TelegramMedia
     val certificate: Attachment? = null,
     val ipAddress: String? = null,
     val maxConnections: Int? = null,

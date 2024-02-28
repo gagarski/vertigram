@@ -11,7 +11,7 @@ import ski.gagar.vertigram.telegram.client.Telegram
  * the return type of [ski.gagar.vertigram.telegram.client.Telegram.call].
  */
 @TelegramCodegen
-@ski.gagar.vertigram.telegram.annotations.TelegramMethod
+@TelegramMethod
 sealed class TelegramCallable<ReturnType> {
     suspend fun call(telegram: Telegram) = telegram.call(this)
 }

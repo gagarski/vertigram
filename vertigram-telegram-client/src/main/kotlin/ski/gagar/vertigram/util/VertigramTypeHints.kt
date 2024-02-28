@@ -84,7 +84,7 @@ private val <T> Class<T>.responseType: JavaType
  */
 private fun getTgCallables() =
     Reflections("ski.gagar.vertigram.telegram.methods")
-        .getTypesAnnotatedWith(ski.gagar.vertigram.telegram.annotations.TelegramMethod::class.java, true)
+        .getTypesAnnotatedWith(TelegramMethod::class.java, true)
         .asSequence()
         .filter { !Modifier.isAbstract(it.modifiers) }
         .toSet()
@@ -93,7 +93,7 @@ private fun getTgCallables() =
  * Get consumer address for `TelegramVerticle`
  */
 private val <T> Class<T>.tgvAddress: String
-    get() = getAnnotation(ski.gagar.vertigram.telegram.annotations.TelegramMethod::class.java).verticleConsumerName.ifEmpty { name.uncapitalizeDotSeparated() }
+    get() = getAnnotation(TelegramMethod::class.java).verticleConsumerName.ifEmpty { name.uncapitalizeDotSeparated() }
 
 /**
  * Do [StringUtils.uncapitalize] on each part of string, separated by dot.
@@ -105,7 +105,7 @@ private fun String.uncapitalizeDotSeparated() =
  * Get method name passed to Telegram.
  */
 private val <T> Class<T>.telegramMethodName: String
-    get() = getAnnotation(ski.gagar.vertigram.telegram.annotations.TelegramMethod::class.java).methodName.ifEmpty { StringUtils.uncapitalize(simpleName) }
+    get() = getAnnotation(TelegramMethod::class.java).methodName.ifEmpty { StringUtils.uncapitalize(simpleName) }
 
 /**
  * Type hints used by Vertigram implementation to deserialize Telegram entities.
@@ -135,7 +135,7 @@ object VertigramTypeHints {
      */
     val doNotGenerateInTgVerticleAddresses =
         tgvAddressByClass
-            .filter { (k, _) -> k.getAnnotation(ski.gagar.vertigram.telegram.annotations.TelegramMethod::class.java)?.generateVerticleConsumer == false }
+            .filter { (k, _) -> k.getAnnotation(TelegramMethod::class.java)?.generateVerticleConsumer == false }
             .values
             .toSet()
 

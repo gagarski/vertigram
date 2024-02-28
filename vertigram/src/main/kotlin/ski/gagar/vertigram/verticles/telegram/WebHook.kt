@@ -6,34 +6,35 @@ import io.vertx.core.http.HttpServer
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.handler.BodyHandler
 import kotlinx.coroutines.delay
-import ski.gagar.vertigram.telegram.client.Telegram
-import ski.gagar.vertigram.telegram.client.ThinTelegram
-import ski.gagar.vertigram.verticles.telegram.config.WebHookConfig
 import ski.gagar.vertigram.jackson.mapTo
 import ski.gagar.vertigram.jackson.typeReference
-import ski.gagar.vertigram.util.lazy
-import ski.gagar.vertigram.util.logger
+import ski.gagar.vertigram.retrying
+import ski.gagar.vertigram.telegram.client.Telegram
+import ski.gagar.vertigram.telegram.client.ThinTelegram
 import ski.gagar.vertigram.telegram.methods.deleteWebhook
 import ski.gagar.vertigram.telegram.methods.setWebhook
-import ski.gagar.vertigram.retrying
 import ski.gagar.vertigram.telegram.types.Update
 import ski.gagar.vertigram.util.json.TELEGRAM_JSON_MAPPER
-import ski.gagar.vertigram.verticles.common.VertigramVerticle
+import ski.gagar.vertigram.util.lazy
+import ski.gagar.vertigram.util.logger
 import ski.gagar.vertigram.verticles.telegram.address.TelegramAddress
+import ski.gagar.vertigram.verticles.telegram.config.WebHookConfig
 import ski.gagar.vertigram.web.server.IpNetworkAddress
 import ski.gagar.vertigram.web.server.RealIpLoggerHandler
+import java.time.Instant
 import java.util.*
 
-class WebHook : VertigramVerticle<WebHook.Config>() {
+class WebHook : UpdateReceiver<WebHook.Config>() {
     override val configTypeReference: TypeReference<Config> = typeReference()
     private val secret = UUID.randomUUID()
     private val tg: Telegram by lazy {
-        ThinTelegram(vertigram, typedConfig.tgvAddress)
+        ThinTelegram(vertigram, typedConfig.telegramAddress)
     }
 
     private lateinit var server: HttpServer
 
     override suspend fun start() {
+        val startDate = Instant.now()
         logger.lazy.info { "Deleting old webhook..." }
         retrying(coolDown = { delay(3000) }) {
             tg.deleteWebhook()
@@ -76,7 +77,10 @@ class WebHook : VertigramVerticle<WebHook.Config>() {
             }
             logger.lazy.trace { "Received update $req" }
             logger.lazy.trace { "Publishing $req" }
-            vertigram.eventBus.publish(typedConfig.updatePublishingAddress, req)
+            val date = req.date
+            if (!typedConfig.skipMissed || date == null || date >= startDate) {
+                vertigram.eventBus.publish(typedConfig.updatePublishingAddress, req)
+            }
             context.response().end()
         }
 
@@ -100,11 +104,12 @@ class WebHook : VertigramVerticle<WebHook.Config>() {
     }
 
     data class Config(
-        val tgvAddress: String = TelegramAddress.TELEGRAM_VERTICLE_BASE,
-        val updatePublishingAddress: String = TelegramAddress.UPDATES,
-        val webHook: WebHookConfig = WebHookConfig(),
-        val allowedUpdates: List<Update.Type>? = null
-    ) {
+        override val telegramAddress: String = TelegramAddress.TELEGRAM_VERTICLE_BASE,
+        override val allowedUpdates: List<Update.Type>,
+        override val updatePublishingAddress: String = TelegramAddress.UPDATES,
+        override val skipMissed: Boolean = true,
+        val webHook: WebHookConfig = WebHookConfig()
+    ) : UpdateReceiver.Config {
         companion object {
             const val DEFAULT_UPDATE_PUBLISHING_ADDRESS = "ski.gagar.vertigram.updates"
         }

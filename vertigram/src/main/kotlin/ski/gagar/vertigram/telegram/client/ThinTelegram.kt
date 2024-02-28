@@ -47,7 +47,7 @@ class ThinTelegram(
         return longPollDeliveryOptions
     }
 
-    override suspend fun getUpdates(offset: Long?, limit: Int?, allowedUpdates: List<Update.Type>?): List<Update<*>> =
+    override suspend fun getUpdates(offset: Long?, limit: Int?, allowedUpdates: List<Update.Type>): List<Update<*>> =
         vertigram.eventBus.request(
             TelegramVerticle.Config.updatesAddress(baseAddress),
             TelegramVerticle.GetUpdates(offset, limit, allowedUpdates),

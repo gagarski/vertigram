@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 import ski.gagar.vertigram.annotations.TelegramCodegen
+import ski.gagar.vertigram.telegram.annotations.TelegramMethod
 import ski.gagar.vertigram.util.NoPosArgs
 
 
@@ -25,7 +26,7 @@ sealed class AnswerPreCheckoutQuery : JsonTelegramCallable<Boolean>() {
     /**
      * Case when ok is true
      */
-    @ski.gagar.vertigram.telegram.annotations.TelegramMethod(
+    @TelegramMethod(
         methodName = "answerPreCheckoutQuery"
     )
     @TelegramCodegen(
@@ -44,7 +45,7 @@ sealed class AnswerPreCheckoutQuery : JsonTelegramCallable<Boolean>() {
     /**
      * Case when ok is false
      */
-    @ski.gagar.vertigram.telegram.annotations.TelegramMethod(
+    @TelegramMethod(
         methodName = "answerPreCheckoutQuery"
     )
     @TelegramCodegen(

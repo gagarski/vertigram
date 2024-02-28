@@ -19,7 +19,7 @@ import java.time.Duration
  * For up-to-date documentation for telegram method please consult the official Telegram docs.
  */
 @Deprecated("Use Telegram.getUpdates instead")
-@ski.gagar.vertigram.telegram.annotations.TelegramMethod(
+@TelegramMethod(
     methodName = "getUpdates",
     generateVerticleConsumer = false
 )
@@ -32,5 +32,5 @@ internal data class GetUpdatesRaw(
     val offset: Long? = null,
     val timeout: Duration = Duration.ZERO,
     val limit: Int? = null,
-    val allowedUpdates: List<Update.Type>? = null
+    val allowedUpdates: List<Update.Type>
 ) : JsonTelegramCallable<List<Map<String, Any?>>>()
