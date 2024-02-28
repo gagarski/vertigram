@@ -109,11 +109,7 @@ class WebHook : UpdateReceiver<WebHook.Config>() {
         override val updatePublishingAddress: String = TelegramAddress.UPDATES,
         override val skipMissed: Boolean = true,
         val webHook: WebHookConfig = WebHookConfig()
-    ) : UpdateReceiver.Config {
-        companion object {
-            const val DEFAULT_UPDATE_PUBLISHING_ADDRESS = "ski.gagar.vertigram.updates"
-        }
-    }
+    ) : UpdateReceiver.Config
 
     companion object {
         private const val X_TELEGRAM_BOT_API_SECRET_TOKEN = "X-Telegram-Bot-Api-Secret-Token"
