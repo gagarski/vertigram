@@ -7,12 +7,23 @@ import org.slf4j.LoggerFactory
 import org.slf4j.MDC
 import java.lang.invoke.MethodHandles
 
+/**
+ * Global logger variable. Uses [MethodHandles] to get [Logger].
+ */
 val logger: Logger
     inline get() = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass())
 
+/**
+ * Lazy handle for [Logger]
+ *
+ * @sample lazyLog
+ */
 val Logger.lazy
     get() = LazyLogger(this)
 
+/**
+ * Implementation of [lazy] handle
+ */
 @JvmInline
 value class LazyLogger(@PublishedApi internal val delegate: Logger) {
     inline fun trace(throwable: Throwable? = null, crossinline msgProvider: () -> String) {
@@ -24,6 +35,11 @@ value class LazyLogger(@PublishedApi internal val delegate: Logger) {
         }
     }
 
+    /**
+     * Debug log record.
+     *
+     * [msgProvider] is executed lazily if the log writing will actually happen
+     */
     inline fun debug(throwable: Throwable? = null, crossinline msgProvider: () -> String) {
         if (delegate.isDebugEnabled) {
             if (null == throwable)
@@ -33,6 +49,11 @@ value class LazyLogger(@PublishedApi internal val delegate: Logger) {
         }
     }
 
+    /**
+     * Info log record.
+     *
+     * [msgProvider] is executed lazily if the log writing will actually happen
+     */
     inline fun info(throwable: Throwable? = null, crossinline msgProvider: () -> String) {
         if (delegate.isInfoEnabled) {
             if (null == throwable)
@@ -42,6 +63,11 @@ value class LazyLogger(@PublishedApi internal val delegate: Logger) {
         }
     }
 
+    /**
+     * Warn log record.
+     *
+     * [msgProvider] is executed lazily if the log writing will actually happen
+     */
     inline fun warn(throwable: Throwable? = null, crossinline msgProvider: () -> String) {
         if (delegate.isWarnEnabled) {
             if (null == throwable)
@@ -50,6 +76,12 @@ value class LazyLogger(@PublishedApi internal val delegate: Logger) {
                 delegate.warn(msgProvider(), throwable)
         }
     }
+
+    /**
+     * Error log record.
+     *
+     * [msgProvider] is executed lazily if the log writing will actually happen
+     */
 
     inline fun error(throwable: Throwable? = null, crossinline msgProvider: () -> String) {
         if (delegate.isErrorEnabled) {
@@ -61,12 +93,17 @@ value class LazyLogger(@PublishedApi internal val delegate: Logger) {
     }
 }
 
+/**
+ * Add extra context to [MDC] when running coroutine
+ */
 fun CoroutineScope.coroMdcWith(vararg extra: Pair<String, String>) =
     (coroutineContext[MDCContext]?.contextMap ?: mapOf()).toMutableMap().apply {
         putAll(extra)
     }
 
-
+/**
+ * RUn [block] with [extra] [MDC] context
+ */
 inline fun withExtraMdc(extra: Map<String, String>, block: () -> Unit) {
     val old = extra.keys.asSequence().map { it to MDC.get(it) }.toMap()
 
@@ -83,5 +120,20 @@ inline fun withExtraMdc(extra: Map<String, String>, block: () -> Unit) {
                 MDC.remove(k)
             }
         }
+    }
+}
+
+
+@Suppress("UNUSED_PARAMETER")
+private fun doOperation(obj: Any) {}
+/**
+ * An example for [lazy]
+ */
+private fun lazyLog(obj: Any) {
+    try {
+        logger.lazy.info { "Performing an operation with $obj" }
+        doOperation(obj)
+    } catch (ex: Exception) {
+        logger.lazy.error(ex) { "Something bad happened with $obj" }
     }
 }
