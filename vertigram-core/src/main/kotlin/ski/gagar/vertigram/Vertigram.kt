@@ -32,7 +32,7 @@ import java.util.*
 
 const val VERTIGRAMS = "ski.gagar.vertigram.vertigrams"
 
-fun defaultVertigramMapper() =
+fun defaultVertigramMapper(): ObjectMapper =
     DatabindCodec.mapper().copy()
         .registerModule(KotlinModule.Builder().build())
         .registerModule(JavaTimeModule())
