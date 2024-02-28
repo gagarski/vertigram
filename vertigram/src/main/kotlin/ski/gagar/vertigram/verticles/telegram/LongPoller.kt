@@ -11,7 +11,6 @@ import ski.gagar.vertigram.telegram.methods.deleteWebhook
 import ski.gagar.vertigram.telegram.types.Update
 import ski.gagar.vertigram.util.lazy
 import ski.gagar.vertigram.util.logger
-import ski.gagar.vertigram.verticles.telegram.LongPoller.Config
 import ski.gagar.vertigram.verticles.telegram.address.TelegramAddress
 import java.time.Instant
 
