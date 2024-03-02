@@ -20,6 +20,19 @@ import ski.gagar.vertigram.util.logger
 import kotlin.coroutines.CoroutineContext
 
 
+/**
+ * [Vertigram] verticle.
+ *
+ * Provides the following features on top of [CoroutineVerticle]:
+ *  - [name] for verticle
+ *  - access to [Vertigram] instance and therefore to [Vertigram.EventBus] instance
+ *  - strongly-typed [typedConfig]
+ *
+ * For more details on deploying and interacting with it without [Vertigram],
+ * see the docs for [Vertigram].
+ *
+ * @see [Vertigram]
+ */
 abstract class VertigramVerticle<Config> : CoroutineVerticle() {
     lateinit var vertigram: Vertigram
         private set
@@ -109,7 +122,7 @@ abstract class VertigramVerticle<Config> : CoroutineVerticle() {
         function = function
     )
 
-    data class BareBonesConfig(
+    private data class BareBonesConfig(
         override val vertigramName: String
     ) : HasVertigramName
 
