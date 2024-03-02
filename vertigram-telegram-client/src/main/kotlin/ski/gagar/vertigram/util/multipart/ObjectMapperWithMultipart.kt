@@ -10,8 +10,8 @@ import com.fasterxml.jackson.databind.ser.BeanSerializer
 import com.fasterxml.jackson.databind.ser.DefaultSerializerProvider
 import com.fasterxml.jackson.databind.util.TokenBuffer
 import io.vertx.core.Vertx
-import ski.gagar.vertigram.uncheckedCast
-import ski.gagar.vertigram.uncheckedCastOrNull
+import ski.gagar.vertigram.internal.uncheckedCast
+import ski.gagar.vertigram.internal.uncheckedCastOrNull
 import ski.gagar.vertigram.web.multipart.FieldPart
 import ski.gagar.vertigram.web.multipart.MultipartForm
 

@@ -5,16 +5,28 @@ import ski.gagar.vertigram.util.lazy
 import ski.gagar.vertigram.util.logger
 import ski.gagar.vertigram.verticles.common.messages.DeathNotice
 import ski.gagar.vertigram.verticles.common.messages.DeathReason
-import java.util.*
 
+/**
+ * A verticle that introduces a concept of verticle hierarchy.
+ *
+ * [AbstractHierarchyVerticle] can have children, spawned by [deployChild]ю
+ *
+ * The main traits of [AbstractHierarchyVerticle] are;
+ *  - it can deploy children
+ *  - it has lifecycle, specifically it can optionally [die]
+ *  - parents and children are notified on each other death and can act accordingly, based on death reason
+ *  - parents and children can optionally talk to each other using private addresses based on [deploymentID]
+ */
 abstract class AbstractHierarchyVerticle<Config> : VertigramVerticle<Config>() {
     private val children = mutableSetOf<String>()
     private var deathReason: DeathReason? = null
 
+    /**
+     * Is the verticle already dead
+     */
     protected val isDead
         get() = deathReason != null
 
-    // Verticle lifecycle methods
     override suspend fun start() {
         logger.lazy.debug {
             "$name: adding handleDeathNotice handler on $DEATH_NOTICE_ADDRESS"
@@ -41,17 +53,45 @@ abstract class AbstractHierarchyVerticle<Config> : VertigramVerticle<Config>() {
         }
     }
 
-    // Callbacks that can be overriden
-
-    protected open fun onParentDeath(deathNotice: DeathNotice) {
+    /**
+     * Action on parent's death.
+     *
+     * Can be overridden. By default, die with the same reason as parent.
+     */
+    protected open fun onParentDeath(
+        /**
+         * Death notice message
+         */
+        deathNotice: DeathNotice
+    ) {
         die(deathNotice.reason)
     }
 
-    protected open fun onChildDeath(deathNotice: DeathNotice) {}
+    /**
+     * Action on child death.
+     *
+     * Can be overridden, by default, do nothing.
+     */
+    protected open fun onChildDeath(
+        /**
+         * Death notice message
+         */
+        deathNotice: DeathNotice
+    ) {}
 
+    /**
+     * A callback to be called before death.
+     */
+    protected open fun beforeDeath(
+        /**
+         * Future death reason
+         */
+        reason: DeathReason
+    ) {}
 
-    protected open fun beforeDeath(reason: DeathReason) {}
-
+    /**
+     * Deploy a child [verticle] using [config].
+     */
     protected suspend fun <T> deployChild(verticle: VertigramVerticle<T>,
                                           config: T): String {
         val id = vertigram.deployVerticle(verticle, Vertigram.DeploymentOptions(vertigram, config))
@@ -59,14 +99,25 @@ abstract class AbstractHierarchyVerticle<Config> : VertigramVerticle<Config>() {
         return id
     }
 
+    /**
+     * Deploy non-configurable child [verticle]
+     */
     protected suspend fun deployChild(verticle: VertigramVerticle<Unit?>): String {
         val id = vertigram.deployVerticle(verticle)
         children.add(id)
         return id
     }
 
-    // Can be called by implementors
-
+    /**
+     * Die with given [reason].
+     *
+     * Dying means calling [beforeDeath], undeploying the verticle and publishing event bus notification about death.
+     *
+     * For notification [DeathNotice] object is published to two kinds of addresses:
+     *  - Global [DEATH_NOTICE_ADDRESS] to notify parent verticle about death
+     *    (it will be listening for this address and track deaths of its children)
+     *  - Per-child address [parentDeathNoticeAddress] which will notify each child separately on parent death.
+     */
     protected fun die(reason: DeathReason) {
         vertx.runOnContext {
             // Putting it to the event queue so that we can die during start() (otherwise undeploy dos not work)
@@ -79,22 +130,40 @@ abstract class AbstractHierarchyVerticle<Config> : VertigramVerticle<Config>() {
         }
     }
 
+    /**
+     * Die as completed.
+     */
     protected fun complete() {
         die(DeathReason.COMPLETED)
     }
 
+    /**
+     * Die as failed.
+     */
     protected fun fail() {
         die(DeathReason.FAILED)
     }
 
+    /**
+     * Die as cancelled.
+     */
     protected fun cancel() {
         die(DeathReason.CANCELLED)
     }
 
+    /**
+     * Die as timed out.
+     */
     protected fun timeout() {
         die(DeathReason.TIMEOUT)
     }
 
+    /**
+     * Convenience method to wrap message handler for [consumer].
+     *
+     * Besides executing the [block] performs state management: ignores the message if for some reason
+     * it arrived after death and [fail]s the verticle if the exception happened.
+     */
     protected suspend fun messageHandler(block: suspend () -> Unit) {
         try {
             if (isDead) return
@@ -104,8 +173,6 @@ abstract class AbstractHierarchyVerticle<Config> : VertigramVerticle<Config>() {
             fail()
         }
     }
-
-    // Private stuff
 
     private fun handleDeathNotice(deathNotice: DeathNotice) {
         if (isDead) return
@@ -129,7 +196,6 @@ abstract class AbstractHierarchyVerticle<Config> : VertigramVerticle<Config>() {
     companion object {
         const val DEATH_NOTICE_ADDRESS = "ski.gagar.deathNotice"
         fun parentDeathNoticeAddress(childId: String) = "ski.gagar.deathNotice.parent.${childId}"
-        private fun nextId() = "${UUID.randomUUID()}"
     }
 
 }

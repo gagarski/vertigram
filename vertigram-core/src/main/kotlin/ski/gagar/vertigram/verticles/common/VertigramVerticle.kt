@@ -37,10 +37,21 @@ abstract class VertigramVerticle<Config> : CoroutineVerticle() {
     lateinit var vertigram: Vertigram
         private set
 
+    /**
+     * Should be overridden to store [TypeReference] to config
+     *
+     * In most cases it's enough to just call [typeReference]
+     *
+     * @see typeReference
+     * @sample typeReferenceExample
+     */
     protected abstract val configTypeReference: TypeReference<Config>
 
     private lateinit var context: Context
 
+    /**
+     * Verticle name. May be overriden by subclasses.
+     */
     open val name: String by lazy {
         "${this.javaClass.name}#$deploymentID"
     }
@@ -54,8 +65,12 @@ abstract class VertigramVerticle<Config> : CoroutineVerticle() {
                     logger.lazy.error(throwable = ex) { "Unhandled exception" }
                 }
     }
+
     private lateinit var configHolder: ConfigHolder<Config>
 
+    /**
+     * Config passed during deployment.
+     */
     protected val typedConfig: Config
         get() = configHolder.config
 
@@ -70,6 +85,13 @@ abstract class VertigramVerticle<Config> : CoroutineVerticle() {
         configHolder = ConfigHolder(wrapper.config)
     }
 
+    /**
+     * Non-reified version of [consumer]
+     *
+     * @see consumer
+     * @see Vertigram.EventBus.consumer
+     * @see io.vertx.core.eventbus.EventBus.consumer
+     */
     inline fun <RequestPayload, Result> consumerNonReified(
         address: String,
         replyOptions: DeliveryOptions = DeliveryOptions(),
@@ -83,10 +105,27 @@ abstract class VertigramVerticle<Config> : CoroutineVerticle() {
         function = function
     )
 
+    /**
+     * Attach a consumer [function] to event bus on Vertigram [address] with the verticle as a coroutine scope.
+     *
+     * @see Vertigram.EventBus.consumer
+     */
     inline fun <reified RequestPayload, Result> consumer(
+        /**
+         * Vertigram address
+         */
         address: String,
+        /**
+         * Reply options
+         */
         replyOptions: DeliveryOptions = DeliveryOptions(),
+        /**
+         * Request java type
+         */
         requestJavaType: JavaType = vertigram.objectMapper.typeFactory.constructType(typeReference<RequestPayload>().type),
+        /**
+         * Consumer itself
+         */
         crossinline function: suspend (RequestPayload) -> Result
     ) = vertigram.eventBus.consumer(
         coroScope = this,
@@ -96,6 +135,13 @@ abstract class VertigramVerticle<Config> : CoroutineVerticle() {
         function = function
     )
 
+    /**
+     * Non-reified version of [localConsumer]
+     *
+     * @see consumer
+     * @see Vertigram.EventBus.consumer
+     * @see io.vertx.core.eventbus.EventBus.consumer
+     */
     inline fun <RequestPayload, Result> localConsumerNonReified(
         address: String,
         replyOptions: DeliveryOptions = DeliveryOptions(),
@@ -109,10 +155,27 @@ abstract class VertigramVerticle<Config> : CoroutineVerticle() {
         function = function
     )
 
+    /**
+     * Attach a local consumer [function] to event bus on Vertigram [address] with the verticle as a coroutine scope.
+     *
+     * @see Vertigram.EventBus.localConsumer
+     */
     inline fun <reified RequestPayload, Result> localConsumer(
+        /**
+         * Vertigram address
+         */
         address: String,
+        /**
+         * Reply options
+         */
         replyOptions: DeliveryOptions = DeliveryOptions(),
+        /**
+         * Request java type
+         */
         requestJavaType: JavaType = vertigram.objectMapper.typeFactory.constructType(typeReference<RequestPayload>().type),
+        /**
+         * Consumer itself
+         */
         crossinline function: suspend (RequestPayload) -> Result
     ) = vertigram.eventBus.localConsumer(
         coroScope = this,
@@ -126,19 +189,38 @@ abstract class VertigramVerticle<Config> : CoroutineVerticle() {
         override val vertigramName: String
     ) : HasVertigramName
 
+    /**
+     * Wrapper for the config.
+     *
+     * See [Vertigram.deployVerticle] for more details about the protocol around bare Verticles
+     */
     data class ConfigWrapper<Config>(
+        /**
+         * Vertigram name
+         */
         override val vertigramName: String,
+        /**
+         * Config itself, as passed to [Vertigram.deployVerticle]
+         */
         val config: Config
     ) : HasVertigramName
 
-    interface HasVertigramName {
+    private interface HasVertigramName {
         val vertigramName: String
     }
+
 
     private data class ConfigHolder<T>(val config: T)
 
     companion object {
         const val VERTICLE_NAME_MDC = "verticleName"
     }
+}
 
+private fun typeReferenceExample() {
+    data class Config(val something: String)
+
+    class ExampleVerticle : VertigramVerticle<Config>() {
+        override val configTypeReference: TypeReference<Config> = typeReference()
+    }
 }

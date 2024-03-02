@@ -8,7 +8,7 @@ import kotlinx.coroutines.withContext
 import org.slf4j.LoggerFactory
 import org.slf4j.MDC
 import ski.gagar.vertigram.Vertigram
-import ski.gagar.vertigram.uncheckedCast
+import ski.gagar.vertigram.internal.uncheckedCast
 import ski.gagar.vertigram.util.lazy
 import ski.gagar.vertigram.util.logger
 import java.util.concurrent.atomic.AtomicReference

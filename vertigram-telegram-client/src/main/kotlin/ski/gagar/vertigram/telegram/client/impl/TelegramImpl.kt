@@ -24,7 +24,7 @@ import ski.gagar.vertigram.telegram.methods.MultipartTelegramCallable
 import ski.gagar.vertigram.telegram.methods.TelegramCallable
 import ski.gagar.vertigram.util.internal.toMap
 import ski.gagar.vertigram.telegram.types.Wrapper
-import ski.gagar.vertigram.uncheckedCast
+import ski.gagar.vertigram.internal.uncheckedCast
 import ski.gagar.vertigram.telegram.exceptions.TelegramCallException
 import ski.gagar.vertigram.telegram.exceptions.TelegramDownloadException
 import ski.gagar.vertigram.util.VertigramTypeHints

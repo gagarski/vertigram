@@ -8,8 +8,8 @@ import ski.gagar.vertigram.telegram.annotations.TelegramMethod
 import ski.gagar.vertigram.telegram.methods.JsonTelegramCallable
 import ski.gagar.vertigram.telegram.methods.MultipartTelegramCallable
 import ski.gagar.vertigram.telegram.methods.TelegramCallable
-import ski.gagar.vertigram.uncheckedCast
-import ski.gagar.vertigram.uncheckedCastOrNull
+import ski.gagar.vertigram.internal.uncheckedCast
+import ski.gagar.vertigram.internal.uncheckedCastOrNull
 import ski.gagar.vertigram.util.json.TELEGRAM_JSON_MAPPER
 import java.lang.reflect.GenericDeclaration
 import java.lang.reflect.Modifier

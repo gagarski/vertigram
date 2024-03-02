@@ -1,4 +1,4 @@
-package ski.gagar.vertigram
+package ski.gagar.vertigram.internal
 
 inline fun <reified D> Any?.uncheckedCast(): D = this as D
 
