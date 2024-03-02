@@ -83,11 +83,11 @@ abstract class AbstractDispatchVerticle<Config : AbstractDispatchVerticle.Config
 
     override suspend fun start() {
         super.start()
-        consumer<Message, Unit>(TelegramAddress.demuxAddress(Update.Type.MESSAGE, typedConfig.baseAddress)) {
+        consumer<Message, Unit>(TelegramAddress.dispatchAddress(Update.Type.MESSAGE, typedConfig.baseAddress)) {
             handleMessage(it)
         }
 
-        consumer<Update.CallbackQuery.Payload, Unit>(TelegramAddress.demuxAddress(Update.Type.CALLBACK_QUERY, typedConfig.baseAddress)) {
+        consumer<Update.CallbackQuery.Payload, Unit>(TelegramAddress.dispatchAddress(Update.Type.CALLBACK_QUERY, typedConfig.baseAddress)) {
             handleCallbackQuery(it)
         }
     }

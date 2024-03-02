@@ -41,7 +41,7 @@
         </dependency>
         <dependency>
             <groupId>ski.gagar.vertigram</groupId>
-            <artifactId>vertigram-core</artifactId>
+            <artifactId>vertigram</artifactId>
         </dependency>
         <dependency>
             <groupId>ski.gagar.vertigram</groupId>

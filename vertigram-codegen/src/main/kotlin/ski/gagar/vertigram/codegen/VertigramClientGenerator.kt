@@ -26,6 +26,11 @@ import javax.lang.model.SourceVersion
 import javax.lang.model.element.ElementKind
 import javax.lang.model.element.TypeElement
 
+/**
+ * Code generator for [ski.gagar.vertigram.telegram.client.Telegram].
+ *
+ * Generates pseudo-constructors for some classes and Kotlin function wrappers for Telegram methods.
+ */
 @SupportedSourceVersion(SourceVersion.RELEASE_21)
 @SupportedAnnotationTypes("ski.gagar.vertigram.annotations.TelegramCodegen")
 class VertigramClientGenerator : AbstractProcessor() {

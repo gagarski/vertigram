@@ -254,7 +254,9 @@ fun Vertx.attachVertigram(config: Vertigram.Config = Vertigram.Config()): Vertig
                 }
             }
 
-        }!!
+        }!!.also {
+            logUnhandledExceptions()
+        }
 
 fun Vertx.detachVertigram(name: String = Vertigram.Config.DEFAULT_NAME) =
     sharedData().getLocalMap<String, Vertigram>(VERTIGRAMS).remove(name)

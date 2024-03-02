@@ -1,5 +1,8 @@
 package ski.gagar.vertigram.logback
 
+/**
+ * A duplicate of [LogbackLevel] used in [LogEvent]
+ */
 enum class Level {
     OFF,
     ERROR,
@@ -12,6 +15,9 @@ enum class Level {
 
 private typealias LogbackLevel = ch.qos.logback.classic.Level
 
+/**
+ * Convert [LogbackLevel] to [Level]
+ */
 fun LogbackLevel.convert(): Level = when (LogbackLevel.toLevel(levelInt).levelInt) {
     LogbackLevel.OFF_INT -> Level.OFF
     LogbackLevel.ERROR_INT -> Level.ERROR

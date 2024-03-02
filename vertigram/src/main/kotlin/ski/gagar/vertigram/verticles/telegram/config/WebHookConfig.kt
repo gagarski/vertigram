@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore
  *
  * @see ski.gagar.vertigram.verticles.telegram.WebHook
  * @see ski.gagar.vertigram.verticles.telegram.WebHook.Config
+ * @see ski.gagar.vertigram.verticles.telegram.ensemble.deployTelegramEnsemble
  */
 data class WebHookConfig(
     /**

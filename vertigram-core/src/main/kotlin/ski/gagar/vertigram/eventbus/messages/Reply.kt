@@ -10,6 +10,9 @@ import ski.gagar.vertigram.eventbus.exceptions.VertigramException
 import ski.gagar.vertigram.eventbus.exceptions.VertigramInternalException
 import ski.gagar.vertigram.jackson.toJsonObject
 
+/**
+ * Reply wrapper for [Vertigram.EventBus]
+ */
 @JsonTypeInfo(use = JsonTypeInfo.Id.DEDUCTION)
 @JsonSubTypes(
     JsonSubTypes.Type(Reply.Success::class),
@@ -30,8 +33,8 @@ sealed interface Reply<T> {
     }
 }
 
-
-fun <Result> Message<JsonObject>.replyWithSuccess(
+@PublishedApi
+internal fun <Result> Message<JsonObject>.replyWithSuccess(
     res: Result,
     vertigram: Vertigram,
     options: DeliveryOptions = DeliveryOptions()
@@ -42,7 +45,8 @@ fun <Result> Message<JsonObject>.replyWithSuccess(
     }
 }
 
-fun <Result> Message<JsonObject>.replyWithThrowable(
+@PublishedApi
+internal fun <Result> Message<JsonObject>.replyWithThrowable(
     t: Throwable,
     vertigram: Vertigram,
     options: DeliveryOptions = DeliveryOptions()

@@ -22,7 +22,7 @@ import ski.gagar.vertigram.util.logger
 import ski.gagar.vertigram.telegram.methods.JsonTelegramCallable
 import ski.gagar.vertigram.telegram.methods.MultipartTelegramCallable
 import ski.gagar.vertigram.telegram.methods.TelegramCallable
-import ski.gagar.vertigram.toMap
+import ski.gagar.vertigram.util.internal.toMap
 import ski.gagar.vertigram.telegram.types.Wrapper
 import ski.gagar.vertigram.uncheckedCast
 import ski.gagar.vertigram.telegram.exceptions.TelegramCallException

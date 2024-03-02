@@ -4,6 +4,9 @@ import ch.qos.logback.classic.spi.IThrowableProxy
 import ch.qos.logback.classic.spi.StackTraceElementProxy
 import ch.qos.logback.classic.spi.ThrowableProxyUtil
 
+/**
+ * A duplicate of [IThrowableProxy] serializable for [ski.gagar.vertigram.Vertigram.EventBus]
+ */
 data class ThrowableProxy(
     val message: String,
     val className: String,
@@ -13,6 +16,9 @@ data class ThrowableProxy(
     val suppressed: List<ThrowableProxy>? = null
 )
 
+/**
+ * Convert [IThrowableProxy] to [ThrowableProxy]
+ */
 fun ThrowableProxy(orig: IThrowableProxy?): ThrowableProxy? =
     orig?.let {
         ThrowableProxy(
@@ -25,6 +31,9 @@ fun ThrowableProxy(orig: IThrowableProxy?): ThrowableProxy? =
         )
     }
 
+/**
+ * Implementation of [IThrowableProxy] using [ThrowableProxy] as delegate
+ */
 internal class IThrowableProxyImpl(private val p: ThrowableProxy) : IThrowableProxy {
     override fun getMessage(): String = p.message
 

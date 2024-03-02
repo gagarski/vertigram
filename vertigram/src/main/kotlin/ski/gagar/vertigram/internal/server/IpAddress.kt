@@ -1,4 +1,4 @@
-package ski.gagar.vertigram.web.server
+package ski.gagar.vertigram.internal.server
 
 import java.math.BigInteger
 
@@ -8,18 +8,33 @@ private const val MAX_OCTET = (1 shl (BITS_IN_OCTET)) - 1
 private const val ALL_ONES_OCTET = (1 shl (BITS_IN_OCTET)) - 1
 private const val MAX_DOUBLE_OCTET = (1 shl (BITS_IN_DOUBLE_OCTET)) - 1
 
-
+/**
+ * Interface for IP address
+ */
 interface IpAddress {
+    /**
+     * Protocol version (4 or 6)
+     */
     val version: Int
+
+    /**
+     * Bytes of the address
+     */
     val bytes: List<Int>
 
     companion object {
+        /**
+         * Create an address from [String]. IPv4 and IPv6 addresses are supported.
+         */
         operator fun invoke(addr: String) = try {
             IpV4Address(addr)
         } catch (ex: IllegalArgumentException) {
             IpV6Address(addr)
         }
 
+        /**
+         * Create an address from list of bytes represented as [List] of [Int]. IPv4 and IPv6 addresses are supported.
+         */
         operator fun invoke(bytes: List<Int>) = when (bytes.size) {
             IpV6Address.ADDR_LENGTH -> IpV6Address(bytes)
             IpV4Address.ADDR_LENGTH -> IpV4Address(bytes)
@@ -28,6 +43,9 @@ interface IpAddress {
     }
 }
 
+/**
+ * IPv6 address
+ */
 class IpV6Address(bytes: List<Int>) : IpAddress {
     override val bytes: List<Int> = bytes.toList()
 
@@ -104,6 +122,9 @@ class IpV6Address(bytes: List<Int>) : IpAddress {
             }.flatMap { listOf(it / (MAX_OCTET + 1), it % (MAX_OCTET + 1)).asSequence() }.toList()
         }
 
+        /**
+         * Create IPv6 address from [String]
+         */
         operator fun invoke(addr: String): IpV6Address {
             val parts = addr.split(SKIP_DELIMITER)
             require(parts.size <= 2) {
@@ -124,10 +145,16 @@ class IpV6Address(bytes: List<Int>) : IpAddress {
                             bytesAfter.asSequence()).toList())
         }
 
+        /**
+         * Create network address from [Int] representation.
+         */
         fun mask(number: Int) = intMaskToAddr(number, ADDR_LENGTH * BITS_IN_OCTET)
     }
 }
 
+/**
+ * IPv4 address
+ */
 class IpV4Address(bytes: List<Int>) : IpAddress {
     override val version: Int = 4
     override val bytes: List<Int> = bytes.toList()
@@ -146,6 +173,9 @@ class IpV4Address(bytes: List<Int>) : IpAddress {
         const val ADDR_LENGTH = 4
         const val DELIMITER = "."
 
+        /**
+         * Create IPv4 address from [String]
+         */
         operator fun invoke(addr: String): IpV4Address {
             val parts = addr.split(DELIMITER).map { it.toInt() }
             require(parts.size == ADDR_LENGTH) {
@@ -154,10 +184,16 @@ class IpV4Address(bytes: List<Int>) : IpAddress {
             return IpV4Address(parts)
         }
 
+        /**
+         * Create network address from [Int] representation.
+         */
         fun mask(number: Int) = intMaskToAddr(number, IpV6Address.ADDR_LENGTH * BITS_IN_OCTET)
     }
 }
 
+/**
+ * A bundle of IP address and network mask
+ */
 class IpNetworkAddress(val ip: IpAddress, val mask: IpAddress) {
     init {
         require(ip.version == mask.version) {
@@ -204,6 +240,9 @@ class IpNetworkAddress(val ip: IpAddress, val mask: IpAddress) {
     companion object {
         const val DELIMITER = "/"
 
+        /**
+         * Create [IpNetworkAddress] from string like `192.168.0.1/24`
+         */
         operator fun invoke(str: String): IpNetworkAddress {
             val split = str.split(DELIMITER)
 

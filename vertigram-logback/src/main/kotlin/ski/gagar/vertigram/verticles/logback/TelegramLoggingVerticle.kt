@@ -3,22 +3,30 @@ package ski.gagar.vertigram.verticles.logback
 import com.fasterxml.jackson.core.type.TypeReference
 import kotlinx.coroutines.Job
 import ski.gagar.vertigram.Vertigram
-import ski.gagar.vertigram.telegram.client.DirectTelegram
-import ski.gagar.vertigram.telegram.client.THIN_POOLS
-import ski.gagar.vertigram.telegram.client.Telegram
 import ski.gagar.vertigram.coroutines.setTimerNonCancellable
 import ski.gagar.vertigram.jackson.typeReference
 import ski.gagar.vertigram.logback.Level
 import ski.gagar.vertigram.logback.LogEvent
 import ski.gagar.vertigram.logback.asString
 import ski.gagar.vertigram.logback.bypassEventBusAppenderSuspend
+import ski.gagar.vertigram.telegram.client.Telegram
+import ski.gagar.vertigram.telegram.client.ThinTelegram
 import ski.gagar.vertigram.telegram.markup.textMarkdown
 import ski.gagar.vertigram.telegram.methods.sendMessage
 import ski.gagar.vertigram.telegram.types.User
 import ski.gagar.vertigram.telegram.types.util.toChatId
 import ski.gagar.vertigram.verticles.common.VertigramVerticle
+import ski.gagar.vertigram.verticles.logback.TelegramLoggingVerticle.Config
 import java.time.Duration
 
+/**
+ * Verticle that sends log events produced by [ski.gagar.vertigram.logback.EventBusAppender] to selected Telegram chat.
+ *
+ * The _first_ logging event appears in the chat immediately.
+ * Then (if [Config.accumulationPeriod] is set), the log events are accumulated during this period and the stats
+ * are sent in the end of the period.
+ * After the end of accumulation period, the next log event considered _first_ again.
+ */
 class TelegramLoggingVerticle : VertigramVerticle<TelegramLoggingVerticle.Config>() {
     override val configTypeReference: TypeReference<Config> = typeReference()
     private lateinit var tg: Telegram
@@ -26,7 +34,7 @@ class TelegramLoggingVerticle : VertigramVerticle<TelegramLoggingVerticle.Config
     private var acc: MutableMap<Level, Int>? = null
     private var timer: Job? = null
     override suspend fun start() {
-        tg = DirectTelegram(typedConfig.token, vertx, typedConfig.tgOptions)
+        tg = ThinTelegram(vertigram)
 
         consumer<LogEvent, Unit>(typedConfig.listenAddress) {
             handleLogEvent(it)
@@ -240,12 +248,26 @@ class TelegramLoggingVerticle : VertigramVerticle<TelegramLoggingVerticle.Config
             Level.ALL -> "⚪"
         }
 
+    /**
+     * Config for [TelegramLoggingVerticle]
+     */
     data class Config(
-        val token: String,
+        /**
+         * Id of the chat to log
+         */
         val chatId: Long,
+        /**
+         * Period of which the events (after first one) are accumulated.
+         */
         val accumulationPeriod: Duration? = Duration.ofMinutes(5),
-        val tgOptions: DirectTelegram.Options = DirectTelegram.Options(pools = THIN_POOLS),
+        /**
+         * Bot user info (returned from `getMe`)
+         */
         val me: User.Me? = null,
+        /**
+         * An address to listen to.
+         * @see ski.gagar.vertigram.logback.EventBusAppender.address
+         */
         val listenAddress: String = DEFAULT_LISTEN_ADDRESS
     )
 
@@ -258,3 +280,6 @@ class TelegramLoggingVerticle : VertigramVerticle<TelegramLoggingVerticle.Config
         const val DEFAULT_LISTEN_ADDRESS = "ski.gagar.vertigram.logback"
     }
 }
+
+suspend fun Vertigram.enableTelegramLogging(config: TelegramLoggingVerticle.Config) =
+    deployVerticle(TelegramLoggingVerticle(), config)

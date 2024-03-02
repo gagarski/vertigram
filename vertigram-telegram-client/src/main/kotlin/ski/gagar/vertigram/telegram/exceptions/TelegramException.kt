@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo
 import io.vertx.core.http.impl.headers.HeadersMultiMap
 import ski.gagar.vertigram.eventbus.exceptions.VertigramException
 import ski.gagar.vertigram.telegram.methods.TelegramCallable
-import ski.gagar.vertigram.toMultiMap
+import ski.gagar.vertigram.util.internal.toMultiMap
 
 
 abstract class TelegramException(str: String) : VertigramException(str)

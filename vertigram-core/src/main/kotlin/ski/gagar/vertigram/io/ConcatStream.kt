@@ -7,8 +7,19 @@ import kotlinx.coroutines.launch
 
 private typealias RSW<T> = ReadStreamWrapper<T, ReadStream<T>>
 
-class ConcatStream<T> internal constructor(private val scope: CoroutineScope,
-                                           streams: Sequence<RSW<T>>) : ReadStream<T> {
+/**
+ * [ReadStream] which yields data from concatenated `streams`
+ */
+class ConcatStream<T> internal constructor(
+    /**
+     * Coroutine scope
+     */
+    private val scope: CoroutineScope,
+    /**
+     * Streams to concatenate
+     */
+    streams: Sequence<RSW<T>>
+) : ReadStream<T> {
     private enum class State {
         INITIAL,
         STARTED,

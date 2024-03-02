@@ -26,7 +26,7 @@ abstract class AbstractSimpleCommandVerticle<Config : AbstractSimpleCommandVerti
      */
     abstract suspend fun respond(message: Message)
     open val listenAddress: String
-        get() = TelegramAddress.demuxAddress(Update.Type.MESSAGE, typedConfig.baseAddress)
+        get() = TelegramAddress.dispatchAddress(Update.Type.MESSAGE, typedConfig.baseAddress)
 
     override suspend fun start() {
         consumer<Message, Unit>(listenAddress) { handle(it) }

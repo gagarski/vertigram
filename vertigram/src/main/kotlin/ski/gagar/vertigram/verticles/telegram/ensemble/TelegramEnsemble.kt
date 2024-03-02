@@ -17,6 +17,11 @@ import java.util.*
 
 private const val PRIVATE_UPDATES_CLASSIFIER = "updates"
 
+/**
+ * Deployment descriptor returned from [deployTelegramEnsemble].
+ *
+ * Allows you to undeploy all ensemble verticles.
+ */
 data class TelegramEnsembleDeploymentDescriptor(
     private val vertigram: Vertigram,
     private val telegramId: String,
@@ -30,15 +35,50 @@ data class TelegramEnsembleDeploymentDescriptor(
     }
 }
 
+/**
+ * Deploy verticles to interact with Telegram:
+ *  - [TelegramVerticle]
+ *  - [LongPoller] or [WebHook]
+ *  - [UpdateDispatcher]
+ */
 suspend fun Vertigram.deployTelegramEnsemble(
+    /**
+     * Telegram Bot API token
+     */
     token: String,
+    /**
+     * Allowed updates to pass to `setWebHook` or `getUpades`
+     */
     allowedUpdates: List<Update.Type>,
+    /**
+     * Base address for [TelegramVerticle]
+     */
     telegramAddress: String = TelegramAddress.TELEGRAM_VERTICLE_BASE,
+    /**
+     * Options for [DirectTelegram] wrapped in [TelegramVerticle]
+     */
     telegramOptions: DirectTelegram.Options = DirectTelegram.Options(),
+    /**
+     * Throttling options for [TelegramVerticle]
+     */
     throttling: ThrottlingOptions = ThrottlingOptions(),
+    /**
+     * Address to publish updates from [LongPoller] or [WebHook].
+     *
+     * `null` means that updates will be published to a private address, known only by [UpdateDispatcher]
+     */
     updatePublishingAddress: String? = null,
+    /**
+     * Should [LongPoller]/[WebHook] skip with the date before they were deployed.
+     */
     skipMissed: Boolean = true,
+    /**
+     * Config for update receiver: [LongPoller] or [WebHook]
+     */
     updateReceiverConfig: UpdateReceiverConfig = LongPollerConfig,
+    /**
+     * Address for publishing updates dispatched and unwrapped by [UpdateDispatcher]
+     */
     updateDispatchAddressBase: String = TelegramAddress.DEMUX_BASE
 ) : TelegramEnsembleDeploymentDescriptor {
     val telegramId = deployVerticle(

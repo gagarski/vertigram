@@ -539,12 +539,12 @@ abstract class AbstractTelegramDialogVerticle<Config> : AbstractHierarchyVerticl
 
     }
 
-    private fun yawnTimeout(): State = YawnTimeout(this)
-    private fun silentTimeout(): State = SilentTimeout(this)
-    private fun crossCancelled(): State = CrossCancelled(this)
-    private fun silentCancelled(): State = SilentCancelled(this)
-    private fun checkmarkDone(): State = CheckmarkDone(this)
-    private fun silentDone(): State = SilentDone(this)
+    protected fun yawnTimeout(): State = YawnTimeout(this)
+    protected fun silentTimeout(): State = SilentTimeout(this)
+    protected fun crossCancelled(): State = CrossCancelled(this)
+    protected fun silentCancelled(): State = SilentCancelled(this)
+    protected fun checkmarkDone(): State = CheckmarkDone(this)
+    protected fun silentDone(): State = SilentDone(this)
 
     private class YawnTimeout(private val verticle: AbstractTelegramDialogVerticle<*>) : State(verticle) {
         override suspend fun sideEffect() {

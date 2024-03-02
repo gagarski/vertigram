@@ -11,14 +11,14 @@ import ski.gagar.vertigram.telegram.methods.deleteWebhook
 import ski.gagar.vertigram.telegram.types.Update
 import ski.gagar.vertigram.util.lazy
 import ski.gagar.vertigram.util.logger
+import ski.gagar.vertigram.verticles.telegram.LongPoller.Config
 import ski.gagar.vertigram.verticles.telegram.address.TelegramAddress
 import java.time.Instant
 
 /**
  * An update receiver using [long-polling](https://core.telegram.org/bots/api#getupdates) mechanism.
  *
- * It **publishes** [Update] object received from long polling to [Config.updatePublishingAddress]
- * using [ski.gagar.vertigram.Vertigram] protocol on top of Vertx event bus
+ * It **publishes** [Update] object received from long polling to [Config.updatePublishingAddress].
  */
 class LongPoller : UpdateReceiver<LongPoller.Config>() {
     override val configTypeReference: TypeReference<Config> = typeReference()
@@ -87,21 +87,9 @@ class LongPoller : UpdateReceiver<LongPoller.Config>() {
     }
 
     data class Config(
-        /**
-         * Allowed updates as passed to `getUpdates`
-         */
         override val allowedUpdates: List<Update.Type>,
-        /**
-         * Telegram Verticle base address
-         */
         override val telegramAddress: String = TelegramAddress.TELEGRAM_VERTICLE_BASE,
-        /**
-         * An address to publish updates
-         */
         override val updatePublishingAddress: String = TelegramAddress.UPDATES,
-        /**
-         * Skip the updates which happened before the [LongPoller] has started.
-         */
-        override val skipMissed: Boolean = true
+override val skipMissed: Boolean = true
     ) : UpdateReceiver.Config
 }

@@ -1,4 +1,4 @@
-package ski.gagar.vertigram.web.server
+package ski.gagar.vertigram.internal.server
 
 import io.vertx.core.http.HttpServerRequest
 import io.vertx.core.http.HttpVersion
@@ -10,9 +10,21 @@ import io.vertx.ext.web.impl.Utils
 import ski.gagar.vertigram.util.lazy
 import ski.gagar.vertigram.util.logger
 
-class RealIpFormatter(private val immediate: Boolean = false,
-                      private val trustedNetworks: Set<IpNetworkAddress> = setOf(),
-                      private val trustDomainSockets: Boolean = false) :
+/**
+ * [LoggerFormatter] which prints real IP address obtained from proxy headers like `X-Forwarded-For` or `X-Real-Ip`
+ */
+class RealIpFormatter(
+    /**
+     * `immediate` value passed to [LoggerHandler.create]
+     */
+    private val immediate: Boolean = false,
+    /**
+     * Networks for which headers will be trusted.
+     *
+     * For untrusted networks the address obtained from [HttpServerRequest.authority] will be used
+     */
+    private val trustedNetworks: Set<IpNetworkAddress> = setOf(),
+    private val trustDomainSockets: Boolean = false) :
     LoggerFormatter {
 
     private val String?.shouldBeTrusted: Boolean
@@ -81,6 +93,9 @@ class RealIpFormatter(private val immediate: Boolean = false,
     }
 }
 
+/**
+ * Create a [LoggerHandler] with [RealIpFormatter]
+ */
 fun RealIpLoggerHandler(immediate: Boolean = false,
                         trustedNetworks: Set<IpNetworkAddress> = setOf(),
                         trustDomainSockets: Boolean = false) =

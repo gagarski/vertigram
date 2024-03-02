@@ -11,7 +11,7 @@ class DataSourceWithUrl(private val ds: DataSource, val jdbcUrl: String) : DataS
 
 const val DATA_SOURCES_MAP_NAME = "ski.gagar.vertigram.jooq.ds"
 
-fun Vertx.createSharedDataSource(name: String, jdbcUrl: String, username: String? = null, password: String? = null): DataSource {
+internal fun Vertx.createSharedDataSource(name: String, jdbcUrl: String, username: String? = null, password: String? = null): DataSource {
     val ds = HikariDataSource().apply dsConstruct@ {
         this.jdbcUrl = jdbcUrl
         username?.let {
@@ -33,11 +33,11 @@ fun Vertx.createSharedDataSource(name: String, jdbcUrl: String, username: String
     return ds
 }
 
-fun Vertx.getSharedDataSource(name: String): DataSourceWithUrl =
+internal fun Vertx.getSharedDataSource(name: String): DataSourceWithUrl =
     sharedData().getLocalMap<String, ShareableHolder<DataSourceWithUrl>>(DATA_SOURCES_MAP_NAME)[name]?.data ?:
     throw IllegalArgumentException("Shared data source $name is not present")
 
-fun Vertx.deleteSharedDataSource(name: String) {
+internal fun Vertx.deleteSharedDataSource(name: String) {
     sharedData().getLocalMap<String, ShareableHolder<DataSourceWithUrl>>(DATA_SOURCES_MAP_NAME)
         .compute(name) { _, old ->
             if (old != null)

@@ -25,20 +25,20 @@ object TelegramAddress {
     /**
      * Get demultiplexed address from [className] and [base] address
      */
-    private fun demuxAddress(className: String, base: String) =
+    private fun dispatchAddress(className: String, base: String) =
         "${base}.${StringUtils.uncapitalize(className)}"
 
     /**
      * Get demultiplexed address from [update] object and [base] address
      */
-    fun demuxAddress(update: Update<*>, base: String = DEMUX_BASE) =
-        demuxAddress(update.javaClass.simpleName, base)
+    fun dispatchAddress(update: Update<*>, base: String = DEMUX_BASE) =
+        dispatchAddress(update.javaClass.simpleName, base)
 
     /**
      * Get demultiplexed address from update [type] and [base] address
      */
-    fun demuxAddress(type: Update.Type, base: String = DEMUX_BASE) =
-        demuxAddress(
+    fun dispatchAddress(type: Update.Type, base: String = DEMUX_BASE) =
+        dispatchAddress(
             when (type) {
                 Update.Type.MESSAGE -> Update.Message::class.simpleName
                 Update.Type.EDITED_MESSAGE -> Update.EditedMessage::class.simpleName

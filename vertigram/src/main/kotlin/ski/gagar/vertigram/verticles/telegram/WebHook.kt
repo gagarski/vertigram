@@ -17,13 +17,19 @@ import ski.gagar.vertigram.telegram.types.Update
 import ski.gagar.vertigram.util.json.TELEGRAM_JSON_MAPPER
 import ski.gagar.vertigram.util.lazy
 import ski.gagar.vertigram.util.logger
+import ski.gagar.vertigram.verticles.telegram.WebHook.Config
 import ski.gagar.vertigram.verticles.telegram.address.TelegramAddress
 import ski.gagar.vertigram.verticles.telegram.config.WebHookConfig
-import ski.gagar.vertigram.web.server.IpNetworkAddress
-import ski.gagar.vertigram.web.server.RealIpLoggerHandler
+import ski.gagar.vertigram.internal.server.IpNetworkAddress
+import ski.gagar.vertigram.internal.server.RealIpLoggerHandler
 import java.time.Instant
 import java.util.*
 
+/**
+ * An update receiver using [web-hook](https://core.telegram.org/bots/api#setwebhook) mechanism.
+ *
+ * It **publishes** [Update] object received from webhook to [Config.updatePublishingAddress].
+ */
 class WebHook : UpdateReceiver<WebHook.Config>() {
     override val configTypeReference: TypeReference<Config> = typeReference()
     private val secret = UUID.randomUUID()
@@ -108,6 +114,9 @@ class WebHook : UpdateReceiver<WebHook.Config>() {
         override val allowedUpdates: List<Update.Type>,
         override val updatePublishingAddress: String = TelegramAddress.UPDATES,
         override val skipMissed: Boolean = true,
+        /**
+         * The config for web hook web server
+         */
         val webHook: WebHookConfig = WebHookConfig()
     ) : UpdateReceiver.Config
 

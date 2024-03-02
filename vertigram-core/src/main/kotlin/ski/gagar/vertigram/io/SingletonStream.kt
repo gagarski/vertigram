@@ -3,6 +3,9 @@ package ski.gagar.vertigram.io
 import io.vertx.core.Handler
 import io.vertx.core.streams.ReadStream
 
+/**
+ * [ReadStream] that yields only single [value]
+ */
 class SingletonStream<T>(private val value: T) : ReadStream<T> {
     private var paused = false
     private var state = State.NOT_FIRED

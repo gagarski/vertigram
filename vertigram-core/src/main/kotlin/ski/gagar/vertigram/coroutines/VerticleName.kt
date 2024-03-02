@@ -3,6 +3,9 @@ package ski.gagar.vertigram.coroutines
 import kotlin.coroutines.AbstractCoroutineContextElement
 import kotlin.coroutines.CoroutineContext
 
+/**
+ * [CoroutineContext.Element] adding Verticle name
+ */
 data class VerticleName(
     /**
      * User-defined coroutine name.

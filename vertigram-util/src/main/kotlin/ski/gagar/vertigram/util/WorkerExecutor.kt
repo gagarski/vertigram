@@ -12,6 +12,13 @@ import java.util.concurrent.ScheduledFuture
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicReference
 
+/**
+ * Create [kotlinx.coroutines.CoroutineDispatcher] from [workerExecutor]
+ */
+fun Vertx.workerExecutorDispatcher(workerExecutor: WorkerExecutor) =
+    WorkerExecutorService(workerExecutor, this).asCoroutineDispatcher()
+
+
 class WorkerExecutorServiceError(msg: String) : Error(msg)
 
 private class WorkerExecutorServiceScheduledFuture(
@@ -70,7 +77,7 @@ private class WorkerExecutorServiceScheduledFuture(
     }
 }
 
-class WorkerExecutorService(
+private class WorkerExecutorService(
     private val workerExecutor: WorkerExecutor,
     private val vertx: Vertx
     ) : AbstractExecutorService(), ScheduledExecutorService {
@@ -130,8 +137,3 @@ class WorkerExecutorService(
     }
 
 }
-
-fun Vertx.workerExecutorDispatcher(workerExecutor: WorkerExecutor) =
-    WorkerExecutorService(workerExecutor, this).asCoroutineDispatcher()
-
-fun WorkerExecutor.asCoroutineDispatcher(vertx: Vertx) = WorkerExecutorService(this, vertx).asCoroutineDispatcher()

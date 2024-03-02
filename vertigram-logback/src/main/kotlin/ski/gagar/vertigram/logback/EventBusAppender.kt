@@ -13,8 +13,17 @@ import ski.gagar.vertigram.util.lazy
 import ski.gagar.vertigram.util.logger
 import java.util.concurrent.atomic.AtomicReference
 
+/**
+ * Logback appender to log to [Vertigram.EventBus].
+ *
+ * Publishes [LogEvent]s to the event bus
+ */
 class EventBusAppender : AppenderBase<ILoggingEvent>() {
     private var vertigram_: AtomicReference<Vertigram?> = AtomicReference(null)
+
+    /**
+     * An address to publish log events to
+     */
     var address: String = "ski.gagar.vertigram.logback"
     val vertigram: Vertigram?
         get() = vertigram_.get()
@@ -26,6 +35,9 @@ class EventBusAppender : AppenderBase<ILoggingEvent>() {
         vertigram?.eventBus?.publish(address, LogEvent(eventObject))
     }
 
+    /**
+     * Attach Vertigram to log
+     */
     fun attachVertigram(vertigram: Vertigram) {
         vertigram_.set(vertigram)
     }
@@ -35,10 +47,18 @@ class EventBusAppender : AppenderBase<ILoggingEvent>() {
     }
 }
 
+/**
+ * Attach [this] to [appender]
+ */
 fun Vertigram.attachEventBusAppender(appender: EventBusAppender) {
     appender.attachVertigram(this)
 }
 
+/**
+ * Enable event bus logging on [this].
+ *
+ * The appender should be present in logback.xml
+ */
 fun Vertigram.attachEventBusLogging() {
     val cxt = LoggerFactory.getILoggerFactory().uncheckedCast<LoggerContext>()
     var attached = false
@@ -56,12 +76,22 @@ fun Vertigram.attachEventBusLogging() {
     }
 }
 
+/**
+ * A wrapper which marks all logger calls in [block] to bypass [EventBusAppender].
+ *
+ * For example, useful in verticles, listening to the log events and doing the actual logging.
+ */
 suspend inline fun bypassEventBusAppenderSuspend(crossinline block: suspend () -> Unit) {
     withContext(MDCContext(contextMap = mapOf(EventBusAppender.BYPASS to EventBusAppender.BYPASS))) {
         block()
     }
 }
 
+/**
+ * A wrapper which marks all logger calls in [block] to bypass [EventBusAppender].
+ *
+ * For example, useful in verticles, listening to the log events and doing the actual logging.
+ */
 inline fun bypassEventBusAppender(crossinline block: () -> Unit) {
     try {
         MDC.put(EventBusAppender.BYPASS, EventBusAppender.BYPASS)

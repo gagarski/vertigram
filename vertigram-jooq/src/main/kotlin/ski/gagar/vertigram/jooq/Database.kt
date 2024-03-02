@@ -23,16 +23,43 @@ import javax.sql.DataSource
 
 typealias WorkerExecutorFactory = Vertx.(String) -> WorkerExecutor
 
+/**
+ * [WorkerExecutorFactory] that calls [Vertx.createSharedWorkerExecutor] without args
+ */
 val NO_ARGS_WORKER_EXECUTOR_FACTORY: WorkerExecutorFactory = { name -> createSharedWorkerExecutor(name) }
+
+/**
+ * [WorkerExecutorFactory] that creates an executor with number of threads equal to double number of CPUs
+ */
 val DOUBLE_CPU_WORKER_EXECUTOR_FACTORY: WorkerExecutorFactory =
     { name -> createSharedWorkerExecutor(name, 2 * CpuCoreSensor.availableProcessors()) }
 
 
+/**
+ * A wrapper for [Database] connection allowing to execute jOOQ queries inside Vertx Verticles.
+ *
+ * @sample dbExample
+ */
 class Database(
+    /**
+     * Vertx instance
+     */
     vertx: Vertx,
+    /**
+     * Coroutine scope (e.g. a verticle)
+     */
     private val scope: CoroutineScope,
+    /**
+     * A name for the [WorkerExecutor] on which the queries will be executed
+     */
     executorName: String = DEFAULT_EXECUTOR_NAME,
+    /**
+     * Data source name
+     */
     dataSourceName: String = DEFAULT_DATA_SOURCE_NAME,
+    /**
+     * [WorkerExecutorFactory] to use
+     */
     workerExecutorFactory: WorkerExecutorFactory = DOUBLE_CPU_WORKER_EXECUTOR_FACTORY
 ) : Closeable, CoroutineScope by scope {
 
@@ -45,6 +72,11 @@ class Database(
 
     val withTransaction = WithTransaction()
 
+    /**
+     * Run [body] with jOOQ query.
+     *
+     * @sample dbExample
+     */
     suspend operator fun <T> invoke(body: suspend DSLContext.() -> T) = coroutineScope {
         withContext(dispatcher) {
             dsl.run { body() }
@@ -55,6 +87,11 @@ class Database(
         executor.close()
     }
 
+    /**
+     * Transaction wrapper
+     *
+     * @see dbTranExample
+     */
     inner class WithTransaction {
         suspend operator fun <T> invoke(body: suspend DSLContext.() -> T): T =
             dsl.transactionResultCoro { conf ->
@@ -77,7 +114,24 @@ class Database(
             }).coAwait()
         }
 
-        suspend fun initDs(vertx: Vertx, name: String, config: DbConfig, migrate: Boolean = true): DataSource {
+        /**
+         * Create data source with [name] on [vertx] from [config]
+         */
+        suspend fun attachDatasource(
+            /**
+             * Vertx instance
+             */
+            vertx: Vertx,
+            /**
+             * Data source config
+             */
+            config: DataSourceConfig,
+            name: String = DEFAULT_DATA_SOURCE_NAME,
+            /**
+             * Run Flyway migrations
+             */
+            migrate: Boolean = true
+        ): DataSource {
             logger.lazy.info { "Creating shared data source with config $config" }
             val ds = vertx.createSharedDataSource(name, config.jdbcUrl, config.username, config.password)
 
@@ -87,29 +141,58 @@ class Database(
 
             return ds
         }
-        suspend fun initDs(vertx: Vertx, config: DbConfig, migrate: Boolean = true) {
-            initDs(vertx, DEFAULT_DATA_SOURCE_NAME, config, migrate)
-        }
-        fun deleteDs(vertx: Vertx, name: String) {
+
+        /**
+         * Detach data source with [name] from [vertx]
+         */
+        fun detachDatasource(vertx: Vertx, name: String) {
             vertx.deleteSharedDataSource(name)
         }
     }
 }
 
-suspend fun Vertx.initDs(name: String, config: DbConfig) = Database.initDs(this, name, config)
-suspend fun Vertx.initDs(config: DbConfig) = Database.initDs(this, config)
-fun Vertx.deleteDs(name: String) = Database.deleteDs(this, name)
+/**
+ * Create data source with [name] on [this] from [config]
+ */
+suspend fun Vertx.attachDatasource(config: DataSourceConfig, name: String = Database.DEFAULT_DATA_SOURCE_NAME) = Database.attachDatasource(this, config, name)
 
+/**
+ * Detach data source with [name] from [this]
+ */
+fun Vertx.detachDatasource(name: String) = Database.detachDatasource(this, name)
+
+/**
+ * Create a [Database] object attached to [this] and [scope]
+ */
 fun Vertx.Database(scope: CoroutineScope,
                    executorName: String = Database.DEFAULT_EXECUTOR_NAME,
                    dataSourceName: String = Database.DEFAULT_DATA_SOURCE_NAME
 ) =
     Database(this, scope, executorName, dataSourceName)
 
+/**
+ * Create a [Database] object attached to [this]
+ */
 fun CoroutineVerticle.Database(executorName: String = Database.DEFAULT_EXECUTOR_NAME,
                                dataSourceName: String = Database.DEFAULT_DATA_SOURCE_NAME
 ) =
     Database(vertx, this, executorName, dataSourceName)
 
-suspend fun <T> DSLContext.transactionResultCoro(block: suspend (Configuration) -> T): T =
+internal suspend fun <T> DSLContext.transactionResultCoro(block: suspend (Configuration) -> T): T =
     transactionResultInt(block)
+
+
+private suspend fun CoroutineVerticle.dbExample() {
+    val db = Database()
+    db {
+        selectFrom("some_table")
+            .fetch()
+    }
+}
+private suspend fun CoroutineVerticle.dbTranExample() {
+    val db = Database()
+    db.withTransaction {
+        selectFrom("some_table")
+            .fetch()
+    }
+}
