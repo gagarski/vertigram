@@ -100,10 +100,6 @@
         </dependency>
         <dependency>
             <groupId>ski.gagar.vertigram</groupId>
-            <artifactId>vertigram-logback</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>ski.gagar.vertigram</groupId>
             <artifactId>vertigram-annotations</artifactId>
         </dependency>
     </dependencies>
