@@ -54,8 +54,6 @@ configure<ReleaseExtension> {
 
 tasks {
     named("afterReleaseBuild") {
-        dependsOn(project.getSubprojects().map {
-            it.getTasks().getByName("uploadArchive")
-        })
+        dependsOn("vertigram-util:publish")
     }
 }
