@@ -13,5 +13,6 @@ rootProject.name = "vertigram-all"
 //include(":vertigram-jooq")
 //include(":vertigram-telegram-client")
 //include(":vertigram-codegen")
-//include(":vertigram-bom")
+//include(":vertigram-bzvertigram-all")
+include(":")
 include(":vertigram-util")

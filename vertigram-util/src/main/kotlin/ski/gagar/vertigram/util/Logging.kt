@@ -22,7 +22,7 @@ val Logger.lazy
     get() = LazyLogger(this)
 
 /**
- * Implementation of [lazy] handle
+ * Implementation of [Logger.lazy] handle
  */
 @JvmInline
 value class LazyLogger(@PublishedApi internal val delegate: Logger) {
@@ -102,7 +102,7 @@ fun CoroutineScope.coroMdcWith(vararg extra: Pair<String, String>) =
     }
 
 /**
- * RUn [block] with [extra] [MDC] context
+ * Run [block] with [extra] [MDC] context
  */
 inline fun withExtraMdc(extra: Map<String, String>, block: () -> Unit) {
     val old = extra.keys.asSequence().map { it to MDC.get(it) }.toMap()

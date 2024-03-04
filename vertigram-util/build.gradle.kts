@@ -10,13 +10,12 @@ plugins {
 dependencies {
     api(libs.bundles.vertx.core)
     api(libs.bundles.kotlin.std)
-
-    implementation(libs.bundles.slf4j.api)
+    api(libs.bundles.slf4j.api)
 
     testImplementation(libs.junit.api)
     testRuntimeOnly (libs.junit.engine)
+
+    dokkaPlugin(libs.dokka.versioning.plugin)
 }
-
-
 
 description = "Vertigram Util"
