@@ -55,7 +55,7 @@ configure<ReleaseExtension> {
 tasks {
     named("afterReleaseBuild") {
         dependsOn(project.getSubprojects().map {
-            it.getTasks().getByName("publish")
+            "${it.name}:publish"
         })
     }
 }
