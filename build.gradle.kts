@@ -12,6 +12,7 @@ repositories {
 plugins {
     id("org.jetbrains.dokka")
     signing
+    `maven-publish`
     alias(libs.plugins.release)
     alias(libs.plugins.nexus)
 }
