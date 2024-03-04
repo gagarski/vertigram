@@ -3,25 +3,24 @@
  */
 
 plugins {
-    id("buildlogic.java-conventions")
+    id("buildlogic.vertigram-module")
 }
 
 dependencies {
-    api(libs.com.zaxxer.hikaricp)
-    api(libs.io.vertx.vertx.core)
-    api(libs.io.vertx.vertx.jdbc.client)
-    api(libs.io.vertx.vertx.lang.kotlin)
-    api(libs.io.vertx.vertx.lang.kotlin.coroutines)
-    api(libs.org.flywaydb.flyway.core)
-    api(libs.org.jetbrains.kotlin.kotlin.stdlib.jdk8)
-    api(libs.org.jetbrains.kotlinx.kotlinx.coroutines.core.jvm)
-    api(libs.org.jetbrains.kotlinx.kotlinx.coroutines.jdk8)
-    api(libs.org.jooq.jooq)
-    api(libs.org.jooq.jooq.codegen)
-    api(libs.org.jooq.jooq.meta)
-    api(libs.org.postgresql.postgresql)
-    api(libs.org.slf4j.slf4j.api)
+    api(libs.bundles.hikari)
+    api(libs.bundles.vertx.core)
+    api(libs.bundles.vertx.jdbc)
+    api(libs.bundles.flyway)
+    api(libs.bundles.kotlin.std)
+    api(libs.bundles.jooq)
+    api(libs.bundles.slf4j.api)
+
     api(project(":vertigram-util"))
+
+    testImplementation(libs.junit.api)
+    testRuntimeOnly (libs.junit.engine)
+
+    dokkaPlugin(libs.dokka.versioning.plugin)
 }
 
 description = "Vertigram jOOQ"

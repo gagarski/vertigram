@@ -4,6 +4,7 @@
 
 plugins {
     id("buildlogic.vertigram-module")
+    kotlin("kapt")
 }
 
 dependencies {
@@ -18,6 +19,16 @@ dependencies {
     api(libs.bundles.slf4j.api)
     api(project(":vertigram-util"))
     api(project(":vertigram-annotations"))
+    kapt(project(":vertigram-codegen"))
+
+    testImplementation(libs.junit.api)
+    testRuntimeOnly (libs.junit.engine)
+
+    dokkaPlugin(libs.dokka.versioning.plugin)
 }
 
 description = "Vertigram Client"
+
+kapt {
+    annotationProcessor("ski.gagar.vertigram.codegen.VertigramClientGenerator")
+}

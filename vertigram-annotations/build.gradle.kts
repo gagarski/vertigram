@@ -8,6 +8,11 @@ plugins {
 
 dependencies {
     api(libs.bundles.kotlin.std)
+
+    testImplementation(libs.junit.api)
+    testRuntimeOnly (libs.junit.engine)
+
+    dokkaPlugin(libs.dokka.versioning.plugin)
 }
 
 description = "Vertigram Annotations"

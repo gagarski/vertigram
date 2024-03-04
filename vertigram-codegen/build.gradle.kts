@@ -10,6 +10,11 @@ dependencies {
     api(libs.bundles.kotlin.std)
     api(project(":vertigram-annotations"))
     api(libs.bundles.kotlinpoet)
+
+    testImplementation(libs.junit.api)
+    testRuntimeOnly (libs.junit.engine)
+
+    dokkaPlugin(libs.dokka.versioning.plugin)
 }
 
 description = "Vertigram Code Generators"

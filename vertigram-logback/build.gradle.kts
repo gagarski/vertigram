@@ -3,17 +3,21 @@
  */
 
 plugins {
-    id("buildlogic.java-conventions")
+    id("buildlogic.vertigram-module")
 }
 
 dependencies {
-    api(libs.io.vertx.vertx.core)
-    api(libs.io.vertx.vertx.lang.kotlin)
-    api(libs.io.vertx.vertx.lang.kotlin.coroutines)
+    api(libs.bundles.vertx.core)
+    api(libs.bundles.kotlin.std)
+    api(libs.bundles.logback)
+
     api(project(":vertigram"))
     api(project(":vertigram-telegram-client"))
-    api(libs.org.jetbrains.kotlinx.kotlinx.coroutines.slf4j)
-    compileOnly(libs.ch.qos.logback.logback.classic)
+
+    testImplementation(libs.junit.api)
+    testRuntimeOnly (libs.junit.engine)
+
+    dokkaPlugin(libs.dokka.versioning.plugin)
 }
 
 description = "Vertigram Logback"
