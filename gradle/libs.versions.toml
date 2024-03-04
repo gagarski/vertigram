@@ -60,6 +60,7 @@ dokka-versioning-plugin = { module = "org.jetbrains.dokka:versioning-plugin", ve
 
 kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 dokka-gradle-plugin = { module = "org.jetbrains.dokka:dokka-gradle-plugin", version.ref = "dokka" }
+rrr-gradle-plugin = { module = "net.researchgate:gradle-release", version.ref = "release" }
 
 
 [plugins]
