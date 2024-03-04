@@ -3,14 +3,13 @@
  */
 
 plugins {
-    id("buildlogic.java-conventions")
+    id("buildlogic.vertigram-module")
 }
 
 dependencies {
-    api(libs.org.jetbrains.kotlin.kotlin.stdlib.jdk8)
+    api(libs.bundles.kotlin.std)
     api(project(":vertigram-annotations"))
-    api(libs.com.squareup.kotlinpoet.metadata)
-    api(libs.com.squareup.kotlinpoet)
+    api(libs.bundles.kotlinpoet)
 }
 
 description = "Vertigram Code Generators"

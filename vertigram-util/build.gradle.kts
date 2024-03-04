@@ -4,10 +4,11 @@
  */
 
 plugins {
-    id("buildlogic.xxx")
+    id("buildlogic.vertigram-module")
 }
 
 dependencies {
+    api(libs.bundles.jackson)
     api(libs.bundles.vertx.core)
     api(libs.bundles.kotlin.std)
     api(libs.bundles.slf4j.api)

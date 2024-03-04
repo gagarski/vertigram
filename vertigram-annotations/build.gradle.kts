@@ -3,11 +3,11 @@
  */
 
 plugins {
-    id("buildlogic.java-conventions")
+    id("buildlogic.vertigram-module")
 }
 
 dependencies {
-    api(libs.org.jetbrains.kotlin.kotlin.stdlib.jdk8)
+    api(libs.bundles.kotlin.std)
 }
 
 description = "Vertigram Annotations"
