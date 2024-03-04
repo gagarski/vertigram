@@ -49,6 +49,6 @@ nexusPublishing {
 
 configure<ReleaseExtension> {
     with(git) {
-        requireBranch.set(null as String?)
+        requireBranch.set("gradle")
     }
 }
