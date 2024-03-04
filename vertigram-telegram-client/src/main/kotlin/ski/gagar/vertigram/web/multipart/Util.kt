@@ -1,7 +1,7 @@
 package ski.gagar.vertigram.web.multipart
 
 import io.vertx.core.buffer.Buffer
-import ski.gagar.vertigram.io.SingletonStream
+import ski.gagar.vertigram.util.io.SingletonStream
 
 internal const val NL = "\r\n"
 internal fun String.asBuffer() = Buffer.buffer(this)

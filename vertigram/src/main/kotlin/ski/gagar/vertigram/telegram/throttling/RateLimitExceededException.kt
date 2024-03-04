@@ -1,6 +1,6 @@
 package ski.gagar.vertigram.telegram.throttling
 
-import ski.gagar.vertigram.eventbus.exceptions.VertigramException
+import ski.gagar.vertigram.util.exceptions.VertigramException
 import java.time.Duration
 
 /**

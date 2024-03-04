@@ -1,4 +1,4 @@
-package ski.gagar.vertigram.eventbus.exceptions
+package ski.gagar.vertigram.util.exceptions
 
 /**
  * An exception, which is serializable vor [ski.gagar.vertigram.Vertigram.EventBus]

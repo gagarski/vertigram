@@ -66,6 +66,10 @@
             <artifactId>vertx-web-client</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.jetbrains.kotlinx</groupId>
             <artifactId>kotlinx-coroutines-core-jvm</artifactId>
         </dependency>
@@ -95,7 +99,7 @@
         </dependency>
         <dependency>
             <groupId>ski.gagar.vertigram</groupId>
-            <artifactId>vertigram-core</artifactId>
+            <artifactId>vertigram-util</artifactId>
         </dependency>
         <dependency>
             <groupId>ski.gagar.vertigram</groupId>

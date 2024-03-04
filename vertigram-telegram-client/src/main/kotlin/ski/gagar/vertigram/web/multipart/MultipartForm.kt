@@ -10,8 +10,8 @@ import io.vertx.kotlin.coroutines.coAwait
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.coroutineScope
 import org.apache.commons.lang3.RandomStringUtils
-import ski.gagar.vertigram.io.ConcatStream
-import ski.gagar.vertigram.io.ReadStreamWrapper
+import ski.gagar.vertigram.util.io.ConcatStream
+import ski.gagar.vertigram.util.io.ReadStreamWrapper
 
 class MultipartForm(val parts: List<Part>) {
     private val boundary =

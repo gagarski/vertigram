@@ -1,4 +1,4 @@
-package ski.gagar.vertigram.jackson.typing
+package ski.gagar.vertigram.util.jackson.typing
 
 import com.fasterxml.jackson.databind.cfg.MapperConfig
 import com.fasterxml.jackson.databind.introspect.AnnotatedClass

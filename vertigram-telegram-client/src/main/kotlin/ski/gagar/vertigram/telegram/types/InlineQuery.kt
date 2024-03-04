@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 import com.fasterxml.jackson.databind.annotation.JsonTypeResolver
 import ski.gagar.vertigram.annotations.TelegramCodegen
-import ski.gagar.vertigram.jackson.typing.TypeResolverWithDeductionBuilder
+import ski.gagar.vertigram.util.jackson.typing.TypeResolverWithDeductionBuilder
 import ski.gagar.vertigram.telegram.types.richtext.HasOptionalRichCaption
 import ski.gagar.vertigram.telegram.types.richtext.HasRichText
 import ski.gagar.vertigram.telegram.types.richtext.RichText

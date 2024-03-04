@@ -1,4 +1,4 @@
-package ski.gagar.vertigram.jackson.typing
+package ski.gagar.vertigram.util.jackson.typing
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo.As
 import com.fasterxml.jackson.core.JsonParser

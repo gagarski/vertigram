@@ -4,7 +4,7 @@ import io.netty.handler.codec.http.HttpHeaderNames
 import io.netty.handler.codec.http.HttpHeaderValues
 import io.vertx.core.buffer.Buffer
 import io.vertx.core.streams.ReadStream
-import ski.gagar.vertigram.io.ReadStreamWrapper
+import ski.gagar.vertigram.util.io.ReadStreamWrapper
 
 class ReadStreamPart(
     name: String,

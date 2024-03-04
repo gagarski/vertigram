@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference
 import kotlinx.coroutines.Job
 import ski.gagar.vertigram.Vertigram
 import ski.gagar.vertigram.coroutines.setTimerNonCancellable
-import ski.gagar.vertigram.jackson.typeReference
+import ski.gagar.vertigram.util.jackson.typeReference
 import ski.gagar.vertigram.logback.Level
 import ski.gagar.vertigram.logback.LogEvent
 import ski.gagar.vertigram.logback.asString

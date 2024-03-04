@@ -1,4 +1,4 @@
-package ski.gagar.vertigram.jackson.typing
+package ski.gagar.vertigram.util.jackson.typing
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 import com.fasterxml.jackson.databind.DeserializationConfig
