@@ -7,7 +7,6 @@ import org.jetbrains.dokka.gradle.DokkaTaskPartial
 
 
 group = "ski.gagar.vertigram"
-version = "1.0.0-alpha42-SNAPSHOT"
 
 plugins {
     kotlin("jvm")

@@ -4,7 +4,6 @@ import org.jetbrains.dokka.versioning.VersioningPlugin
 import org.jetbrains.dokka.versioning.VersioningConfiguration
 
 group = "ski.gagar.vertigram"
-version = "1.0.0-alpha42-SNAPSHOT"
 
 repositories {
     mavenCentral()
