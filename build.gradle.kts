@@ -47,8 +47,15 @@ nexusPublishing {
 
 
 configure<ReleaseExtension> {
+
     with(git) {
         requireBranch.set("gradle")
         buildTasks.set(listOf("publish"))
+    }
+}
+
+tasks {
+    named("afterReleaseBuild") {
+        dependsOn("publish")
     }
 }
