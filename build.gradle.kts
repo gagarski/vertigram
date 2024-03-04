@@ -1,4 +1,5 @@
 
+import net.researchgate.release.ReleaseExtension
 import org.jetbrains.dokka.versioning.VersioningPlugin
 import org.jetbrains.dokka.versioning.VersioningConfiguration
 
@@ -45,8 +46,9 @@ nexusPublishing {
     }
 }
 
-release {
-    git {
-        requireBranch.set(null)
+
+configure<ReleaseExtension> {
+    with(git) {
+        requireBranch.set(null as String?)
     }
 }
