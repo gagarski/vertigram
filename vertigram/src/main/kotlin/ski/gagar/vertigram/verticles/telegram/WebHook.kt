@@ -6,8 +6,8 @@ import io.vertx.core.http.HttpServer
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.handler.BodyHandler
 import kotlinx.coroutines.delay
-import ski.gagar.vertigram.jackson.mapTo
-import ski.gagar.vertigram.jackson.typeReference
+import ski.gagar.vertigram.util.jackson.mapTo
+import ski.gagar.vertigram.util.jackson.typeReference
 import ski.gagar.vertigram.retrying
 import ski.gagar.vertigram.telegram.client.Telegram
 import ski.gagar.vertigram.telegram.client.ThinTelegram

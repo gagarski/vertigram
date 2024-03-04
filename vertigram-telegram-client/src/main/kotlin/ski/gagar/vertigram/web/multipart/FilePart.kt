@@ -4,7 +4,7 @@ import io.netty.handler.codec.http.HttpHeaderNames
 import io.netty.handler.codec.http.HttpHeaderValues
 import io.vertx.core.file.AsyncFile
 import io.vertx.kotlin.coroutines.coAwait
-import ski.gagar.vertigram.io.ReadStreamWrapper
+import ski.gagar.vertigram.util.io.ReadStreamWrapper
 
 class FilePart(name: String,
                filename: String,

@@ -6,9 +6,9 @@ import io.vertx.core.eventbus.DeliveryOptions
 import io.vertx.core.eventbus.Message
 import io.vertx.core.json.JsonObject
 import ski.gagar.vertigram.Vertigram
-import ski.gagar.vertigram.eventbus.exceptions.VertigramException
-import ski.gagar.vertigram.eventbus.exceptions.VertigramInternalException
-import ski.gagar.vertigram.jackson.toJsonObject
+import ski.gagar.vertigram.util.exceptions.VertigramException
+import ski.gagar.vertigram.util.exceptions.VertigramInternalException
+import ski.gagar.vertigram.util.jackson.toJsonObject
 
 /**
  * Reply wrapper for [Vertigram.EventBus]

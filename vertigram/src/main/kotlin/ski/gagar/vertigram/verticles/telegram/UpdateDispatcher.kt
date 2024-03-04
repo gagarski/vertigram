@@ -1,7 +1,7 @@
 package ski.gagar.vertigram.verticles.telegram
 
 import com.fasterxml.jackson.core.type.TypeReference
-import ski.gagar.vertigram.jackson.typeReference
+import ski.gagar.vertigram.util.jackson.typeReference
 import ski.gagar.vertigram.telegram.types.Update
 import ski.gagar.vertigram.verticles.common.VertigramVerticle
 import ski.gagar.vertigram.verticles.telegram.UpdateDispatcher.Config

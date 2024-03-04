@@ -13,8 +13,8 @@ import kotlinx.coroutines.slf4j.MDCContext
 import ski.gagar.vertigram.Vertigram
 import ski.gagar.vertigram.coroutines.VerticleName
 import ski.gagar.vertigram.getVertigram
-import ski.gagar.vertigram.jackson.mapTo
-import ski.gagar.vertigram.jackson.typeReference
+import ski.gagar.vertigram.util.jackson.mapTo
+import ski.gagar.vertigram.util.jackson.typeReference
 import ski.gagar.vertigram.util.lazy
 import ski.gagar.vertigram.util.logger
 import kotlin.coroutines.CoroutineContext

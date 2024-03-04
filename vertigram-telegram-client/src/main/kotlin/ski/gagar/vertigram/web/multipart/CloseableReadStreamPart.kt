@@ -3,8 +3,8 @@ package ski.gagar.vertigram.web.multipart
 import io.netty.handler.codec.http.HttpHeaderNames
 import io.netty.handler.codec.http.HttpHeaderValues
 import io.vertx.core.buffer.Buffer
-import ski.gagar.vertigram.io.CloseableReadStream
-import ski.gagar.vertigram.io.ReadStreamWrapper
+import ski.gagar.vertigram.util.io.CloseableReadStream
+import ski.gagar.vertigram.util.io.ReadStreamWrapper
 
 class CloseableReadStreamPart(
     name: String,

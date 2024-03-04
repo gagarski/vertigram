@@ -1,10 +1,10 @@
-package ski.gagar.vertigram.jackson
+package ski.gagar.vertigram.util.jackson
 
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.JavaType
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.vertx.core.json.JsonObject
-import ski.gagar.vertigram.internal.uncheckedCast
+import ski.gagar.vertigram.util.internal.uncheckedCast
 
 /**
  * Map [this] to [T] using [mapper]

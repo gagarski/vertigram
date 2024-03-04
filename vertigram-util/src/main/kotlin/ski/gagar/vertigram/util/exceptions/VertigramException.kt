@@ -1,4 +1,4 @@
-package ski.gagar.vertigram.eventbus.exceptions
+package ski.gagar.vertigram.util.exceptions
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonTypeInfo

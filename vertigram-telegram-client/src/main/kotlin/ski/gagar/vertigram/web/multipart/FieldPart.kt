@@ -1,7 +1,7 @@
 package ski.gagar.vertigram.web.multipart
 
-import ski.gagar.vertigram.io.ReadStreamWrapper
-import ski.gagar.vertigram.io.SingletonStream
+import ski.gagar.vertigram.util.io.ReadStreamWrapper
+import ski.gagar.vertigram.util.io.SingletonStream
 
 class FieldPart(name: String, value: Any) : Part() {
     override val contentDisposition = """form-data; name="$name""""

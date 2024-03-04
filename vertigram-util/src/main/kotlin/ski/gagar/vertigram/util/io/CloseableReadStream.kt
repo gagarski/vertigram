@@ -1,4 +1,4 @@
-package ski.gagar.vertigram.io
+package ski.gagar.vertigram.util.io
 
 import io.vertx.core.streams.ReadStream
 

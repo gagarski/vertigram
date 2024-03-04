@@ -4,8 +4,8 @@ import io.netty.handler.codec.http.HttpHeaderNames
 import io.vertx.core.buffer.Buffer
 import io.vertx.core.streams.ReadStream
 import kotlinx.coroutines.CoroutineScope
-import ski.gagar.vertigram.io.ConcatStream
-import ski.gagar.vertigram.io.ReadStreamWrapper
+import ski.gagar.vertigram.util.io.ConcatStream
+import ski.gagar.vertigram.util.io.ReadStreamWrapper
 
 typealias ReadStreamWrapperBuffer = ReadStreamWrapper<Buffer, ReadStream<Buffer>>
 
