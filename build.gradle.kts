@@ -12,7 +12,6 @@ repositories {
 plugins {
     id("org.jetbrains.dokka")
     signing
-    `maven-publish`
     alias(libs.plugins.release)
     alias(libs.plugins.nexus)
 }
@@ -55,6 +54,8 @@ configure<ReleaseExtension> {
 
 tasks {
     named("afterReleaseBuild") {
-        dependsOn("publish")
+        dependsOn(project.getSubprojects().map {
+            it.getTasks().getByName("publish")
+        })
     }
 }
