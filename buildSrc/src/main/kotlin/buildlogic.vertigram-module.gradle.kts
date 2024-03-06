@@ -30,9 +30,10 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach 
 
 tasks.withType<DokkaTaskPartial>().configureEach {
     dokkaSourceSets {
-
         named("main") {
+            sourceRoots.from(file("src/main/"), file("build/generated/source/kaptKotlin/main"))
             includes.from("Module.md")
+            suppressGeneratedFiles = false
 
             documentedVisibilities.set(setOf(
                 Visibility.PUBLIC,
