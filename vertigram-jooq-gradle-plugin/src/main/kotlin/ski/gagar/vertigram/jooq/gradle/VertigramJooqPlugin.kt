@@ -7,6 +7,7 @@ import org.gradle.api.tasks.JavaExec
 import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.register
+import ski.gagar.vertigram.jooq.gradle.config.gradle.Props
 import ski.gagar.vertigram.jooq.gradle.config.gradle.VertigramJooqExtension
 import java.io.File
 import java.util.*
@@ -24,7 +25,7 @@ class VertigramJooqPlugin : Plugin<Project> {
         val extDepConfig = project.configurations.create("vertigramJooq")
 
         val appConfig = project.configurations.create("vertigramJooqApp")
-        project.dependencies.add(appConfig.name, "ski.gagar.vertigram:vertigram-jooq-app:${version}")
+        project.dependencies.add(appConfig.name, "ski.gagar.vertigram:vertigram-jooq-app:${Props.version}")
 
         extDepConfig.setDescription("The classpath used to invoke the Vertigram jOOQ code generator. Add your JDBC driver, generator extensions, and additional dependencies here.")
 

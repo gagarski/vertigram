@@ -26,7 +26,12 @@ val generateResources = tasks.create("generateResources") {
     outputs.file(propFile)
     doLast {
         mkdir(propFile.parentFile)
-        propFile.writeText("version=${project.version}")
+        propFile.writeText("""
+            version=${project.version}
+            test-containers.version=${libs.versions.testcontainers.get()}
+            postgresql-driver.version=${libs.versions.postgresql.get()}
+            flyway.version=${libs.versions.flyway.get()}
+        """.trimIndent())
     }
 }
 

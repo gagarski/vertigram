@@ -51,7 +51,6 @@ fun DatabaseConnection.connect(): HikariDataSource =
     }
 
 fun DataSource.runFlyway(config: GeneratorConfig) {
-    println(config.flyway.locations)
     Flyway.configure()
         .dataSource(this)
         .locations(*config.flyway.locations.toTypedArray())
