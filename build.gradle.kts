@@ -34,9 +34,11 @@ tasks.dokkaHtmlMultiModule.configure {
     moduleName.set("Vertigram")
     pluginConfiguration<VersioningPlugin, VersioningConfiguration> {
         version = "1.0"
-        olderVersionsDir = projectDir.resolve("tmp")
-
+        olderVersionsDir = projectDir.resolve("build/dokka-old")
     }
+//    removeChildTasks([
+//        project(":compose:runtime"),
+//    ])
 }
 
 nexusPublishing {

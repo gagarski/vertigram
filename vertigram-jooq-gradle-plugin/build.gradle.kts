@@ -11,3 +11,9 @@ gradlePlugin {
         implementationClass = "ski.gagar.vertigram.jooq.gradle.VertigramJooqPlugin"
     }
 }
+
+dependencies {
+    implementation(libs.bundles.kotlin.std)
+    implementation(libs.bundles.testcontainers)
+    implementation(libs.bundles.jackson)
+}

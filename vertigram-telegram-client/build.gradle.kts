@@ -39,7 +39,7 @@ kapt {
 sourceSets {
     create("withGenerated") {
         kotlin {
-            srcDir(file("src/main/kotlin"))
+//            srcDir(file("src/main/kotlin"))
             srcDir("${buildDir}/generated/source/kaptKotlin/main")
         }
     }

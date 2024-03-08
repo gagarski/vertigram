@@ -17,7 +17,7 @@ postgresql = "42.7.1"
 reflections = "0.10.2"
 slf4j-api = "2.0.11"
 junit = "5.10.2"
-
+testcontainers = "1.19.7"
 dokka = "1.9.10"
 nexus = "1.3.0"
 release = "3.0.2"
@@ -57,7 +57,7 @@ slf4j-api = { module = "org.slf4j:slf4j-api", version.ref = "slf4j-api" }
 junit-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit" }
 junit-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit" }
 dokka-versioning-plugin = { module = "org.jetbrains.dokka:versioning-plugin", version.ref = "dokka" }
-
+testcontainers = { module = "org.testcontainers:jdbc", version.ref = "testcontainers" }
 kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 dokka-gradle-plugin = { module = "org.jetbrains.dokka:dokka-gradle-plugin", version.ref = "dokka" }
 
@@ -86,3 +86,4 @@ reflections = ["reflections"]
 slf4j-api = ["slf4j-api"]
 junit-engine = ["junit-engine"]
 junit-api = ["junit-api"]
+testcontainers = ["testcontainers"]
