@@ -2,11 +2,10 @@ package ski.gagar.vertigram.jooq.gradle.config.gradle
 
 import org.gradle.api.Action
 import org.gradle.api.GradleException
-import org.gradle.api.invocation.Gradle
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Optional
-import ski.gagar.vertigram.jooq.gradle.config.pojo.GeneratorConfig
+import ski.gagar.vertigram.jooq.app.config.GeneratorConfig
 import javax.inject.Inject
 
 
@@ -15,6 +14,13 @@ abstract class VertigramJooqExtension @Inject constructor(val objectFactory: Obj
     abstract val testContainer: Property<TestContainer>
     @get:Optional
     abstract val liveDb: Property<LiveDb>
+    abstract val flyway: Property<Flyway>
+    abstract val jooq: Property<Jooq>
+
+    init {
+        flyway.convention(objectFactory.newInstance(Flyway::class.java))
+        jooq.convention(objectFactory.newInstance(Jooq::class.java))
+    }
 
     fun testContainer(action: Action<TestContainer>) {
         val tc = objectFactory.newInstance(TestContainer::class.java)
@@ -28,6 +34,18 @@ abstract class VertigramJooqExtension @Inject constructor(val objectFactory: Obj
         liveDb.set(live)
     }
 
+    fun flyway(action: Action<Flyway>) {
+        val fw = objectFactory.newInstance(Flyway::class.java)
+        action.execute(fw)
+        flyway.set(fw)
+    }
+
+    fun jooq(action: Action<Jooq>) {
+        val jooq = objectFactory.newInstance(Jooq::class.java)
+        action.execute(jooq)
+        this.jooq.set(jooq)
+    }
+
     fun pojo(): GeneratorConfig {
         if (testContainer.isPresent && liveDb.isPresent) {
             throw GradleException("testContainer and liveDb are mutually exclusive")
@@ -38,7 +56,9 @@ abstract class VertigramJooqExtension @Inject constructor(val objectFactory: Obj
         }
 
         return GeneratorConfig(
-            db = if (testContainer.isPresent) testContainer.get().pojo() else liveDb.get().pojo()
+            db = if (testContainer.isPresent) testContainer.get().pojo() else liveDb.get().pojo(),
+            flyway = flyway.get().pojo(),
+            jooq = jooq.get().pojo()
         )
     }
 

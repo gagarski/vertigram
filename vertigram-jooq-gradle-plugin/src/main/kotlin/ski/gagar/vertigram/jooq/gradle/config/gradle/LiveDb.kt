@@ -1,7 +1,7 @@
 package ski.gagar.vertigram.jooq.gradle.config.gradle
 
 import org.gradle.api.provider.Property
-import ski.gagar.vertigram.jooq.gradle.config.pojo.DatabaseConfig
+import ski.gagar.vertigram.jooq.app.config.DatabaseConfig
 
 interface LiveDb {
     val url: Property<String>

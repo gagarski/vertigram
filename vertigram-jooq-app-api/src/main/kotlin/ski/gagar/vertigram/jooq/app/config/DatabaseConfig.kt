@@ -1,4 +1,4 @@
-package ski.gagar.vertigram.jooq.gradle.config.pojo
+package ski.gagar.vertigram.jooq.app.config
 
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
@@ -19,5 +19,11 @@ sealed interface DatabaseConfig {
         val className: String,
         val name: String,
         val version: String
-    ) : DatabaseConfig
+    ) : DatabaseConfig {
+        companion object {
+            const val USERNAME = "vertigram_jooq"
+            const val PASSWORD = "secret"
+            const val DB_NAME = "vertigram_jooq"
+        }
+    }
 }

@@ -1,6 +1,7 @@
-package ski.gagar.vertigram.jooq.gradle.app
+package ski.gagar.vertigram.jooq.app
 
 import org.testcontainers.containers.JdbcDatabaseContainer
+import ski.gagar.vertigram.jooq.app.config.DatabaseConfig
 
 sealed interface DatabaseConnection : AutoCloseable {
     val url: String
@@ -26,8 +27,8 @@ data class TestContainerConnection(
     val container: JdbcDatabaseContainer<*>
 ) : DatabaseConnection {
     override val url: String = container.jdbcUrl
-    override val username: String = container.username
-    override val password: String = container.password
+    override val username: String = DatabaseConfig.TestContainer.USERNAME
+    override val password: String = DatabaseConfig.TestContainer.PASSWORD
 
     override fun tearDown() {
         container.stop()
