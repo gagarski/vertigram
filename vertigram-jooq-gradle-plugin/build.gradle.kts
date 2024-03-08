@@ -15,5 +15,6 @@ gradlePlugin {
 dependencies {
     implementation(libs.bundles.kotlin.std)
     implementation(libs.bundles.testcontainers)
-    implementation(libs.bundles.jackson)
+    implementation(libs.flyway.gradle.plugin)
+    implementation(libs.jooq.gradle.plugin)
 }

@@ -1,38 +1,76 @@
 package ski.gagar.vertigram.jooq.gradle
 
-import com.fasterxml.jackson.databind.ObjectMapper
+import nu.studer.gradle.jooq.JooqExtension
+import org.flywaydb.gradle.FlywayExtension
+import org.gradle.BuildAdapter
+import org.gradle.BuildResult
+import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.tasks.JavaExec
 import org.gradle.kotlin.dsl.create
-import org.gradle.kotlin.dsl.register
+import org.testcontainers.containers.JdbcDatabaseContainer
+import ski.gagar.vertigram.jooq.gradle.config.gradle.TestContainer
 import ski.gagar.vertigram.jooq.gradle.config.gradle.VertigramJooqExtension
-import java.io.File
-import java.net.URLClassLoader
+import ski.gagar.vertigram.jooq.gradle.tasks.SetUpDatabase
 
 class VertigramJooqPlugin : Plugin<Project> {
-    override fun apply(project: Project) {
-        val extension = project.extensions.create<VertigramJooqExtension>("vertigramJooq")
-        val config = project.configurations.create("vertigramJooq")
-        config.setDescription("The classpath used to invoke the Vertigram jOOQ code generator. Add your JDBC driver, generator extensions, and additional dependencies here.")
+    private fun configurePlugins(project: Project, task: SetUpDatabase) {
+        if (null == task.containerInstance)
+            return
+        val flywayEx = project.extensions.findByType(FlywayExtension::class.java)
+            ?: throw GradleException("Flyway plugin expected")
 
-        project.tasks.register<JavaExec>("vertigramJooqCodegen") {
-            val om = ObjectMapper().findAndRegisterModules()
-            val pluginCp = project.files((VertigramJooqPlugin::class.java.classLoader as URLClassLoader).urLs.map { it.path })
-            classpath(pluginCp, config)
-            lateinit var f: File
+        flywayEx.apply {
+            url = task.containerInstance!!.jdbcUrl
+        }
 
-            mainClass.set("ski.gagar.vertigram.jooq.gradle.app.AppKt")
+        val jooqEx = project.extensions.findByType(JooqExtension::class.java)
+            ?: throw GradleException("jOOQ plugin required")
 
-            doFirst {
-                f = File.createTempFile("vertigram-jooq-", ".json")
-                om.writeValue(f, extension.pojo())
-                args(f.path)
+        jooqEx.configurations.all {
+            jooqConfiguration.apply {
+                jdbc.apply {
+                    url = task.containerInstance!!.jdbcUrl
+                }
+
             }
+        }
+    }
 
+    override fun apply(project: Project) {
+        project.plugins.withId("org.flywaydb.flyway") {
+            project.plugins.withId("nu.studer.jooq") {
+                val extension = project.extensions.create<VertigramJooqExtension>("vertigramJooq")
 
-            doLast {
-                f.delete()
+                val setUpTask = project.tasks.create<SetUpDatabase>("setUpDatabase") {
+                    if (!extension.testContainer.isPresent) return@create
+                    val tc = extension.testContainer.get()
+                    val clazz = Class.forName(tc.className.get())
+                    val cons = clazz.getConstructor(String::class.java)
+                    val container = (cons.newInstance("${tc.name.get()}:${tc.version.get()}") as JdbcDatabaseContainer<*>)
+                        .withUsername(TestContainer.USERNAME)
+                        .withPassword(TestContainer.PASSWORD)
+                        .withDatabaseName(TestContainer.DB_NAME)
+
+                    container.start()
+                    containerInstance = container
+                }
+
+                configurePlugins(project, setUpTask)
+
+                project.tasks.named("flywayMigrate").configure {
+                    dependsOn("setUpDatabase")
+                }
+
+                project.gradle.addBuildListener(object : BuildAdapter() {
+                    override fun buildFinished(result: BuildResult) {
+                        setUpTask.containerInstance?.stop()
+                    }
+                })
+
+//                project.tasks.named("generateJooq").configure {
+//                    dependsOn("flywayMigrate")
+//                }
             }
         }
     }

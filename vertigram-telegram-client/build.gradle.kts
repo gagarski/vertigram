@@ -40,7 +40,7 @@ sourceSets {
     create("withGenerated") {
         kotlin {
 //            srcDir(file("src/main/kotlin"))
-            srcDir("${buildDir}/generated/source/kaptKotlin/main")
+            srcDir("${layout.buildDirectory.get()}/generated/source/kaptKotlin/main")
         }
     }
 }

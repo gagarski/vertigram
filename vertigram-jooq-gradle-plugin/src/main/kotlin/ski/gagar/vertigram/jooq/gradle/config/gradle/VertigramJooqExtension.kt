@@ -1,45 +1,30 @@
 package ski.gagar.vertigram.jooq.gradle.config.gradle
 
 import org.gradle.api.Action
-import org.gradle.api.GradleException
-import org.gradle.api.invocation.Gradle
+import org.gradle.api.Project
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Optional
-import ski.gagar.vertigram.jooq.gradle.config.pojo.GeneratorConfig
+import org.gradle.kotlin.dsl.newInstance
 import javax.inject.Inject
 
-
-abstract class VertigramJooqExtension @Inject constructor(val objectFactory: ObjectFactory) {
+abstract class VertigramJooqExtension @Inject constructor(val objectFactory: ObjectFactory, val project: Project) {
+    abstract val generator: Property<String>
+    abstract val jooqDatabase: Property<String>
+    abstract val schema: Property<String>
+    abstract val driver: Property<String>
+    abstract val packageName: Property<String>
+    abstract val directory: Property<String>
     @get:Optional
     abstract val testContainer: Property<TestContainer>
     @get:Optional
     abstract val liveDb: Property<LiveDb>
+    abstract val config: Property<Config>
 
-    fun testContainer(action: Action<TestContainer>) {
-        val tc = objectFactory.newInstance(TestContainer::class.java)
-        action.execute(tc)
-        testContainer.set(tc)
+    fun configuration(action: Action<Config>) {
+        val conf = if (config.isPresent) config.get() else objectFactory.newInstance<Config>()
+        action.execute(conf)
+        config.set(conf)
+        conf.propagateTo(project)
     }
-
-    fun liveDb(action: Action<LiveDb>) {
-        val live = objectFactory.newInstance(LiveDb::class.java)
-        action.execute(live)
-        liveDb.set(live)
-    }
-
-    fun pojo(): GeneratorConfig {
-        if (testContainer.isPresent && liveDb.isPresent) {
-            throw GradleException("testContainer and liveDb are mutually exclusive")
-        }
-
-        if (!testContainer.isPresent && !liveDb.isPresent) {
-            throw GradleException("Either testContainer or liveDb should be present in config")
-        }
-
-        return GeneratorConfig(
-            db = if (testContainer.isPresent) testContainer.get().pojo() else liveDb.get().pojo()
-        )
-    }
-
 }
