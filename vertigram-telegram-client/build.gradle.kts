@@ -35,22 +35,15 @@ kapt {
     annotationProcessor("ski.gagar.vertigram.codegen.VertigramClientGenerator")
 }
 
-
 sourceSets {
-    create("withGenerated") {
-        kotlin {
-//            srcDir(file("src/main/kotlin"))
-            srcDir("${buildDir}/generated/source/kaptKotlin/main")
-        }
+    main {
+        kotlin.srcDir("${layout.buildDirectory.get()}/generated/source/kaptKotlin/main")
     }
 }
 
 tasks.named<Jar>("sourcesJar").configure {
     dependsOn("kaptKotlin")
-    archiveClassifier = "sources"
-    from(sourceSets.named("withGenerated").get().allSource)
 }
-
 
 tasks.withType<DokkaTaskPartial>().configureEach {
     dependsOn("kaptKotlin")
