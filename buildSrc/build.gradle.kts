@@ -15,5 +15,5 @@ repositories {
 
 dependencies {
     implementation(libs.kotlin.gradle.plugin)
-    implementation(libs.dokka.gradle.plugin)
+    implementation(libsInternal.dokka.gradle.plugin)
 }

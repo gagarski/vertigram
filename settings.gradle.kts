@@ -22,3 +22,12 @@ include("vertigram-version-catalog")
 include("vertigram-bom")
 include("vertigram-jooq-app-api")
 include("vertigram-jooq-app")
+include("vertigram-dokka-tool")
+
+dependencyResolutionManagement {
+    versionCatalogs {
+        create("libsInternal") {
+            from(files("./gradle/libs.internal.versions.toml"))
+        }
+    }
+}

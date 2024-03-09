@@ -1,7 +1,6 @@
 
-import net.researchgate.release.ReleaseExtension
-import org.jetbrains.dokka.versioning.VersioningPlugin
 import org.jetbrains.dokka.versioning.VersioningConfiguration
+import org.jetbrains.dokka.versioning.VersioningPlugin
 
 group = "ski.gagar.vertigram"
 
@@ -12,17 +11,17 @@ repositories {
 plugins {
     id("org.jetbrains.dokka")
     signing
-    alias(libs.plugins.release)
-    alias(libs.plugins.nexus)
+    alias(libsInternal.plugins.release)
+    alias(libsInternal.plugins.nexus)
 }
 
 dependencies {
-    dokkaPlugin(libs.dokka.versioning.plugin)
+    dokkaPlugin(libsInternal.dokka.versioning.plugin)
 }
 
 buildscript {
     dependencies {
-        classpath(libs.dokka.versioning.plugin)
+        classpath(libsInternal.dokka.versioning.plugin)
     }
 
     repositories {
@@ -36,9 +35,6 @@ tasks.dokkaHtmlMultiModule.configure {
         version = "1.0"
         olderVersionsDir = projectDir.resolve("build/dokka-old")
     }
-//    removeChildTasks([
-//        project(":compose:runtime"),
-//    ])
 }
 
 nexusPublishing {

@@ -26,7 +26,7 @@ dependencies {
     testImplementation(libs.junit.api)
     testRuntimeOnly (libs.junit.engine)
 
-    dokkaPlugin(libs.dokka.versioning.plugin)
+    dokkaPlugin(libsInternal.dokka.versioning.plugin)
 }
 
 description = "Vertigram Client"

@@ -1,0 +1,42 @@
+group = "ski.gagar.vertigram"
+
+plugins {
+    alias(libsInternal.plugins.spring.boot)
+    java
+    kotlin("jvm")
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+    gradlePluginPortal()
+}
+
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+    kotlinOptions {
+        jvmTarget = "21"
+    }
+}
+
+tasks.withType<Test> {
+    useJUnitPlatform()
+}
+
+java.sourceCompatibility = JavaVersion.VERSION_21
+
+springBoot {
+    mainClass = "ski.gagar.vertigram.dokka.tool.DokkaToolKt"
+}
+
+tasks.getByName<org.springframework.boot.gradle.tasks.bundling.BootJar>("bootJar") {
+    archiveFileName = "vertigram-dokka-tool.jar"
+}
+
+dependencies {
+    implementation(libs.bundles.kotlin.std)
+    implementation(libsInternal.args4j)
+    implementation(project(":vertigram-util"))
+
+    testImplementation(libs.junit.api)
+    testRuntimeOnly (libs.junit.engine)
+}

@@ -1,3 +1,5 @@
+import org.jetbrains.dokka.gradle.DokkaTaskPartial
+
 plugins {
     id("buildlogic.vertigram-module")
 }
@@ -10,7 +12,11 @@ dependencies {
     testImplementation(libs.junit.api)
     testRuntimeOnly (libs.junit.engine)
 
-    dokkaPlugin(libs.dokka.versioning.plugin)
+    dokkaPlugin(libsInternal.dokka.versioning.plugin)
 }
 
 description = "API for interacting between vertigram-jooq-gradle-plugin and vertigram-jooq-app"
+
+tasks.withType<DokkaTaskPartial>().configureEach {
+    onlyIf { false }
+}
