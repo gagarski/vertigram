@@ -46,14 +46,11 @@ tasks.dokkaHtmlMultiModule.configure {
     }
 }
 
-
-
 nexusPublishing {
     repositories {
         sonatype()
     }
 }
-
 
 release {
     with(git) {
