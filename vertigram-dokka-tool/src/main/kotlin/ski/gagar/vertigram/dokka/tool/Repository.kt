@@ -1,7 +1,5 @@
 package ski.gagar.vertigram.dokka.tool
 
-import ski.gagar.vertigram.util.lazy
-import ski.gagar.vertigram.util.logger
 import java.nio.file.Path
 import java.util.*
 import kotlin.io.path.ExperimentalPathApi
@@ -29,9 +27,6 @@ class Repository(
         for (file in archDir.listFiles()!!) {
             val v = file.name.toVersionOrNull(majorVersionParts)
             if (null == v) {
-                logger.lazy.warn {
-                    "${file.name} does not look like a version, skipping it"
-                }
                 continue
             }
             versions.add(VersionEx(v, false))
@@ -74,7 +69,7 @@ class Repository(
             }
 
     fun getVersionsToKeep() = getVersionsToKeepSeq().toList()
-    fun getPathsToKeep() = getVersionsToKeepSeq().map { it.path.toAbsolutePath() }.toList()
+    fun getPathsToKeep() = getVersionsToKeepSeq().map { it.path }.toList()
 
     private fun getVersionsToRemoveSeq(): Sequence<Version> {
         val oldMajors =
@@ -109,7 +104,7 @@ class Repository(
     }
 
     fun getVersionsToRemove() = getVersionsToRemoveSeq().toList()
-    fun getPathsToRemove() = getVersionsToRemoveSeq().map { it.path.toAbsolutePath() }.toList()
+    fun getPathsToRemove() = getVersionsToRemoveSeq().map { it.path }.toList()
 
     @OptIn(ExperimentalPathApi::class)
     fun removeOld() {

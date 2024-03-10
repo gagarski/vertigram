@@ -33,9 +33,8 @@ tasks.getByName<org.springframework.boot.gradle.tasks.bundling.BootJar>("bootJar
 }
 
 dependencies {
-    implementation(libs.bundles.kotlin.std)
+    implementation(libs.kotlin.stdlib)
     implementation(libsInternal.args4j)
-    implementation(project(":vertigram-util"))
 
     testImplementation(libs.junit.api)
     testRuntimeOnly (libs.junit.engine)

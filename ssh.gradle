@@ -1,0 +1,64 @@
+
+remotes {
+    dokkaHost {
+        host = project.properties["vertigram.ssh.host"]
+        port = Integer.parseInt(project.properties["vertigram.ssh.port"])
+        user = project.properties["vertigram.ssh.user"]
+        identity = file(project.properties["vertigram.ssh.identity"])
+    }
+}
+
+tasks.register('dokkaDownloadOld') {
+    doLast {
+        delete "${layout.buildDirectory.get()}/oldDokka"
+        mkdir "${layout.buildDirectory.get()}/oldDokka"
+        ssh.run {
+            session(remotes.dokkaHost) {
+                def nonSnapshotVersion = version.split("-").getAt(0)
+                put from: file("vertigram-dokka-tool/build/libs/vertigram-dokka-tool.jar"), into: "${project.properties["vertigram.ssh.repo"]}"
+                def res = execute "cd ${project.properties["vertigram.ssh.repo"]}; java -jar ./vertigram-dokka-tool.jar -repository . -with-virtual ${nonSnapshotVersion}"
+                def splitted = res.replace("\r\n", "\n").split("\n")
+                execute "rm -f ${project.properties["vertigram.ssh.repo"]}/archive.zip"
+                execute "cd ${project.properties["vertigram.ssh.repo"]}; zip -q -9 -r ./archive.zip ${String.join(" ", splitted)}"
+                get from: "${project.properties["vertigram.ssh.repo"]}/archive.zip", into: "${layout.buildDirectory.get()}/oldDokka"
+                execute "rm -f ${project.properties["vertigram.ssh.repo"]}/archive.zip"
+                execute "rm -f ${project.properties["vertigram.ssh.repo"]}/vertigram-dokka-tool.jar"
+            }
+        }
+        copy {
+            from zipTree("${layout.buildDirectory.get()}/oldDokka/archive.zip")
+            into "${layout.buildDirectory.get()}/oldDokka"
+        }
+    }
+}
+
+tasks.register('dokkaUpload') {
+    doLast {
+
+        ssh.run {
+            session(remotes.dokkaHost) {
+                def versionSplitted = version.split("-")
+                def isSnapshot = versionSplitted.size() > 1 && versionSplitted.getAt(1) == "SNAPSHOT"
+                put from: file("vertigram-dokka-tool/build/libs/vertigram-dokka-tool.jar"), into: "${project.properties["vertigram.ssh.repo"]}"
+                put from: file("build/distributions/dokka.zip"), into: "${project.properties["vertigram.ssh.repo"]}"
+
+                if (!isSnapshot) {
+                    execute "rm -rf ${project.properties["vertigram.ssh.repo"]}/latest"
+                    execute "mkdir ${project.properties["vertigram.ssh.repo"]}/latest"
+                    execute "unzip  ${project.properties["vertigram.ssh.repo"]}/dokka.zip -d ${project.properties["vertigram.ssh.repo"]}/latest"
+                    execute "unzip ${project.properties["vertigram.ssh.repo"]}/dokka.zip -d ${project.properties["vertigram.ssh.repo"]}/archive/${version}"
+                    execute "rm -rf archive/${version}/older"
+                    def res = execute "cd ${project.properties["vertigram.ssh.repo"]}; java -jar ./vertigram-dokka-tool.jar -repository . remove"
+                } else {
+                    execute "rm -rf ${project.properties["vertigram.ssh.repo"]}/snapshot"
+                    execute "mkdir ${project.properties["vertigram.ssh.repo"]}/snapshot"
+                    execute "unzip ${project.properties["vertigram.ssh.repo"]}/dokka.zip -d ${project.properties["vertigram.ssh.repo"]}/snapshot"
+                }
+
+                execute "rm -f ${project.properties["vertigram.ssh.repo"]}/dokka.zip"
+                execute "rm -f ${project.properties["vertigram.ssh.repo"]}/vertigram-dokka-tool.jar"
+
+            }
+        }
+    }
+}
