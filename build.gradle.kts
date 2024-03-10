@@ -66,6 +66,7 @@ tasks {
         dependsOn(project.getSubprojects().map {
             "${it.name}:publish"
         })
+        dependsOn("vertigram-jooq-plugin:publishPlugins")
     }
 }
 
