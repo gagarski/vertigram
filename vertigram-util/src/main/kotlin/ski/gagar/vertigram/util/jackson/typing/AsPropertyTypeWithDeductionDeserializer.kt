@@ -54,7 +54,7 @@ class AsPropertyTypeWithDeductionDeserializer(
         tb: TokenBuffer?,
         typeId: String?
     ): Any {
-        val tb = if (_typeIdVisible) {
+        val tokenBuffer = if (_typeIdVisible) {
             (tb ?: ctxt.bufferForInputBuffering(p))?.apply {
                 writeFieldName(p.currentName())
                 writeString(typeId)
@@ -62,20 +62,20 @@ class AsPropertyTypeWithDeductionDeserializer(
         } else {
             tb
         }
-        val p = if (tb != null) {
+        val parser = if (tokenBuffer != null) {
             p.clearCurrentToken()
-            JsonParserSequence.createFlattened(false, tb.asParser(p), p)
+            JsonParserSequence.createFlattened(false, tokenBuffer.asParser(p), p)
         } else {
             p
         }
-        if (p.currentToken() != JsonToken.END_OBJECT) {
+        if (parser.currentToken() != JsonToken.END_OBJECT) {
             // Must point to the next value; tb had no current, p pointed to VALUE_STRING:
-            p.nextToken() // to skip past String value
+            parser.nextToken() // to skip past String value
         }
 
-        val deducer = deducers[typeId] ?: return _deserializeTypedUsingDefaultImpl(p, ctxt, tb, _msgForMissingId)
+        val deducer = deducers[typeId] ?: return _deserializeTypedUsingDefaultImpl(parser, ctxt, tokenBuffer, _msgForMissingId)
 
-        return deducer.deserializeTypedFromAny(p, ctxt)
+        return deducer.deserializeTypedFromAny(parser, ctxt)
     }
 
 
@@ -91,7 +91,7 @@ class AsPropertyTypeWithDeductionDeserializer(
             return subtypes
                 .groupBy {
                     it.getId(config.isEnabled(MapperFeature.ACCEPT_CASE_INSENSITIVE_VALUES))
-                }.mapValues { (k, v) ->
+                }.mapValues { (_, v) ->
                     AsDeductionTypeDeserializer(bt, idRes, defaultImpl, config, v)
                 }
         }

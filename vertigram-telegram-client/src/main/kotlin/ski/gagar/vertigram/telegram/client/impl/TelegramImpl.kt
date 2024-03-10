@@ -17,19 +17,19 @@ import io.vertx.ext.web.client.WebClient
 import io.vertx.ext.web.client.WebClientOptions
 import io.vertx.ext.web.codec.BodyCodec
 import io.vertx.kotlin.coroutines.coAwait
-import ski.gagar.vertigram.util.lazy
-import ski.gagar.vertigram.util.logger
+import ski.gagar.vertigram.telegram.exceptions.TelegramCallException
+import ski.gagar.vertigram.telegram.exceptions.TelegramDownloadException
 import ski.gagar.vertigram.telegram.methods.JsonTelegramCallable
 import ski.gagar.vertigram.telegram.methods.MultipartTelegramCallable
 import ski.gagar.vertigram.telegram.methods.TelegramCallable
-import ski.gagar.vertigram.util.internal.toMap
 import ski.gagar.vertigram.telegram.types.Wrapper
-import ski.gagar.vertigram.util.internal.uncheckedCast
-import ski.gagar.vertigram.telegram.exceptions.TelegramCallException
-import ski.gagar.vertigram.telegram.exceptions.TelegramDownloadException
 import ski.gagar.vertigram.util.VertigramTypeHints
 import ski.gagar.vertigram.util.getOrAssert
+import ski.gagar.vertigram.util.internal.toMap
+import ski.gagar.vertigram.util.internal.uncheckedCast
 import ski.gagar.vertigram.util.json.TELEGRAM_JSON_MAPPER
+import ski.gagar.vertigram.util.lazy
+import ski.gagar.vertigram.util.logger
 import ski.gagar.vertigram.util.multipart.telegramJsonMapperWithMultipart
 import ski.gagar.vertigram.web.multipart.FieldPart
 import ski.gagar.vertigram.web.multipart.MultipartForm
@@ -82,23 +82,16 @@ internal data class TelegramImplOptions(
 
 /**
  * Internal low-level Telegram implementation
+ *
+ * @param token Auth token
+ * @param vertx [Vertx] instance
+ * @param proxy Proxy options
+ * @param options Options
  */
 internal class TelegramImpl(
-    /**
-     * Auth token
-     */
     private val token: String,
-    /**
-     * [Vertx] instance
-     */
     vertx: Vertx,
-    /**
-     * Proxy options
-     */
     private val proxy: ProxyOptions? = null,
-    /**
-     * Options
-     */
     private val options: TelegramImplOptions = TelegramImplOptions()
 ) {
     private fun makeClientOptions(poolSize: Int?) =

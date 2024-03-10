@@ -186,7 +186,7 @@ abstract class RichTextElementWithChildren internal constructor() : RichTextElem
     protected open fun user(user: User, text: String) = initTag(UserMention(user)) { +text }
 
     /**
-     * Add user mention (\@user) as a child
+     * Add user mention (@user) as a child
      */
     protected open fun user(user: User) = when {
         user.username != null -> initTag(UserMention(user)) { +"@${user.username}" }
@@ -195,7 +195,7 @@ abstract class RichTextElementWithChildren internal constructor() : RichTextElem
     }
 
     /**
-     * Add soft user mention (\@user inside `code`) as a child
+     * Add soft user mention (@user inside `code`) as a child
      */
     protected open fun userSoft(user: User) = when {
         user.username != null -> initTag(Code("@${user.username}"))

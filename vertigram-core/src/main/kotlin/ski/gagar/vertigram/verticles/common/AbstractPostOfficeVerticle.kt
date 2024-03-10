@@ -38,23 +38,16 @@ import java.util.*
  *  [AbstractPostOfficeVerticle] tracks forward receipts, meaning if the subscriber unsibscribes and then subscribes
  *  again using the same address (only addresses are used to identify subscribers), [AbstractPostOfficeVerticle]
  *  will track which of the stored messages the subscriber has already received and won't resend them.
+ *
+ *  @param Config Configuration type
+ *  @param Message Message type
+ *  @param Discriminator Discriminator to get a receiver by message
+ *  @param SubscriptionInfo Subscription info message type
  */
 abstract class AbstractPostOfficeVerticle<
-        /**
-         * Configuration
-         */
         Config,
-        /**
-         * Message type
-         */
         Message,
-        /**
-         * Discriminator to get a receiver by message
-         */
         Discriminator: AbstractPostOfficeVerticle.Discriminator,
-        /**
-         * Subscription info message type
-         */
         SubscriptionInfo : AbstractPostOfficeVerticle.SubscriptionInfo<Discriminator>> : AbstractHierarchyVerticle<Config>() {
     /**
      * Incoming messages address, should be overridden by subclasses.

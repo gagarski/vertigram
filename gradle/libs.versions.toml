@@ -3,16 +3,16 @@
 
 [versions]
 logback = "1.4.14"
-jackson = "2.16.1"
+jackson = "2.16.2"
 kotlinpoet = "1.14.2"
 hikaricp = "5.1.0"
-vertx = "4.5.1"
+vertx = "4.5.4"
 commons-lang3 = "3.14.0"
 flyway = "10.6.0"
 kotlin = "1.9.22"
 kotlinx-coroutines = "1.7.3"
 kotlinx-html = "0.11.0"
-jooq = "3.19.3"
+jooq = "3.19.6"
 postgresql = "42.7.1"
 reflections = "0.10.2"
 slf4j-api = "2.0.11"
@@ -56,8 +56,6 @@ jooq-meta = { module = "org.jooq:jooq-meta", version.ref = "jooq" }
 postgresql = { module = "org.postgresql:postgresql", version.ref = "postgresql" }
 reflections = { module = "org.reflections:reflections", version.ref = "reflections" }
 slf4j-api = { module = "org.slf4j:slf4j-api", version.ref = "slf4j-api" }
-junit-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit" }
-junit-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit" }
 testcontainers = { module = "org.testcontainers:jdbc", version.ref = "testcontainers" }
 kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 
@@ -79,6 +77,4 @@ jooq-codegen = ["jooq-codegen"]
 postgresql = ["postgresql"]
 reflections = ["reflections"]
 slf4j-api = ["slf4j-api"]
-junit-engine = ["junit-engine"]
-junit-api = ["junit-api"]
 testcontainers = ["testcontainers"]

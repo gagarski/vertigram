@@ -275,19 +275,14 @@ abstract class AbstractTelegramDialogVerticle<Config> : AbstractHierarchyVerticl
      * By default, the last sent message (sent by [sendOrEdit] itself) will be edited instead of sending a new message
      * if there were no messages in the chat after it has been sent (i.e. we think that it is the last message in the chat).
      * Otherwise, a new message will be sent.
+     *
+     * @param richText Text of the message
+     * @param buttons Reply markup of the message
+     * @param forceSend Ignore the fact that the message is the last in the chat and do sending instead of editing
      */
     protected suspend fun sendOrEdit(
-        /**
-         * Text of the message
-         */
         richText: RichText,
-        /**
-         * Reply markup of the message
-         */
         buttons: ReplyMarkup? = null,
-        /**
-         * Ignore the fact that the message is the last in the chat and do sending instead of editing
-         */
         forceSend: Boolean = false
     ) {
         if (forceSend) {

@@ -108,24 +108,17 @@ abstract class VertigramVerticle<Config> : CoroutineVerticle() {
     /**
      * Attach a consumer [function] to event bus on Vertigram [address] with the verticle as a coroutine scope.
      *
-     * @see Vertigram.EventBus.consumer
+     * @param address Vertigram address
+     * @param replyOptions Reply options
+     * @param requestJavaType Request java type
+     * @param function Consumer itself
+     *
+     *  @see Vertigram.EventBus.consumer
      */
     inline fun <reified RequestPayload, Result> consumer(
-        /**
-         * Vertigram address
-         */
         address: String,
-        /**
-         * Reply options
-         */
         replyOptions: DeliveryOptions = DeliveryOptions(),
-        /**
-         * Request java type
-         */
         requestJavaType: JavaType = vertigram.objectMapper.typeFactory.constructType(typeReference<RequestPayload>().type),
-        /**
-         * Consumer itself
-         */
         crossinline function: suspend (RequestPayload) -> Result
     ) = vertigram.eventBus.consumer(
         coroScope = this,
@@ -161,21 +154,9 @@ abstract class VertigramVerticle<Config> : CoroutineVerticle() {
      * @see Vertigram.EventBus.localConsumer
      */
     inline fun <reified RequestPayload, Result> localConsumer(
-        /**
-         * Vertigram address
-         */
         address: String,
-        /**
-         * Reply options
-         */
         replyOptions: DeliveryOptions = DeliveryOptions(),
-        /**
-         * Request java type
-         */
         requestJavaType: JavaType = vertigram.objectMapper.typeFactory.constructType(typeReference<RequestPayload>().type),
-        /**
-         * Consumer itself
-         */
         crossinline function: suspend (RequestPayload) -> Result
     ) = vertigram.eventBus.localConsumer(
         coroScope = this,

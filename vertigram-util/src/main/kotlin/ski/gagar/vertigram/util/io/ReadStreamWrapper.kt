@@ -5,15 +5,12 @@ import io.vertx.core.streams.ReadStream
 
 /**
  * A lazy wrapper for [ReadStream]
+ *
+ * @param provider Provider of the stream which will be called on [open]
+ * @param closer Closer which will be called on [close]
  */
 class ReadStreamWrapper<T, out S : ReadStream<T>>(
-    /**
-     * Provider of the stream which will be called on [open]
-     */
     private val provider: suspend () -> S,
-    /**
-     * Closer which will be called on [close]
-     */
     private val closer: suspend (stream: S) -> Unit = { }
 ) {
     private lateinit var stream: S

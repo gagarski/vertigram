@@ -19,10 +19,6 @@ dependencies {
     api(project(":vertigram-core"))
     api(project(":vertigram-annotations"))
 
-    testImplementation(libs.junit.api)
-    testRuntimeOnly (libs.junit.engine)
-
-    dokkaPlugin(libsInternal.dokka.versioning.plugin)
 }
 
 description = "Vertigram"

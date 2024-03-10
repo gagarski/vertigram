@@ -38,28 +38,21 @@ val DOUBLE_CPU_WORKER_EXECUTOR_FACTORY: WorkerExecutorFactory =
 /**
  * A wrapper for [Database] connection allowing to execute jOOQ queries inside Vertx Verticles.
  *
+ * @param vertx [Vertx] instance
+ * @param executorName A name for the [WorkerExecutor] on which the queries will be executed
+ * @param dataSourceName Data source name
+ * @param workerExecutorFactory [WorkerExecutorFactory] to use
+ *
  * @sample ski.gagar.vertigram.samples.dbExample
  */
 class Database(
-    /**
-     * Vertx instance
-     */
     vertx: Vertx,
     /**
      * Coroutine scope (e.g. a verticle)
      */
     private val scope: CoroutineScope,
-    /**
-     * A name for the [WorkerExecutor] on which the queries will be executed
-     */
     executorName: String = DEFAULT_EXECUTOR_NAME,
-    /**
-     * Data source name
-     */
     dataSourceName: String = DEFAULT_DATA_SOURCE_NAME,
-    /**
-     * [WorkerExecutorFactory] to use
-     */
     workerExecutorFactory: WorkerExecutorFactory = DOUBLE_CPU_WORKER_EXECUTOR_FACTORY
 ) : Closeable, CoroutineScope by scope {
 
@@ -116,20 +109,16 @@ class Database(
 
         /**
          * Create data source with [name] on [vertx] from [config]
+         *
+         * @param vertx [Vertx] instance
+         * @param config Data source config
+         * @param name Data source name
+         * @param migrate RunFlyway migrations
          */
         suspend fun attachDatasource(
-            /**
-             * Vertx instance
-             */
             vertx: Vertx,
-            /**
-             * Data source config
-             */
             config: DataSourceConfig,
             name: String = DEFAULT_DATA_SOURCE_NAME,
-            /**
-             * Run Flyway migrations
-             */
             migrate: Boolean = true
         ): DataSource {
             logger.lazy.info { "Creating shared data source with config $config" }

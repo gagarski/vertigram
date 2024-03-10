@@ -10,19 +10,14 @@ import kotlin.coroutines.CoroutineContext
 
 /**
  * Run [task] after [delay]
+ *
+ * @param delay The delay
+ * @param context Coroutine context
+ * @param task The task to run
  */
 fun CoroutineScope.setTimer(
-    /**
-     * The delay
-     */
     delay: Duration,
-    /**
-     * Coroutine context
-     */
     context: CoroutineContext = this.coroutineContext,
-    /**
-     * The task to run
-     */
     task: suspend () -> Unit
 ) = launch {
     delay(delay.toMillis())
@@ -33,6 +28,10 @@ fun CoroutineScope.setTimer(
 
 /**
  * [setTimer] on [NonCancellable]
+ *
+ * @param delay The delay
+ * @param task The task to run
+ *
  */
 fun CoroutineScope.setTimerNonCancellable(
     /**

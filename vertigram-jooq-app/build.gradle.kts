@@ -19,11 +19,6 @@ dependencies {
     implementation(libs.bundles.logback)
     implementation(libs.bundles.jooq.codegen)
     implementation(libs.jackson.dataformat.xml)
-
-    testImplementation(libs.junit.api)
-    testRuntimeOnly (libs.junit.engine)
-
-    dokkaPlugin(libsInternal.dokka.versioning.plugin)
 }
 
 description = "Vertigram jOOQ app"

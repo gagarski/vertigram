@@ -17,8 +17,8 @@ dependencies {
 
     api(project(":vertigram-util"))
 
-    testImplementation(libs.junit.api)
-    testRuntimeOnly (libs.junit.engine)
+    testImplementation(libsInternal.junit.api)
+    testRuntimeOnly (libsInternal.junit.engine)
 
     dokkaPlugin(libsInternal.dokka.versioning.plugin)
 }

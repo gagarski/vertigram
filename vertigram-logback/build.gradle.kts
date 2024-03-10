@@ -13,11 +13,6 @@ dependencies {
 
     api(project(":vertigram"))
     api(project(":vertigram-telegram-client"))
-
-    testImplementation(libs.junit.api)
-    testRuntimeOnly (libs.junit.engine)
-
-    dokkaPlugin(libsInternal.dokka.versioning.plugin)
 }
 
 description = "Vertigram Logback"

@@ -19,15 +19,12 @@ private val LONG_POLL_DEFAULT_GAP: Duration = Duration.ofSeconds(5)
  * This implementation keeps HTTP connection pools open until it is closed.
  * This should be considered a "heavy" client, which means you probably should consider
  * sharing it across your app. The implemntation is thread-safe.
+ *
+ * @param token Auth token
+ * @param vertx [Vertx] instance
  */
 class DirectTelegram(
-    /**
-     * Auth token
-     */
     token: String,
-    /**
-     * Vertx instance
-     */
     vertx: Vertx,
     /**
      * Options

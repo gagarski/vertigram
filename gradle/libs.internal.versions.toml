@@ -8,11 +8,17 @@ release = "3.0.2"
 spring-boot = "3.2.3"
 args4j = "2.33"
 ssh = "2.11.2"
+junit = "5.10.2"
+grgit = "1.1.0"
 
 [libraries]
 dokka-versioning-plugin = { module = "org.jetbrains.dokka:versioning-plugin", version.ref = "dokka" }
 dokka-gradle-plugin = { module = "org.jetbrains.dokka:dokka-gradle-plugin", version.ref = "dokka" }
+dokka-base = { module = "org.jetbrains.dokka:dokka-base", version.ref = "dokka" }
 args4j = { module = "args4j:args4j", version.ref = "args4j" }
+junit-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit" }
+junit-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit" }
+grgit = { module = "org.ajoberstar:grgit", version.ref = "grgit" }
 
 [plugins]
 dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
@@ -20,3 +26,7 @@ nexus = { id = "io.github.gradle-nexus.publish-plugin", version.ref = "nexus" }
 release = { id = "net.researchgate.release", version.ref = "release" }
 spring-boot = { id = "org.springframework.boot", version.ref = "spring-boot" }
 ssh = { id = "org.hidetake.ssh", version.ref = "ssh" }
+
+[bundles]
+junit-engine = ["junit-engine"]
+junit-api = ["junit-api"]

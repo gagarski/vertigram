@@ -22,11 +22,6 @@ dependencies {
     api(project(":vertigram-util"))
     api(project(":vertigram-annotations"))
     kapt(project(":vertigram-codegen"))
-
-    testImplementation(libs.junit.api)
-    testRuntimeOnly (libs.junit.engine)
-
-    dokkaPlugin(libsInternal.dokka.versioning.plugin)
 }
 
 description = "Vertigram Client"

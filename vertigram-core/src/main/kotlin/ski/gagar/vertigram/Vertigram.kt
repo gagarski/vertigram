@@ -15,17 +15,17 @@ import io.vertx.kotlin.coroutines.coAwait
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.slf4j.MDCContext
-import ski.gagar.vertigram.util.exceptions.VertigramException
-import ski.gagar.vertigram.util.exceptions.VertigramInternalException
 import ski.gagar.vertigram.eventbus.messages.Reply
 import ski.gagar.vertigram.eventbus.messages.Request
 import ski.gagar.vertigram.eventbus.messages.replyWithSuccess
 import ski.gagar.vertigram.eventbus.messages.replyWithThrowable
+import ski.gagar.vertigram.services.VertigramInitializer
+import ski.gagar.vertigram.util.coroMdcWith
+import ski.gagar.vertigram.util.exceptions.VertigramException
+import ski.gagar.vertigram.util.exceptions.VertigramInternalException
 import ski.gagar.vertigram.util.jackson.mapTo
 import ski.gagar.vertigram.util.jackson.toJsonObject
 import ski.gagar.vertigram.util.jackson.typeReference
-import ski.gagar.vertigram.services.VertigramInitializer
-import ski.gagar.vertigram.util.coroMdcWith
 import ski.gagar.vertigram.verticles.common.VertigramVerticle
 import java.util.*
 
@@ -163,50 +163,42 @@ class Vertigram(
          *
          * Published value is wrapped into [Request] with [value] as [Request.payload] and serialized using [objectMapper].
          *
-         * @see io.vertx.core.eventbus.EventBus.send
+         * @param address Vertigram address
+         * @param value Value to publish
+         * @param options Delivery options
          *
+         * @see io.vertx.core.eventbus.EventBus.send
          */
         fun <RequestPayload> publish(
-            /**
-             * Vertigram address
-             */
             address: String,
-            /**
-             * Value to publish
-             */
             value: RequestPayload,
-            /**
-             * Delivery options
-             */
             options: DeliveryOptions = DeliveryOptions()
-        ): io.vertx.core.eventbus.EventBus =
+        ) {
             raw.publish(vertigramAddress(address).address, Request(value).toJsonObject(objectMapper), options)
+        }
 
         /**
          * Send a [value] to Vertigram [address] with [options].
          *
          * Sent value is wrapped into [Request] with [value] as [Request.payload] and serialized using [objectMapper].
          *
+         * @param address Vertigram address
+         * @param value Value to send
+         * @param options Delivery options
+         *
          * @see io.vertx.core.eventbus.EventBus.send
          */
         fun <RequestPayload> send(
-            /**
-             * Vertigram address
-             */
             address: String,
-            /**
-             * Value to send
-             */
             value: RequestPayload,
-            /**
-             * Delivery options
-             */
             options: DeliveryOptions = DeliveryOptions()
         ): io.vertx.core.eventbus.EventBus =
             raw.send(vertigramAddress(address).address, Request(value).toJsonObject(objectMapper), options)
 
         /**
          * Non-reified version of [consumer]
+         *
+         * @param requestJavaType [JavaType] for request
          *
          * @see consumer
          * @see VertigramVerticle.consumer
@@ -216,9 +208,6 @@ class Vertigram(
             coroScope: CoroutineScope,
             address: String,
             replyOptions: DeliveryOptions = DeliveryOptions(),
-            /**
-             * [JavaType] for request
-             */
             requestJavaType: JavaType,
             crossinline function: suspend (RequestPayload) -> Result
         ) : MessageConsumer<JsonObject> {
@@ -247,6 +236,8 @@ class Vertigram(
         /**
          * Non-reified version of [localConsumer]
          *
+         * @param requestJavaType [JavaType] for request
+         *
          * @see localConsumer
          * @see VertigramVerticle.localConsumer
          * @see io.vertx.core.eventbus.EventBus.localConsumer
@@ -256,9 +247,6 @@ class Vertigram(
             coroScope: CoroutineScope,
             address: String,
             replyOptions: DeliveryOptions = DeliveryOptions(),
-            /**
-             * [JavaType] for request
-             */
             requestJavaType: JavaType,
             crossinline function: suspend (RequestPayload) -> Result
         ) : MessageConsumer<JsonObject> {
@@ -302,29 +290,20 @@ class Vertigram(
          *  - If [Config.hideInternalExceptions] is false then exceptions outside [VertigramException] hierarchy are transformed
          *    into [VertigramInternalException] with the same message.
          *
+         * @param coroScope Coroutine scope
+         * @param address Vertigram address
+         * @param replyOptions Reply options
+         * @param requestJavaType Request java type
+         * @param function Consumer itself
+         *
          * @see VertigramVerticle.consumer
          * @see io.vertx.core.eventbus.EventBus.consumer
          */
         inline fun <reified RequestPayload, Result> consumer(
-            /**
-             * Coroutine scope
-             */
             coroScope: CoroutineScope,
-            /**
-             * Vertigram address
-             */
             address: String,
-            /**
-             * Reply options
-             */
             replyOptions: DeliveryOptions = DeliveryOptions(),
-            /**
-             * Request java type
-             */
             requestJavaType: JavaType = objectMapper.typeFactory.constructType(typeReference<RequestPayload>().type),
-            /**
-             * Consumer itself
-             */
             crossinline function: suspend (RequestPayload) -> Result
         ) = consumerNonReified(
             coroScope = coroScope,
@@ -339,29 +318,20 @@ class Vertigram(
          *
          * The same protocol is used as for [consumer].
          *
+         * @param coroScope Coroutine scope
+         * @param address Vertigram address
+         * @param replyOptions Reply options
+         * @param requestJavaType Request java type
+         * @param function Consumer itself
+         *
          * @see VertigramVerticle.localConsumer
          * @see io.vertx.core.eventbus.EventBus.localConsumer
          */
         inline fun <reified RequestPayload, Result> localConsumer(
-            /**
-             * Coroutine scope
-             */
             coroScope: CoroutineScope,
-            /**
-             * Vertigram address
-             */
             address: String,
-            /**
-             * Reply options
-             */
             replyOptions: DeliveryOptions = DeliveryOptions(),
-            /**
-             * Request java type
-             */
             requestJavaType: JavaType = objectMapper.typeFactory.constructType(typeReference<RequestPayload>().type),
-            /**
-             * Consumer itself
-             */
             crossinline function: suspend (RequestPayload) -> Result
         ) = localConsumerNonReified(
             coroScope = coroScope,

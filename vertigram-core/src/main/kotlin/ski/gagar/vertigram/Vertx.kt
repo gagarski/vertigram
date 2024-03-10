@@ -25,21 +25,15 @@ fun <T> Vertx.runBlocking(block: suspend Vertx.() -> T) {
 
 /**
  * Call [block] until no exception is thrown or [shouldStop] returns true, all [coolDown] between attempts.
+ *
+ * @param shouldStop A predicate on number of the current attempt that determines if we should stop and throw even if exception was
+ *     thrown last time. The exception in that case is being rethrown to the caller.
+ * @param coolDown A suspend function being called between the attempts. The number of the attempt is passed to it.
+ * @param block The function to call
  */
 suspend fun <T> retrying(
-    /**
-     * A predicate on number of the current attempt that determines if we should stop and throw even if exception was
-     * thrown last time.
-     * The exception in that cas is being rethrown to the caller.
-     */
     shouldStop: (Int) -> Boolean = { it >= 10 },
-    /**
-     * A suspend function being called between the attempts. The number of the attempt is passed to it.
-     */
     coolDown: suspend (Int) -> Unit = { delay(5000) },
-    /**
-     * The function to call
-     */
     block: suspend () -> T
 ): T {
     var i = 0
