@@ -10,6 +10,7 @@ args4j = "2.33"
 ssh = "2.11.2"
 junit = "5.10.2"
 grgit = "1.1.0"
+gradle-publish-plugin = "1.2.1"
 
 [libraries]
 dokka-versioning-plugin = { module = "org.jetbrains.dokka:versioning-plugin", version.ref = "dokka" }
@@ -26,7 +27,7 @@ nexus = { id = "io.github.gradle-nexus.publish-plugin", version.ref = "nexus" }
 release = { id = "net.researchgate.release", version.ref = "release" }
 spring-boot = { id = "org.springframework.boot", version.ref = "spring-boot" }
 ssh = { id = "org.hidetake.ssh", version.ref = "ssh" }
-
+gradle-publish = { id = "com.gradle.plugin-publish", version.ref = "gradle-publish-plugin" }
 [bundles]
 junit-engine = ["junit-engine"]
 junit-api = ["junit-api"]

@@ -2,14 +2,21 @@
 plugins {
     id("buildlogic.vertigram-module")
     `kotlin-dsl`
+    alias(libsInternal.plugins.gradle.publish)
 }
 
 
 
 gradlePlugin {
+    website = "https://vertigram.gagar.ski"
+    vcsUrl = "https://github.com/gagarski/vertigram"
     // Define the plugin
-    val greeting by plugins.creating {
+    plugins.create("vertigramJooq") {
         id = "ski.gagar.vertigram.jooq"
+        displayName = "Vertigram jOOQ plugin"
+        description = "Vertigram plugin that allows to execute jOOQ code generation together with Flyway " +
+                "migrations and optionally involving testcontainers"
+        tags = listOf("vertigram", "jooq", "flyway", "testcontainers", "vertx")
         implementationClass = "ski.gagar.vertigram.jooq.gradle.VertigramJooqPlugin"
     }
 }
