@@ -1,3 +1,3 @@
 # Vertigram
 
-Blah-blah [Xxx](ski.gagar.vertigram.util.WorkerExecutorServiceError)
+Blah-blah <a href="./vertigram-core/index.html">vertigram-core</a>

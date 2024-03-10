@@ -38,7 +38,7 @@ val DOUBLE_CPU_WORKER_EXECUTOR_FACTORY: WorkerExecutorFactory =
 /**
  * A wrapper for [Database] connection allowing to execute jOOQ queries inside Vertx Verticles.
  *
- * @sample dbExample
+ * @sample ski.gagar.vertigram.samples.dbExample
  */
 class Database(
     /**
@@ -75,7 +75,7 @@ class Database(
     /**
      * Run [body] with jOOQ query.
      *
-     * @sample dbExample
+     * @sample ski.gagar.vertigram.samples.dbExample
      */
     suspend operator fun <T> invoke(body: suspend DSLContext.() -> T) = coroutineScope {
         withContext(dispatcher) {
@@ -90,7 +90,7 @@ class Database(
     /**
      * Transaction wrapper
      *
-     * @see dbTranExample
+     * @sample ski.gagar.vertigram.samples.dbTranExample
      */
     inner class WithTransaction {
         suspend operator fun <T> invoke(body: suspend DSLContext.() -> T): T =
@@ -181,18 +181,3 @@ fun CoroutineVerticle.Database(executorName: String = Database.DEFAULT_EXECUTOR_
 internal suspend fun <T> DSLContext.transactionResultCoro(block: suspend (Configuration) -> T): T =
     transactionResultInt(block)
 
-
-private suspend fun CoroutineVerticle.dbExample() {
-    val db = Database()
-    db {
-        selectFrom("some_table")
-            .fetch()
-    }
-}
-private suspend fun CoroutineVerticle.dbTranExample() {
-    val db = Database()
-    db.withTransaction {
-        selectFrom("some_table")
-            .fetch()
-    }
-}

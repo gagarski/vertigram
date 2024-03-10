@@ -42,10 +42,11 @@ tasks.withType<DokkaTaskPartial>().configureEach {
             ))
             perPackageOption {
                 matchingRegex.set(".*internal.*")
+                matchingRegex.set(".*samples.*")
                 suppress.set(true)
 
             }
-
+            samples.from(files("src/main/kotlin/ski/gagar/vertigram/samples/Samples.kt"))
 //        sourceLink {
 //            val exampleDir = "https://github.com/Kotlin/dokka/tree/master/examples/gradle/dokka-multimodule-example"
 //

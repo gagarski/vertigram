@@ -16,7 +16,7 @@ val logger: Logger
 /**
  * Lazy handle for [Logger]
  *
- * @sample lazyLog
+ * @sample ski.gagar.vertigram.samples.lazyLog
  */
 val Logger.lazy
     get() = LazyLogger(this)
@@ -120,20 +120,5 @@ inline fun withExtraMdc(extra: Map<String, String>, block: () -> Unit) {
                 MDC.remove(k)
             }
         }
-    }
-}
-
-
-@Suppress("UNUSED_PARAMETER")
-private fun doOperation(obj: Any) {}
-/**
- * An example for [lazy]
- */
-private fun lazyLog(obj: Any) {
-    try {
-        logger.lazy.info { "Performing an operation with $obj" }
-        doOperation(obj)
-    } catch (ex: Exception) {
-        logger.lazy.error(ex) { "Something bad happened with $obj" }
     }
 }

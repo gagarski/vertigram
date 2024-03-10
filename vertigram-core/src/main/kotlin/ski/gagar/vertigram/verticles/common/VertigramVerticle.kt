@@ -43,7 +43,7 @@ abstract class VertigramVerticle<Config> : CoroutineVerticle() {
      * In most cases it's enough to just call [typeReference]
      *
      * @see typeReference
-     * @sample typeReferenceExample
+     * @sample ski.gagar.vertigram.samples.typeReferenceExample
      */
     protected abstract val configTypeReference: TypeReference<Config>
 
@@ -217,10 +217,3 @@ abstract class VertigramVerticle<Config> : CoroutineVerticle() {
     }
 }
 
-private fun typeReferenceExample() {
-    data class Config(val something: String)
-
-    class ExampleVerticle : VertigramVerticle<Config>() {
-        override val configTypeReference: TypeReference<Config> = typeReference()
-    }
-}

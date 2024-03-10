@@ -9,7 +9,7 @@ import ski.gagar.vertigram.util.NoPosArgs
 /**
  * A builder for [ReplyMarkup.InlineKeyboard].
  *
- * @sample inlineKeyboardSample
+ * @sample ski.gagar.vertigram.samples.inlineKeyboardSample
  */
 fun inlineKeyboard(init: InlineKeyboardMarkupBuilder.() -> Unit): ReplyMarkup.InlineKeyboard {
     val bld = InlineKeyboardMarkupBuilder()
@@ -22,7 +22,7 @@ fun inlineKeyboard(init: InlineKeyboardMarkupBuilder.() -> Unit): ReplyMarkup.In
  *
  * Payloads for button types are unwrapped.
  *
- * @sample keyboardSample
+ * @sample ski.gagar.vertigram.samples.keyboardSample
  */
 fun keyboard(
     @Suppress("UNUSED_PARAMETER")
