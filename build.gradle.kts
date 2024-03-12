@@ -88,4 +88,3 @@ if (null != project.properties["vertigram.ssh.host"]) {
         dependsOn("dokkaZip")
     }
 }
-

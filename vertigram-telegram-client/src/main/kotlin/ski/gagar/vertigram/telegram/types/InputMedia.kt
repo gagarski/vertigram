@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
+import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.telegram.types.attachments.Attachment
 import ski.gagar.vertigram.telegram.types.richtext.HasOptionalRichCaption
 import ski.gagar.vertigram.telegram.types.richtext.RichText
@@ -41,7 +42,11 @@ sealed interface InputMedia {
      *
      * For up-to-date documentation please consult the official Telegram docs.
      */
-    data class Animation(
+    @TelegramCodegen(
+        generateMethod = false,
+        generatePseudoConstructor = true,
+    )
+    data class Animation internal constructor(
         @JsonIgnore
         private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
         override val media: Attachment,
@@ -57,6 +62,8 @@ sealed interface InputMedia {
         override val type: Type = Type.ANIMATION
 
         override fun instantiate(media: Attachment, thumbnail: Attachment?) = copy(media = media, thumbnail = thumbnail)
+
+        companion object
     }
 
     /**
@@ -64,7 +71,11 @@ sealed interface InputMedia {
      *
      * For up-to-date documentation please consult the official Telegram docs.
      */
-    data class Audio(
+    @TelegramCodegen(
+        generateMethod = false,
+        generatePseudoConstructor = true,
+    )
+    data class Audio internal constructor(
         @JsonIgnore
         private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
         override val media: Attachment,
@@ -78,6 +89,8 @@ sealed interface InputMedia {
     ) : InputMedia, HasOptionalRichCaption {
         override val type: Type = Type.AUDIO
         override fun instantiate(media: Attachment, thumbnail: Attachment?) = copy(media = media, thumbnail = thumbnail)
+
+        companion object
     }
 
     /**
@@ -85,7 +98,11 @@ sealed interface InputMedia {
      *
      * For up-to-date documentation please consult the official Telegram docs.
      */
-    data class Document(
+    @TelegramCodegen(
+        generateMethod = false,
+        generatePseudoConstructor = true,
+    )
+    data class Document internal constructor(
         @JsonIgnore
         private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
         override val media: Attachment,
@@ -97,6 +114,8 @@ sealed interface InputMedia {
     ) : InputMedia, HasOptionalRichCaption {
         override val type: Type = Type.DOCUMENT
         override fun instantiate(media: Attachment, thumbnail: Attachment?) = copy(media = media, thumbnail = thumbnail)
+
+        companion object
     }
 
     /**
@@ -104,7 +123,11 @@ sealed interface InputMedia {
      *
      * For up-to-date documentation please consult the official Telegram docs.
      */
-    data class Photo(
+    @TelegramCodegen(
+        generateMethod = false,
+        generatePseudoConstructor = true,
+    )
+    data class Photo internal constructor(
         @JsonIgnore
         private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
         override val media: Attachment,
@@ -116,6 +139,8 @@ sealed interface InputMedia {
         override val type: Type = Type.PHOTO
         override val thumbnail = null
         override fun instantiate(media: Attachment, thumbnail: Attachment?) = copy(media = media)
+
+        companion object
     }
 
     /**
@@ -123,7 +148,11 @@ sealed interface InputMedia {
      *
      * For up-to-date documentation please consult the official Telegram docs.
      */
-    data class Video(
+    @TelegramCodegen(
+        generateMethod = false,
+        generatePseudoConstructor = true,
+    )
+    data class Video internal constructor(
         @JsonIgnore
         private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
         override val media: Attachment,
@@ -139,6 +168,8 @@ sealed interface InputMedia {
     ) : InputMedia, HasOptionalRichCaption {
         override val type: Type = Type.VIDEO
         override fun instantiate(media: Attachment, thumbnail: Attachment?) = copy(media = media, thumbnail = thumbnail)
+
+        companion object
     }
 
     /**
@@ -155,6 +186,8 @@ sealed interface InputMedia {
         val keywords: List<String>? = null
     ) {
         fun instantiate(sticker: Attachment) = copy(sticker = sticker)
+
+        companion object
     }
 
 
@@ -181,7 +214,5 @@ sealed interface InputMedia {
             const val DOCUMENT_STR = "document"
         }
     }
-
-
 }
 

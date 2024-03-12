@@ -51,7 +51,7 @@ tasks.withType<DokkaTaskPartial>().configureEach {
     dokkaSourceSets {
         named("main") {
             sourceRoots.from(file("src/main/"), file("build/generated/source/kaptKotlin/main"))
-            includes.from("Module.md")
+            includes.from("README.md")
             suppressGeneratedFiles = false
 
             jdkVersion = 21
@@ -111,8 +111,6 @@ tasks.withType<DokkaTaskPartial>().configureEach {
                 packageListUrl.set(URI("https://javadoc.io/doc/org.jooq/jooq/${libs.findVersion("jooq").get()}/element-list").toURL())
             }
         }
-
-
     }
 }
 
@@ -130,6 +128,9 @@ tasks.withType<Test> {
 java.sourceCompatibility = JavaVersion.VERSION_21
 
 publishing {
+    if (name == "vertigram-jooq-gradle-plugin")
+        return@publishing
+
     publications.create<MavenPublication>("maven") {
         from(components["java"])
 
@@ -168,5 +169,8 @@ publishing {
 }
 
 signing {
+    if (name == "vertigram-jooq-gradle-plugin")
+        return@signing
+
     sign(publishing.publications["maven"])
 }

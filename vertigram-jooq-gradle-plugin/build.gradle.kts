@@ -5,8 +5,6 @@ plugins {
     alias(libsInternal.plugins.gradle.publish)
 }
 
-
-
 gradlePlugin {
     website = "https://vertigram.gagar.ski"
     vcsUrl = "https://github.com/gagarski/vertigram"

@@ -8,6 +8,7 @@ repositories {
 plugins {
     `java-platform`
     `maven-publish`
+    signing
 }
 
 val subprojectsExcludedFromBom = setOf(

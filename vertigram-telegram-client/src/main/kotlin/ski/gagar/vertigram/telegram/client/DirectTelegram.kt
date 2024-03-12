@@ -30,7 +30,7 @@ class DirectTelegram(
      * Options
      */
     private val options: Options = Options()
-) : ski.gagar.vertigram.telegram.client.AbstractTelegram(), AutoCloseable {
+) : AbstractTelegram(), AutoCloseable {
     private val impl: TelegramImpl =
         TelegramImpl(
             token,
