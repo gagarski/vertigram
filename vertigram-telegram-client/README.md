@@ -252,7 +252,7 @@ limits. Vert.x gives you a plenty of way of sharing an object locally (for examp
 [sharedData](io.vertx.core.Vertx.sharedData) or just by passing it everywhere as a parameter). 
 [DirectTelegram](ski.gagar.vertigram.telegram.client.DirectTelegram) is safe to be shared and can be used from multiple 
 threads. However, if you want to explore Vertigram way of sharing [Telegram](ski.gagar.vertigram.telegram.client.Telegram)
-across your bot, you may explore `vertigram` module, which introduce `vertigram-core`-enabled way to talk to Telegram
-from across your application. It wraps [Telegram](ski.gagar.vertigram.telegram.client.Telegram) into a verticle and
-provides a thin client to talk to this verticle using event bus, providing same [Telegram](ski.gagar.vertigram.telegram.client.Telegram)
-interface.
+across your bot, you may explore <a href="../vertigram/index.html">`vertigram`</a> module, which introduce 
+<a href="../vertigram-core/index.html">`vertigram-core`</a>-enabled way to talk to Telegram
+from your application. It wraps [Telegram](ski.gagar.vertigram.telegram.client.Telegram) into a verticle and provides a thin client to talk to this verticle 
+using event bus, providing same [Telegram](ski.gagar.vertigram.telegram.client.Telegram) interface.

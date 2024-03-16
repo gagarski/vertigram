@@ -15,15 +15,15 @@ import java.lang.annotation.Inherited
  *
  *  Sometimes these assumptions are wrong. For these cases special notion for default parameters using nested
  *  `Defaults` object is used. For a parameter X the field with name X from `Defaults` object will be used.
- *  See [ski.gagar.vertigram.methods.SendPoll] as an example. This won't allow you to use power
+ *  See [ski.gagar.vertigram.telegram.methods.SendPoll] as an example. This won't allow you to use power
  *  of default values fully but still a reasonable trade-off to make methods generatable.
  *
  * This annotation is [Inherited]. To override annotation parameters in a subclass,
  * just add the annotation directly to it.
  *
- *  @see ski.gagar.vertigram.methods.TelegramCallable
- *  @see ski.gagar.vertigram.methods.EditChatInviteLink.WithJoinRequest
- *  @see ski.gagar.vertigram.methods.SendPoll
+ *  @see ski.gagar.vertigram.telegram.methods.TelegramCallable
+ *  @see ski.gagar.vertigram.telegram.methods.EditChatInviteLink.WithJoinRequest
+ *  @see ski.gagar.vertigram.telegram.methods.SendPoll
  */
 @Inherited
 @Retention(AnnotationRetention.SOURCE)
