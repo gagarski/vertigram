@@ -28,8 +28,30 @@ repositories {
     gradlePluginPortal()
 }
 
+
+val dokkaSourceSetClasspath: Configuration by configurations.creating {
+    description = "Declare additional DokkaSourceSet dependencies."
+    isCanBeConsumed = false
+    isCanBeResolved = false
+}
+
+val dokkaSourceSetClasspathResolver: Configuration by configurations.creating {
+    description = "Resolves the additional DokkaSourceSet dependencies."
+    extendsFrom(dokkaSourceSetClasspath)
+    isCanBeConsumed = false
+    isCanBeResolved = true
+    isTransitive = false // be defensive, try to only add a bare minimum of additional classes to the Dokka source set.
+}
+
+
 dependencies {
     dokkaPlugin(libsInternal.findLibrary("dokka-versioning-plugin").get().get().toString())
+
+    for (sub in rootProject.subprojects) {
+        if (sub.name == name)
+            continue
+        dokkaSourceSetClasspath(project(":${sub.name}"))
+    }
 }
 
 tasks.withType<DokkaTaskPartial>().configureEach {
@@ -38,6 +60,7 @@ tasks.withType<DokkaTaskPartial>().configureEach {
     }
     dokkaSourceSets {
         named("main") {
+            classpath.from(dokkaSourceSetClasspathResolver)
             sourceRoots.from(file("src/main/"), file("build/generated/source/kaptKotlin/main"))
             includes.from("README.md")
             suppressGeneratedFiles = false
