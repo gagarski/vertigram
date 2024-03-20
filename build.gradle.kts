@@ -54,7 +54,7 @@ nexusPublishing {
 
 release {
     with(git) {
-        requireBranch.set("gradle")
+        requireBranch.set("master")
     }
 }
 
@@ -64,6 +64,14 @@ tasks {
             "${it.name}:publish"
         })
         dependsOn("vertigram-jooq-plugin:publishPlugins")
+
+        if (project.properties["vertigram.dokka.skip"] != "true") {
+            dependsOn("dokkaUpload")
+        }
+
+        if (project.properties["vertigram.staging.close"] != "false") {
+            dependsOn("closeAndReleaseRepository")
+        }
     }
 }
 
