@@ -1,7 +1,3 @@
 # Module vertigram-util
 
-This is a core utils used across all vertigram modules.
-
-## Something else
-
-Blah-blah [Xxx](ski.gagar.vertigram.util.WorkerExecutorServiceError)
+A core utils module used across all vertigram modules. Most likely useless on its own.
