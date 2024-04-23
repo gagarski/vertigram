@@ -28,6 +28,10 @@ class ParsedUpdateList(private val delegate: List<Update.Parsed<*>>) : List<Upda
     JsonSubTypes.Type(value = Update.EditedMessage::class),
     JsonSubTypes.Type(value = Update.ChannelPost::class),
     JsonSubTypes.Type(value = Update.EditedChannelPost::class),
+    JsonSubTypes.Type(value = Update.BusinessConnection::class),
+    JsonSubTypes.Type(value = Update.BusinessMessage::class),
+    JsonSubTypes.Type(value = Update.EditedBusinessMessage::class),
+    JsonSubTypes.Type(value = Update.DeletedBusinessMessages::class),
     JsonSubTypes.Type(value = Update.MessageReaction::class),
     JsonSubTypes.Type(value = Update.MessageReactionCount::class),
     JsonSubTypes.Type(value = Update.InlineQuery::class),
@@ -79,7 +83,6 @@ sealed interface Update<T> {
     ) : Parsed<ski.gagar.vertigram.telegram.types.Message> {
         override val payload: ski.gagar.vertigram.telegram.types.Message = editedMessage
         override val date: Instant = payload.date
-
     }
 
     /**
@@ -102,6 +105,61 @@ sealed interface Update<T> {
     ) : Parsed<ski.gagar.vertigram.telegram.types.Message> {
         override val payload: ski.gagar.vertigram.telegram.types.Message = editedChannelPost
         override val date: Instant = payload.date
+    }
+
+    /**
+     * Case when [businessConnection] is set
+     */
+    data class BusinessConnection(
+        override val updateId: Long,
+        val businessConnection: ski.gagar.vertigram.telegram.types.BusinessConnection
+    ) : Parsed<ski.gagar.vertigram.telegram.types.BusinessConnection> {
+        override val payload: ski.gagar.vertigram.telegram.types.BusinessConnection = businessConnection
+        override val date: Instant = payload.date
+    }
+
+    /**
+     * Case when [businessMessage] is set
+     */
+    data class BusinessMessage(
+        override val updateId: Long,
+        val businessMessage: ski.gagar.vertigram.telegram.types.Message
+    ) : Parsed<ski.gagar.vertigram.telegram.types.Message> {
+        override val payload: ski.gagar.vertigram.telegram.types.Message = businessMessage
+        override val date: Instant = payload.date
+    }
+
+    /**
+     * Case when [editedBusinessMessage] is set
+     */
+    data class EditedBusinessMessage(
+        override val updateId: Long,
+        val editedBusinessMessage: ski.gagar.vertigram.telegram.types.Message
+    ) : Parsed<ski.gagar.vertigram.telegram.types.Message> {
+        override val payload: ski.gagar.vertigram.telegram.types.Message = editedBusinessMessage
+        override val date: Instant = payload.date
+    }
+
+    /**
+     * Case when [deletedBusinessMesages] is set
+     */
+    data class DeletedBusinessMessages(
+        override val updateId: Long,
+        val deletedBusinessMessaged: Payload
+    ) : Parsed<DeletedBusinessMessages.Payload> {
+        override val payload: DeletedBusinessMessages.Payload = deletedBusinessMessaged
+        override val date: Instant? = null
+
+        /**
+         * Telegram [BusinessMessagesDeleted](https://core.telegram.org/bots/api#businessmessagesdeleted) type.
+         *
+         * For up-to-date documentation please consult the official Telegram docs.
+         */
+        data class Payload(
+            val businessConnectionId: String,
+            val chat: Chat,
+            val messageId: List<Long>
+        )
     }
 
     /**
@@ -179,7 +237,6 @@ sealed interface Update<T> {
     ) : Parsed<ski.gagar.vertigram.telegram.types.InlineQuery> {
         override val payload: ski.gagar.vertigram.telegram.types.InlineQuery = inlineQuery
         override val date: Instant? = null
-
     }
 
     /**
@@ -452,6 +509,14 @@ sealed interface Update<T> {
         CHANNEL_POST,
         @JsonProperty("edited_channel_post")
         EDITED_CHANNEL_POST,
+        @JsonProperty("business_connection")
+        BUSINESS_CONNECTION,
+        @JsonProperty("business_message")
+        BUSINESS_MESSAGE,
+        @JsonProperty("edited_business_message")
+        EDITED_BUSINESS_MESSAGE,
+        @JsonProperty("deleted_business_messages")
+        DELETED_BUSINESS_MESSAGES,
         @JsonProperty("message_reaction")
         MESSAGE_REACTION,
         @JsonProperty("message_reaction_COUNT")

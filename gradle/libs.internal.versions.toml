@@ -28,6 +28,7 @@ release = { id = "net.researchgate.release", version.ref = "release" }
 spring-boot = { id = "org.springframework.boot", version.ref = "spring-boot" }
 ssh = { id = "org.hidetake.ssh", version.ref = "ssh" }
 gradle-publish = { id = "com.gradle.plugin-publish", version.ref = "gradle-publish-plugin" }
+
 [bundles]
 junit-engine = ["junit-engine"]
 junit-api = ["junit-api"]

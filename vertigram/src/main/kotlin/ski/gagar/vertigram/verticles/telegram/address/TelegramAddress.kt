@@ -44,6 +44,10 @@ object TelegramAddress {
                 Update.Type.EDITED_MESSAGE -> Update.EditedMessage::class.simpleName
                 Update.Type.CHANNEL_POST -> Update.ChannelPost::class.simpleName
                 Update.Type.EDITED_CHANNEL_POST -> Update.EditedChannelPost::class.simpleName
+                Update.Type.BUSINESS_CONNECTION -> Update.BusinessConnection::class.simpleName
+                Update.Type.BUSINESS_MESSAGE -> Update.BusinessMessage::class.simpleName
+                Update.Type.EDITED_BUSINESS_MESSAGE -> Update.EditedBusinessMessage::class.simpleName
+                Update.Type.DELETED_BUSINESS_MESSAGES -> Update.DeletedBusinessMessages::class.simpleName
                 Update.Type.MESSAGE_REACTION -> Update.MessageReaction::class.simpleName
                 Update.Type.MESSAGE_REACTION_COUNT -> Update.MessageReactionCount::class.simpleName
                 Update.Type.INLINE_QUERY -> Update.InlineQuery::class.simpleName
