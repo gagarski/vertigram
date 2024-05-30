@@ -3,10 +3,10 @@
 
 [versions]
 dokka = "1.9.10"
-nexus = "1.3.0"
+nexus = "2.0.0"
 release = "3.0.2"
-spring-boot = "3.2.3"
-args4j = "2.33"
+spring-boot = "3.3.0"
+args4j = "2.37"
 ssh = "2.11.2"
 junit = "5.10.2"
 grgit = "1.1.0"
