@@ -66,7 +66,7 @@ class VertigramClientGenerator : AbstractProcessor() {
 
     @OptIn(KotlinPoetMetadataPreview::class, DelicateKotlinPoetApi::class)
     private fun RoundEnvironment.getProcessedClasses(): Map<ClassName, TypeInfo> {
-        val inspector = ElementsClassInspector.create(processingEnv.elementUtils, processingEnv.typeUtils)
+        val inspector = ElementsClassInspector.create(true, processingEnv.elementUtils, processingEnv.typeUtils)
 
         val types = getElementsAnnotatedWith(TelegramCodegen::class.java)
             .asSequence()
@@ -76,7 +76,7 @@ class VertigramClientGenerator : AbstractProcessor() {
             .toList()
 
         return types.asSequence().map { (typeElement, anno) ->
-            val typeSpec = typeElement.toTypeSpec(inspector)
+            val typeSpec = typeElement.toTypeSpec(true, inspector)
             val className = typeElement.asClassName()
             className to TypeInfo(className, typeSpec, anno)
         }.toMap()

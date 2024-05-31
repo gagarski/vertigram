@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 import ski.gagar.vertigram.telegram.types.richtext.HasOptionalExplanationWithEntities
+import ski.gagar.vertigram.telegram.types.richtext.HasQuestionWithEntities
+import ski.gagar.vertigram.telegram.types.richtext.HasTextWithEntities
 import ski.gagar.vertigram.util.NoPosArgs
 import java.time.Duration
 import java.time.Instant
@@ -23,9 +25,10 @@ import java.time.Instant
     JsonSubTypes.Type(value = Poll.Regular::class, name = Poll.Type.REGULAR_STR),
     JsonSubTypes.Type(value = Poll.Quiz::class, name = Poll.Type.QUIZ_STR)
 )
-interface Poll {
+interface Poll : HasQuestionWithEntities {
     val id: String
-    val question: String
+    override val question: String
+    override val questionEntities: List<MessageEntity>?
     val options: List<Option>
     val totalVoterCount: Int
     @Suppress("INAPPLICABLE_JVM_NAME")
@@ -45,6 +48,7 @@ interface Poll {
     data class Regular(
         override val id: String,
         override val question: String,
+        override val questionEntities: List<MessageEntity>? = null,
         override val options: List<Option>,
         override val totalVoterCount: Int,
         @get:JvmName("getIsClosed")
@@ -66,6 +70,7 @@ interface Poll {
     data class Quiz(
         override val id: String,
         override val question: String,
+        override val questionEntities: List<MessageEntity>? = null,
         override val options: List<Option>,
         override val totalVoterCount: Int,
         @get:JvmName("getIsClosed")
@@ -91,9 +96,10 @@ interface Poll {
     data class Option(
         @JsonIgnore
         private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
-        val text: String,
+        override val text: String,
+        override val entities: List<MessageEntity>? = null,
         val voterCount: Int
-    )
+    ) : HasTextWithEntities
 
     /**
      * Telegram [PollAnswer](https://core.telegram.org/bots/api#pollanswer) type.

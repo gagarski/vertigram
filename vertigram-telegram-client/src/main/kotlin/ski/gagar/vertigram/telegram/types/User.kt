@@ -54,7 +54,8 @@ data class User(
         val addedToAttachmentMenu: Boolean = false,
         val canJoinGroups: Boolean = false,
         val canReadAllGroupMessages: Boolean = false,
-        val supportsInlineQueries: Boolean = false
+        val supportsInlineQueries: Boolean = false,
+        val canConnectToBusiness: Boolean = false
     ) : IUser {
         @get:JvmName("getIsBot")
         override val isBot: Boolean = true

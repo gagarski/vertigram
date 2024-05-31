@@ -3,12 +3,13 @@ package ski.gagar.vertigram.telegram.methods
 import com.fasterxml.jackson.annotation.JsonIgnore
 import ski.gagar.vertigram.telegram.throttling.HasChatId
 import ski.gagar.vertigram.telegram.throttling.Throttled
-import ski.gagar.vertigram.telegram.types.util.ChatId
 import ski.gagar.vertigram.telegram.types.Message
 import ski.gagar.vertigram.telegram.types.ReplyMarkup
 import ski.gagar.vertigram.telegram.types.ReplyParameters
+import ski.gagar.vertigram.telegram.types.util.ChatId
 import ski.gagar.vertigram.util.NoPosArgs
 import java.time.Duration
+import java.time.temporal.ChronoUnit
 
 /**
  * Telegram [sendLocation](https://core.telegram.org/bots/api#sendlocation) method.
@@ -19,6 +20,7 @@ import java.time.Duration
 data class SendLocation(
     @JsonIgnore
     private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+    val businessConnectionId: String? = null,
     override val chatId: ChatId,
     val messageThreadId: Long? = null,
     val latitude: Double,
@@ -29,6 +31,14 @@ data class SendLocation(
     val proximityAlertRadius: Int? = null,
     val disableNotification: Boolean = false,
     val protectContent: Boolean = false,
+    val messageEffectId: String? = null,
     val replyParameters: ReplyParameters? = null,
     val replyMarkup: ReplyMarkup? = null
-) : JsonTelegramCallable<Message>(), HasChatId
+) : JsonTelegramCallable<Message>(), HasChatId {
+    @JsonIgnore
+    val isLivePeriodIndefinite = livePeriod?.truncatedTo(ChronoUnit.SECONDS) == DURATION_INDEFINITE
+
+    companion object {
+        val DURATION_INDEFINITE = Duration.ofSeconds(0x7FFFFFFF)
+    }
+}

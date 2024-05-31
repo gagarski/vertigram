@@ -253,7 +253,10 @@ class ReplyKeyboardMarkupRowBuilder {
         requestId: Long,
         userIsBot: Boolean? = null,
         userIsPremium: Boolean? = null,
-        maxQuantity: Long? = null
+        maxQuantity: Long? = null,
+        requestName: Boolean = false,
+        requestUsername: Boolean = false,
+        requestPhoto: Boolean = false
     ) {
         buttons.add(
             ReplyMarkup.Keyboard.Button.RequestUsers(
@@ -262,7 +265,10 @@ class ReplyKeyboardMarkupRowBuilder {
                     requestId = requestId,
                     userIsBot = userIsBot,
                     userIsPremium = userIsPremium,
-                    maxQuantity = maxQuantity
+                    maxQuantity = maxQuantity,
+                    requestName = requestName,
+                    requestUsername = requestUsername,
+                    requestPhoto = requestPhoto,
                 )
             )
         )
@@ -284,7 +290,10 @@ class ReplyKeyboardMarkupRowBuilder {
         chatIsCreated: Boolean = false,
         userAdministratorRights: ChatAdministratorRights? = null,
         botAdministratorRights: ChatAdministratorRights? = null,
-        botIsMember: Boolean = false
+        botIsMember: Boolean = false,
+        requestTitle: Boolean = false,
+        requestUsername: Boolean = false,
+        requestPhoto: Boolean = false
     ) {
         buttons.add(
             ReplyMarkup.Keyboard.Button.RequestChat(
@@ -297,7 +306,10 @@ class ReplyKeyboardMarkupRowBuilder {
                     chatIsCreated = chatIsCreated,
                     userAdministratorRights = userAdministratorRights,
                     botAdministratorRights = botAdministratorRights,
-                    botIsMember = botIsMember
+                    botIsMember = botIsMember,
+                    requestTitle = requestTitle,
+                    requestUsername = requestUsername,
+                    requestPhoto = requestPhoto
                 )
             )
         )

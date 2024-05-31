@@ -271,7 +271,10 @@ sealed interface ReplyMarkup {
                     val requestId: Long,
                     val userIsBot: Boolean? = null,
                     val userIsPremium: Boolean? = null,
-                    val maxQuantity: Long? = null
+                    val maxQuantity: Long? = null,
+                    val requestName: Boolean = false,
+                    val requestUsername: Boolean = false,
+                    val requestPhoto: Boolean = false
                 )
             }
 
@@ -299,7 +302,10 @@ sealed interface ReplyMarkup {
                     val chatIsCreated: Boolean = false,
                     val userAdministratorRights: ChatAdministratorRights? = null,
                     val botAdministratorRights: ChatAdministratorRights? = null,
-                    val botIsMember: Boolean = false
+                    val botIsMember: Boolean = false,
+                    val requestTitle: Boolean = false,
+                    val requestUsername: Boolean = false,
+                    val requestPhoto: Boolean = false
                 )
 
             }

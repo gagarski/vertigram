@@ -54,6 +54,7 @@ sealed interface InputMedia {
         override val caption: String? = null,
         override val parseMode: RichText.ParseMode? = null,
         override val captionEntities: List<MessageEntity>? = null,
+        val showCaptionAboveMedia: Boolean = false,
         val width: Int? = null,
         val height: Int? = null,
         val duration: Duration? = null,
@@ -134,6 +135,7 @@ sealed interface InputMedia {
         override val caption: String? = null,
         override val parseMode: RichText.ParseMode? = null,
         override val captionEntities: List<MessageEntity>? = null,
+        val showCaptionAboveMedia: Boolean = false,
         val hasSpoiler: Boolean = false
     ) : InputMedia, HasOptionalRichCaption {
         override val type: Type = Type.PHOTO
@@ -160,6 +162,7 @@ sealed interface InputMedia {
         override val caption: String? = null,
         override val parseMode: RichText.ParseMode? = null,
         override val captionEntities: List<MessageEntity>? = null,
+        val showCaptionAboveMedia: Boolean = false,
         val width: Int? = null,
         val height: Int? = null,
         val duration: Duration? = null,
@@ -181,6 +184,7 @@ sealed interface InputMedia {
         @JsonIgnore
         private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
         val sticker: Attachment,
+        val format: ski.gagar.vertigram.telegram.types.Sticker.Format,
         val emojiList: List<String>,
         val maskPosition: ski.gagar.vertigram.telegram.types.Sticker.MaskPosition? = null,
         val keywords: List<String>? = null

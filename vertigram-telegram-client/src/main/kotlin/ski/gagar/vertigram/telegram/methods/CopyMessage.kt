@@ -32,6 +32,7 @@ data class CopyMessage internal constructor(
     override val caption: String? = null,
     override val parseMode: RichText.ParseMode? = null,
     override val captionEntities: List<MessageEntity>? = null,
+    val showCaptionAboveMedia: Boolean = false,
     val disableNotification: Boolean = false,
     val protectContent: Boolean = false,
     val replyParameters: ReplyParameters? = null,

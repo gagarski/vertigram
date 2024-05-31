@@ -49,6 +49,7 @@ sealed interface EditMessageCaption : HasOptionalRichCaption {
         override val caption: String? = null,
         override val parseMode: RichText.ParseMode? = null,
         override val captionEntities: List<MessageEntity>? = null,
+        val showCaptionAboveMedia: Boolean = false,
         override val replyMarkup: ReplyMarkup? = null
     ) : EditMessageCaption, JsonTelegramCallable<Boolean>()
 
@@ -72,6 +73,7 @@ sealed interface EditMessageCaption : HasOptionalRichCaption {
         override val caption: String? = null,
         override val parseMode: RichText.ParseMode? = null,
         override val captionEntities: List<MessageEntity>? = null,
+        val showCaptionAboveMedia: Boolean = false,
         override val replyMarkup: ReplyMarkup? = null
     ) : EditMessageCaption, HasChatId, JsonTelegramCallable<Message>()
 }

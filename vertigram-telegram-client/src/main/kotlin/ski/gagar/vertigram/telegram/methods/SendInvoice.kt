@@ -3,11 +3,11 @@ package ski.gagar.vertigram.telegram.methods
 import com.fasterxml.jackson.annotation.JsonIgnore
 import ski.gagar.vertigram.telegram.throttling.HasChatId
 import ski.gagar.vertigram.telegram.throttling.Throttled
-import ski.gagar.vertigram.telegram.types.util.ChatId
 import ski.gagar.vertigram.telegram.types.LabeledPrice
 import ski.gagar.vertigram.telegram.types.Message
 import ski.gagar.vertigram.telegram.types.ReplyMarkup
 import ski.gagar.vertigram.telegram.types.ReplyParameters
+import ski.gagar.vertigram.telegram.types.util.ChatId
 import ski.gagar.vertigram.util.NoPosArgs
 
 /**
@@ -24,7 +24,7 @@ data class SendInvoice(
     val title: String,
     val description: String,
     val payload: String,
-    val providerToken: String,
+    val providerToken: String? = null,
     val currency: String,
     val prices: List<LabeledPrice>,
     val maxTipAmount: Int? = null,

@@ -11,6 +11,8 @@ import ski.gagar.vertigram.telegram.types.Message
 import ski.gagar.vertigram.telegram.types.ReplyMarkup
 import ski.gagar.vertigram.telegram.types.util.ChatId
 import ski.gagar.vertigram.util.NoPosArgs
+import java.time.Duration
+import java.time.temporal.ChronoUnit
 
 /**
  * Telegram [editMessageLiveLocation](https://core.telegram.org/bots/api#editmessagelivelication) method.
@@ -28,10 +30,16 @@ import ski.gagar.vertigram.util.NoPosArgs
 sealed interface EditMessageLiveLocation {
     val latitude: Double
     val longitude: Double
+    val livePeriod: Duration?
     val horizontalAccuracy: Double?
     val heading: Int?
     val proximityAlertRadius: Int?
     val replyMarkup: ReplyMarkup?
+
+    @get:JsonIgnore
+    val isLivePeriodIndefinite
+        get() = livePeriod?.truncatedTo(ChronoUnit.SECONDS) == SendLocation.DURATION_INDEFINITE
+
     /**
      * Inline message case
      */
@@ -50,6 +58,7 @@ sealed interface EditMessageLiveLocation {
         val inlineMessageId: String,
         override val latitude: Double,
         override val longitude: Double,
+        override val livePeriod: Duration? = null,
         override val horizontalAccuracy: Double? = null,
         override val heading: Int? = null,
         override val proximityAlertRadius: Int? = null,
@@ -75,9 +84,14 @@ sealed interface EditMessageLiveLocation {
         val messageId: Long,
         override val latitude: Double,
         override val longitude: Double,
+        override val livePeriod: Duration? = null,
         override val horizontalAccuracy: Double? = null,
         override val heading: Int? = null,
         override val proximityAlertRadius: Int? = null,
         override val replyMarkup: ReplyMarkup? = null
     ) : EditMessageLiveLocation, HasChatId, JsonTelegramCallable<Message>()
+
+    companion object {
+        val DURATION_INDEFINITE = SendLocation.DURATION_INDEFINITE
+    }
 }

@@ -19,7 +19,6 @@ data class CreateNewStickerSet(
     val title: String,
     @TelegramMedia
     val stickers: List<InputMedia.Sticker>,
-    val stickerFormat: Sticker.Format,
     val stickerType: Sticker.Type? = null,
     val needsRepainting: Boolean = false
 ) : MultipartTelegramCallable<Boolean>()

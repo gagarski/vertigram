@@ -15,4 +15,4 @@ data class GetChat(
     @JsonIgnore
     private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
     override val chatId: ChatId
-) : JsonTelegramCallable<Chat.Verbose>(), HasChatId
+) : JsonTelegramCallable<Chat.FullInfo>(), HasChatId

@@ -407,6 +407,7 @@ sealed interface Update<T> {
             val oldChatMember: ski.gagar.vertigram.telegram.types.ChatMember,
             val newChatMember: ski.gagar.vertigram.telegram.types.ChatMember,
             val inviteLink: ChatInviteLink? = null,
+            val viaJoinRequest: Boolean = false,
             val viaChatFolderInviteLink: Boolean = false
         )
     }

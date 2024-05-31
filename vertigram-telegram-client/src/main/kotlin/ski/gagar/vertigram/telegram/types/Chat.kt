@@ -9,7 +9,7 @@ import java.time.Duration
 import java.time.Instant
 
 /**
- * Common interface for [Chat] and [Chat.Verbose]
+ * Common interface for [Chat] and [Chat.FullInfo]
  */
 interface IChat {
     val id: Long
@@ -19,7 +19,6 @@ interface IChat {
     val firstName: String?
     val lastName: String?
     @Suppress("INAPPLICABLE_JVM_NAME")
-
     @get:JvmName("getIsForum")
     val isForum: Boolean
 }
@@ -27,9 +26,6 @@ interface IChat {
 /**
  * Telegram [Chat](https://core.telegram.org/bots/api#chat) type.
  *
- * This class represents a part of original Telegram type, which is not marked with
- * "Returned only in getChat". The remaining part (Always returned field + returned only in
- * [ski.gagar.vertigram.telegram.methods.GetChat] is represented by class [Chat.Verbose])
  * For up-to-date documentation please consult the official Telegram docs.
  */
 data class Chat(
@@ -45,10 +41,12 @@ data class Chat(
     override val isForum: Boolean = false
 ) : IChat {
     /**
-     * The verbose Telegram [Chat](https://core.telegram.org/bots/api#chat) type, representing the data
+     * Telegram [ChatFullInfo](https://core.telegram.org/bots/api#chatfullinfo) type, representing the data
      * returned from [ski.gagar.vertigram.telegram.methods.GetChat]
+     *
+     * For up-to-date documentation please consult the official Telegram docs.
      */
-    data class Verbose(
+    data class FullInfo(
         @JsonIgnore
         private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
         override val id: Long,
@@ -60,9 +58,15 @@ data class Chat(
         @get:JvmName("getIsForum")
         override val isForum: Boolean = false,
         val photo: Photo? = null,
-        val activeUserNames: List<String>? = null,
+        val activeUsernames: List<String>? = null,
+        val birthdate: Birthdate? = null,
+        val businessIntro: BusinessIntro? = null,
+        val businessLocation: BusinessLocation? = null,
+        val businessOpeningHours: BusinessOpeningHours? = null,
+        val personalChat: Chat? = null,
         val availableReactions: List<Reaction>? = null,
         val accentColorId: Int,
+        val maxReactionCount: Int,
         val backgroundCustomEmojiId: Int? = null,
         val profileAccentColorId: Int? = null,
         val profileBackgroundCustomEmojiId: Int? = null,

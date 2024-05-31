@@ -3,7 +3,7 @@ package ski.gagar.vertigram.telegram.types.colors
 import com.fasterxml.jackson.annotation.JsonValue
 
 /**
- * An enum, representing a value for [ski.gagar.vertigram.telegram.types.Chat.Verbose.profileAccentColor].
+ * An enum, representing a value for [ski.gagar.vertigram.telegram.types.Chat.FullInfo.profileAccentColor].
  *
  * See [Profile Accent Colors](https://core.telegram.org/bots/api#profile-accent-colors)
  * in Telegram docs for up-to-date reference.

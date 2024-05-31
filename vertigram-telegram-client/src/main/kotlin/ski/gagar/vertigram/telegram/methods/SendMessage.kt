@@ -21,6 +21,7 @@ import ski.gagar.vertigram.util.NoPosArgs
 data class SendMessage(
     @JsonIgnore
     private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+    val businessConnectionId: String? = null,
     override val chatId: ChatId,
     val messageThreadId: Long? = null,
     override val text: String,
@@ -29,6 +30,7 @@ data class SendMessage(
     val linkPreviewOptions: Message.LinkPreviewOptions? = null,
     val disableNotification: Boolean = false,
     val protectContent: Boolean = false,
+    val messageEffectId: String? = null,
     val replyParameters: ReplyParameters? = null,
     val replyMarkup: ReplyMarkup? = null
 ) : JsonTelegramCallable<Message>(), HasChatId, HasRichText

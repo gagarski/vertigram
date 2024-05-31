@@ -12,6 +12,15 @@ interface HasRichText {
 }
 
 /**
+ * Interface for input types (sent TO Telegram API) that has rich text field
+ */
+interface HasRichQuestion {
+    val question: String
+    val questionParseMode: RichText.ParseMode?
+    val questionEntities: List<MessageEntity>?
+}
+
+/**
  * Interface for input types (sent TO Telegram API) that has optional rich caption field
  */
 interface HasOptionalRichCaption {
@@ -47,6 +56,14 @@ interface HasOptionalTextWithEntities {
 }
 
 /**
+ * Interface for output types (received FROM Telegram API) that has text with entities field
+ */
+interface HasTextWithEntities {
+    val text: String
+    val entities: List<MessageEntity>?
+}
+
+/**
  * Interface for output types (received FROM Telegram API) that has optional caption with entities field
  */
 interface HasOptionalCaptionWithEntities {
@@ -62,12 +79,26 @@ interface HasOptionalExplanationWithEntities {
     val explanationEntities: List<MessageEntity>?
 }
 
+/**
+ * Interface for output types (received FROM Telegram API) that has question with entities field
+ */
+interface HasQuestionWithEntities {
+    val question: String
+    val questionEntities: List<MessageEntity>?
+}
+
 
 /**
  * Get text [RichText] for types that [HasRichText]
  */
 val HasRichText.richText: RichText
     get() = RichText(text = text, parseMode = parseMode, entities = entities)
+
+/**
+ * Get text [RichText] for types that [HasRichText]
+ */
+val HasRichQuestion.richQuestion: RichText
+    get() = RichText(text = question, parseMode = questionParseMode, entities = questionEntities)
 
 /**
  * Get caption as [RichText] for types that [HasOptionalRichCaption]
@@ -100,13 +131,25 @@ val HasOptionalTextWithEntities.textWithEntities: TextWithEntities?
     get() = text?.let { TextWithEntities(text = it, entities = entities ?: listOf()) }
 
 /**
- * Get text as [TextWithEntities] for types that [HasOptionalCaptionWithEntities]
+ * Get text as [TextWithEntities] for types that [HasOptionalTextWithEntities]
+ */
+val HasTextWithEntities.textWithEntities: TextWithEntities
+    get() = text.let { TextWithEntities(text = it, entities = entities ?: listOf()) }
+
+/**
+ * Get caption as [TextWithEntities] for types that [HasOptionalCaptionWithEntities]
  */
 val HasOptionalCaptionWithEntities.captionWithEntities: TextWithEntities?
     get() = caption?.let { TextWithEntities(text = it, entities = captionEntities ?: listOf()) }
 
 /**
- * Get text as [TextWithEntities] for types that [HasOptionalExplanationWithEntities]
+ * Get explanation as [TextWithEntities] for types that [HasOptionalExplanationWithEntities]
  */
 val HasOptionalExplanationWithEntities.explanationWithEntities: TextWithEntities?
     get() = explanation?.let { TextWithEntities(text = it, entities = explanationEntities ?: listOf()) }
+
+/**
+ * Get question as [TextWithEntities] for types that [HasQuestionWithEntities]
+ */
+val HasQuestionWithEntities.questionWithEntities: TextWithEntities?
+    get() = question.let { TextWithEntities(text = it, entities = questionEntities ?: listOf()) }

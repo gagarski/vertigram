@@ -2,21 +2,20 @@ package ski.gagar.vertigram.telegram.methods
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import ski.gagar.vertigram.telegram.annotations.TelegramMedia
-import ski.gagar.vertigram.telegram.types.Sticker
-import ski.gagar.vertigram.telegram.types.attachments.Attachment
+import ski.gagar.vertigram.telegram.types.InputMedia
 import ski.gagar.vertigram.util.NoPosArgs
 
 /**
- * Telegram [setStickerSetThumbnail](https://core.telegram.org/bots/api#setstickersetthumbnail) method.
+ * Telegram [replaceStickerInSet](https://core.telegram.org/bots/api#replacestickerinset) method.
  *
  * For up-to-date documentation please consult the official Telegram docs.
  */
-data class SetStickerSetThumbnail(
+data class ReplaceStickerInSet(
     @JsonIgnore
     private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
-    val name: String,
     val userId: Long,
+    val name: String,
+    val oldSticker: String,
     @TelegramMedia
-    val thumbnail: Attachment? = null,
-    val format: Sticker.Format
+    val sticker: InputMedia.Sticker
 ) : MultipartTelegramCallable<Boolean>()

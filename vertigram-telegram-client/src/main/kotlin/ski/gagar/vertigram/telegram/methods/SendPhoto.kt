@@ -23,6 +23,7 @@ import ski.gagar.vertigram.util.NoPosArgs
 data class SendPhoto(
     @JsonIgnore
     private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+    val businessConnectionId: String? = null,
     override val chatId: ChatId,
     val messageThreadId: Long? = null,
     @TelegramMedia
@@ -30,9 +31,11 @@ data class SendPhoto(
     override val caption: String? = null,
     override val parseMode: RichText.ParseMode? = null,
     override val captionEntities: List<MessageEntity>? = null,
+    val showCaptionAboveMedia: Boolean = false,
     val hasSpoiler: Boolean = false,
     val disableNotification: Boolean = false,
     val protectContent: Boolean = false,
+    val messageEffectId: String? = null,
     val replyParameters: ReplyParameters? = null,
     val replyMarkup: ReplyMarkup? = null
 ) : MultipartTelegramCallable<Message>(), HasChatId, HasOptionalRichCaption

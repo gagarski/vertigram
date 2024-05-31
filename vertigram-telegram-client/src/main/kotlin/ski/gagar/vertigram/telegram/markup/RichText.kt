@@ -1,5 +1,6 @@
 package ski.gagar.vertigram.telegram.markup
 
+import io.vertx.core.Vertx
 import kotlinx.html.FlowContent
 import kotlinx.html.FlowOrPhrasingContent
 import kotlinx.html.HTMLTag
@@ -14,9 +15,12 @@ import kotlinx.html.pre
 import kotlinx.html.span
 import kotlinx.html.stream.appendHTML
 import kotlinx.html.visit
+import ski.gagar.vertigram.telegram.client.DirectTelegram
+import ski.gagar.vertigram.telegram.methods.sendMessage
 import ski.gagar.vertigram.telegram.types.MessageEntity
 import ski.gagar.vertigram.telegram.types.User
 import ski.gagar.vertigram.telegram.types.richtext.TextWithEntities
+import ski.gagar.vertigram.telegram.types.util.toChatId
 
 /**
  * [DslMarker] for rich text markdown.
@@ -61,6 +65,8 @@ class Text internal constructor(val value: String): RichTextElement() {
         append(text)
     }
 }
+
+interface BlockElement
 
 /**
  * Abstract class for the element that has children.
@@ -226,7 +232,7 @@ abstract class RichTextElementWithChildren internal constructor() : RichTextElem
     /**
      * Add block quote as a child
      */
-    protected open fun blockQuote(init: BlockQuote.() -> Unit) = initTag(BlockQuote(), init)
+    protected open fun blockQuote(expandable: Boolean = false, init: BlockQuote.() -> Unit) = initTag(BlockQuote(expandable, children), init)
 }
 
 /**
@@ -503,9 +509,12 @@ class Code internal constructor(private val code: String) : RichTextElement() {
 /**
  * Pre-formatted text (code block)
  */
-class Pre internal constructor(private val code: String, private val language: String? = null) : RichTextElement() {
+class Pre internal constructor(private val code: String, private val language: String? = null, siblings: List<RichTextElement>) : RichTextElement(), BlockElement {
+    private val afterBlock = siblings.lastOrNull() is BlockElement || siblings.lastOrNull() == null
+
     override fun StringBuilder.renderMarkdown() {
-        append("\n```")
+        if (afterBlock) append("\n")
+        append("```")
         language?.let {
             append(MarkdownTools.escapeCode(language))
         }
@@ -566,20 +575,41 @@ class Spoiler internal constructor() : WrappedRichTextElementWithChildren() {
 /**
  * Block quote
  */
-class BlockQuote internal constructor() : RichTextElementWithChildren() {
+class BlockQuote internal constructor(val expandable: Boolean = false, siblings: List<RichTextElement>) : RichTextElementWithChildren(), BlockElement {
+    private val afterBlockQuote = siblings.lastOrNull() is BlockQuote
+    private val afterBlock = siblings.lastOrNull() is BlockElement || siblings.lastOrNull() == null
+
     override fun createEntity(offset: Int, length: Int): MessageEntity =
         MessageEntity.BlockQuote(offset = offset, length = length)
 
     override fun StringBuilder.renderMarkdown() {
-        val childBuilder = StringBuilder("\n>")
+        val childBuilder = StringBuilder()
+
+        if (!afterBlock) {
+            childBuilder.append("\n")
+        }
+
+        if (afterBlockQuote) {
+            childBuilder.append("**")
+        }
+
+        childBuilder.append(">")
         childBuilder.renderMarkdownChildren()
-        childBuilder.replace(Regex("""\n"""), "\n>")
+        val replaced = childBuilder.replace(Regex("""\n"""), "\n>")
+        childBuilder.clear()
+        childBuilder.append(replaced)
+        if (expandable) {
+            childBuilder.append("||")
+        }
         childBuilder.append("\n")
         append(childBuilder.toString())
     }
 
     override fun FlowContent.renderHtml() {
         blockQuote {
+            if (expandable) {
+                attributes["expandable"] = ""
+            }
             renderHtmlChildren()
         }
     }
@@ -617,7 +647,7 @@ class RichTextRoot internal constructor() : RichTextElementWithChildren() {
     public override fun code(code: String) = super.code(code)
     public override fun pre(code: String, language: String?) = super.pre(code, language)
     public override fun spoiler(init: Spoiler.() -> Unit) = super.spoiler(init)
-    public override fun blockQuote(init: BlockQuote.() -> Unit) = super.blockQuote(init)
+    public override fun blockQuote(expandable: Boolean, init: BlockQuote.() -> Unit) = super.blockQuote(expandable, init)
 
     override fun StringBuilder.renderMarkdown() {
         this.renderMarkdownChildren()
@@ -654,7 +684,7 @@ private object TelegramHtmlEx {
         HTMLTag("tg-emoji", consumer, initialAttributes, null, true, false),
         HtmlBlockInlineTag
     inline fun FlowOrPhrasingContent.tgEmoji(emojiId: Long, crossinline block : TgEmoji.() -> Unit = {}) : Unit = TgEmoji(
-        attributesMapOf("emojiId", emojiId.toString()), consumer).visit(block)
+        attributesMapOf("emoji-id", emojiId.toString()), consumer).visit(block)
 }
 
 private object MarkdownTools {

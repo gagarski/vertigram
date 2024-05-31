@@ -24,7 +24,9 @@ data class Message(
     val from: User? = null,
     val senderChat: Chat? = null,
     val senderBoostCount: Int? = null,
+    val senderBusinessBot: User? = null,
     val date: Instant,
+    val businessConnectionId: String? = null,
     val chat: Chat,
     val forwardOrigin: Origin? = null,
     @get:JvmName("getIsTopicMessage")
@@ -38,11 +40,14 @@ data class Message(
     val viaBot: User? = null,
     val editDate: Instant? = null,
     val hasProtectedContent: Boolean = false,
+    @get:JvmName("getIsFromOffline")
+    val isFromOffline: Boolean = false,
     val mediaGroupId: String? = null,
     val authorSignature: String? = null,
     override val text: String? = null,
     override val entities: List<MessageEntity>? = null,
     val linkPreviewOptions: LinkPreviewOptions? = null,
+    val effectId: String? = null,
     val animation: Animation? = null,
     val audio: Audio? = null,
     val document: Document? = null,
@@ -54,6 +59,7 @@ data class Message(
     val voice: Voice? = null,
     override val caption: String? = null,
     override val captionEntities: List<MessageEntity>? = null,
+    val showCaptionAboveMedia: Boolean = false,
     val hasMediaSpoiler: Boolean = false,
     val contact: Contact? = null,
     val dice: Dice? = null,
@@ -82,6 +88,7 @@ data class Message(
     val passportData: Passport.Data? = null,
     val proximityAlertTriggered: Service.ProximityAlertTriggered? = null,
     val boostAdded: ChatBoost.Added? = null,
+    val chatBackgroundSet: ChatBackground? = null,
     val forumTopicCreated: Service.ForumTopic.Created? = null,
     val forumTopicEdited: Service.ForumTopic.Edited? = null,
     val forumTopicClosed: Service.ForumTopic.Closed? = null,
@@ -306,8 +313,23 @@ data class Message(
             @JsonIgnore
             private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
             val requestId: Long,
-            val userIds: List<Long>
-        )
+            val users: List<SharedUser>
+        ) {
+            /**
+             * Telegram [SharedUser](https://core.telegram.org/bots/api#shareduser) type.
+             *
+             * For up-to-date documentation please consult the official Telegram docs.
+             */
+            data class SharedUser(
+                @JsonIgnore
+                private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+                val userId: Long,
+                val firstName: String? = null,
+                val lastName: String? = null,
+                val username: String? = null,
+                val photo: List<PhotoSize>? = null
+            )
+        }
 
         /**
          * Telegram [ChatShared](https://core.telegram.org/bots/api#chatshared) type.
@@ -318,7 +340,10 @@ data class Message(
             @JsonIgnore
             private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
             val requestId: Long,
-            val chatId: Long
+            val chatId: Long,
+            val title: String? = null,
+            val username: String? = null,
+            val photo: List<PhotoSize>? = null
         )
 
         /**

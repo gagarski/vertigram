@@ -19,6 +19,7 @@ import ski.gagar.vertigram.util.NoPosArgs
 data class SendMediaGroup(
     @JsonIgnore
     private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+    val businessConnectionId: String? = null,
     override val chatId: ChatId,
     val messageThreadId: Long? = null,
     @TelegramMedia

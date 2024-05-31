@@ -24,6 +24,7 @@ import java.time.Duration
 data class SendVoice(
     @JsonIgnore
     private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+    val businessConnectionId: String? = null,
     override val chatId: ChatId,
     val messageThreadId: Long? = null,
     @TelegramMedia
@@ -34,6 +35,7 @@ data class SendVoice(
     val duration: Duration? = null,
     val disableNotification: Boolean = false,
     val protectContent: Boolean = false,
+    val messageEffectId: String? = null,
     val replyParameters: ReplyParameters? = null,
     val replyMarkup: ReplyMarkup? = null
 ) : MultipartTelegramCallable<Message>(), HasChatId, HasOptionalRichCaption

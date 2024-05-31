@@ -15,7 +15,7 @@ data class CreateInvoiceLink(
     val title: String,
     val description: String,
     val payload: String,
-    val providerToken: String,
+    val providerToken: String? = null,
     val currency: String,
     val prices: List<LabeledPrice>,
     val maxTipAmount: Int? = null,

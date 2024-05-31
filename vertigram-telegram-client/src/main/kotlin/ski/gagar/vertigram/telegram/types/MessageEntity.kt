@@ -33,6 +33,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo
     JsonSubTypes.Type(value = MessageEntity.TextMention::class, name = MessageEntity.Type.TEXT_MENTION_STR),
     JsonSubTypes.Type(value = MessageEntity.CustomEmoji::class, name = MessageEntity.Type.CUSTOM_EMOJI_STR),
     JsonSubTypes.Type(value = MessageEntity.BlockQuote::class, name = MessageEntity.Type.BLOCKQUOTE_STR),
+    JsonSubTypes.Type(value = MessageEntity.ExpandableBlockQuote::class, name = MessageEntity.Type.EXPANDABLE_BLOCKQUOTE_STR),
 )
 sealed interface MessageEntity {
     val type: Type
@@ -189,6 +190,14 @@ sealed interface MessageEntity {
         override fun copyTo(offset: Int, length: Int) = copy(offset = offset, length = length)
     }
 
+    data class ExpandableBlockQuote(
+        override val offset: Int,
+        override val length: Int
+    ) : MessageEntity {
+        override val type: Type = Type.EXPANDABLE_BLOCKQUOTE
+        override fun copyTo(offset: Int, length: Int) = copy(offset = offset, length = length)
+    }
+
     /**
      * Value for [type]
      */
@@ -228,7 +237,9 @@ sealed interface MessageEntity {
         @JsonProperty(CUSTOM_EMOJI_STR)
         CUSTOM_EMOJI,
         @JsonProperty(BLOCKQUOTE_STR)
-        BLOCKQUOTE;
+        BLOCKQUOTE,
+        @JsonProperty(EXPANDABLE_BLOCKQUOTE_STR)
+        EXPANDABLE_BLOCKQUOTE;
 
         companion object {
             const val MENTION_STR = "mention"
@@ -249,6 +260,7 @@ sealed interface MessageEntity {
             const val TEXT_MENTION_STR = "text_mention"
             const val CUSTOM_EMOJI_STR = "custom_emoji"
             const val BLOCKQUOTE_STR = "blockquote"
+            const val EXPANDABLE_BLOCKQUOTE_STR = "expandable_blockquote"
         }
     }
 }

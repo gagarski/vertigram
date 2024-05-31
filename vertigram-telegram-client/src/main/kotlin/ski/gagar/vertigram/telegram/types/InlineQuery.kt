@@ -147,7 +147,7 @@ data class InlineQuery(
             val title: String,
             val description: String,
             val payload: String,
-            val providerToken: String,
+            val providerToken: String? = null,
             val currency: String,
             val prices: List<LabeledPrice>,
             val maxTipAmount: Int? = null,
@@ -425,6 +425,7 @@ data class InlineQuery(
             override val caption: String? = null,
             override val parseMode: RichText.ParseMode? = null,
             override val captionEntities: List<MessageEntity>? = null,
+            val showCaptionAboveMedia: Boolean = false,
             val replyMarkup: ReplyMarkup.InlineKeyboard? = null,
             val inputMessageContent: InputMessageContent? = null
         ) : Result, HasOptionalRichCaption {
@@ -448,6 +449,7 @@ data class InlineQuery(
                 override val caption: String? = null,
                 override val parseMode: RichText.ParseMode? = null,
                 override val captionEntities: List<MessageEntity>? = null,
+                val showCaptionAboveMedia: Boolean = false,
                 val replyMarkup: ReplyMarkup.InlineKeyboard? = null,
                 val inputMessageContent: InputMessageContent? = null
             ) : Result, HasOptionalRichCaption {
@@ -508,6 +510,7 @@ data class InlineQuery(
             override val caption: String? = null,
             override val parseMode: RichText.ParseMode? = null,
             override val captionEntities: List<MessageEntity>? = null,
+            val showCaptionAboveMedia: Boolean = false,
             val replyMarkup: ReplyMarkup.InlineKeyboard? = null,
             val inputMessageContent: InputMessageContent? = null
         ) : Result, HasOptionalRichCaption {
@@ -531,6 +534,7 @@ data class InlineQuery(
                 override val caption: String? = null,
                 override val parseMode: RichText.ParseMode? = null,
                 override val captionEntities: List<MessageEntity>? = null,
+                val showCaptionAboveMedia: Boolean = false,
                 val replyMarkup: ReplyMarkup.InlineKeyboard? = null,
                 val inputMessageContent: InputMessageContent? = null
             ) : Result, HasOptionalRichCaption {
@@ -565,6 +569,7 @@ data class InlineQuery(
             override val caption: String? = null,
             override val parseMode: RichText.ParseMode? = null,
             override val captionEntities: List<MessageEntity>? = null,
+            val showCaptionAboveMedia: Boolean = false,
             val replyMarkup: ReplyMarkup.InlineKeyboard? = null,
             val inputMessageContent: InputMessageContent? = null
 
@@ -590,6 +595,7 @@ data class InlineQuery(
                 override val caption: String? = null,
                 override val parseMode: RichText.ParseMode? = null,
                 override val captionEntities: List<MessageEntity>? = null,
+                val showCaptionAboveMedia: Boolean = false,
                 val replyMarkup: ReplyMarkup.InlineKeyboard? = null,
                 val inputMessageContent: InputMessageContent? = null
             ) : Result, HasOptionalRichCaption {
@@ -671,6 +677,7 @@ data class InlineQuery(
             override val caption: String? = null,
             override val parseMode: RichText.ParseMode? = null,
             override val captionEntities: List<MessageEntity>? = null,
+            val showCaptionAboveMedia: Boolean = false,
             val videoWidth: Int? = null,
             val videoHeight: Int? = null,
             val videoDuration: Duration? = null,
@@ -699,6 +706,7 @@ data class InlineQuery(
                 override val caption: String? = null,
                 override val parseMode: RichText.ParseMode? = null,
                 override val captionEntities: List<MessageEntity>? = null,
+                val showCaptionAboveMedia: Boolean = false,
                 val replyMarkup: ReplyMarkup.InlineKeyboard? = null,
                 val inputMessageContent: InputMessageContent? = null
             ) : Result, HasOptionalRichCaption {
