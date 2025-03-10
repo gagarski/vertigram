@@ -15,7 +15,7 @@ import ski.gagar.vertigram.util.io.ReadStreamWrapper
 
 class MultipartForm(val parts: List<Part>) {
     private val boundary =
-        RandomStringUtils.random(69, BOUNDARY_CHARS) + RandomStringUtils.random(1, BOUNDARY_LAST_CHARS)
+        RandomStringUtils.insecure().next(69, BOUNDARY_CHARS) + RandomStringUtils.insecure().next(1, BOUNDARY_LAST_CHARS)
     private val boundaryLine = "--$boundary$NL"
     private val boundaryLineLast = "--$boundary--$NL"
 

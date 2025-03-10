@@ -39,8 +39,9 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach 
 }
 
 dependencies {
-    testImplementation(libsInternal.findLibrary("junit-api").get().get().toString())
-    testRuntimeOnly(libsInternal.findLibrary("junit-engine").get().get().toString())
+    testImplementation(libsInternal.findLibrary("junit-jupiter").get().get().toString())
+    testRuntimeOnly(libsInternal.findLibrary("junit-platform-launcher").get().get().toString())
+
 }
 
 java {

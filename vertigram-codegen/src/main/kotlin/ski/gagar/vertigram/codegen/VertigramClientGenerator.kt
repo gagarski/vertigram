@@ -1,18 +1,6 @@
 package ski.gagar.vertigram.codegen
 
-import com.squareup.kotlinpoet.AnnotationSpec
-import com.squareup.kotlinpoet.BOOLEAN
-import com.squareup.kotlinpoet.ClassName
-import com.squareup.kotlinpoet.DelicateKotlinPoetApi
-import com.squareup.kotlinpoet.FileSpec
-import com.squareup.kotlinpoet.FunSpec
-import com.squareup.kotlinpoet.KModifier
-import com.squareup.kotlinpoet.ParameterSpec
-import com.squareup.kotlinpoet.ParameterizedTypeName
-import com.squareup.kotlinpoet.TypeName
-import com.squareup.kotlinpoet.TypeSpec
-import com.squareup.kotlinpoet.asClassName
-import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
+import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.metadata.classinspectors.ElementsClassInspector
 import com.squareup.kotlinpoet.metadata.specs.toTypeSpec
 import ski.gagar.vertigram.annotations.TelegramCodegen
@@ -64,7 +52,7 @@ class VertigramClientGenerator : AbstractProcessor() {
         }
     }
 
-    @OptIn(KotlinPoetMetadataPreview::class, DelicateKotlinPoetApi::class)
+    @OptIn(DelicateKotlinPoetApi::class)
     private fun RoundEnvironment.getProcessedClasses(): Map<ClassName, TypeInfo> {
         val inspector = ElementsClassInspector.create(true, processingEnv.elementUtils, processingEnv.typeUtils)
 

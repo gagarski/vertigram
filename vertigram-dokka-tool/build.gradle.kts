@@ -36,6 +36,5 @@ dependencies {
     implementation(libs.kotlin.stdlib)
     implementation(libsInternal.args4j)
 
-    testImplementation(libsInternal.junit.api)
-    testRuntimeOnly (libsInternal.junit.engine)
+    testImplementation(libsInternal.junit.jupiter)
 }

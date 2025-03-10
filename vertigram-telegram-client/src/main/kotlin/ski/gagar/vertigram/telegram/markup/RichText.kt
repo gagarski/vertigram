@@ -1,6 +1,5 @@
 package ski.gagar.vertigram.telegram.markup
 
-import io.vertx.core.Vertx
 import kotlinx.html.FlowContent
 import kotlinx.html.FlowOrPhrasingContent
 import kotlinx.html.HTMLTag
@@ -15,12 +14,9 @@ import kotlinx.html.pre
 import kotlinx.html.span
 import kotlinx.html.stream.appendHTML
 import kotlinx.html.visit
-import ski.gagar.vertigram.telegram.client.DirectTelegram
-import ski.gagar.vertigram.telegram.methods.sendMessage
 import ski.gagar.vertigram.telegram.types.MessageEntity
 import ski.gagar.vertigram.telegram.types.User
 import ski.gagar.vertigram.telegram.types.richtext.TextWithEntities
-import ski.gagar.vertigram.telegram.types.util.toChatId
 
 /**
  * [DslMarker] for rich text markdown.
@@ -220,7 +216,8 @@ abstract class RichTextElementWithChildren internal constructor() : RichTextElem
     protected open fun pre(code: String, language: String? = null) = initTag(
         Pre(
             code,
-            language
+            language,
+            children
         )
     )
 
