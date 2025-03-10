@@ -1,6 +1,7 @@
 import org.ajoberstar.grgit.Grgit
 import org.jetbrains.dokka.DokkaConfiguration.Visibility
 import org.jetbrains.dokka.gradle.DokkaTaskPartial
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import java.net.URI
 import java.net.URL
 import java.time.LocalDate
@@ -33,8 +34,9 @@ repositories {
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
-    kotlinOptions {
-        jvmTarget = "21"
+    compilerOptions {
+        jvmTarget.set(JvmTarget.JVM_21)
+        freeCompilerArgs.add("-Xconsistent-data-class-copy-visibility")
     }
 }
 

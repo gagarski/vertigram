@@ -1,8 +1,8 @@
+
 import org.ajoberstar.grgit.Grgit
 import org.jetbrains.dokka.DokkaConfiguration.Visibility
 import org.jetbrains.dokka.gradle.DokkaTaskPartial
 import java.net.URI
-import java.net.URL
 import java.time.LocalDate
 
 /*
