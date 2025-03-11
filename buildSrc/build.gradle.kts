@@ -17,5 +17,4 @@ dependencies {
     implementation(libs.kotlin.gradle.plugin)
     implementation(libsInternal.dokka.gradle.plugin)
     implementation(libsInternal.dokka.base)
-    implementation(libsInternal.grgit)
 }

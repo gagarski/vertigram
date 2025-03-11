@@ -1,7 +1,7 @@
 
-import org.ajoberstar.grgit.Grgit
 import org.jetbrains.dokka.DokkaConfiguration.Visibility
 import org.jetbrains.dokka.gradle.DokkaTaskPartial
+import java.io.ByteArrayOutputStream
 import java.net.URI
 import java.time.LocalDate
 
@@ -86,10 +86,16 @@ tasks.withType<DokkaTaskPartial>().configureEach {
             sourceLink {
                 val isSnapshot = version.toString().split("-").let { it[it.lastIndex] } == "SNAPSHOT"
                 val urlVersion = if (isSnapshot) {
-                    val git = Grgit.open(rootDir)
-                    git.head().id
+                    val os = ByteArrayOutputStream()
+                    exec {
+                        workingDir = rootDir
+                        commandLine("git", "rev-parse", "--short", "HEAD")
+
+                        standardOutput = os
+                    }
+                    os.toString().trim()
                 } else {
-                    "v${version.toString()}"
+                    "v${version}"
                 }
                 // Unix based directory relative path to the root of the project (where you execute gradle respectively).
                 localDirectory.set(rootDir)
@@ -112,7 +118,6 @@ tasks.withType<DokkaTaskPartial>().configureEach {
             }
             externalDocumentationLink {
                 url.set(URI("https://javadoc.io/doc/com.fasterxml.jackson.core/jackson-core/${jacksonVersion}/").toURL())
-                packageListUrl.set(URI("https://javadoc.io/doc/com.fasterxml.jackson.core/jackson-core/${jacksonVersion}/element-list").toURL())
             }
             externalDocumentationLink {
                 url.set(URI("https://javadoc.io/doc/com.fasterxml.jackson.core/jackson-databind/${jacksonVersion}/").toURL())

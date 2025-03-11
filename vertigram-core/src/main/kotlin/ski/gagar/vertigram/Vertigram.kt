@@ -59,7 +59,7 @@ fun defaultVertigramMapper(): ObjectMapper =
  *  - namespaces for event bus addresses
  *
  *  The most convenient way to interact with [VertigramVerticle]s and [Vertigram.EventBus] is by using
- *  [Vertigram.EventBus] API, however, you can interac with it using plain [Vertx], given that you follow
+ *  [Vertigram.EventBus] API, however, you can interact with it using plain [Vertx], given that you follow
  *  the JSON serialization protocol.
  *
  *  Vertigram is purely local. If you want to use it in clustered environment, you need to attach a
@@ -480,4 +480,4 @@ fun Vertx.detachVertigram(name: String = Vertigram.Config.DEFAULT_NAME) =
  */
 fun Vertx.getVertigram(name: String = Vertigram.Config.DEFAULT_NAME) =
     sharedData().getLocalMap<String, Vertigram>(VERTIGRAMS)[name]
-        ?: throw IllegalArgumentException("Vertigram $name is not attached to this Ver.X instance")
+        ?: throw IllegalArgumentException("Vertigram $name is not attached to this Vert.X instance")
