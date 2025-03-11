@@ -5,3 +5,4 @@ target
 *.releaseBackup
 .gradle
 **/build/
+.kotlin

@@ -1,5 +1,6 @@
 package ski.gagar.vertigram.telegram.methods
 
+import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.telegram.types.User
 
 /**
@@ -7,4 +8,5 @@ import ski.gagar.vertigram.telegram.types.User
  *
  * For up-to-date documentation please consult the official Telegram docs.
  */
+@TelegramCodegen
 object GetMe : JsonTelegramCallable<User.Me>()

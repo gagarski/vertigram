@@ -20,6 +20,7 @@ import ski.gagar.vertigram.util.NoPosArgs
     JsonSubTypes.Type(value = AnswerPreCheckoutQuery.Ok::class, name = "true"),
     JsonSubTypes.Type(value = AnswerPreCheckoutQuery.Error::class, name = "false")
 )
+@TelegramCodegen
 sealed class AnswerPreCheckoutQuery : JsonTelegramCallable<Boolean>() {
     abstract val preCheckoutQueryId: String
 

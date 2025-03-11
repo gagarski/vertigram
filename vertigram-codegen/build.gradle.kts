@@ -11,7 +11,8 @@ plugins {
 dependencies {
     api(libs.bundles.kotlin.std)
     api(project(":vertigram-annotations"))
-    api(libs.bundles.kotlinpoet)
+    api(libsInternal.bundles.kotlinpoet)
+    api(libsInternal.ksp.api)
 }
 
 description = "Vertigram Code Generators"

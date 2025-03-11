@@ -4,7 +4,6 @@
 [versions]
 logback = "1.5.17"
 jackson = "2.18.3"
-kotlinpoet = "2.1.0"
 hikaricp = "6.2.1"
 vertx = "4.5.13"
 commons-lang3 = "3.17.0"
@@ -28,8 +27,7 @@ jackson-datatype-jsr310 = { module = "com.fasterxml.jackson.datatype:jackson-dat
 jackson-module-kotlin = { module = "com.fasterxml.jackson.module:jackson-module-kotlin", version.ref = "jackson" }
 jackson-module-parameter-names = { module = "com.fasterxml.jackson.module:jackson-module-parameter-names", version.ref = "jackson" }
 jackson-dataformat-xml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-xml", version.ref = "jackson" }
-kotlinpoet = { module = "com.squareup:kotlinpoet", version.ref = "kotlinpoet" }
-kotlinpoet-metadata = { module = "com.squareup:kotlinpoet-metadata", version.ref = "kotlinpoet" }
+
 hikaricp = { module = "com.zaxxer:HikariCP", version.ref = "hikaricp" }
 vertx-core = { module = "io.vertx:vertx-core", version.ref = "vertx" }
 vertx-lang-kotlin = { module = "io.vertx:vertx-lang-kotlin", version.ref = "vertx" }
@@ -57,7 +55,6 @@ kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", v
 [bundles]
 logback = ["logback-classic"]
 jackson = ["jackson-annotations", "jackson-core", "jackson-databind", "jackson-datatype-jdk8", "jackson-datatype-jsr310", "jackson-module-kotlin", "jackson-module-parameter-names"]
-kotlinpoet = ["kotlinpoet", "kotlinpoet-metadata"]
 hikari = ["hikaricp"]
 vertx-core = ["vertx-core", "vertx-lang-kotlin", "vertx-lang-kotlin-coroutines"]
 vertx-jdbc = ["vertx-jdbc-client"]

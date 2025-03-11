@@ -6,7 +6,7 @@ import org.jetbrains.dokka.gradle.DokkaTaskPartial
 
 plugins {
     id("buildlogic.vertigram-module")
-    kotlin("kapt")
+    alias(libsInternal.plugins.ksp)
 }
 
 dependencies {
@@ -21,25 +21,21 @@ dependencies {
     api(libs.bundles.slf4j.api)
     api(project(":vertigram-util"))
     api(project(":vertigram-annotations"))
-    kapt(project(":vertigram-codegen"))
+    ksp(project(":vertigram-codegen"))
 }
 
 description = "Vertigram Client"
 
-kapt {
-    annotationProcessor("ski.gagar.vertigram.codegen.VertigramClientGenerator")
-}
-
 sourceSets {
     main {
-        kotlin.srcDir("${layout.buildDirectory.get()}/generated/source/kaptKotlin/main")
+        kotlin.srcDir("${layout.buildDirectory.get()}/generated/ksp/main/kotlin")
     }
 }
 
 tasks.named<Jar>("sourcesJar").configure {
-    dependsOn("kaptKotlin")
+    dependsOn("kspKotlin")
 }
 
 tasks.withType<DokkaTaskPartial>().configureEach {
-    dependsOn("kaptKotlin")
+    dependsOn("kspKotlin")
 }

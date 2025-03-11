@@ -45,6 +45,7 @@ import java.time.Instant
     JsonSubTypes.Type(value = SendPoll.Quiz.Indefinite::class, name = Poll.Type.QUIZ_STR),
 )
 @JsonTypeResolver(TypeResolverWithDeductionBuilder::class)
+@TelegramCodegen
 sealed class SendPoll : JsonTelegramCallable<Message>(), HasChatId, HasRichQuestion {
     abstract val businessConnectionId: String?
     abstract val messageThreadId: Long?
@@ -187,6 +188,7 @@ sealed class SendPoll : JsonTelegramCallable<Message>(), HasChatId, HasRichQuest
     /**
      * Cases for quiz
      */
+    @TelegramCodegen
     sealed class Quiz : SendPoll(), HasOptionalRichExplanation {
         /**
          * Case with [openPeriod] field

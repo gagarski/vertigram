@@ -1,5 +1,6 @@
 package ski.gagar.vertigram.telegram.methods
 
+import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.telegram.types.WebhookInfo
 
 /**
@@ -7,4 +8,5 @@ import ski.gagar.vertigram.telegram.types.WebhookInfo
  *
  * For up-to-date documentation please consult the official Telegram docs.
  */
+@TelegramCodegen
 object GetWebHookInfo : JsonTelegramCallable<WebhookInfo>()

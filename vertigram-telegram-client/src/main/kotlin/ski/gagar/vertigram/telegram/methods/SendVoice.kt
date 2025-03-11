@@ -1,6 +1,7 @@
 package ski.gagar.vertigram.telegram.methods
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.telegram.annotations.TelegramMedia
 import ski.gagar.vertigram.telegram.throttling.HasChatId
 import ski.gagar.vertigram.telegram.throttling.Throttled
@@ -21,6 +22,7 @@ import java.time.Duration
  * For up-to-date documentation please consult the official Telegram docs.
  */
 @Throttled
+@TelegramCodegen
 data class SendVoice(
     @JsonIgnore
     private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,

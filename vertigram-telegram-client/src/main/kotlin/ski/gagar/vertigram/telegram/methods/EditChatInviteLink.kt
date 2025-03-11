@@ -23,6 +23,7 @@ import java.time.Instant
     JsonSubTypes.Type(EditChatInviteLink.WithMemberLimit::class),
     JsonSubTypes.Type(EditChatInviteLink.WithJoinRequest::class)
 )
+@TelegramCodegen
 sealed class EditChatInviteLink : JsonTelegramCallable<ChatInviteLink>(), HasChatId {
     abstract val inviteLink: String
     abstract val name: String?

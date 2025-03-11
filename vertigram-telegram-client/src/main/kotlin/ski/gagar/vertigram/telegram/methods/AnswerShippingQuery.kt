@@ -20,6 +20,7 @@ import ski.gagar.vertigram.util.NoPosArgs
     JsonSubTypes.Type(value = AnswerShippingQuery.Ok::class, name = "true"),
     JsonSubTypes.Type(value = AnswerShippingQuery.Error::class, name = "false")
 )
+@TelegramCodegen
 sealed class AnswerShippingQuery : JsonTelegramCallable<Boolean>() {
     abstract val shippingQueryId: String
     /**

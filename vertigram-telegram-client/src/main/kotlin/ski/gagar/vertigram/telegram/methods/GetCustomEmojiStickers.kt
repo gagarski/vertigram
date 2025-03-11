@@ -1,6 +1,7 @@
 package ski.gagar.vertigram.telegram.methods
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.telegram.types.Sticker
 import ski.gagar.vertigram.util.NoPosArgs
 
@@ -9,6 +10,7 @@ import ski.gagar.vertigram.util.NoPosArgs
  *
  * For up-to-date documentation please consult the official Telegram docs.
  */
+@TelegramCodegen
 data class GetCustomEmojiStickers(
     @JsonIgnore
     private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,

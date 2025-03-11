@@ -22,6 +22,7 @@ import ski.gagar.vertigram.util.NoPosArgs
     JsonSubTypes.Type(GetGameHighScores.InlineMessage::class),
     JsonSubTypes.Type(GetGameHighScores.ChatMessage::class)
 )
+@TelegramCodegen
 sealed class GetGameHighScores : JsonTelegramCallable<List<GameHighScore>>() {
     abstract val userId: Long
     /**

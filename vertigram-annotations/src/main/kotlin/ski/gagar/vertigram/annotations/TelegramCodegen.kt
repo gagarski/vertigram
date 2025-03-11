@@ -25,7 +25,6 @@ import java.lang.annotation.Inherited
  *  @see ski.gagar.vertigram.telegram.methods.EditChatInviteLink.WithJoinRequest
  *  @see ski.gagar.vertigram.telegram.methods.SendPoll
  */
-@Inherited
 @Retention(AnnotationRetention.SOURCE)
 annotation class TelegramCodegen(
     /**

@@ -16,6 +16,8 @@ sealed class TelegramCallable<ReturnType> {
     suspend fun call(telegram: Telegram) = telegram.call(this)
 }
 
+@TelegramCodegen
 abstract class JsonTelegramCallable<ReturnType> : TelegramCallable<ReturnType>()
 
+@TelegramCodegen
 abstract class MultipartTelegramCallable<ReturnType> : TelegramCallable<ReturnType>()
