@@ -1,7 +1,7 @@
 import org.jetbrains.dokka.gradle.DokkaTaskPartial
 
 plugins {
-    id("buildlogic.vertigram-module")
+    id("buildlogic.vertigram-module-convention")
 }
 
 dependencies {
