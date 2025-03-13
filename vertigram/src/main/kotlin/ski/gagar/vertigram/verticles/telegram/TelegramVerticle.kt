@@ -4,9 +4,9 @@ import com.fasterxml.jackson.core.type.TypeReference
 import ski.gagar.vertigram.util.jackson.typeReference
 import ski.gagar.vertigram.telegram.client.DirectTelegram
 import ski.gagar.vertigram.telegram.client.Telegram
-import ski.gagar.vertigram.telegram.methods.JsonTelegramCallable
-import ski.gagar.vertigram.telegram.methods.MultipartTelegramCallable
-import ski.gagar.vertigram.telegram.methods.TelegramCallable
+import ski.gagar.vertigram.telegram.types.methods.JsonTelegramCallable
+import ski.gagar.vertigram.telegram.types.methods.MultipartTelegramCallable
+import ski.gagar.vertigram.telegram.types.methods.TelegramCallable
 import ski.gagar.vertigram.telegram.throttling.ThrottlingOptions
 import ski.gagar.vertigram.telegram.throttling.ThrottlingTelegram
 import ski.gagar.vertigram.telegram.types.Update

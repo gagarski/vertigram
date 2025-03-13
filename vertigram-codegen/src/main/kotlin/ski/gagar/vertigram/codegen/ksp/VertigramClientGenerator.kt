@@ -38,11 +38,11 @@ class VertigramClientGenerator(
 
         val methodsFile = fileSpecBuilders.computeIfAbsent(
             FileSpecBuilderKey(
-                className.packageName,
+                METHODS_PACKAGE,
                 TG_METHODS
             )
         ) {
-            FileSpec.builder(className.packageName, TG_METHODS)
+            FileSpec.builder(METHODS_PACKAGE, TG_METHODS)
         }
 
         val constructorsFile = fileSpecBuilders.computeIfAbsent(
@@ -412,8 +412,8 @@ class VertigramClientGenerator(
         private const val TG_METHODS = "TelegramMethods"
         private const val TG_CONSTRUCTORS = "TelegramConstructors"
         private val SUPERTYPES = setOf(
-            "ski.gagar.vertigram.telegram.methods.JsonTelegramCallable",
-            "ski.gagar.vertigram.telegram.methods.MultipartTelegramCallable"
+            "ski.gagar.vertigram.telegram.types.methods.JsonTelegramCallable",
+            "ski.gagar.vertigram.telegram.types.methods.MultipartTelegramCallable"
         )
         private val ROOT_CLASSES = setOf(
             ClassName("java.lang", "Object"),
@@ -436,6 +436,16 @@ class VertigramClientGenerator(
                 wrapperParam = "richText",
                 wrapperParamMapping = mapOf(
                     "text" to "text",
+                    "parseMode" to "parseMode",
+                    "entities" to "entities"
+                )
+            ),
+            WrapConfig(
+                triggerParam = "messageText",
+                wrapper = ClassName("ski.gagar.vertigram.telegram.types.richtext", "RichText"),
+                wrapperParam = "richMessageText",
+                wrapperParamMapping = mapOf(
+                    "messageText" to "text",
                     "parseMode" to "parseMode",
                     "entities" to "entities"
                 )
@@ -465,6 +475,6 @@ class VertigramClientGenerator(
         private val WRAP_CONFIGS_BY_TRIGGER = WRAP_CONFIGS.associateBy { it.triggerParam }
         private val WRAP_CONFIGS_BY_WRAPPER = WRAP_CONFIGS.associateBy { it.wrapperParam }
         private val NO_POS_ARGS_TYPE = ClassName("ski.gagar.vertigram.util", "NoPosArgs")
-
+        private const val METHODS_PACKAGE = "ski.gagar.vertigram.telegram.methods"
     }
 }

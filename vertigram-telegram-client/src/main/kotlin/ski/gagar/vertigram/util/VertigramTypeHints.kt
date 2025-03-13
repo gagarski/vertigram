@@ -5,9 +5,9 @@ import com.fasterxml.jackson.databind.type.TypeFactory
 import org.apache.commons.lang3.StringUtils
 import org.reflections.Reflections
 import ski.gagar.vertigram.telegram.annotations.TelegramMethod
-import ski.gagar.vertigram.telegram.methods.JsonTelegramCallable
-import ski.gagar.vertigram.telegram.methods.MultipartTelegramCallable
-import ski.gagar.vertigram.telegram.methods.TelegramCallable
+import ski.gagar.vertigram.telegram.types.methods.JsonTelegramCallable
+import ski.gagar.vertigram.telegram.types.methods.MultipartTelegramCallable
+import ski.gagar.vertigram.telegram.types.methods.TelegramCallable
 import ski.gagar.vertigram.util.internal.uncheckedCast
 import ski.gagar.vertigram.util.internal.uncheckedCastOrNull
 import ski.gagar.vertigram.util.json.TELEGRAM_JSON_MAPPER
@@ -83,7 +83,7 @@ private val <T> Class<T>.responseType: JavaType
  * List of classes, representing Telegram method.
  */
 private fun getTgCallables() =
-    Reflections("ski.gagar.vertigram.telegram.methods")
+    Reflections("ski.gagar.vertigram.telegram.types.methods")
         .getTypesAnnotatedWith(TelegramMethod::class.java, true)
         .asSequence()
         .filter { !Modifier.isAbstract(it.modifiers) }

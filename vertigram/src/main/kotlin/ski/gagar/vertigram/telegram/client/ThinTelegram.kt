@@ -3,7 +3,7 @@ package ski.gagar.vertigram.telegram.client
 import com.fasterxml.jackson.databind.JavaType
 import io.vertx.core.eventbus.DeliveryOptions
 import ski.gagar.vertigram.Vertigram
-import ski.gagar.vertigram.telegram.methods.TelegramCallable
+import ski.gagar.vertigram.telegram.types.methods.TelegramCallable
 import ski.gagar.vertigram.telegram.types.Update
 import ski.gagar.vertigram.telegram.types.UpdateList
 import ski.gagar.vertigram.util.TELEGRAM_TYPE_FACTORY

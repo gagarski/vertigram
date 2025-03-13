@@ -5,8 +5,9 @@ import io.vertx.core.Vertx
 import io.vertx.core.net.ProxyOptions
 import ski.gagar.vertigram.telegram.client.impl.TelegramImpl
 import ski.gagar.vertigram.telegram.client.impl.TelegramImplOptions
-import ski.gagar.vertigram.telegram.methods.TelegramCallable
+import ski.gagar.vertigram.telegram.types.methods.TelegramCallable
 import ski.gagar.vertigram.telegram.types.Update
+import ski.gagar.vertigram.telegram.types.methods.GetUpdatesRaw
 import ski.gagar.vertigram.util.lazy
 import ski.gagar.vertigram.util.logger
 import java.time.Duration
@@ -54,7 +55,7 @@ class DirectTelegram(
     override suspend fun getUpdates(offset: Long?, limit: Int?, allowedUpdates: List<Update.Type>): List<Update<*>> =
         impl.call(
             typeFactory.constructParametricType(List::class.java, Map::class.java),
-            ski.gagar.vertigram.telegram.methods.GetUpdatesRaw(
+            GetUpdatesRaw(
                 offset = offset,
                 limit = limit,
                 timeout = options.getUpdatesTimeoutParam,

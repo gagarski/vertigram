@@ -2,7 +2,7 @@ package ski.gagar.vertigram.telegram.client
 
 import com.fasterxml.jackson.databind.JavaType
 import com.fasterxml.jackson.databind.type.TypeFactory
-import ski.gagar.vertigram.telegram.methods.TelegramCallable
+import ski.gagar.vertigram.telegram.types.methods.TelegramCallable
 import ski.gagar.vertigram.util.VertigramTypeHints
 import ski.gagar.vertigram.util.getOrAssert
 import ski.gagar.vertigram.util.json.TELEGRAM_JSON_MAPPER

@@ -8,7 +8,7 @@ import org.reflections.Reflections
 import ski.gagar.vertigram.telegram.client.DirectTelegram
 import ski.gagar.vertigram.telegram.client.Telegram
 import ski.gagar.vertigram.telegram.exceptions.TelegramCallException
-import ski.gagar.vertigram.telegram.methods.TelegramCallable
+import ski.gagar.vertigram.telegram.types.methods.TelegramCallable
 import ski.gagar.vertigram.telegram.types.util.ChatId
 import ski.gagar.vertigram.telegram.types.util.toChatId
 import ski.gagar.vertigram.util.lazy
@@ -198,6 +198,6 @@ class ThrottlingTelegram(
 
     companion object {
         private val TO_THROTTLE =
-            Reflections("ski.gagar.vertigram.methods").getTypesAnnotatedWith(Throttled::class.java)
+            Reflections("ski.gagar.vertigram.types.methods").getTypesAnnotatedWith(Throttled::class.java)
     }
 }

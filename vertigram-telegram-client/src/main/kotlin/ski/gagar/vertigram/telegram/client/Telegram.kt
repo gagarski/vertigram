@@ -1,7 +1,7 @@
 package ski.gagar.vertigram.telegram.client
 
 import ski.gagar.vertigram.telegram.exceptions.TelegramNoFilePathException
-import ski.gagar.vertigram.telegram.methods.TelegramCallable
+import ski.gagar.vertigram.telegram.types.methods.TelegramCallable
 import ski.gagar.vertigram.telegram.methods.getFile
 import ski.gagar.vertigram.telegram.types.Update
 
