@@ -2,6 +2,7 @@
 plugins {
     id("buildlogic.vertigram-module-convention")
     id("buildlogic.dokka-convention")
+    `maven-publish`
     `kotlin-dsl`
     alias(libsInternal.plugins.gradle.publish)
 }

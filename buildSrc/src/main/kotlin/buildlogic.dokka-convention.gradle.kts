@@ -1,10 +1,7 @@
 
-import org.jetbrains.dokka.DokkaConfiguration.Visibility
-import org.jetbrains.dokka.gradle.DokkaTaskPartial
 import org.jetbrains.dokka.gradle.engine.parameters.VisibilityModifier
 import java.io.ByteArrayOutputStream
 import java.net.URI
-import java.time.LocalDate
 
 group = "ski.gagar.vertigram"
 
@@ -12,16 +9,9 @@ val catalogs = extensions
     .getByType<VersionCatalogsExtension>()
 
 val libs = catalogs.named("libs")
-val libsInternal = catalogs.named("libsInternal")
 
 plugins {
     id("org.jetbrains.dokka")
-}
-
-repositories {
-    mavenLocal()
-    mavenCentral()
-    gradlePluginPortal()
 }
 
 

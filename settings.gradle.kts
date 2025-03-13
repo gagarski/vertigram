@@ -23,5 +23,11 @@ dependencyResolutionManagement {
             from(files("./gradle/libs.internal.versions.toml"))
         }
     }
+    @Suppress("UnstableApiUsage")
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        gradlePluginPortal()
+    }
 }
 include("vertigram-docs")

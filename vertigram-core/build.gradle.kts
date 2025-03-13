@@ -1,5 +1,6 @@
 plugins {
     id("buildlogic.vertigram-module-convention")
+    id("buildlogic.maven-publishing-convention")
     id("buildlogic.dokka-convention")
 }
 
