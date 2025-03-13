@@ -347,7 +347,10 @@ class VertigramClientGenerator(
         val receiver = when {
             null != consName -> null
             className.simpleNames.size == 1 -> null
-            else -> className.simpleNames.joinToString(".") + ".Companion"
+            else -> sequence {
+                yieldAll(className.simpleNames)
+                yield("Companion")
+            }.toList()
         }
 
         val constructor = classDecl.primaryConstructor
