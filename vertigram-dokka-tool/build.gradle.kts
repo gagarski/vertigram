@@ -25,6 +25,7 @@ tasks.withType<Test> {
 }
 
 java.sourceCompatibility = JavaVersion.VERSION_21
+java.targetCompatibility = JavaVersion.VERSION_21
 
 springBoot {
     mainClass = "ski.gagar.vertigram.dokka.tool.DokkaToolKt"

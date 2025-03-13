@@ -3,10 +3,7 @@ package ski.gagar.vertigram.telegram.annotations
 import java.lang.annotation.Inherited
 
 /**
- * Annotation for Telegram method, used to give hints for deserialization and Telegram verticle generation.
-
- * This annotation is [Inherited]. To override annotation parameters in a subclass,
- * just add the annotation directly to it.
+ * Annotation for Telegram method, used to give hints for deserialization and [TelegramVerticle](ski.gagar.vertigram.verticles.telegram.TelegramVerticle) generation.
  */
 @Inherited
 annotation class TelegramMethod(

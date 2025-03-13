@@ -1,6 +1,7 @@
 
 import org.jetbrains.dokka.DokkaConfiguration.Visibility
 import org.jetbrains.dokka.gradle.DokkaTaskPartial
+import org.jetbrains.dokka.gradle.engine.parameters.VisibilityModifier
 import java.io.ByteArrayOutputStream
 import java.net.URI
 import java.time.LocalDate
@@ -40,86 +41,82 @@ val dokkaSourceSetClasspathResolver: Configuration by configurations.creating {
 
 
 dependencies {
-    dokkaPlugin(libsInternal.findLibrary("dokka-versioning-plugin").get().get().toString())
-
     for (sub in rootProject.subprojects) {
+        if (sub.name == "vertigram-docs")
+            continue
         if (sub.name == name)
             continue
         dokkaSourceSetClasspath(project(":${sub.name}"))
     }
 }
 
-tasks.withType<DokkaTaskPartial>().configureEach {
-    pluginConfiguration<org.jetbrains.dokka.base.DokkaBase, org.jetbrains.dokka.base.DokkaBaseConfiguration> {
-        footerMessage = "© ${LocalDate.now().year} <a href=\"https://github.com/gagarski/\">Kirill Gagarski</a>"
+dokka {
+    pluginsConfiguration.html {
+        footerMessage.set("© ${years()} <a href=\"https://github.com/gagarski/\">Kirill Gagarski</a>")
     }
-    dokkaSourceSets {
-        named("main") {
-            classpath.from(dokkaSourceSetClasspathResolver)
-            sourceRoots.from(file("src/main/"), file("build/generated/source/kaptKotlin/main"))
-            includes.from("README.md")
-            suppressGeneratedFiles = false
+    dokkaSourceSets.configureEach {
+        classpath.from(dokkaSourceSetClasspathResolver)
+        sourceRoots.from(file("src/main/"), file("build/generated/source/ksp/main/kotlin"))
+        includes.from("README.md")
+        suppressGeneratedFiles = false
 
-            jdkVersion = 21
+        jdkVersion = 21
 
-            platform.set(org.jetbrains.dokka.Platform.jvm)
+        documentedVisibilities.set(setOf(
+            VisibilityModifier.Public,
+            VisibilityModifier.Protected
+        ))
+        perPackageOption {
+            matchingRegex.set(".*internal.*")
+            suppress.set(true)
+        }
 
-            documentedVisibilities.set(setOf(
-                Visibility.PUBLIC,
-                Visibility.PROTECTED
-            ))
-            perPackageOption {
-                matchingRegex.set(".*internal.*")
-                suppress.set(true)
-            }
+        perPackageOption {
+            matchingRegex.set(".*samples.*")
+            suppress.set(true)
+        }
+        samples.from(files("src/main/kotlin/ski/gagar/vertigram/samples/Samples.kt"))
+        sourceLink {
+            val isSnapshot = version.toString().split("-").let { it[it.lastIndex] } == "SNAPSHOT"
+            val urlVersion = if (isSnapshot) {
+                val os = ByteArrayOutputStream()
+                exec {
+                    workingDir = rootDir
+                    commandLine("git", "rev-parse", "--short", "HEAD")
 
-            perPackageOption {
-                matchingRegex.set(".*samples.*")
-                suppress.set(true)
-            }
-            samples.from(files("src/main/kotlin/ski/gagar/vertigram/samples/Samples.kt"))
-            sourceLink {
-                val isSnapshot = version.toString().split("-").let { it[it.lastIndex] } == "SNAPSHOT"
-                val urlVersion = if (isSnapshot) {
-                    val os = ByteArrayOutputStream()
-                    exec {
-                        workingDir = rootDir
-                        commandLine("git", "rev-parse", "--short", "HEAD")
-
-                        standardOutput = os
-                    }
-                    os.toString().trim()
-                } else {
-                    "v${version}"
+                    standardOutput = os
                 }
-                // Unix based directory relative path to the root of the project (where you execute gradle respectively).
-                localDirectory.set(rootDir)
-
-                // URL showing where the source code can be accessed through the web browser
-                remoteUrl.set(URI("https://github.com/gagarski/vertigram/tree/${urlVersion}").toURL())
-                // Suffix which is used to append the line number to the URL. Use #L for GitHub
-                remoteLineSuffix.set("#L")
+                os.toString().trim()
+            } else {
+                "v${version}"
             }
+            // Unix based directory relative path to the root of the project (where you execute gradle respectively).
+            localDirectory.set(rootDir)
 
-            externalDocumentationLink {
-                url.set(URI("https://kotlinlang.org/api/kotlinx.coroutines/").toURL())
+            // URL showing where the source code can be accessed through the web browser
+            remoteUrl.set(URI("https://github.com/gagarski/vertigram/tree/${urlVersion}"))
+            // Suffix which is used to append the line number to the URL. Use #L for GitHub
+            remoteLineSuffix.set("#L")
+            externalDocumentationLinks.register("kotlinx-coroutines") {
+                url.set(URI("https://kotlinlang.org/api/kotlinx.coroutines/"))
             }
-            externalDocumentationLink {
-                url.set(URI("https://vertx.io/docs/${libs.findVersion("vertx").get()}/apidocs/").toURL())
+            externalDocumentationLinks.register("vertx") {
+                url.set(URI("https://vertx.io/docs/${libs.findVersion("vertx").get()}/apidocs/"))
             }
             val jacksonVersion = libs.findVersion("jackson").get()
-            externalDocumentationLink {
-                url.set(URI("https://javadoc.io/doc/com.fasterxml.jackson.core/jackson-annotations/${jacksonVersion}/").toURL())
+
+            externalDocumentationLinks.register("jackson-annotations") {
+              url.set(URI("https://javadoc.io/doc/com.fasterxml.jackson.core/jackson-annotations/${jacksonVersion}/"))
             }
-            externalDocumentationLink {
-                url.set(URI("https://javadoc.io/doc/com.fasterxml.jackson.core/jackson-core/${jacksonVersion}/").toURL())
+            externalDocumentationLinks.register("jackson-core") {
+                url.set(URI("https://javadoc.io/doc/com.fasterxml.jackson.core/jackson-core/${jacksonVersion}/"))
             }
-            externalDocumentationLink {
-                url.set(URI("https://javadoc.io/doc/com.fasterxml.jackson.core/jackson-databind/${jacksonVersion}/").toURL())
+            externalDocumentationLinks.register("jackson-databind") {
+                url.set(URI("https://javadoc.io/doc/com.fasterxml.jackson.core/jackson-databind/${jacksonVersion}/"))
             }
-            externalDocumentationLink {
-                url.set(URI("https://javadoc.io/doc/org.jooq/jooq/${libs.findVersion("jooq").get()}").toURL())
-                packageListUrl.set(URI("https://javadoc.io/doc/org.jooq/jooq/${libs.findVersion("jooq").get()}/element-list").toURL())
+            externalDocumentationLinks.register("jooq") {
+                url.set(URI("https://javadoc.io/doc/org.jooq/jooq/${libs.findVersion("jooq").get()}"))
+                packageListUrl.set(URI("https://javadoc.io/doc/org.jooq/jooq/${libs.findVersion("jooq").get()}/element-list"))
             }
         }
     }

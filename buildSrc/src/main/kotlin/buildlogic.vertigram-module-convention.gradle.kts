@@ -44,6 +44,7 @@ tasks.withType<Test> {
 }
 
 java.sourceCompatibility = JavaVersion.VERSION_21
+java.targetCompatibility = JavaVersion.VERSION_21
 
 publishing {
     if (name == "vertigram-jooq-gradle-plugin")

@@ -15,6 +15,7 @@ include("vertigram-bom")
 include("vertigram-jooq-app-api")
 include("vertigram-jooq-app")
 include("vertigram-dokka-tool")
+include("vertigram-docs")
 
 dependencyResolutionManagement {
     versionCatalogs {
@@ -23,3 +24,4 @@ dependencyResolutionManagement {
         }
     }
 }
+include("vertigram-docs")
