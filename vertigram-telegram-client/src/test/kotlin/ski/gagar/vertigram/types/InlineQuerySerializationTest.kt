@@ -2,39 +2,40 @@ package ski.gagar.vertigram.telegram.types
 
 import org.junit.jupiter.api.Test
 import ski.gagar.vertigram.BaseSerializationTest
+import ski.gagar.vertigram.telegram.markup.toRichText
 
 object InlineQuerySerializationTest : BaseSerializationTest() {
     @Test
     fun `inline query result should survive serialization`() {
         assertSerializable<InlineQuery.Result>(
-            InlineQuery.Result.Audio(
+            InlineQuery.Result.Audio.create(
                 id = "aaa",
                 audioUrl = "https://example.com",
                 title = "aaa"
             )
         )
         assertSerializable<InlineQuery.Result>(
-            InlineQuery.Result.Audio.Cached(
+            InlineQuery.Result.Audio.Cached.create(
                 id = "aaa",
                 audioFileId = "aaa"
             )
         )
         assertSerializable<InlineQuery.Result>(
-            InlineQuery.Result.Article(
+            InlineQuery.Result.Article.create(
                 id = "aaa",
                 title = "aaa",
                 inputMessageContent = InlineQuery.InputMessageContent.Text(messageText = "111")
             )
         )
         assertSerializable<InlineQuery.Result>(
-            InlineQuery.Result.Contact(
+            InlineQuery.Result.Contact.create(
                 id = "aaa",
                 phoneNumber = "+49-111-11-11-111",
                 firstName = "XXX"
             )
         )
         assertSerializable<InlineQuery.Result>(
-            InlineQuery.Result.Document(
+            InlineQuery.Result.Document.create(
                 id = "aaa",
                 title = "xxx",
                 documentUrl = "yyy",
@@ -42,33 +43,33 @@ object InlineQuerySerializationTest : BaseSerializationTest() {
             )
         )
         assertSerializable<InlineQuery.Result>(
-            InlineQuery.Result.Document.Cached(
+            InlineQuery.Result.Document.Cached.create(
                 id = "aaa",
                 title = "xxx",
                 documentFileId = "aaa"
             )
         )
         assertSerializable<InlineQuery.Result>(
-            InlineQuery.Result.Game(
+            InlineQuery.Result.Game.create(
                 id = "aaa",
                 gameShortName = "Game"
             )
         )
         assertSerializable<InlineQuery.Result>(
-            InlineQuery.Result.Gif(
+            InlineQuery.Result.Gif.create(
                 id = "aaa",
                 gifUrl = "https://example.com",
                 thumbnailUrl = "https://example.com"
             )
         )
         assertSerializable<InlineQuery.Result>(
-            InlineQuery.Result.Gif.Cached(
+            InlineQuery.Result.Gif.Cached.create(
                 id = "aaa",
                 gifFileId = "https://example.com"
             )
         )
         assertSerializable<InlineQuery.Result>(
-            InlineQuery.Result.Location(
+            InlineQuery.Result.Location.create(
                 id = "aaa",
                 latitude = 1.0,
                 longitude = 1.0,
@@ -76,39 +77,39 @@ object InlineQuerySerializationTest : BaseSerializationTest() {
             )
         )
         assertSerializable<InlineQuery.Result>(
-            InlineQuery.Result.Mpeg4Gif(
+            InlineQuery.Result.Mpeg4Gif.create(
                 id = "aaa",
                 mpeg4Url = "https://example.com",
                 thumbnailUrl = "https://example.com"
             )
         )
         assertSerializable<InlineQuery.Result>(
-            InlineQuery.Result.Mpeg4Gif.Cached(
+            InlineQuery.Result.Mpeg4Gif.Cached.create(
                 id = "aaa",
                 mpeg4FileId = "https://example.com"
             )
         )
         assertSerializable<InlineQuery.Result>(
-            InlineQuery.Result.Photo(
+            InlineQuery.Result.Photo.create(
                 id = "aaa",
                 photoUrl = "https://example.com",
                 thumbnailUrl = "https://example.com"
             )
         )
         assertSerializable<InlineQuery.Result>(
-            InlineQuery.Result.Photo.Cached(
+            InlineQuery.Result.Photo.Cached.create(
                 id = "aaa",
                 photoFileId = "1"
             )
         )
         assertSerializable<InlineQuery.Result>(
-            InlineQuery.Result.Sticker.Cached(
+            InlineQuery.Result.Sticker.Cached.create(
                 id = "aaa",
                 stickerFileId = "1"
             )
         )
         assertSerializable<InlineQuery.Result>(
-            InlineQuery.Result.Venue(
+            InlineQuery.Result.Venue.create(
                 id = "aaa",
                 latitude = 1.0,
                 longitude = 1.0,
@@ -117,7 +118,7 @@ object InlineQuerySerializationTest : BaseSerializationTest() {
             )
         )
         assertSerializable<InlineQuery.Result>(
-            InlineQuery.Result.Video(
+            InlineQuery.Result.Video.create(
                 id = "aaa",
                 videoUrl = "https://example.com",
                 mimeType = "video/whatever",
@@ -126,21 +127,21 @@ object InlineQuerySerializationTest : BaseSerializationTest() {
             )
         )
         assertSerializable<InlineQuery.Result>(
-            InlineQuery.Result.Video.Cached(
+            InlineQuery.Result.Video.Cached.create(
                 id = "aaa",
                 videoFileId = "1",
                 title = "whatever"
             )
         )
         assertSerializable<InlineQuery.Result>(
-            InlineQuery.Result.Voice(
+            InlineQuery.Result.Voice.create(
                 id = "aaa",
                 voiceUrl = "http://example.com",
                 title = "whatever"
             )
         )
         assertSerializable<InlineQuery.Result>(
-            InlineQuery.Result.Voice.Cached(
+            InlineQuery.Result.Voice.Cached.create(
                 id = "aaa",
                 voiceFileId = "1",
                 title = "whatever"
@@ -151,18 +152,18 @@ object InlineQuerySerializationTest : BaseSerializationTest() {
     @Test
     fun `input message content should survive serialization`() {
         assertSerializable<InlineQuery.InputMessageContent>(
-            InlineQuery.InputMessageContent.Text(
-                messageText = "xxx"
+            InlineQuery.InputMessageContent.Text.create(
+                richMessageText = "xxx".toRichText()
             )
         )
         assertSerializable<InlineQuery.InputMessageContent>(
-            InlineQuery.InputMessageContent.Location(
+            InlineQuery.InputMessageContent.Location.create(
                 latitude = 1.0,
                 longitude = 1.0
             )
         )
         assertSerializable<InlineQuery.InputMessageContent>(
-            InlineQuery.InputMessageContent.Venue(
+            InlineQuery.InputMessageContent.Venue.create(
                 latitude = 1.0,
                 longitude = 1.0,
                 address = "aaa",
@@ -170,19 +171,19 @@ object InlineQuerySerializationTest : BaseSerializationTest() {
             )
         )
         assertSerializable<InlineQuery.InputMessageContent>(
-            InlineQuery.InputMessageContent.Contact(
+            InlineQuery.InputMessageContent.Contact.create(
                 firstName = "A",
                 phoneNumber = "+1"
             )
         )
         assertSerializable<InlineQuery.InputMessageContent>(
-            InlineQuery.InputMessageContent.Invoice(
+            InlineQuery.InputMessageContent.Invoice.create(
                 title = "aaa",
                 description = "aaa",
                 payload = "bbb",
                 providerToken = "xxx",
                 currency = "USD",
-                prices = listOf(LabeledPrice(label = "xxx", amount = 1))
+                prices = listOf(LabeledPrice.create(label = "xxx", amount = 1))
             )
         )
 

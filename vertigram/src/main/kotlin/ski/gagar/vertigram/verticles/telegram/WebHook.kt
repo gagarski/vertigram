@@ -22,6 +22,10 @@ import ski.gagar.vertigram.verticles.telegram.address.TelegramAddress
 import ski.gagar.vertigram.verticles.telegram.config.WebHookConfig
 import ski.gagar.vertigram.internal.server.IpNetworkAddress
 import ski.gagar.vertigram.internal.server.RealIpLoggerHandler
+import ski.gagar.vertigram.telegram.types.ReplyParameters
+import ski.gagar.vertigram.telegram.types.create
+import ski.gagar.vertigram.telegram.types.invoke
+import ski.gagar.vertigram.telegram.types.util.toChatId
 import java.time.Instant
 import java.util.*
 
@@ -123,4 +127,17 @@ class WebHook : UpdateReceiver<WebHook.Config>() {
     companion object {
         private const val X_TELEGRAM_BOT_API_SECRET_TOKEN = "X-Telegram-Bot-Api-Secret-Token"
     }
+}
+
+
+fun main() {
+    ReplyParameters.create(
+        messageId = 42,
+        chatId = 42.toChatId()
+    )
+    ReplyParameters(
+        messageId = 42,
+        chatId = 42.toChatId()
+    )
+
 }

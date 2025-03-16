@@ -80,6 +80,8 @@ data class Chat internal constructor(
         val inviteLink: String? = null,
         val pinnedMessage: Message? = null,
         val permissions: ChatPermissions? = null,
+        val canSendGift: Boolean = false,
+        val canSendPaidMedia: Boolean = false,
         val slowModeDelay: Duration? = null,
         val unrestrictBoostCount: Int? = null,
         val messageAutoDeleteTime: Duration? = null,

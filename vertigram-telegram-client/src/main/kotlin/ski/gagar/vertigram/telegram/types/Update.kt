@@ -40,6 +40,7 @@ class ParsedUpdateList(private val delegate: List<Update.Parsed<*>>) : List<Upda
     JsonSubTypes.Type(value = Update.CallbackQuery::class),
     JsonSubTypes.Type(value = Update.ShippingQuery::class),
     JsonSubTypes.Type(value = Update.PreCheckoutQuery::class),
+    JsonSubTypes.Type(value = Update.PurchasedPaidMedia::class),
     JsonSubTypes.Type(value = Update.Poll::class),
     JsonSubTypes.Type(value = Update.PollAnswer::class),
     JsonSubTypes.Type(value = Update.MyChatMember::class),
@@ -400,6 +401,34 @@ sealed interface Update<T> {
     }
 
     /**
+     * Case when [purchasedPaidMedia] is set
+     */
+    @TelegramCodegen.Type
+    data class PurchasedPaidMedia internal constructor(
+        override val updateId: Long,
+        val purchasedPaidMedia: Payload
+    ) : Parsed<PurchasedPaidMedia.Payload> {
+        override val payload: Payload = purchasedPaidMedia
+        override val date: Instant? = null
+
+        /**
+         * Telegram [PreCheckoutQuery](https://core.telegram.org/bots/api#precheckoutquery) type.
+         *
+         * For up-to-date documentation please consult the official Telegram docs.
+         */
+        @TelegramCodegen.Type
+        data class Payload internal constructor(
+            val id: String,
+            val from: User,
+            val paidMediaPayload: String,
+        ) {
+            companion object
+        }
+
+        companion object
+    }
+
+    /**
      * Case when [poll] is set
      */
     @TelegramCodegen.Type
@@ -611,6 +640,8 @@ sealed interface Update<T> {
         SHIPPING_QUERY,
         @JsonProperty("pre_checkout_query")
         PRE_CHECKOUT_QUERY,
+        @JsonProperty("purchased_paid_media")
+        PURCHASED_PAID_MEDIA,
         @JsonProperty("poll")
         POLL,
         @JsonProperty("poll_answer")

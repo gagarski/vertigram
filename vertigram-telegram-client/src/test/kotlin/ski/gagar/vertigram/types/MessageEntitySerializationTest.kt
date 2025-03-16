@@ -117,5 +117,12 @@ object MessageEntitySerializationTest : BaseSerializationTest() {
                 length = 1
             )
         )
+
+        assertSerializable<MessageEntity>(
+            MessageEntity.ExpandableBlockQuote(
+                offset = 1,
+                length = 1
+            )
+        )
     }
 }

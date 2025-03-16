@@ -29,6 +29,7 @@ import ski.gagar.vertigram.util.NoPosArgs
     JsonSubTypes.Type(EditMessageCaption.ChatMessage::class)
 )
 sealed interface EditMessageCaption : HasOptionalRichCaption {
+    val businessConnectionId: String?
     val replyMarkup: ReplyMarkup?
     /**
      * Inline message case
@@ -41,6 +42,7 @@ sealed interface EditMessageCaption : HasOptionalRichCaption {
     )
     @Throttled
     data class InlineMessage internal constructor(
+        override val businessConnectionId: String? = null,
         val inlineMessageId: String,
         override val caption: String? = null,
         override val parseMode: RichText.ParseMode? = null,
@@ -60,6 +62,7 @@ sealed interface EditMessageCaption : HasOptionalRichCaption {
     )
     @Throttled
     data class ChatMessage internal constructor(
+        override val businessConnectionId: String? = null,
         override val chatId: ChatId,
         val messageId: Long,
         override val caption: String? = null,

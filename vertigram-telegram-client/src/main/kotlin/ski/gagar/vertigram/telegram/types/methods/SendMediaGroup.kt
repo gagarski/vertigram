@@ -26,5 +26,6 @@ data class SendMediaGroup internal constructor(
     val media: List<InputMedia>,
     val disableNotification: Boolean = false,
     val protectContent: Boolean = false,
+    val allowPaidBroadcast: Boolean = false,
     val replyParameters: ReplyParameters? = null
 ) : MultipartTelegramCallable<List<Message>>(), HasChatId

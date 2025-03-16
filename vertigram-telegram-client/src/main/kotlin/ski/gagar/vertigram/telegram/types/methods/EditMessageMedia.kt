@@ -27,6 +27,7 @@ import ski.gagar.vertigram.util.NoPosArgs
     JsonSubTypes.Type(EditMessageMedia.ChatMessage::class)
 )
 sealed interface EditMessageMedia {
+    val businessConnectionId: String?
     val media: InputMedia
     val replyMarkup: ReplyMarkup.InlineKeyboard?
     /**
@@ -40,6 +41,7 @@ sealed interface EditMessageMedia {
     )
     @Throttled
     data class InlineMessage internal constructor(
+        override val businessConnectionId: String? = null,
         val inlineMessageId: String,
         @ski.gagar.vertigram.telegram.annotations.TelegramMedia
         override val media: InputMedia,
@@ -57,6 +59,7 @@ sealed interface EditMessageMedia {
     )
     @Throttled
     data class ChatMessage internal constructor(
+        override val businessConnectionId: String? = null,
         override val chatId: ChatId,
         val messageId: Long,
         @ski.gagar.vertigram.telegram.annotations.TelegramMedia

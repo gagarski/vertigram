@@ -15,6 +15,7 @@ import ski.gagar.vertigram.util.NoPosArgs
 @Throttled
 @TelegramCodegen.Method
 data class UnpinChatMessage internal constructor(
+    val businessConnectionId: String? = null,
     override val chatId: ChatId,
     val messageId: Long? = null
 ) : JsonTelegramCallable<Boolean>(), HasChatId

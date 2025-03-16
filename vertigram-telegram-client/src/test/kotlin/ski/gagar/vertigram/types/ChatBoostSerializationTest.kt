@@ -7,23 +7,23 @@ object ChatBoostSerializationTest : BaseSerializationTest() {
     @Test
     fun `chat boost source should survive serialization`() {
         assertSerializable<ChatBoost.Source>(
-            ChatBoost.Source.Premium(
-                user = User(
+            ChatBoost.Source.Premium.create(
+                user = User.create(
                     id = 1
                 )
             )
         )
         assertSerializable<ChatBoost.Source>(
-            ChatBoost.Source.GiftCode(
-                user = User(
+            ChatBoost.Source.GiftCode.create(
+                user = User.create(
                     id = 1
                 )
             )
         )
         assertSerializable<ChatBoost.Source>(
-            ChatBoost.Source.Giveaway(
+            ChatBoost.Source.Giveaway.create(
                 giveAwayMessageId = 1,
-                user = User(
+                user = User.create(
                     id = 1
                 )
             )

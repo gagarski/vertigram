@@ -77,6 +77,41 @@ new version. This restriction is enforced in all Telegram methods and type const
 other functions (most of which are related to Telegram entities). In case you see a reference to 
 [NoPosArgs](ski.gagar.vertigram.util.NoPosArgs) class, that means you're not allowed to use positional arguments here.
 
+## Telegram types
+
+Besides methods Telegram API introduces types: instances of some of them you receive as a response from the API, so you 
+don't have to worry about creating them. For nested parameters you have to create an instances of them and the constructors
+for the types are unavailable. The reason for that is that input parameters for the types in Vertigram API do not 
+necessarily mirror the fields actually sent to Telegram API. For consistency all types can be created the following ways:
+```kotlin
+import ski.gagar.vertigram.telegram.types.create
+import ski.gagar.vertigram.telegram.types.invoke
+
+tg.sendMessage(
+    chatId = "@someusername".toChatId(),
+    richText = "Hello World".toRichText(),
+    disableNotifications = true,
+    // More verbose way, but code-completion-friendly
+    replyParameters = ReplyParameters.create(
+        messageId = 42,
+        chatId = 42.toChatId()
+    )
+)
+// or
+tg.sendMessage(
+  chatId = "@someusername".toChatId(),
+  richText = "Hello World".toRichText(),
+  disableNotifications = true,
+  // Kotlin-way (invoke on companion object): looks like constructor, but you may need
+  // to manually import ski.gagar.vertigram.telegram.types.invoke
+  replyParameters = ReplyParameters(
+    messageId = 42,
+    chatId = 42.toChatId()
+  )
+)
+
+```
+
 ## Rich Text and Reply Markup
 
 We've barely touched [toRichText](ski.gagar.vertigram.telegram.markup.toRichText) method in previous section. 

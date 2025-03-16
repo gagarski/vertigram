@@ -27,6 +27,7 @@ import java.time.temporal.ChronoUnit
     JsonSubTypes.Type(EditMessageLiveLocation.ChatMessage::class)
 )
 sealed interface EditMessageLiveLocation {
+    val businessConnectionId: String?
     val latitude: Double
     val longitude: Double
     val livePeriod: Duration?
@@ -50,6 +51,7 @@ sealed interface EditMessageLiveLocation {
     )
     @Throttled
     data class InlineMessage internal constructor(
+        override val businessConnectionId: String? = null,
         val inlineMessageId: String,
         override val latitude: Double,
         override val longitude: Double,
@@ -71,6 +73,7 @@ sealed interface EditMessageLiveLocation {
     )
     @Throttled
     data class ChatMessage internal constructor(
+        override val businessConnectionId: String? = null,
         override val chatId: ChatId,
         val messageId: Long,
         override val latitude: Double,

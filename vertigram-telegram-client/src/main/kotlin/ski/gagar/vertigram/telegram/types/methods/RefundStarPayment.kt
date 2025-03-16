@@ -11,6 +11,6 @@ import ski.gagar.vertigram.util.NoPosArgs
  */
 @TelegramCodegen.Method
 data class RefundStarPayment internal constructor(
-    val userId: Int,
+    val userId: Long,
     val telegramPaymentChargeId: String
 ) : JsonTelegramCallable<Boolean>()

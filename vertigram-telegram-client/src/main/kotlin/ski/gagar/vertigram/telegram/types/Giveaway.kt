@@ -19,6 +19,7 @@ data class Giveaway internal constructor(
     val hasPublicWinners: Boolean = false,
     val prizeDescription: String? = null,
     val countryCodes: List<String> = listOf(),
+    val prizeStarCount: Int? = null,
     val premiumSubscriptionMonthCount: Int? = null
 ) {
     /**
@@ -34,6 +35,7 @@ data class Giveaway internal constructor(
         val winnerCount: Int,
         val winners: List<User>,
         val additionalChatCount: Int? = null,
+        val prizeStarCount: Int? = null,
         val premiumSubscriptionMonthCount: Int? = null,
         val unclaimedPrizeCount: Int? = null,
         val onlyNewMembers: Boolean = false,

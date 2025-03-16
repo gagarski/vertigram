@@ -7,14 +7,17 @@ object ReactionSerializationTest : BaseSerializationTest() {
     @Test
     fun `reaction should survive serialization`() {
         assertSerializable<Reaction>(
-            Reaction.Emoji(
+            Reaction.Emoji.create(
                 emoji = ":*"
             )
         )
         assertSerializable<Reaction>(
-            Reaction.CustomEmoji(
+            Reaction.CustomEmoji.create(
                 customEmojiId = "1"
             )
+        )
+        assertSerializable<Reaction>(
+            Reaction.Paid
         )
     }
 

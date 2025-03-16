@@ -3,6 +3,7 @@ package ski.gagar.vertigram.util.multipart
 import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.databind.SerializerProvider
 import com.fasterxml.jackson.databind.ser.BeanPropertyWriter
+import ski.gagar.vertigram.telegram.types.BaseInputMedia
 import ski.gagar.vertigram.telegram.types.InputMedia
 import ski.gagar.vertigram.telegram.types.attachments.Attachment
 
@@ -11,21 +12,24 @@ import ski.gagar.vertigram.telegram.types.attachments.Attachment
  */
 internal class MediaInstantiatingBeanPropertyWriter(delegate: BeanPropertyWriter) : BeanPropertyWriter(delegate) {
     private fun processSingleMedia(
-        value: InputMedia,
+        value: BaseInputMedia<*>,
         deferred: MutableMap<String, AttachmentInfo>,
         index: Int? = null
-    ): InputMedia {
+    ): BaseInputMedia<*> {
         val indexStr = index?.let {
             "_$it"
         }
 
         val mediaName = "${ATTACHMENT}_${_name}${indexStr}_${MEDIA}"
         val thumbName = "${ATTACHMENT}_${_name}${indexStr}_${THUMB}"
+        val coverName = "${ATTACHMENT}_${_name}${indexStr}_${COVER}"
 
-        val processedMedia = value.instantiate(
-            media = value.media.getReference(mediaName),
-            thumbnail = value.thumbnail?.getReference(thumbName)
-        )
+        val processedMedia =
+            value.instantiate(
+                media = value.media.getReference(mediaName),
+                thumbnail = value.thumbnail?.getReference(thumbName),
+                cover = value.cover?.getReference(coverName),
+            )
 
         deferred[mediaName] = AttachmentInfo(value.media, true)
         value.thumbnail?.let {
@@ -67,7 +71,7 @@ internal class MediaInstantiatingBeanPropertyWriter(delegate: BeanPropertyWriter
                 deferredAttachments[name] = AttachmentInfo(value, false)
                 return deferredAttachments // no need to write to json
             }
-            is InputMedia -> {
+            is BaseInputMedia<*> -> {
                 processSingleMedia(value, deferredAttachments)
             }
             is InputMedia.Sticker -> {
@@ -76,7 +80,7 @@ internal class MediaInstantiatingBeanPropertyWriter(delegate: BeanPropertyWriter
             is Collection<*> -> {
                 value.withIndex().map { (index, it) ->
                     when (it) {
-                        is InputMedia -> processSingleMedia(it, deferredAttachments, index)
+                        is BaseInputMedia<*> -> processSingleMedia(it, deferredAttachments, index)
                         is InputMedia.Sticker -> processSingleSticker(it, deferredAttachments, index)
                         else -> it
                     }
@@ -131,6 +135,7 @@ internal class MediaInstantiatingBeanPropertyWriter(delegate: BeanPropertyWriter
         const val ATTACHMENT = "attachment"
         const val MEDIA = "media"
         const val THUMB = "thumb"
+        const val COVER = "cover"
         const val STICKER = "sticker"
     }
 }

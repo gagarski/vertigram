@@ -24,6 +24,7 @@ import ski.gagar.vertigram.util.NoPosArgs
     JsonSubTypes.Type(StopMessageLiveLocation.ChatMessage::class)
 )
 sealed interface StopMessageLiveLocation {
+    val businessConnectionId: String?
     val replyMarkup: ReplyMarkup?
     /**
      * Inline message case
@@ -35,6 +36,7 @@ sealed interface StopMessageLiveLocation {
         name = "stopMessageLiveLocation"
     )
     data class InlineMessage internal constructor(
+        override val businessConnectionId: String? = null,
         val inlineMessageId: String,
         override val replyMarkup: ReplyMarkup? = null
     ) : JsonTelegramCallable<Boolean>(), StopMessageLiveLocation
@@ -49,6 +51,7 @@ sealed interface StopMessageLiveLocation {
         name = "stopMessageLiveLocation"
     )
     data class ChatMessage internal constructor(
+        override val businessConnectionId: String? = null,
         override val chatId: ChatId,
         val messageId: Long,
         override val replyMarkup: ReplyMarkup? = null

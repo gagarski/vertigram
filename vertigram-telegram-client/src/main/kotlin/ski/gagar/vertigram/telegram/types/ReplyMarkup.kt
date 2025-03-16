@@ -60,6 +60,7 @@ sealed interface ReplyMarkup {
             JsonSubTypes.Type(value = Button.SwitchInline::class),
             JsonSubTypes.Type(value = Button.SwitchInlineCurrentChat::class),
             JsonSubTypes.Type(value = Button.SwitchInlineChosenChat::class),
+            JsonSubTypes.Type(value = Button.CopyText::class),
             JsonSubTypes.Type(value = Button.Game::class),
             JsonSubTypes.Type(value = Button.Pay::class),
 
@@ -179,6 +180,30 @@ sealed interface ReplyMarkup {
 
                 companion object
             }
+
+            /**
+             * Case when [copyText] is set
+             */
+            // @TelegramCodegen.Type
+            data class CopyText internal constructor(
+                val text: String,
+                val copyText: Payload
+            ) : Button {
+                /**
+                 * Telegram [CopyTextButton](https://core.telegram.org/bots/api#copytextbutton) type.
+                 *
+                 * For up-to-date documentation please consult the official Telegram docs.
+                 */
+                // @TelegramCodegen.Type
+                data class Payload internal constructor(
+                    val text: String
+                ) {
+                    companion object
+                }
+
+                companion object
+            }
+
 
             /**
              * Case when [callbackGame] is set

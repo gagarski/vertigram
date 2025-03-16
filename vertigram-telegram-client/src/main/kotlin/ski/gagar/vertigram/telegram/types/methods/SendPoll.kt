@@ -1,5 +1,6 @@
 package ski.gagar.vertigram.telegram.types.methods
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 import com.fasterxml.jackson.databind.annotation.JsonTypeResolver
@@ -13,6 +14,7 @@ import ski.gagar.vertigram.telegram.types.richtext.HasRichQuestion
 import ski.gagar.vertigram.telegram.types.richtext.HasRichText
 import ski.gagar.vertigram.telegram.types.richtext.RichText
 import ski.gagar.vertigram.telegram.types.util.ChatId
+import ski.gagar.vertigram.util.NoPosArgs
 import ski.gagar.vertigram.util.jackson.typing.TypeResolverWithDeductionBuilder
 import java.time.Duration
 import java.time.Instant
@@ -51,6 +53,7 @@ sealed class SendPoll : JsonTelegramCallable<Message>(), HasChatId, HasRichQuest
     abstract val allowsMultipleAnswers: Boolean
     abstract val disableNotification: Boolean
     abstract val protectContent: Boolean
+    abstract val allowPaidBroadcast: Boolean
     abstract val messageEffectId: String?
     abstract val replyParameters: ReplyParameters?
     abstract val replyMarkup: ReplyMarkup?
@@ -85,6 +88,7 @@ sealed class SendPoll : JsonTelegramCallable<Message>(), HasChatId, HasRichQuest
             val openPeriod: Duration,
             override val disableNotification: Boolean = false,
             override val protectContent: Boolean = false,
+            override val allowPaidBroadcast: Boolean = false,
             override val messageEffectId: String? = null,
             override val replyParameters: ReplyParameters? = null,
             override val replyMarkup: ReplyMarkup? = null,
@@ -121,6 +125,7 @@ sealed class SendPoll : JsonTelegramCallable<Message>(), HasChatId, HasRichQuest
             val closeDate: Instant,
             override val disableNotification: Boolean = false,
             override val protectContent: Boolean = false,
+            override val allowPaidBroadcast: Boolean = false,
             override val messageEffectId: String? = null,
             override val replyParameters: ReplyParameters? = null,
             override val replyMarkup: ReplyMarkup? = null
@@ -156,6 +161,7 @@ sealed class SendPoll : JsonTelegramCallable<Message>(), HasChatId, HasRichQuest
             val isClosed: Boolean = false,
             override val disableNotification: Boolean = false,
             override val protectContent: Boolean = false,
+            override val allowPaidBroadcast: Boolean = false,
             override val messageEffectId: String? = null,
             override val replyParameters: ReplyParameters? = null,
             override val replyMarkup: ReplyMarkup? = null
@@ -201,6 +207,7 @@ sealed class SendPoll : JsonTelegramCallable<Message>(), HasChatId, HasRichQuest
             val openPeriod: Duration,
             override val disableNotification: Boolean = false,
             override val protectContent: Boolean = false,
+            override val allowPaidBroadcast: Boolean = false,
             override val messageEffectId: String? = null,
             override val replyParameters: ReplyParameters? = null,
             override val replyMarkup: ReplyMarkup? = null
@@ -241,6 +248,7 @@ sealed class SendPoll : JsonTelegramCallable<Message>(), HasChatId, HasRichQuest
             val closeDate: Instant,
             override val disableNotification: Boolean = false,
             override val protectContent: Boolean = false,
+            override val allowPaidBroadcast: Boolean = false,
             override val messageEffectId: String? = null,
             override val replyParameters: ReplyParameters? = null,
             override val replyMarkup: ReplyMarkup? = null
@@ -282,6 +290,7 @@ sealed class SendPoll : JsonTelegramCallable<Message>(), HasChatId, HasRichQuest
             val isClosed: Boolean = false,
             override val disableNotification: Boolean = false,
             override val protectContent: Boolean = false,
+            override val allowPaidBroadcast: Boolean = false,
             override val messageEffectId: String? = null,
             override val replyParameters: ReplyParameters? = null,
             override val replyMarkup: ReplyMarkup? = null
@@ -300,13 +309,42 @@ sealed class SendPoll : JsonTelegramCallable<Message>(), HasChatId, HasRichQuest
      *
      * For up-to-date documentation please consult the official Telegram docs.
      */
-    @TelegramCodegen.Type
+//    @TelegramCodegen.Type
     data class InputOption internal constructor(
         override val text: String,
-        override val parseMode: RichText.ParseMode? = null,
-        override val entities: List<MessageEntity>? = null,
+        val textParseMode: RichText.ParseMode? = null,
+        val textEntities: List<MessageEntity>? = null,
     ) : HasRichText {
+        @get:JsonIgnore
+        override val parseMode: RichText.ParseMode?
+            get() = textParseMode
+        @get:JsonIgnore
+        override val entities: List<MessageEntity>?
+            get() = textEntities
+
         companion object
     }
 
 }
+
+/////
+// Generated manually, since codegen does not support text/textParseMode/textEntities
+/////
+
+fun SendPoll.InputOption.Companion.create(
+    noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+    richText: RichText
+) = SendPoll.InputOption(
+    text = richText.text,
+    textParseMode = richText.parseMode,
+    textEntities = richText.entities
+)
+
+operator fun SendPoll.InputOption.Companion.invoke(
+    noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+    richText: RichText
+) = SendPoll.InputOption(
+    text = richText.text,
+    textParseMode = richText.parseMode,
+    textEntities = richText.entities
+)

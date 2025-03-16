@@ -49,6 +49,7 @@ data class Message internal constructor(
     val animation: Animation? = null,
     val audio: Audio? = null,
     val document: Document? = null,
+    val paidMedia: PaidMediaInfo? = null,
     val photo: List<PhotoSize>? = null,
     val sticker: Sticker? = null,
     val story: Story? = null,
@@ -79,6 +80,7 @@ data class Message internal constructor(
     val pinnedMessage: Message? = null,
     val invoice: Invoice? = null,
     val successfulPayment: Service.SuccessfulPayment? = null,
+    val refundedPayment: Service.RefundedPayment? = null,
     val usersShared: Service.UsersShared? = null,
     val chatShared: Service.ChatShared? = null,
     val connectedWebsite: String? = null,
@@ -118,6 +120,7 @@ data class Message internal constructor(
         val animation: Animation? = null,
         val audio: Audio? = null,
         val document: Document? = null,
+        val paidMedia: PaidMediaInfo? = null,
         val photo: List<PhotoSize>? = null,
         val sticker: Sticker? = null,
         val story: Story? = null,
@@ -138,6 +141,18 @@ data class Message internal constructor(
         companion object
     }
 
+    /**
+     * Telegram [PaidMediaInfo](https://core.telegram.org/bots/api#paidmediainfo) type.
+     *
+     * For up-to-date documentation please consult the official Telegram docs.
+     */
+    @TelegramCodegen.Type
+    data class PaidMediaInfo internal constructor(
+        val starCount: Int,
+        val paidMedia: List<PaidMedia>
+    ) {
+        companion object
+    }
 
     /**
      * Telegram [MessageOrigin](https://core.telegram.org/bots/api#messageorigin) type.
@@ -303,10 +318,31 @@ data class Message internal constructor(
             val currency: String,
             val totalAmount: Int,
             val invoicePayload: String,
+            val subscriptionExpirationDate: Instant? = null,
+            @get:JvmName("getIsRecurring")
+            val isRecurring: Boolean = false,
+            @get:JvmName("getIsFirstRecurring")
+            val isFirstRecurring: Boolean = false,
             val shippingOptionId: String? = null,
             val orderInfo: OrderInfo? = null,
             val telegramPaymentChargeId: String,
             val providerPaymentChargeId: String
+        ) {
+            companion object
+        }
+
+        /**
+         * Telegram [RefundedPayment](https://core.telegram.org/bots/api#refundedpayment) type.
+         *
+         * For up-to-date documentation please consult the official Telegram docs.
+         */
+        @TelegramCodegen.Type
+        data class RefundedPayment internal constructor(
+            val currency: String,
+            val totalAmount: Int,
+            val invoicePayload: String,
+            val telegramPaymentChargeId: String,
+            val providerPaymentChargeId: String? = null
         ) {
             companion object
         }
@@ -502,7 +538,9 @@ data class Message internal constructor(
             data class Completed internal constructor(
                 val winnerCount: Int,
                 val unclaimedPrizeCount: Int? = null,
-                val giveawayMessage: Message? = null
+                val giveawayMessage: Message? = null,
+                @get:JvmName("getIsStarGiveaway")
+                val isStarGiveaway: Boolean = false
             ) {
                 companion object
             }
@@ -512,7 +550,12 @@ data class Message internal constructor(
              *
              * For up-to-date documentation please consult the official Telegram docs.
              */
-            data object Created
+            @TelegramCodegen.Type
+            data class Created internal constructor(
+                val prizeStarCount: Int? = null
+            ) {
+                companion object
+            }
         }
 
         /**

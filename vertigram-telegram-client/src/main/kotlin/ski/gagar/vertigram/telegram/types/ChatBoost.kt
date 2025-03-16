@@ -74,6 +74,7 @@ data class ChatBoost internal constructor(
         data class Giveaway internal constructor(
             val giveAwayMessageId: Long,
             override val user: User,
+            val prizeStarCount: Int? = null,
             @get:JvmName("getIsUnclaimed")
             val isUnclaimed: Boolean = false
         ) : Source {

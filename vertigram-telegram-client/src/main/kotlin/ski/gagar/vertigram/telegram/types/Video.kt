@@ -2,6 +2,7 @@ package ski.gagar.vertigram.telegram.types
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import ski.gagar.vertigram.annotations.TelegramCodegen
+import ski.gagar.vertigram.telegram.types.attachments.Attachment
 import ski.gagar.vertigram.util.NoPosArgs
 import java.time.Duration
 
@@ -18,6 +19,8 @@ data class Video internal constructor(
     val height: Int,
     val duration: Duration,
     val thumbnail: PhotoSize? = null,
+    val cover: List<PhotoSize>? = null,
+    val startTimestamp: Duration? = null,
     val fileName: String? = null,
     val mimeType: String? = null,
     val fileSize: Long? = null

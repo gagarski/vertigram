@@ -15,6 +15,7 @@ import ski.gagar.vertigram.util.NoPosArgs
 @Throttled
 @TelegramCodegen.Method
 data class PinChatMessage internal constructor(
+    val businessConnectionId: String? = null,
     override val chatId: ChatId,
     val messageId: Long,
     val disableNotification: Boolean = false

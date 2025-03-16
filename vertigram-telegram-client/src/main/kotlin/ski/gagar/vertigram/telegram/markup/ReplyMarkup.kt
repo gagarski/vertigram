@@ -165,6 +165,27 @@ class InlineKeyboardMarkupRowBuilder {
     }
 
     /**
+     * Add copy text button
+     *
+     * @see ReplyMarkup.InlineKeyboard.Button.CopyText
+     */
+    fun copyText(
+        @Suppress("UNUSED_PARAMETER")
+        noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+        text: String,
+        copyText: String
+    ) {
+        buttons.add(
+            ReplyMarkup.InlineKeyboard.Button.CopyText(
+                text = text,
+                copyText = ReplyMarkup.InlineKeyboard.Button.CopyText.Payload(
+                    text = copyText
+                )
+            )
+        )
+    }
+
+    /**
      * Add game button
      *
      * @see ReplyMarkup.InlineKeyboard.Button.Game

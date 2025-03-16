@@ -12,6 +12,15 @@ interface HasRichText {
 }
 
 /**
+ * Interface for input types (sent TO Telegram API) that has optional rich quote field
+ */
+interface HasOptionalRichText {
+    val text: String?
+    val textParseMode: RichText.ParseMode?
+    val textEntities: List<MessageEntity>?
+}
+
+/**
  * Interface for input types (sent TO Telegram API) that has rich text field
  */
 interface HasRichQuestion {

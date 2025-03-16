@@ -31,6 +31,7 @@ data class SendVenue internal constructor(
     val googlePlaceType: String? = null,
     val disableNotification: Boolean = false,
     val protectContent: Boolean = false,
+    val allowPaidBroadcast: Boolean = false,
     val messageEffectId: String? = null,
 
     val replyParameters: ReplyParameters? = null,

@@ -142,7 +142,7 @@ data class InlineQuery internal constructor(
             val sendPhoneNumberToProvider: Boolean = false,
             val sendEmailToProvider: Boolean = false,
             @get:JvmName("getIsFlexible")
-            val isFlexible: Boolean? = false
+            val isFlexible: Boolean = false
         ) : InputMessageContent {
             companion object
         }
@@ -217,7 +217,6 @@ data class InlineQuery internal constructor(
             val inputMessageContent: InputMessageContent,
             val replyMarkup: ReplyMarkup.InlineKeyboard? = null,
             val url: String? = null,
-            val hideUrl: Boolean = false,
             val description: String? = null,
             val thumbnailUrl: String? = null,
             val thumbnailWidth: Int? = null,

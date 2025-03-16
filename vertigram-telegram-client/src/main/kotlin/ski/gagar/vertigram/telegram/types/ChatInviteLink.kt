@@ -3,6 +3,7 @@ package ski.gagar.vertigram.telegram.types
 import com.fasterxml.jackson.annotation.JsonIgnore
 import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.util.NoPosArgs
+import java.time.Duration
 import java.time.Instant
 
 /**
@@ -22,7 +23,9 @@ data class ChatInviteLink internal constructor(
     val name: String? = null,
     val expireDate: Instant? = null,
     val memberLimit: Int? = null,
-    val pendingJoinRequestCount: Int? = null
+    val pendingJoinRequestCount: Int? = null,
+    val subscriptionPeriod: Duration? = null,
+    val subscriptionPrice: Int? = null
 ) {
     companion object
 }

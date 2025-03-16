@@ -27,6 +27,7 @@ import ski.gagar.vertigram.telegram.types.util.ChatId
     JsonSubTypes.Type(EditMessageText.ChatMessage::class)
 )
 sealed interface EditMessageText : HasRichText {
+    val businessConnectionId: String?
     val linkPreviewOptions: Message.LinkPreviewOptions?
     val replyMarkup: ReplyMarkup?
     /**
@@ -40,6 +41,7 @@ sealed interface EditMessageText : HasRichText {
     )
     @Throttled
     data class InlineMessage internal constructor(
+        override val businessConnectionId: String? = null,
         val inlineMessageId: String,
         override val text: String,
         override val parseMode: RichText.ParseMode? = null,
@@ -59,6 +61,7 @@ sealed interface EditMessageText : HasRichText {
     )
     @Throttled
     data class ChatMessage internal constructor(
+        override val businessConnectionId: String? = null,
         override val chatId: ChatId,
         val messageId: Long,
         override val text: String,

@@ -9,33 +9,33 @@ object MessageSerializationTest : BaseSerializationTest() {
     @Test
     fun `message origin should survive serialization`() {
         assertSerializable<Message.Origin>(
-            Message.Origin.Chat(
+            Message.Origin.Chat.create(
                 date = Instant.now().truncatedTo(ChronoUnit.SECONDS),
-                senderChat = Chat(
+                senderChat = Chat.create(
                     id = 1,
                     type = Chat.Type.PRIVATE
                 )
             )
         )
         assertSerializable<Message.Origin>(
-            Message.Origin.User(
+            Message.Origin.User.create(
                 date = Instant.now().truncatedTo(ChronoUnit.SECONDS),
-                senderUser = User(
+                senderUser = User.create(
                     id = 1
                 )
             )
         )
         assertSerializable<Message.Origin>(
-            Message.Origin.HiddenUser(
+            Message.Origin.HiddenUser.create(
                 date = Instant.now().truncatedTo(ChronoUnit.SECONDS),
                 senderUserName = "Alex"
             )
         )
         assertSerializable<Message.Origin>(
-            Message.Origin.Channel(
+            Message.Origin.Channel.create(
                 date = Instant.now().truncatedTo(ChronoUnit.SECONDS),
                 messageId = 1,
-                chat = Chat(
+                chat = Chat.create(
                     id = 1,
                     type = Chat.Type.CHANNEL
                 )
@@ -46,15 +46,15 @@ object MessageSerializationTest : BaseSerializationTest() {
     @Test
     fun `service message WriteAccessAllowed should survive serialization`() {
         assertSerializable<Message.Service.WriteAccessAllowed>(
-            Message.Service.WriteAccessAllowed.FromRequest()
+            Message.Service.WriteAccessAllowed.FromRequest.create()
         )
         assertSerializable<Message.Service.WriteAccessAllowed>(
-            Message.Service.WriteAccessAllowed.WebApp(
+            Message.Service.WriteAccessAllowed.WebApp.create(
                 webAppName = "111"
             )
         )
         assertSerializable<Message.Service.WriteAccessAllowed>(
-            Message.Service.WriteAccessAllowed.FromAttachmentMenu()
+            Message.Service.WriteAccessAllowed.FromAttachmentMenu.create()
         )
     }
 

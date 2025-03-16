@@ -20,17 +20,17 @@ object BotCommandSerializationTest : BaseSerializationTest() {
             BotCommand.Scope.AllChatAdministrators
         )
         assertSerializable<BotCommand.Scope>(
-            BotCommand.Scope.Chat(
+            BotCommand.Scope.Chat.create(
                 chatId = 1.toChatId()
             )
         )
         assertSerializable<BotCommand.Scope>(
-            BotCommand.Scope.ChatAdministrators(
+            BotCommand.Scope.ChatAdministrators.create(
                 chatId = 1.toChatId()
             )
         )
         assertSerializable<BotCommand.Scope>(
-            BotCommand.Scope.ChatMember(
+            BotCommand.Scope.ChatMember.create(
                 chatId = 1.toChatId(),
                 userId = 1
             )

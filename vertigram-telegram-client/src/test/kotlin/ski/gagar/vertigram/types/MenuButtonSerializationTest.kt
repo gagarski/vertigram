@@ -13,9 +13,9 @@ object MenuButtonSerializationTest : BaseSerializationTest() {
             MenuButton.Commands
         )
         assertSerializable<MenuButton>(
-            MenuButton.WebApp(
+            MenuButton.WebApp.create(
                 text = "xxx",
-                webApp = WebAppInfo(
+                webApp = WebAppInfo.create(
                     url = "https://example.com"
                 )
             )

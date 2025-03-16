@@ -117,7 +117,8 @@ sealed interface ChatMember {
      */
     @TelegramCodegen.Type
     data class Member internal constructor(
-        override val user: User
+        override val user: User,
+        val untilDate: Instant? = null
     ) : ChatMember {
         override val status: Status = ChatMember.Status.MEMBER
         @JsonIgnore

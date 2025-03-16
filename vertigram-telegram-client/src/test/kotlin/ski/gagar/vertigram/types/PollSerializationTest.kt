@@ -7,7 +7,7 @@ object PollSerializationTest : BaseSerializationTest() {
     @Test
     fun `poll should survive serialization`() {
         assertSerializable<Poll>(
-            Poll.Regular(
+            Poll.Regular.create(
                 id = "1",
                 question = "a",
                 options = listOf(),
@@ -15,7 +15,7 @@ object PollSerializationTest : BaseSerializationTest() {
             )
         )
         assertSerializable<Poll>(
-            Poll.Quiz(
+            Poll.Quiz.create(
                 id = "1",
                 question = "a",
                 options = listOf(),

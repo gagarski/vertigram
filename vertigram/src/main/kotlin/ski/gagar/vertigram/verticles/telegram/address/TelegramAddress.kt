@@ -55,6 +55,7 @@ object TelegramAddress {
                 Update.Type.CALLBACK_QUERY -> Update.CallbackQuery::class.simpleName
                 Update.Type.SHIPPING_QUERY -> Update.ShippingQuery::class.simpleName
                 Update.Type.PRE_CHECKOUT_QUERY -> Update.PreCheckoutQuery::class.simpleName
+                Update.Type.PURCHASED_PAID_MEDIA -> Update.PurchasedPaidMedia::class.simpleName
                 Update.Type.POLL -> Update.Poll::class.simpleName
                 Update.Type.POLL_ANSWER -> Update.PollAnswer::class.simpleName
                 Update.Type.MY_CHAT_MEMBER -> Update.MyChatMember::class.simpleName

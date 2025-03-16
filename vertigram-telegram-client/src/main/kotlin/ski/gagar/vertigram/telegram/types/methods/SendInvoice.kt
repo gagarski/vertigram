@@ -45,6 +45,7 @@ data class SendInvoice internal constructor(
     val isFlexible: Boolean = false,
     val disableNotification: Boolean = false,
     val protectContent: Boolean = false,
+    val allowPaidBroadcast: Boolean = false,
     val replyParameters: ReplyParameters? = null,
     val replyMarkup: ReplyMarkup? = null
 ) : JsonTelegramCallable<Message>(), HasChatId

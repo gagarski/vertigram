@@ -24,6 +24,7 @@ import ski.gagar.vertigram.telegram.types.util.ChatId
     JsonSubTypes.Type(EditMessageReplyMarkup.ChatMessage::class)
 )
 sealed interface EditMessageReplyMarkup {
+    val businessConnectionId: String?
     val replyMarkup: ReplyMarkup.InlineKeyboard?
     /**
      * Inline message case
@@ -36,6 +37,7 @@ sealed interface EditMessageReplyMarkup {
     )
     @Throttled
     data class InlineMessage internal constructor(
+        override val businessConnectionId: String? = null,
         val inlineMessageId: String,
         override val replyMarkup: ReplyMarkup.InlineKeyboard? = null
     ) : EditMessageReplyMarkup, JsonTelegramCallable<Boolean>()
@@ -51,6 +53,7 @@ sealed interface EditMessageReplyMarkup {
     )
     @Throttled
     data class ChatMessage internal constructor(
+        override val businessConnectionId: String? = null,
         override val chatId: ChatId,
         val messageId: Long,
         override val replyMarkup: ReplyMarkup.InlineKeyboard? = null

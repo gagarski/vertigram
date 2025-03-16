@@ -10,6 +10,7 @@ import ski.gagar.vertigram.telegram.types.ReplyParameters
 import ski.gagar.vertigram.telegram.types.richtext.HasOptionalRichCaption
 import ski.gagar.vertigram.telegram.types.richtext.RichText
 import ski.gagar.vertigram.telegram.types.util.ChatId
+import java.time.Duration
 
 /**
  * Telegram [copyMessage](https://core.telegram.org/bots/api#copymessage) method.
@@ -23,12 +24,14 @@ data class CopyMessage internal constructor(
     val messageThreadId: Long? = null,
     val fromChatId: ChatId,
     val messageId: Long,
+    val videoStartTimestamp: Duration? = null,
     override val caption: String? = null,
     override val parseMode: RichText.ParseMode? = null,
     override val captionEntities: List<MessageEntity>? = null,
     val showCaptionAboveMedia: Boolean = false,
     val disableNotification: Boolean = false,
     val protectContent: Boolean = false,
+    val allowPaidBroadcast: Boolean = false,
     val replyParameters: ReplyParameters? = null,
     val replyMarkup: ReplyMarkup? = null
 ) : JsonTelegramCallable<Message.Id>(), HasChatId, HasOptionalRichCaption

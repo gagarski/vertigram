@@ -25,6 +25,7 @@ data class SendDice internal constructor(
     val emoji: Dice.Emoji? = null,
     val disableNotification: Boolean = false,
     val protectContent: Boolean = false,
+    val allowPaidBroadcast: Boolean = false,
     val replyParameters: ReplyParameters? = null,
     val replyMarkup: ReplyMarkup? = null
 ) : JsonTelegramCallable<Message>(), HasChatId

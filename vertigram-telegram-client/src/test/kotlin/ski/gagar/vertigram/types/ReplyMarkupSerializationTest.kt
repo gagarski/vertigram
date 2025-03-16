@@ -91,6 +91,13 @@ object ReplyMarkupSerializationTest : BaseSerializationTest() {
         )
 
         assertSerializable<ReplyMarkup.InlineKeyboard.Button>(
+            ReplyMarkup.InlineKeyboard.Button.CopyText(
+                text = "Text",
+                copyText = ReplyMarkup.InlineKeyboard.Button.CopyText.Payload(text = "text")
+            )
+        )
+
+        assertSerializable<ReplyMarkup.InlineKeyboard.Button>(
             ReplyMarkup.InlineKeyboard.Button.Game(
                 text = "Text",
                 callbackGame = ReplyMarkup.InlineKeyboard.Button.Game.Payload

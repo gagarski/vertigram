@@ -9,31 +9,22 @@ object PassportSerializationTest : BaseSerializationTest() {
     @Test
     fun `passport encrypted element should survive serialization`() {
         assertSerializable<Passport.EncryptedElement>(
-            Passport.EncryptedElement.PersonalDetails(
+            Passport.EncryptedElement.PersonalDetails.create(
                 data = "data",
                 hash = "hash"
             )
         )
 
         assertSerializable<Passport.EncryptedElement>(
-            Passport.EncryptedElement.Passport(
-                data = "data",
-                frontSide = DUMMY_PASSPORT_FILE,
-                hash = "hash"
-            )
-        )
-
-        assertSerializable<Passport.EncryptedElement>(
-            Passport.EncryptedElement.DriverLicense(
+            Passport.EncryptedElement.Passport.create(
                 data = "data",
                 frontSide = DUMMY_PASSPORT_FILE,
-                reverseSide = DUMMY_PASSPORT_FILE,
                 hash = "hash"
             )
         )
 
         assertSerializable<Passport.EncryptedElement>(
-            Passport.EncryptedElement.IdentityCard(
+            Passport.EncryptedElement.DriverLicense.create(
                 data = "data",
                 frontSide = DUMMY_PASSPORT_FILE,
                 reverseSide = DUMMY_PASSPORT_FILE,
@@ -42,7 +33,16 @@ object PassportSerializationTest : BaseSerializationTest() {
         )
 
         assertSerializable<Passport.EncryptedElement>(
-            Passport.EncryptedElement.InternalPassport(
+            Passport.EncryptedElement.IdentityCard.create(
+                data = "data",
+                frontSide = DUMMY_PASSPORT_FILE,
+                reverseSide = DUMMY_PASSPORT_FILE,
+                hash = "hash"
+            )
+        )
+
+        assertSerializable<Passport.EncryptedElement>(
+            Passport.EncryptedElement.InternalPassport.create(
                 data = "data",
                 frontSide = DUMMY_PASSPORT_FILE,
                 hash = "hash"
@@ -50,56 +50,56 @@ object PassportSerializationTest : BaseSerializationTest() {
         )
 
         assertSerializable<Passport.EncryptedElement>(
-            Passport.EncryptedElement.Address(
+            Passport.EncryptedElement.Address.create(
                 data = "data",
                 hash = "hash"
             )
         )
 
         assertSerializable<Passport.EncryptedElement>(
-            Passport.EncryptedElement.UtilityBill(
+            Passport.EncryptedElement.UtilityBill.create(
                 files = listOf(DUMMY_PASSPORT_FILE),
                 hash = "hash"
             )
         )
 
         assertSerializable<Passport.EncryptedElement>(
-            Passport.EncryptedElement.BankStatement(
+            Passport.EncryptedElement.BankStatement.create(
                 files = listOf(DUMMY_PASSPORT_FILE),
                 hash = "hash"
             )
         )
 
         assertSerializable<Passport.EncryptedElement>(
-            Passport.EncryptedElement.RentalAgreement(
+            Passport.EncryptedElement.RentalAgreement.create(
                 files = listOf(DUMMY_PASSPORT_FILE),
                 hash = "hash"
             )
         )
 
         assertSerializable<Passport.EncryptedElement>(
-            Passport.EncryptedElement.PassportRegistration(
+            Passport.EncryptedElement.PassportRegistration.create(
                 files = listOf(DUMMY_PASSPORT_FILE),
                 hash = "hash"
             )
         )
 
         assertSerializable<Passport.EncryptedElement>(
-            Passport.EncryptedElement.TemporaryRegistration(
+            Passport.EncryptedElement.TemporaryRegistration.create(
                 files = listOf(DUMMY_PASSPORT_FILE),
                 hash = "hash"
             )
         )
 
         assertSerializable<Passport.EncryptedElement>(
-            Passport.EncryptedElement.PhoneNumber(
+            Passport.EncryptedElement.PhoneNumber.create(
                 phoneNumber = "+491111111111",
                 hash = "hash"
             )
         )
 
         assertSerializable<Passport.EncryptedElement>(
-            Passport.EncryptedElement.Email(
+            Passport.EncryptedElement.Email.create(
                 email = "bob@gmail.com",
                 hash = "hash"
             )
@@ -109,7 +109,7 @@ object PassportSerializationTest : BaseSerializationTest() {
     @Test
     fun `element error should survive serialization`() {
         assertSerializable<Passport.ElementError>(
-            Passport.ElementError.DataField(
+            Passport.ElementError.DataField.create(
                 type = Passport.EncryptedElement.Type.PASSPORT,
                 fieldName = "a",
                 dataHash = "1",
@@ -117,56 +117,56 @@ object PassportSerializationTest : BaseSerializationTest() {
             )
         )
         assertSerializable<Passport.ElementError>(
-            Passport.ElementError.FrontSide(
+            Passport.ElementError.FrontSide.create(
                 type = Passport.EncryptedElement.Type.PASSPORT,
                 fileHash = "1",
                 message = "a"
             )
         )
         assertSerializable<Passport.ElementError>(
-            Passport.ElementError.ReverseSide(
+            Passport.ElementError.ReverseSide.create(
                 type = Passport.EncryptedElement.Type.PASSPORT,
                 fileHash = "1",
                 message = "a"
             )
         )
         assertSerializable<Passport.ElementError>(
-            Passport.ElementError.Selfie(
+            Passport.ElementError.Selfie.create(
                 type = Passport.EncryptedElement.Type.PASSPORT,
                 fileHash = "1",
                 message = "a"
             )
         )
         assertSerializable<Passport.ElementError>(
-            Passport.ElementError.File(
+            Passport.ElementError.File.create(
                 type = Passport.EncryptedElement.Type.PASSPORT,
                 fileHash = "1",
                 message = "a"
             )
         )
         assertSerializable<Passport.ElementError>(
-            Passport.ElementError.Files(
+            Passport.ElementError.Files.create(
                 type = Passport.EncryptedElement.Type.PASSPORT,
                 fileHashes = listOf(),
                 message = "a"
             )
         )
         assertSerializable<Passport.ElementError>(
-            Passport.ElementError.TranslationFile(
+            Passport.ElementError.TranslationFile.create(
                 type = Passport.EncryptedElement.Type.PASSPORT,
                 fileHash = "1",
                 message = "a"
             )
         )
         assertSerializable<Passport.ElementError>(
-            Passport.ElementError.TranslationFiles(
+            Passport.ElementError.TranslationFiles.create(
                 type = Passport.EncryptedElement.Type.PASSPORT,
                 fileHashes = listOf(),
                 message = "a"
             )
         )
         assertSerializable<Passport.ElementError>(
-            Passport.ElementError.Unspecified(
+            Passport.ElementError.Unspecified.create(
                 type = Passport.EncryptedElement.Type.PASSPORT,
                 elementHash = "1",
                 message = "a"
@@ -174,7 +174,7 @@ object PassportSerializationTest : BaseSerializationTest() {
         )
     }
 
-    private val DUMMY_PASSPORT_FILE = Passport.File(
+    private val DUMMY_PASSPORT_FILE = Passport.File.create(
         fileId = "1",
         fileUniqueId = "1",
         fileDate = Instant.now().truncatedTo(ChronoUnit.SECONDS),

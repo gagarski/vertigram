@@ -7,6 +7,7 @@ import ski.gagar.vertigram.telegram.throttling.Throttled
 import ski.gagar.vertigram.telegram.types.util.ChatId
 import ski.gagar.vertigram.telegram.types.Message
 import ski.gagar.vertigram.util.NoPosArgs
+import java.time.Duration
 
 /**
  * Telegram [forwardMessage](https://core.telegram.org/bots/api#forwardmessage) method.
@@ -19,6 +20,7 @@ data class ForwardMessage internal constructor(
     override val chatId: ChatId,
     val messageThreadId: Long? = null,
     val fromChatId: ChatId,
+    val videoStartTimestamp: Duration? = null,
     val disableNotification: Boolean = false,
     val protectContent: Boolean = false,
     val messageId: Long

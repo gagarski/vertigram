@@ -10,44 +10,44 @@ object ChatMemberSerializationTest : BaseSerializationTest() {
     @Test
     fun `chat member source should survive serialization`() {
         assertSerializable<ChatMember>(
-            ChatMember.Owner(
-                user = User(
+            ChatMember.Owner.create(
+                user = User.create(
                     id = 1
                 )
             )
         )
         assertSerializable<ChatMember>(
-            ChatMember.Administrator(
-                user = User(
+            ChatMember.Administrator.create(
+                user = User.create(
                     id = 1
                 )
             )
         )
         assertSerializable<ChatMember>(
-            ChatMember.Member(
-                user = User(
+            ChatMember.Member.create(
+                user = User.create(
                     id = 1
                 )
             )
         )
         assertSerializable<ChatMember>(
-            ChatMember.Restricted(
-                user = User(
+            ChatMember.Restricted.create(
+                user = User.create(
                     id = 1
                 ),
                 untilDate = Instant.now().orEpoch().truncatedTo(ChronoUnit.SECONDS)
             )
         )
         assertSerializable<ChatMember>(
-            ChatMember.Left(
-                user = User(
+            ChatMember.Left.create(
+                user = User.create(
                     id = 1
                 )
             )
         )
         assertSerializable<ChatMember>(
-            ChatMember.Banned(
-                user = User(
+            ChatMember.Banned.create(
+                user = User.create(
                     id = 1
                 ),
                 untilDate = Instant.now().orEpoch().truncatedTo(ChronoUnit.SECONDS)

@@ -34,6 +34,9 @@ data class SendVideo internal constructor(
     val height: Int? = null,
     @TelegramMedia
     val thumbnail: Attachment? = null,
+    @TelegramMedia
+    val cover: Attachment? = null,
+    val startTimestamp: Duration? = null,
     override val caption: String? = null,
     override val parseMode: RichText.ParseMode? = null,
     override val captionEntities: List<MessageEntity>? = null,
@@ -42,6 +45,7 @@ data class SendVideo internal constructor(
     val supportsStreaming: Boolean = false,
     val disableNotification: Boolean = false,
     val protectContent: Boolean = false,
+    val allowPaidBroadcast: Boolean = false,
     val messageEffectId: String? = null,
     val replyParameters: ReplyParameters? = null,
     val replyMarkup: ReplyMarkup? = null
