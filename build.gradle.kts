@@ -1,10 +1,3 @@
-
-import org.jetbrains.dokka.base.DokkaBase
-import org.jetbrains.dokka.base.DokkaBaseConfiguration
-import org.jetbrains.dokka.versioning.VersioningConfiguration
-import org.jetbrains.dokka.versioning.VersioningPlugin
-import java.time.LocalDate
-
 group = "ski.gagar.vertigram"
 
 repositories {
@@ -33,18 +26,6 @@ buildscript {
     }
 }
 
-//tasks.dokkaHtmlMultiModule.configure {
-//    moduleName.set("Vertigram")
-//    includes.from("README.md")
-//
-//    pluginConfiguration<VersioningPlugin, VersioningConfiguration> {
-//        version = project.version as String
-//        olderVersionsDir = projectDir.resolve("build/oldDokka/archive")
-//    }
-//    pluginConfiguration<DokkaBase, DokkaBaseConfiguration> {
-//        footerMessage = "© ${LocalDate.now().year} <a href=\"https://github.com/gagarski/\">Kirill Gagarski</a>"
-//    }
-//}
 
 nexusPublishing {
     repositories {

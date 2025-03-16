@@ -1,5 +1,3 @@
-import java.time.LocalDate
-
 plugins {
     id("org.jetbrains.dokka")
     id("buildlogic.dokka-convention")
@@ -22,7 +20,7 @@ dokka {
     pluginsConfiguration {
         versioning {
             version = project.version as String
-            val old = projectDir.resolve("build/oldDokka/archive")
+            val old = rootProject.projectDir.resolve("build/dokkaRepo/archive")
             if (old.exists()) olderVersionsDir = old
         }
         dokkaSourceSets.create("main") {

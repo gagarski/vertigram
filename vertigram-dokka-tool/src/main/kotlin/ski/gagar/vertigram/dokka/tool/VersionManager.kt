@@ -5,7 +5,7 @@ import java.util.*
 import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.deleteRecursively
 
-class Repository(
+class VersionManager(
     val root: Path,
     val majorVersionParts: Int = 2,
     val keepMajor: Int = 3,

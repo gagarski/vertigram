@@ -14,6 +14,10 @@ repositories {
     gradlePluginPortal()
 }
 
+dependencies {
+    implementation(libsInternal.rsync4j)
+}
+
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
     compilerOptions {
         jvmTarget.set(JvmTarget.JVM_21)
