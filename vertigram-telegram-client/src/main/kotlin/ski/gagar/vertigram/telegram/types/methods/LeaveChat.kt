@@ -11,9 +11,7 @@ import ski.gagar.vertigram.util.NoPosArgs
  *
  * For up-to-date documentation please consult the official Telegram docs.
  */
-@TelegramCodegen
-data class LeaveChat(
-    @JsonIgnore
-    private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+@TelegramCodegen.Method
+data class LeaveChat internal constructor(
     override val chatId: ChatId
 ) : JsonTelegramCallable<Boolean>(), HasChatId

@@ -2,6 +2,7 @@ package ski.gagar.vertigram.telegram.types
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonValue
+import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.telegram.types.colors.RgbColor
 import ski.gagar.vertigram.util.NoPosArgs
 
@@ -12,9 +13,8 @@ import ski.gagar.vertigram.util.NoPosArgs
  *
  * For up-to-date documentation please consult the official Telegram docs.
  */
-data class ForumTopic(
-    @JsonIgnore
-    private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+@TelegramCodegen.Type
+data class ForumTopic internal constructor(
     val messageThreadId: Long,
     val name: String,
     val iconColor: RgbColor,
@@ -36,4 +36,5 @@ data class ForumTopic(
         fun toValue() = color.toInt()
     }
 
+    companion object
 }

@@ -1,6 +1,5 @@
 package ski.gagar.vertigram.telegram.types.methods
 
-import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 import ski.gagar.vertigram.annotations.TelegramCodegen
@@ -8,7 +7,6 @@ import ski.gagar.vertigram.telegram.annotations.TelegramMethod
 import ski.gagar.vertigram.telegram.throttling.HasChatId
 import ski.gagar.vertigram.telegram.types.ChatInviteLink
 import ski.gagar.vertigram.telegram.types.util.ChatId
-import ski.gagar.vertigram.util.NoPosArgs
 import java.time.Instant
 
 /**
@@ -23,7 +21,7 @@ import java.time.Instant
     JsonSubTypes.Type(CreateChatInviteLink.WithMemberLimit::class),
     JsonSubTypes.Type(CreateChatInviteLink.WithJoinRequest::class)
 )
-@TelegramCodegen
+@TelegramCodegen.Method
 sealed class CreateChatInviteLink : JsonTelegramCallable<ChatInviteLink>(), HasChatId {
     abstract val name: String?
     abstract val expireDate: Instant?
@@ -33,14 +31,10 @@ sealed class CreateChatInviteLink : JsonTelegramCallable<ChatInviteLink>(), HasC
     @TelegramMethod(
         methodName = "createChatInviteLink"
     )
-    @TelegramCodegen(
-        methodName = "createChatInviteLink",
-        generatePseudoConstructor = true,
-        pseudoConstructorName = "CreateChatInviteLink"
+    @TelegramCodegen.Method(
+        name = "createChatInviteLink"
     )
     data class WithMemberLimit internal constructor(
-        @JsonIgnore
-        private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
         override val chatId: ChatId,
         override val name: String? = null,
         override val expireDate: Instant? = null,
@@ -56,14 +50,10 @@ sealed class CreateChatInviteLink : JsonTelegramCallable<ChatInviteLink>(), HasC
     @TelegramMethod(
         methodName = "createChatInviteLink"
     )
-    @TelegramCodegen(
-        methodName = "createChatInviteLink",
-        generatePseudoConstructor = true,
-        pseudoConstructorName = "CreateChatInviteLink"
+    @TelegramCodegen.Method(
+        name = "createChatInviteLink"
     )
     data class WithJoinRequest internal constructor(
-        @JsonIgnore
-        private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
         override val chatId: ChatId,
         override val name: String? = null,
         override val expireDate: Instant? = null,

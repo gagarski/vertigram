@@ -1,6 +1,7 @@
 package ski.gagar.vertigram.telegram.types
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.util.NoPosArgs
 import java.time.Duration
 
@@ -9,13 +10,14 @@ import java.time.Duration
  *
  * For up-to-date documentation please consult the official Telegram docs.
  */
-data class VideoNote(
-    @JsonIgnore
-    private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+@TelegramCodegen.Type
+data class VideoNote internal constructor(
     val fileId: String,
     val fileUniqueId: String,
     val length: Int,
     val duration: Duration,
     val thumbnail: PhotoSize? = null,
     val fileSize: Long? = null
-)
+) {
+    companion object
+}

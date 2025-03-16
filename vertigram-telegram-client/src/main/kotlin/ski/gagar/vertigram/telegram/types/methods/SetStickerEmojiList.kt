@@ -9,10 +9,8 @@ import ski.gagar.vertigram.util.NoPosArgs
  *
  * For up-to-date documentation please consult the official Telegram docs.
  */
-@TelegramCodegen
-data class SetStickerEmojiList(
-    @JsonIgnore
-    private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+@TelegramCodegen.Method
+data class SetStickerEmojiList internal constructor(
     val sticker: String,
     val emojiList: List<String>
 ) : MultipartTelegramCallable<Boolean>()

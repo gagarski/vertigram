@@ -1,6 +1,5 @@
 package ski.gagar.vertigram.telegram.types.methods
 
-import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 import com.fasterxml.jackson.databind.annotation.JsonTypeResolver
@@ -8,17 +7,12 @@ import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.telegram.annotations.TelegramMethod
 import ski.gagar.vertigram.telegram.throttling.HasChatId
 import ski.gagar.vertigram.telegram.throttling.Throttled
-import ski.gagar.vertigram.telegram.types.Message
-import ski.gagar.vertigram.telegram.types.MessageEntity
-import ski.gagar.vertigram.telegram.types.Poll
-import ski.gagar.vertigram.telegram.types.ReplyMarkup
-import ski.gagar.vertigram.telegram.types.ReplyParameters
+import ski.gagar.vertigram.telegram.types.*
 import ski.gagar.vertigram.telegram.types.richtext.HasOptionalRichExplanation
 import ski.gagar.vertigram.telegram.types.richtext.HasRichQuestion
 import ski.gagar.vertigram.telegram.types.richtext.HasRichText
 import ski.gagar.vertigram.telegram.types.richtext.RichText
 import ski.gagar.vertigram.telegram.types.util.ChatId
-import ski.gagar.vertigram.util.NoPosArgs
 import ski.gagar.vertigram.util.jackson.typing.TypeResolverWithDeductionBuilder
 import java.time.Duration
 import java.time.Instant
@@ -45,7 +39,7 @@ import java.time.Instant
     JsonSubTypes.Type(value = SendPoll.Quiz.Indefinite::class, name = Poll.Type.QUIZ_STR),
 )
 @JsonTypeResolver(TypeResolverWithDeductionBuilder::class)
-@TelegramCodegen
+@TelegramCodegen.Method
 sealed class SendPoll : JsonTelegramCallable<Message>(), HasChatId, HasRichQuestion {
     abstract val businessConnectionId: String?
     abstract val messageThreadId: Long?
@@ -68,19 +62,16 @@ sealed class SendPoll : JsonTelegramCallable<Message>(), HasChatId, HasRichQuest
     @TelegramMethod(
         methodName = "sendPoll"
     )
-    @TelegramCodegen(
-        methodName = "sendPoll",
-        generatePseudoConstructor = true,
-        pseudoConstructorName = "SendPoll"
-    )
+    @TelegramCodegen.Method
     @Throttled
     sealed class Regular : SendPoll() {
         /**
          * Case with [openPeriod] field
          */
+        @TelegramCodegen.Method(
+            name = "sendPoll"
+        )
         data class OpenPeriod internal constructor(
-            @JsonIgnore
-            private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
             override val businessConnectionId: String? = null,
             override val chatId: ChatId,
             override val messageThreadId: Long? = null,
@@ -112,15 +103,11 @@ sealed class SendPoll : JsonTelegramCallable<Message>(), HasChatId, HasRichQuest
         @TelegramMethod(
             methodName = "sendPoll"
         )
-        @TelegramCodegen(
-            methodName = "sendPoll",
-            generatePseudoConstructor = true,
-            pseudoConstructorName = "SendPoll"
+        @TelegramCodegen.Method(
+            name = "sendPoll"
         )
         @Throttled
         data class CloseDate internal constructor(
-            @JsonIgnore
-            private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
             override val businessConnectionId: String? = null,
             override val chatId: ChatId,
             override val messageThreadId: Long? = null,
@@ -151,15 +138,11 @@ sealed class SendPoll : JsonTelegramCallable<Message>(), HasChatId, HasRichQuest
         @TelegramMethod(
             methodName = "sendPoll"
         )
-        @TelegramCodegen(
-            methodName = "sendPoll",
-            generatePseudoConstructor = true,
-            pseudoConstructorName = "SendPoll"
+        @TelegramCodegen.Method(
+            name = "sendPoll"
         )
         @Throttled
         data class Indefinite internal constructor(
-            @JsonIgnore
-            private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
             override val businessConnectionId: String? = null,
             override val chatId: ChatId,
             override val messageThreadId: Long? = null,
@@ -188,7 +171,7 @@ sealed class SendPoll : JsonTelegramCallable<Message>(), HasChatId, HasRichQuest
     /**
      * Cases for quiz
      */
-    @TelegramCodegen
+    @TelegramCodegen.Method
     sealed class Quiz : SendPoll(), HasOptionalRichExplanation {
         /**
          * Case with [openPeriod] field
@@ -196,16 +179,12 @@ sealed class SendPoll : JsonTelegramCallable<Message>(), HasChatId, HasRichQuest
         @TelegramMethod(
             methodName = "sendPoll"
         )
-        @TelegramCodegen(
-            methodName = "sendQuiz",
-            docMethodName = "sendPoll",
-            generatePseudoConstructor = true,
-            pseudoConstructorName = "SendQuiz"
+        @TelegramCodegen.Method(
+            name = "sendQuiz",
+            telegramName = "sendPoll"
         )
         @Throttled
         data class OpenPeriod internal constructor(
-            @JsonIgnore
-            private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
             override val businessConnectionId: String? = null,
             override val chatId: ChatId,
             override val messageThreadId: Long? = null,
@@ -240,16 +219,12 @@ sealed class SendPoll : JsonTelegramCallable<Message>(), HasChatId, HasRichQuest
         @TelegramMethod(
             methodName = "sendPoll"
         )
-        @TelegramCodegen(
-            methodName = "sendQuiz",
-            docMethodName = "sendPoll",
-            generatePseudoConstructor = true,
-            pseudoConstructorName = "SendQuiz"
+        @TelegramCodegen.Method(
+            name = "sendQuiz",
+            telegramName = "sendPoll"
         )
         @Throttled
         data class CloseDate internal constructor(
-            @JsonIgnore
-            private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
             override val businessConnectionId: String? = null,
             override val chatId: ChatId,
             override val messageThreadId: Long? = null,
@@ -284,16 +259,12 @@ sealed class SendPoll : JsonTelegramCallable<Message>(), HasChatId, HasRichQuest
         @TelegramMethod(
             methodName = "sendPoll"
         )
-        @TelegramCodegen(
-            methodName = "sendQuiz",
-            docMethodName = "sendPoll",
-            generatePseudoConstructor = true,
-            pseudoConstructorName = "SendQuiz"
+        @TelegramCodegen.Method(
+            name = "sendQuiz",
+            telegramName = "sendPoll"
         )
         @Throttled
         data class Indefinite internal constructor(
-            @JsonIgnore
-            private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
             override val businessConnectionId: String? = null,
             override val chatId: ChatId,
             override val messageThreadId: Long? = null,
@@ -329,13 +300,8 @@ sealed class SendPoll : JsonTelegramCallable<Message>(), HasChatId, HasRichQuest
      *
      * For up-to-date documentation please consult the official Telegram docs.
      */
-    @TelegramCodegen(
-        generateMethod = false,
-        generatePseudoConstructor = true,
-    )
+    @TelegramCodegen.Type
     data class InputOption internal constructor(
-        @JsonIgnore
-        private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
         override val text: String,
         override val parseMode: RichText.ParseMode? = null,
         override val entities: List<MessageEntity>? = null,

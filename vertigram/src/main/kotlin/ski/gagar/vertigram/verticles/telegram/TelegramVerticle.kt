@@ -69,6 +69,7 @@ class TelegramVerticle : VertigramVerticle<TelegramVerticle.Config>() {
                 ),
                 requestJavaType = requestType
             ) { msg: TelegramCallable<*> ->
+                @Suppress("DEPRECATION")
                 tg.call(msg)
             }
         }
@@ -82,6 +83,7 @@ class TelegramVerticle : VertigramVerticle<TelegramVerticle.Config>() {
                 ),
                 requestJavaType = requestType
             ) { msg: TelegramCallable<*> ->
+                @Suppress("DEPRECATION")
                 tg.call(msg)
             }
         }

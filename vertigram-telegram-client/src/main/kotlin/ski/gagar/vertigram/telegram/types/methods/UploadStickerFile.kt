@@ -12,10 +12,8 @@ import ski.gagar.vertigram.util.NoPosArgs
  *
  * For up-to-date documentation please consult the official Telegram docs.
  */
-@TelegramCodegen
-data class UploadStickerFile(
-    @JsonIgnore
-    private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+@TelegramCodegen.Method
+data class UploadStickerFile internal constructor(
     val userId: Long,
     @TelegramMedia
     val sticker: Sticker,

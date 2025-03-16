@@ -59,7 +59,7 @@ sealed interface RichText {
 
 
     companion object {
-        operator fun invoke(text: String,
+        internal operator fun invoke(text: String,
                             parseMode: ParseMode?,
                             entities: List<MessageEntity>?) : RichText {
             if (parseMode != null) require(null == entities)
@@ -78,7 +78,7 @@ sealed interface RichText {
  */
 @Suppress("DEPRECATION")
 @Deprecated("Consider using other mode", replaceWith = ReplaceWith("MarkdownV2Text"))
-data class MarkdownText(
+data class MarkdownText internal constructor(
     override val text: String
 ) : RichText {
     override val parseMode: RichText.ParseMode = RichText.ParseMode.MARKDOWN
@@ -87,7 +87,7 @@ data class MarkdownText(
 /**
  * Markdown v. 2 text, represents the case when `parseMode` is `MarkdownV2`.
  */
-data class MarkdownV2Text(
+data class MarkdownV2Text internal constructor(
     override val text: String
 ) : RichText {
     override val parseMode: RichText.ParseMode = RichText.ParseMode.MARKDOWN_V2
@@ -96,7 +96,7 @@ data class MarkdownV2Text(
 /**
  * HTML text, represents the case when `parseMode` is `HTML`.
  */
-data class HtmlText(
+data class HtmlText internal constructor(
     override val text: String
 ) : RichText {
     override val parseMode: RichText.ParseMode = RichText.ParseMode.HTML
@@ -105,7 +105,7 @@ data class HtmlText(
 /**
  * HTML text, represents the case when there is no parse mode, but entities are set.
  */
-data class TextWithEntities(
+data class TextWithEntities internal constructor(
     override val text: String,
     override val entities: List<MessageEntity> = listOf(),
 ) : RichText

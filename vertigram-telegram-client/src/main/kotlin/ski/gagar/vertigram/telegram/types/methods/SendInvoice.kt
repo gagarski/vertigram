@@ -17,10 +17,8 @@ import ski.gagar.vertigram.util.NoPosArgs
  * For up-to-date documentation please consult the official Telegram docs.
  */
 @Throttled
-@TelegramCodegen
-data class SendInvoice(
-    @JsonIgnore
-    private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+@TelegramCodegen.Method
+data class SendInvoice internal constructor(
     override val chatId: ChatId,
     val messageThreadId: Long? = null,
     val title: String,

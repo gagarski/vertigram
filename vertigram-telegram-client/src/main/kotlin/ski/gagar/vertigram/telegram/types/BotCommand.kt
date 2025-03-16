@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
+import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.telegram.types.util.ChatId
 import ski.gagar.vertigram.util.NoPosArgs
 
@@ -16,9 +17,8 @@ import ski.gagar.vertigram.util.NoPosArgs
  *
  * For up-to-date documentation please consult the official Telegram docs.
  */
-data class BotCommand(
-    @JsonIgnore
-    private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+@TelegramCodegen.Type
+data class BotCommand internal constructor(
     val command: String,
     val description: String
 ) {
@@ -78,12 +78,12 @@ data class BotCommand(
          *
          * For up-to-date documentation please consult the official Telegram docs.
          */
-        data class Chat(
-            @JsonIgnore
-            private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+        @TelegramCodegen.Type
+        data class Chat internal constructor(
             val chatId: ChatId
         ) : Scope {
             override val type: Type = Type.CHAT
+            companion object
         }
 
         /**
@@ -91,12 +91,12 @@ data class BotCommand(
          *
          * For up-to-date documentation please consult the official Telegram docs.
          */
-        data class ChatAdministrators(
-            @JsonIgnore
-            private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+        @TelegramCodegen.Type
+        data class ChatAdministrators internal constructor(
             val chatId: ChatId
         ) : Scope {
             override val type: Type = Type.CHAT_ADMINISTRATORS
+            companion object
         }
 
         /**
@@ -104,13 +104,13 @@ data class BotCommand(
          *
          * For up-to-date documentation please consult the official Telegram docs.
          */
-        data class ChatMember(
-            @JsonIgnore
-            private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+        @TelegramCodegen.Type
+        data class ChatMember internal constructor(
             val chatId: ChatId,
             val userId: Long
         ) : Scope {
             override val type: Type = Type.CHAT_MEMBER
+            companion object
         }
 
         /**
@@ -153,5 +153,5 @@ data class BotCommand(
         }
     }
 
-
+    companion object
 }

@@ -10,10 +10,8 @@ import ski.gagar.vertigram.util.NoPosArgs
  *
  * For up-to-date documentation please consult the official Telegram docs.
  */
-@TelegramCodegen
-data class SetMyCommands(
-    @JsonIgnore
-    private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+@TelegramCodegen.Method
+data class SetMyCommands internal constructor(
     val commands: List<BotCommand>,
     val scope: BotCommand.Scope? = null,
     val languageCode: String? = null

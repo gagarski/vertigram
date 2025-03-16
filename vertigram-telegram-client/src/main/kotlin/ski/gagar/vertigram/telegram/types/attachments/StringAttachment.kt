@@ -6,7 +6,7 @@ import ski.gagar.vertigram.web.multipart.FieldPart
 /**
  * An implementation of [Attachment] allowing to attach URL of file id.
  */
-data class StringAttachment(val url: String) : Attachment {
+data class StringAttachment internal constructor(val url: String) : Attachment {
     override fun getReference(referredField: String) = this
 
     override fun getReferredPart(field: String, vertx: Vertx): Nothing? = null

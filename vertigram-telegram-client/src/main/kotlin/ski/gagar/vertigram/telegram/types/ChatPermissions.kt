@@ -1,6 +1,7 @@
 package ski.gagar.vertigram.telegram.types
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.util.NoPosArgs
 
 /**
@@ -8,9 +9,8 @@ import ski.gagar.vertigram.util.NoPosArgs
  *
  * For up-to-date documentation please consult the official Telegram docs.
  */
-data class ChatPermissions(
-    @JsonIgnore
-    private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+@TelegramCodegen.Type
+data class ChatPermissions internal constructor(
     val canSendMessages: Boolean = false,
     val canSendAudios: Boolean = false,
     val canSendDocuments: Boolean = false,
@@ -25,4 +25,6 @@ data class ChatPermissions(
     val canInviteUsers: Boolean = false,
     val canPinMessages: Boolean = false,
     val canManageTopics: Boolean = false
-)
+) {
+    companion object
+}

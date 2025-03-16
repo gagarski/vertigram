@@ -1,6 +1,5 @@
 package ski.gagar.vertigram.telegram.types.methods
 
-import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 import ski.gagar.vertigram.annotations.TelegramCodegen
@@ -10,7 +9,6 @@ import ski.gagar.vertigram.telegram.throttling.Throttled
 import ski.gagar.vertigram.telegram.types.Message
 import ski.gagar.vertigram.telegram.types.ReplyMarkup
 import ski.gagar.vertigram.telegram.types.util.ChatId
-import ski.gagar.vertigram.util.NoPosArgs
 
 /**
  * Telegram [editMessageReplyMarkup](https://core.telegram.org/bots/api#editmessagereplymarkup) method.
@@ -33,15 +31,11 @@ sealed interface EditMessageReplyMarkup {
     @TelegramMethod(
         methodName = "editMessageReplyMarkup"
     )
-    @TelegramCodegen(
-        methodName = "editMessageReplyMarkup",
-        generatePseudoConstructor = true,
-        pseudoConstructorName = "EditMessageReplyMarkup"
+    @TelegramCodegen.Method(
+        name = "editMessageReplyMarkup"
     )
     @Throttled
     data class InlineMessage internal constructor(
-        @JsonIgnore
-        private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
         val inlineMessageId: String,
         override val replyMarkup: ReplyMarkup.InlineKeyboard? = null
     ) : EditMessageReplyMarkup, JsonTelegramCallable<Boolean>()
@@ -52,10 +46,8 @@ sealed interface EditMessageReplyMarkup {
     @TelegramMethod(
         methodName = "editMessageReplyMarkup"
     )
-    @TelegramCodegen(
-        methodName = "editMessageReplyMarkup",
-        generatePseudoConstructor = true,
-        pseudoConstructorName = "EditMessageReplyMarkup"
+    @TelegramCodegen.Method(
+        name = "editMessageReplyMarkup"
     )
     @Throttled
     data class ChatMessage internal constructor(

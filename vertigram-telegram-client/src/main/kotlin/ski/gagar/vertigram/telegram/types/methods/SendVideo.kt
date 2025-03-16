@@ -22,10 +22,8 @@ import java.time.Duration
  * For up-to-date documentation please consult the official Telegram docs.
  */
 @Throttled
-@TelegramCodegen
-data class SendVideo(
-    @JsonIgnore
-    private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+@TelegramCodegen.Method
+data class SendVideo internal constructor(
     val businessConnectionId: String? = null,
     override val chatId: ChatId,
     val messageThreadId: Long? = null,

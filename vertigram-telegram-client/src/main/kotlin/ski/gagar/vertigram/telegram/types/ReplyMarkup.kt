@@ -3,6 +3,7 @@ package ski.gagar.vertigram.telegram.types
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
+import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.util.NoPosArgs
 
 /**
@@ -37,9 +38,8 @@ sealed interface ReplyMarkup {
      *
      * Consider using [ski.gagar.vertigram.telegram.markup.inlineKeyboard] for building the button layout.
      */
-    data class InlineKeyboard(
-        @JsonIgnore
-        private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+    //@TelegramCodegen.Type
+    data class InlineKeyboard internal constructor(
         val inlineKeyboard: List<List<Button>>
     ) : ReplyMarkup {
         /**
@@ -68,48 +68,50 @@ sealed interface ReplyMarkup {
             /**
              * Case when no optional fields are specified
              */
-            data class Text(
-                @JsonIgnore
-                private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+            // @TelegramCodegen.Type
+            data class Text internal constructor(
                 val text: String
-            ) : Button
+            ) : Button {
+                companion object
+            }
 
             /**
              * Case when [url] is specified
              */
-            data class Url(
-                @JsonIgnore
-                private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+            // @TelegramCodegen.Type
+            data class Url internal constructor(
                 val text: String,
                 val url: String
-            ) : Button
+            ) : Button {
+                companion object
+            }
 
             /**
              * Case when [callbackData] is specified
              */
-            data class Callback(
-                @JsonIgnore
-                private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+            // @TelegramCodegen.Type
+            data class Callback internal constructor(
                 val text: String,
                 val callbackData: String
-            ) : Button
+            ) : Button {
+                companion object
+            }
 
             /**
              * Case when [webApp] is specified
              */
-            data class WebApp(
-                @JsonIgnore
-                private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+            data class WebApp internal constructor(
                 val text: String,
                 val webApp: WebAppInfo
-            ) : Button
+            ) : Button {
+                companion object
+            }
 
             /**
              * Case when [loginUrl] is specified
              */
-            data class Login(
-                @JsonIgnore
-                private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+            // @TelegramCodegen.Type
+            data class Login internal constructor(
                 val text: String,
                 val loginUrl: Payload
             ) : Button {
@@ -126,34 +128,36 @@ sealed interface ReplyMarkup {
                     val botUsername: String? = null,
                     val requestWriteAccess: Boolean = false
                 )
+                companion object
             }
 
             /**
              * Case when [switchInlineQuery] is set
              */
-            data class SwitchInline(
-                @JsonIgnore
-                private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+            // @TelegramCodegen.Type
+            data class SwitchInline internal constructor(
                 val text: String,
                 val switchInlineQuery: String,
-            ) : Button
+            ) : Button {
+                companion object
+            }
 
             /**
              * Case when [switchInlineQueryCurrentChat] is set
              */
-            data class SwitchInlineCurrentChat(
-                @JsonIgnore
-                private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+            // @TelegramCodegen.Type
+            data class SwitchInlineCurrentChat internal constructor(
                 val text: String,
                 val switchInlineQueryCurrentChat: String
-            ) : Button
+            ) : Button {
+                companion object
+            }
 
             /**
              * Case when [switchInlineQueryChosenChat] is set
              */
-            data class SwitchInlineChosenChat(
-                @JsonIgnore
-                private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+            // @TelegramCodegen.Type
+            data class SwitchInlineChosenChat internal constructor(
                 val text: String,
                 val switchInlineQueryChosenChat: Payload
             ) : Button {
@@ -162,23 +166,25 @@ sealed interface ReplyMarkup {
                  *
                  * For up-to-date documentation please consult the official Telegram docs.
                  */
-                data class Payload(
-                    @JsonIgnore
-                    private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+                // @TelegramCodegen.Type
+                data class Payload internal constructor(
                     val query: String? = null,
                     val allowUserChats: Boolean = false,
                     val allowBotChats: Boolean = false,
                     val allowGroupChats: Boolean = false,
                     val allowChannelChats: Boolean = false
-                )
+                ) {
+                    companion object
+                }
+
+                companion object
             }
 
             /**
              * Case when [callbackGame] is set
              */
-            data class Game(
-                @JsonIgnore
-                private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+            // @TelegramCodegen.Type
+            data class Game internal constructor(
                 val text: String,
                 val callbackGame: Payload
             ) : Button {
@@ -188,19 +194,24 @@ sealed interface ReplyMarkup {
                  * For up-to-date documentation please consult the official Telegram docs.
                  */
                 data object Payload
+
+                companion object
             }
 
             /**
              * Case when [pay] is set to `true`
              */
-            data class Pay(
-                @JsonIgnore
-                private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+            // @TelegramCodegen.Type
+            data class Pay internal constructor(
                 val text: String
             ) : Button {
                 val pay: Boolean = true
+
+                companion object
             }
         }
+
+        companion object
     }
 
 
@@ -215,9 +226,8 @@ sealed interface ReplyMarkup {
      * For up-to-date documentation please consult the official Telegram docs.
      *
      */
-    data class Keyboard(
-        @JsonIgnore
-        private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+    // @TelegramCodegen.Type
+    data class Keyboard internal constructor(
         val keyboard: List<List<Button>>,
         @get:JvmName("getIsPersistent")
         val isPersistent: Boolean = false,
@@ -245,18 +255,18 @@ sealed interface ReplyMarkup {
             /**
              * Case when no optional fields are set
              */
-            data class Text(
-                @JsonIgnore
-                private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+            // @TelegramCodegen.Type
+            data class Text internal constructor(
                 val text: String
-            ) : Button
+            ) : Button {
+                companion object
+            }
 
             /**
              * Case when [requestUsers] is specified
              */
-            data class RequestUsers(
-                @JsonIgnore
-                private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+            // @TelegramCodegen.Type
+            data class RequestUsers internal constructor(
                 val text: String,
                 val requestUsers: Payload
             ) : Button {
@@ -265,7 +275,8 @@ sealed interface ReplyMarkup {
                  *
                  * For up-to-date documentation please consult the official Telegram docs.
                  */
-                data class Payload(
+                // @TelegramCodegen.Type
+                data class Payload internal constructor(
                     @JsonIgnore
                     private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
                     val requestId: Long,
@@ -275,15 +286,17 @@ sealed interface ReplyMarkup {
                     val requestName: Boolean = false,
                     val requestUsername: Boolean = false,
                     val requestPhoto: Boolean = false
-                )
+                ) {
+                    companion object
+                }
+                companion object
             }
 
             /**
              * Case when [requestChat] is specified
              */
-            data class RequestChat(
-                @JsonIgnore
-                private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+            // @TelegramCodegen.Type
+            data class RequestChat internal constructor(
                 val text: String,
                 val requestChat: Payload
             ) : Button {
@@ -292,9 +305,8 @@ sealed interface ReplyMarkup {
                  *
                  * For up-to-date documentation please consult the official Telegram docs.
                  */
-                data class Payload(
-                    @JsonIgnore
-                    private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+                // @TelegramCodegen.Type
+                data class Payload internal constructor(
                     val requestId: Long,
                     val chatIsChannel: Boolean,
                     val chatIsForum: Boolean? = null,
@@ -306,38 +318,41 @@ sealed interface ReplyMarkup {
                     val requestTitle: Boolean = false,
                     val requestUsername: Boolean = false,
                     val requestPhoto: Boolean = false
-                )
-
+                ) {
+                    companion object
+                }
+                companion object
             }
 
             /**
              * Case when [requestContact] is specified
              */
-            data class RequestContact(
-                @JsonIgnore
-                private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+            // @TelegramCodegen.Type
+            data class RequestContact internal constructor(
                 val text: String
             ) : Button {
                 val requestContact: Boolean = true
+
+                companion object
             }
 
             /**
              * Case when [requestLocation] is specified
              */
-            data class RequestLocation(
-                @JsonIgnore
-                private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+            // @TelegramCodegen.Type
+            data class RequestLocation internal constructor(
                 val text: String
             ) : Button {
                 val requestLocation: Boolean = true
+
+                companion object
             }
 
             /**
              * Case when [requestPoll] is specified
              */
-            data class RequestPoll(
-                @JsonIgnore
-                private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+            // @TelegramCodegen.Type
+            data class RequestPoll internal constructor(
                 val text: String,
                 val requestPoll: Payload
             ) : Button {
@@ -346,23 +361,29 @@ sealed interface ReplyMarkup {
                  *
                  * For up-to-date documentation please consult the official Telegram docs.
                  */
-                data class Payload(
-                    @JsonIgnore
-                    private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+                // @TelegramCodegen.Type
+                data class Payload internal constructor(
                     val type: Poll.Type? = null
-                )
+                ) {
+                    companion object
+                }
+
+                companion object
             }
 
             /**
              * Case when [webApp] is specified
              */
-            data class WebApp(
-                @JsonIgnore
-                private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+            // @TelegramCodegen.Type
+            data class WebApp internal constructor(
                 val text: String,
                 val webApp: WebAppInfo
-            ) : Button
+            ) : Button {
+                companion object
+            }
         }
+
+        companion object
     }
 
     /**
@@ -370,13 +391,14 @@ sealed interface ReplyMarkup {
      *
      * For up-to-date documentation please consult the official Telegram docs.
      */
-    data class KeyboardRemove(
-        @JsonIgnore
-        private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+    // @TelegramCodegen.Type
+    data class KeyboardRemove internal constructor(
         val selective: Boolean = false
     ) : ReplyMarkup {
         @Suppress("unused")
         val removeKeyboard: Boolean = true
+
+        companion object
     }
 
     /**
@@ -384,13 +406,16 @@ sealed interface ReplyMarkup {
      *
      * For up-to-date documentation please consult the official Telegram docs.
      */
-    data class ForceReply(
-        @JsonIgnore
-        private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+    // @TelegramCodegen.Type
+    data class ForceReply internal constructor(
         val inputFieldPlaceholder: String? = null,
         val selective: Boolean = false
     ) : ReplyMarkup {
         @Suppress("unused")
         val forceReply: Boolean = true
+
+        companion object
     }
+
+    companion object
 }

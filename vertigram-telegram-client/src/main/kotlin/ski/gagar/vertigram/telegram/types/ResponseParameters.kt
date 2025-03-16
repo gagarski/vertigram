@@ -1,6 +1,7 @@
 package ski.gagar.vertigram.telegram.types
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.util.NoPosArgs
 import java.time.Duration
 
@@ -9,9 +10,10 @@ import java.time.Duration
  *
  * For up-to-date documentation please consult the official Telegram docs.
  */
-data class ResponseParameters(
-    @JsonIgnore
-    private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+@TelegramCodegen.Type
+data class ResponseParameters internal constructor(
     val migrateToChatId: Long? = null,
     val retryAfter: Duration? = null
-)
+) {
+    companion object
+}

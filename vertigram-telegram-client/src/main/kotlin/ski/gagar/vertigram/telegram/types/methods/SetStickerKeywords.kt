@@ -9,10 +9,8 @@ import ski.gagar.vertigram.util.NoPosArgs
  *
  * For up-to-date documentation please consult the official Telegram docs.
  */
-@TelegramCodegen
-data class SetStickerKeywords(
-    @JsonIgnore
-    private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+@TelegramCodegen.Method
+data class SetStickerKeywords internal constructor(
     val sticker: String,
     val keywords: List<String>? = null
 ) : MultipartTelegramCallable<Boolean>()

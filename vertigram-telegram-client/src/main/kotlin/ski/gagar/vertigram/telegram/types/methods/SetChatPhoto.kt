@@ -15,10 +15,8 @@ import ski.gagar.vertigram.util.NoPosArgs
  * For up-to-date documentation please consult the official Telegram docs.
  */
 @Throttled
-@TelegramCodegen
-data class SetChatPhoto(
-    @JsonIgnore
-    private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+@TelegramCodegen.Method
+data class SetChatPhoto internal constructor(
     override val chatId: ChatId,
     @TelegramMedia
     val photo: Attachment

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
+import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.util.NoPosArgs
 import java.time.Instant
 
@@ -41,21 +42,21 @@ object Passport {
         /**
          * Personal Details case
          */
-        data class PersonalDetails(
-            @JsonIgnore
-            private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+        @TelegramCodegen.Type
+        data class PersonalDetails internal constructor(
             val data: String,
             val hash: String
         ) : EncryptedElement {
             override val type: Type = Type.PERSONAL_DETAILS
+
+            companion object
         }
 
         /**
          * Passport case
          */
-        data class Passport(
-            @JsonIgnore
-            private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+        @TelegramCodegen.Type
+        data class Passport internal constructor(
             val data: String,
             val frontSide: File,
             val selfie: File? = null,
@@ -63,14 +64,15 @@ object Passport {
             val hash: String
         ) : EncryptedElement {
             override val type: Type = Type.PASSPORT
+
+            companion object
         }
 
         /**
          * Driver License case
          */
-        data class DriverLicense(
-            @JsonIgnore
-            private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+        @TelegramCodegen.Type
+        data class DriverLicense internal constructor(
             val data: String,
             val frontSide: File,
             val reverseSide: File,
@@ -79,14 +81,15 @@ object Passport {
             val hash: String
         ) : EncryptedElement {
             override val type: Type = Type.DRIVER_LICENSE
+
+            companion object
         }
 
         /**
          * Identity Card case
          */
-        data class IdentityCard(
-            @JsonIgnore
-            private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+        @TelegramCodegen.Type
+        data class IdentityCard internal constructor(
             val data: String,
             val frontSide: File,
             val reverseSide: File,
@@ -95,14 +98,15 @@ object Passport {
             val hash: String
         ) : EncryptedElement {
             override val type: Type = Type.IDENTITY_CARD
+
+            companion object
         }
 
         /**
          * Internal Passport case
          */
-        data class InternalPassport(
-            @JsonIgnore
-            private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+        @TelegramCodegen.Type
+        data class InternalPassport internal constructor(
             val data: String,
             val frontSide: File,
             val selfie: File? = null,
@@ -110,102 +114,112 @@ object Passport {
             val hash: String
         ) : EncryptedElement {
             override val type: Type = Type.INTERNAL_PASSPORT
+
+            companion object
         }
 
         /**
          * Address case
          */
-        data class Address(
-            @JsonIgnore
-            private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+        @TelegramCodegen.Type
+        data class Address internal constructor(
             val data: String,
             val hash: String
         ) : EncryptedElement {
             override val type: Type = Type.ADDRESS
+
+            companion object
         }
 
         /**
          * Utility Bill case
          */
-        data class UtilityBill(
-            @JsonIgnore
-            private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+        @TelegramCodegen.Type
+        data class UtilityBill internal constructor(
             val files: List<File>,
             val hash: String
         ) : EncryptedElement {
             override val type: Type = Type.UTILITY_BILL
+
+            companion object
         }
 
         /**
          * Bank Statement case
          */
-        data class BankStatement(
-            @JsonIgnore
-            private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+        @TelegramCodegen.Type
+        data class BankStatement internal constructor(
             val files: List<File>,
             val hash: String
         ) : EncryptedElement {
             override val type: Type = Type.BANK_STATEMENT
+
+            companion object
         }
 
         /**
          * Rental Agreement case
          */
-        data class RentalAgreement(
-            @JsonIgnore
-            private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+        @TelegramCodegen.Type
+        data class RentalAgreement internal constructor(
             val files: List<File>,
             val hash: String
         ) : EncryptedElement {
             override val type: Type = Type.RENTAL_AGREEMENT
+
+            companion object
         }
 
         /**
          * Passport Registration case
          */
-        data class PassportRegistration(
-            @JsonIgnore
-            private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+        @TelegramCodegen.Type
+        data class PassportRegistration internal constructor(
             val files: List<File>,
             val hash: String
         ) : EncryptedElement {
             override val type: Type = Type.PASSPORT_REGISTRATION
+
+            companion object
         }
 
         /**
          * Temporary Registration case
          */
-        data class TemporaryRegistration(
-            @JsonIgnore
-            private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+        @TelegramCodegen.Type
+        data class TemporaryRegistration internal constructor(
             val files: List<File>,
             val hash: String
         ) : EncryptedElement {
             override val type: Type = Type.TEMPORARY_REGISTRATION
+
+            companion object
         }
 
         /**
          * Phone Number case
          */
-        data class PhoneNumber(
-            @JsonIgnore
-            private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+        @TelegramCodegen.Type
+        data class PhoneNumber internal constructor(
             val phoneNumber: String,
             val hash: String
         ) : EncryptedElement {
             override val type: Type = Type.PHONE_NUMBER
+
+            companion object
         }
 
         /**
          * Phone Number case
          */
-        data class Email(
-            @JsonIgnore
-            private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+        @TelegramCodegen.Type
+        data class Email internal constructor(
             val email: String,
             val hash: String
         ) : EncryptedElement {
             override val type: Type = Type.EMAIL
+
+            companion object
         }
 
         /**
@@ -262,40 +276,42 @@ object Passport {
      *
      * For up-to-date documentation please consult the official Telegram docs.
      */
-    data class EncryptedCredentials(
-        @JsonIgnore
-        private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+    @TelegramCodegen.Type
+    data class EncryptedCredentials internal constructor(
         val data: String,
         val hash: String,
         val secret: String
-    )
+    ) {
+        companion object
+    }
 
     /**
      * Telegram [PassportData](https://core.telegram.org/bots/api#passportdata) type.
      *
      * For up-to-date documentation please consult the official Telegram docs.
      */
-    data class Data(
-        @JsonIgnore
-        private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+    @TelegramCodegen.Type
+    data class Data internal constructor(
         val data: List<EncryptedElement>,
         val credentials: EncryptedCredentials
-    )
+    ) {
+        companion object
+    }
 
     /**
      * Telegram [PassportFile](https://core.telegram.org/bots/api#passportfile) type.
      *
      * For up-to-date documentation please consult the official Telegram docs.
      */
-    data class File(
-        @JsonIgnore
-        private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+    @TelegramCodegen.Type
+    data class File internal constructor(
         val fileId: String,
         val fileUniqueId: String,
         val fileSize: Long,
         val fileDate: Instant
-    )
-
+    ) {
+        companion object
+    }
 
     /**
      * Telegram [PassportElementError](https://core.telegram.org/bots/api#passportelementerror) type.
@@ -326,15 +342,16 @@ object Passport {
          *
          * For up-to-date documentation please consult the official Telegram docs.
          */
-        data class DataField(
-            @JsonIgnore
-            private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+        @TelegramCodegen.Type
+        data class DataField internal constructor(
             val type: EncryptedElement.Type,
             val fieldName: String,
             val dataHash: String,
             val message: String
         ) : ElementError {
             override val source: Source = Source.DATA_FIELD
+
+            companion object
         }
 
         /**
@@ -342,14 +359,15 @@ object Passport {
          *
          * For up-to-date documentation please consult the official Telegram docs.
          */
-        data class FrontSide(
-            @JsonIgnore
-            private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+        @TelegramCodegen.Type
+        data class FrontSide internal constructor(
             val type: EncryptedElement.Type,
             val fileHash: String,
             val message: String
         ) : ElementError {
             override val source: Source = Source.FRONT_SIDE
+
+            companion object
         }
 
         /**
@@ -357,14 +375,15 @@ object Passport {
          *
          * For up-to-date documentation please consult the official Telegram docs.
          */
-        data class ReverseSide(
-            @JsonIgnore
-            private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+        @TelegramCodegen.Type
+        data class ReverseSide internal constructor(
             val type: EncryptedElement.Type,
             val fileHash: String,
             val message: String
         ) : ElementError {
             override val source: Source = Source.REVERSE_SIDE
+
+            companion object
         }
 
         /**
@@ -372,14 +391,15 @@ object Passport {
          *
          * For up-to-date documentation please consult the official Telegram docs.
          */
-        data class Selfie(
-            @JsonIgnore
-            private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+        @TelegramCodegen.Type
+        data class Selfie internal constructor(
             val type: EncryptedElement.Type,
             val fileHash: String,
             val message: String
         ) : ElementError {
             override val source: Source = Source.SELFIE
+
+            companion object
         }
 
         /**
@@ -387,14 +407,15 @@ object Passport {
          *
          * For up-to-date documentation please consult the official Telegram docs.
          */
-        data class File(
-            @JsonIgnore
-            private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+        @TelegramCodegen.Type
+        data class File internal constructor(
             val type: EncryptedElement.Type,
             val fileHash: String,
             val message: String
         ) : ElementError {
             override val source: Source = Source.FILE
+
+            companion object
         }
 
         /**
@@ -402,14 +423,15 @@ object Passport {
          *
          * For up-to-date documentation please consult the official Telegram docs.
          */
-        data class Files(
-            @JsonIgnore
-            private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+        @TelegramCodegen.Type
+        data class Files internal constructor(
             val type: EncryptedElement.Type,
             val fileHashes: List<String>,
             val message: String
         ) : ElementError {
             override val source: Source = Source.FILES
+
+            companion object
         }
 
         /**
@@ -417,14 +439,15 @@ object Passport {
          *
          * For up-to-date documentation please consult the official Telegram docs.
          */
-        data class TranslationFile(
-            @JsonIgnore
-            private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+        @TelegramCodegen.Type
+        data class TranslationFile internal constructor(
             val type: EncryptedElement.Type,
             val fileHash: String,
             val message: String
         ) : ElementError {
             override val source: Source = Source.TRANSLATION_FILE
+
+            companion object
         }
 
         /**
@@ -432,14 +455,15 @@ object Passport {
          *
          * For up-to-date documentation please consult the official Telegram docs.
          */
-        data class TranslationFiles(
-            @JsonIgnore
-            private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+        @TelegramCodegen.Type
+        data class TranslationFiles internal constructor(
             val type: EncryptedElement.Type,
             val fileHashes: List<String>,
             val message: String
         ) : ElementError {
             override val source: Source = Source.TRANSLATION_FILES
+
+            companion object
         }
 
         /**
@@ -447,14 +471,15 @@ object Passport {
          *
          * For up-to-date documentation please consult the official Telegram docs.
          */
-        data class Unspecified(
-            @JsonIgnore
-            private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+        @TelegramCodegen.Type
+        data class Unspecified internal constructor(
             val type: EncryptedElement.Type,
             val elementHash: String,
             val message: String
         ) : ElementError {
             override val source: Source = Source.UNSPECIFIED
+
+            companion object
         }
 
 

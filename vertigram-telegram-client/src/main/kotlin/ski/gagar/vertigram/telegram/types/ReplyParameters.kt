@@ -12,13 +12,8 @@ import ski.gagar.vertigram.util.NoPosArgs
  *
  * For up-to-date documentation please consult the official Telegram docs.
  */
-@TelegramCodegen(
-    generateMethod = false,
-    generatePseudoConstructor = true,
-)
+@TelegramCodegen.Type
 data class ReplyParameters internal constructor(
-    @JsonIgnore
-    private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
     val messageId: Long,
     val chatId: ChatId? = null,
     val allowSendingWithoutReply: Boolean = false,

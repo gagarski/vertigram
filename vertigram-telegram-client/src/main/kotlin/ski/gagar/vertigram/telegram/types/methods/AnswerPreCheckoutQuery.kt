@@ -1,11 +1,9 @@
 package ski.gagar.vertigram.telegram.types.methods
 
-import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.telegram.annotations.TelegramMethod
-import ski.gagar.vertigram.util.NoPosArgs
 
 
 /**
@@ -20,7 +18,7 @@ import ski.gagar.vertigram.util.NoPosArgs
     JsonSubTypes.Type(value = AnswerPreCheckoutQuery.Ok::class, name = "true"),
     JsonSubTypes.Type(value = AnswerPreCheckoutQuery.Error::class, name = "false")
 )
-@TelegramCodegen
+@TelegramCodegen.Method
 sealed class AnswerPreCheckoutQuery : JsonTelegramCallable<Boolean>() {
     abstract val preCheckoutQueryId: String
 
@@ -30,14 +28,10 @@ sealed class AnswerPreCheckoutQuery : JsonTelegramCallable<Boolean>() {
     @TelegramMethod(
         methodName = "answerPreCheckoutQuery"
     )
-    @TelegramCodegen(
-        methodName = "answerPreCheckoutQuery",
-        generatePseudoConstructor = true,
-        pseudoConstructorName = "AnswerPreCheckoutQuery"
+    @TelegramCodegen.Method(
+        name = "answerPreCheckoutQuery",
     )
     data class Ok internal constructor(
-        @JsonIgnore
-        private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
         override val preCheckoutQueryId: String
     ) : AnswerPreCheckoutQuery() {
         val ok: Boolean = true
@@ -49,14 +43,10 @@ sealed class AnswerPreCheckoutQuery : JsonTelegramCallable<Boolean>() {
     @TelegramMethod(
         methodName = "answerPreCheckoutQuery"
     )
-    @TelegramCodegen(
-        methodName = "answerPreCheckoutQuery",
-        generatePseudoConstructor = true,
-        pseudoConstructorName = "AnswerPreCheckoutQuery"
+    @TelegramCodegen.Method(
+        name = "answerPreCheckoutQuery",
     )
     data class Error internal constructor(
-        @JsonIgnore
-        private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
         override val preCheckoutQueryId: String,
         val errorMessage: String
     ) : AnswerPreCheckoutQuery() {

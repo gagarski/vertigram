@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
+import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.telegram.types.richtext.HasOptionalExplanationWithEntities
 import ski.gagar.vertigram.telegram.types.richtext.HasQuestionWithEntities
 import ski.gagar.vertigram.telegram.types.richtext.HasTextWithEntities
@@ -45,7 +46,8 @@ interface Poll : HasQuestionWithEntities {
      * Regular case
      */
 
-    data class Regular(
+    @TelegramCodegen.Type
+    data class Regular internal constructor(
         override val id: String,
         override val question: String,
         override val questionEntities: List<MessageEntity>? = null,
@@ -67,7 +69,8 @@ interface Poll : HasQuestionWithEntities {
     /**
      * Quiz case
      */
-    data class Quiz(
+    @TelegramCodegen.Type(wrapRichText = false)
+    data class Quiz internal constructor(
         override val id: String,
         override val question: String,
         override val questionEntities: List<MessageEntity>? = null,
@@ -93,27 +96,29 @@ interface Poll : HasQuestionWithEntities {
      *
      * For up-to-date documentation please consult the official Telegram docs.
      */
-    data class Option(
-        @JsonIgnore
-        private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+    @TelegramCodegen.Type(wrapRichText = false)
+    data class Option internal constructor(
         override val text: String,
         override val entities: List<MessageEntity>? = null,
         val voterCount: Int
-    ) : HasTextWithEntities
+    ) : HasTextWithEntities {
+        companion object
+    }
 
     /**
      * Telegram [PollAnswer](https://core.telegram.org/bots/api#pollanswer) type.
      *
      * For up-to-date documentation please consult the official Telegram docs.
      */
-    data class Answer(
-        @JsonIgnore
-        private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+    @TelegramCodegen.Type
+    data class Answer internal constructor(
         val pollId: String,
         val voterChat: Chat? = null,
         val optionIds: List<Int>,
         val user: User? = null
-    )
+    ) {
+        companion object
+    }
 
 
     /**

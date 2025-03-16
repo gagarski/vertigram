@@ -11,10 +11,8 @@ import ski.gagar.vertigram.util.NoPosArgs
  *
  * For up-to-date documentation please consult the official Telegram docs.
  */
-@TelegramCodegen
-data class GetUserChatBoosts(
-    @JsonIgnore
-    private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+@TelegramCodegen.Method
+data class GetUserChatBoosts internal constructor(
     val chatId: ChatId,
     val userId: Long
 ) : JsonTelegramCallable<UserChatBoosts>()

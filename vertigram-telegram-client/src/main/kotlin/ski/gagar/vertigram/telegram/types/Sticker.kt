@@ -2,6 +2,7 @@ package ski.gagar.vertigram.telegram.types
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
+import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.util.NoPosArgs
 
 /**
@@ -9,9 +10,8 @@ import ski.gagar.vertigram.util.NoPosArgs
  *
  * For up-to-date documentation please consult the official Telegram docs.
  */
-data class Sticker(
-    @JsonIgnore
-    private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+@TelegramCodegen.Type
+data class Sticker internal constructor(
     val fileId: String,
     val fileUniqueId: String,
     val type: Type,
@@ -35,14 +35,15 @@ data class Sticker(
      *
      * For up-to-date documentation please consult the official Telegram docs.
      */
-    data class MaskPosition(
-        @JsonIgnore
-        private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+    @TelegramCodegen.Type
+    data class MaskPosition internal constructor(
         val point: String,
         val xShift: Double,
         val yShift: Double,
         val scale: Double
-    )
+    ) {
+        companion object
+    }
 
     /**
      * Sticker format as used in [ski.gagar.vertigram.telegram.methods.CreateNewStickerSet] and [ski.gagar.vertigram.telegram.methods.UploadStickerFile]
@@ -69,4 +70,5 @@ data class Sticker(
         CUSTOM_EMOJI,
     }
 
+    companion object
 }

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
+import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.telegram.types.colors.RgbColor
 import ski.gagar.vertigram.util.NoPosArgs
 
@@ -12,9 +13,8 @@ import ski.gagar.vertigram.util.NoPosArgs
  *
  * For up-to-date documentation please consult the official Telegram docs.
  */
-data class ChatBackground(
-    @JsonIgnore
-    private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+@TelegramCodegen.Type
+data class ChatBackground internal constructor(
     val type: Type
 ) {
     @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", include = JsonTypeInfo.As.EXISTING_PROPERTY)
@@ -32,9 +32,8 @@ data class ChatBackground(
          *
          * For up-to-date documentation please consult the official Telegram docs.
          */
-        data class Fill(
-            @JsonIgnore
-            private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+        @TelegramCodegen.Type
+        data class Fill internal constructor(
             val fill: Value,
             val darkThemeDimming: Int
         ) : Type {
@@ -54,12 +53,12 @@ data class ChatBackground(
                  *
                  * For up-to-date documentation please consult the official Telegram docs.
                  */
-                data class Solid(
-                    @JsonIgnore
-                    private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+                @TelegramCodegen.Type
+                data class Solid internal constructor(
                     val color: RgbColor
                 ) : Value {
                     override val type: Type = Type.SOLID
+                    companion object
                 }
 
                 /**
@@ -67,14 +66,14 @@ data class ChatBackground(
                  *
                  * For up-to-date documentation please consult the official Telegram docs.
                  */
-                data class Gradient(
-                    @JsonIgnore
-                    private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+                @TelegramCodegen.Type
+                data class Gradient internal constructor(
                     val topColor: RgbColor,
                     val bottomColor: RgbColor,
                     val rotationAngle: Int
                 ) : Value {
                     override val type: Type = Type.GRADIENT
+                    companion object
                 }
 
                 /**
@@ -82,12 +81,12 @@ data class ChatBackground(
                  *
                  * For up-to-date documentation please consult the official Telegram docs.
                  */
-                data class FreeformGradient(
-                    @JsonIgnore
-                    private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+                @TelegramCodegen.Type
+                data class FreeformGradient internal constructor(
                     val colors: List<RgbColor>
                 ) : Value {
                     override val type: Type = Type.FREEFORM_GRADIENT
+                    companion object
                 }
             }
 
@@ -108,6 +107,8 @@ data class ChatBackground(
                     const val FREEFORM_GRADIENT_STR = "freeform"
                 }
             }
+
+            companion object
         }
 
         /**
@@ -115,9 +116,8 @@ data class ChatBackground(
          *
          * For up-to-date documentation please consult the official Telegram docs.
          */
-        data class Wallpaper(
-            @JsonIgnore
-            private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+        @TelegramCodegen.Type
+        data class Wallpaper internal constructor(
             val document: Document,
             val darkThemeDimming: Int,
             @get:JvmName("getIsBlurred")
@@ -126,6 +126,7 @@ data class ChatBackground(
             val isMoving: Boolean = false,
         ) : Type {
             override val type: Kind = Kind.WALLPAPER
+            companion object
         }
 
         /**
@@ -133,9 +134,8 @@ data class ChatBackground(
          *
          * For up-to-date documentation please consult the official Telegram docs.
          */
-        data class Pattern(
-            @JsonIgnore
-            private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+        @TelegramCodegen.Type
+        data class Pattern internal constructor(
             val document: Document,
             val fill: Type.Fill.Value,
             val intensity: Int,
@@ -145,6 +145,7 @@ data class ChatBackground(
             val isMoving: Boolean = false,
         ) : Type {
             override val type: Kind = Kind.PATTERN
+            companion object
         }
 
         /**
@@ -152,12 +153,12 @@ data class ChatBackground(
          *
          * For up-to-date documentation please consult the official Telegram docs.
          */
-        data class ChatTheme(
-            @JsonIgnore
-            private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+        @TelegramCodegen.Type
+        data class ChatTheme internal constructor(
             val themeName: String
         ) : Type {
             override val type: Kind = Kind.CHAT_THEME
+            companion object
         }
     }
 
@@ -183,4 +184,6 @@ data class ChatBackground(
             const val CHAT_THEME_STR = "chat_theme"
         }
     }
+
+    companion object
 }

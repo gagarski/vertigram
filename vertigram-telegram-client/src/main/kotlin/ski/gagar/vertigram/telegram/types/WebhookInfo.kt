@@ -1,6 +1,7 @@
 package ski.gagar.vertigram.telegram.types
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.util.NoPosArgs
 import java.time.Instant
 
@@ -9,9 +10,8 @@ import java.time.Instant
  *
  * For up-to-date documentation please consult the official Telegram docs.
  */
-data class WebhookInfo(
-    @JsonIgnore
-    private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+@TelegramCodegen.Type
+data class WebhookInfo internal constructor(
     val url: String,
     val hasCustomCertificate: Boolean = false,
     val pendingUpdateCount: Int,
@@ -21,4 +21,6 @@ data class WebhookInfo(
     val lastSynchronizationErrorDate: Instant? = null,
     val maxConnections: Int? = null,
     val allowedUpdates: List<String>? = null
-)
+) {
+    companion object
+}

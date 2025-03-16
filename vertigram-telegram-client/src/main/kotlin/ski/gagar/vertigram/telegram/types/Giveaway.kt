@@ -1,6 +1,7 @@
 package ski.gagar.vertigram.telegram.types
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.util.NoPosArgs
 import java.time.Instant
 
@@ -9,7 +10,8 @@ import java.time.Instant
  *
  * For up-to-date documentation please consult the official Telegram docs.
  */
-data class Giveaway(
+@TelegramCodegen.Type
+data class Giveaway internal constructor(
     val chats: List<Chat>,
     val winnersSelectionDate: Instant,
     val winnerCount: Int,
@@ -24,9 +26,8 @@ data class Giveaway(
      *
      * For up-to-date documentation please consult the official Telegram docs.
      */
-    data class Winners(
-        @JsonIgnore
-        private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+    @TelegramCodegen.Type
+    data class Winners internal constructor(
         val chat: Chat,
         val giveawayMessageId: Long,
         val winnersSelectionDate: Instant,
@@ -38,6 +39,9 @@ data class Giveaway(
         val onlyNewMembers: Boolean = false,
         val wasRefunded: Boolean = false,
         val prizeDescription: String? = null
-    )
+    ) {
+        companion object
+    }
 
+    companion object
 }

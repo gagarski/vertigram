@@ -1,6 +1,7 @@
 package ski.gagar.vertigram.telegram.types
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.util.NoPosArgs
 import java.time.Instant
 
@@ -9,11 +10,12 @@ import java.time.Instant
  *
  * For up-to-date documentation please consult the official Telegram docs.
  */
-data class ChatBoostRemoved(
-    @JsonIgnore
-    private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+@TelegramCodegen.Type
+data class ChatBoostRemoved internal constructor(
     val chat: Chat,
     val boostId: String,
     val removeDate: Instant,
     val source: ChatBoost.Source
-)
+) {
+    companion object
+}

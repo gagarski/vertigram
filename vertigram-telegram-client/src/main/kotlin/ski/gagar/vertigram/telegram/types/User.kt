@@ -1,5 +1,7 @@
 package ski.gagar.vertigram.telegram.types
 
+import ski.gagar.vertigram.annotations.TelegramCodegen
+
 /**
  * A common interface for [User] and [User.Me] types.
  */
@@ -25,7 +27,8 @@ interface IUser {
  *
  * @see Me
  */
-data class User(
+@TelegramCodegen.Type
+data class User internal constructor(
     override val id: Long,
     @get:JvmName("getIsBot")
     override val isBot: Boolean = false,
@@ -43,7 +46,8 @@ data class User(
      * For up-to-date documentation please consult the official Telegram docs.
      */
     @Suppress("INAPPLICABLE_JVM_NAME")
-    data class Me(
+    @TelegramCodegen.Type
+    data class Me internal constructor(
         override val id: Long,
         override val firstName: String? = null,
         override val lastName: String? = null,
@@ -59,5 +63,9 @@ data class User(
     ) : IUser {
         @get:JvmName("getIsBot")
         override val isBot: Boolean = true
+
+        companion object
     }
+
+    companion object
 }

@@ -12,10 +12,8 @@ import ski.gagar.vertigram.util.NoPosArgs
  *
  * For up-to-date documentation please consult the official Telegram docs.
  */
-@TelegramCodegen
-data class SetChatPermissions(
-    @JsonIgnore
-    private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+@TelegramCodegen.Method
+data class SetChatPermissions internal constructor(
     override val chatId: ChatId,
     val permissions: ChatPermissions,
     val useIndependentChatPermissions: Boolean = false

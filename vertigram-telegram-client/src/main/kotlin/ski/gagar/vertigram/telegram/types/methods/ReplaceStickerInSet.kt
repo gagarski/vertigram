@@ -11,10 +11,8 @@ import ski.gagar.vertigram.util.NoPosArgs
  *
  * For up-to-date documentation please consult the official Telegram docs.
  */
-@TelegramCodegen
-data class ReplaceStickerInSet(
-    @JsonIgnore
-    private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+@TelegramCodegen.Method
+data class ReplaceStickerInSet internal constructor(
     val userId: Long,
     val name: String,
     val oldSticker: String,

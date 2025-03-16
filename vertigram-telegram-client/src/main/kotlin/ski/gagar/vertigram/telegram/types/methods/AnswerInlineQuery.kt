@@ -1,9 +1,7 @@
 package ski.gagar.vertigram.telegram.types.methods
 
-import com.fasterxml.jackson.annotation.JsonIgnore
 import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.telegram.types.InlineQuery
-import ski.gagar.vertigram.util.NoPosArgs
 import java.time.Duration
 
 /**
@@ -11,10 +9,8 @@ import java.time.Duration
  *
  * For up-to-date documentation please consult the official Telegram docs.
  */
-@TelegramCodegen
-data class AnswerInlineQuery(
-    @JsonIgnore
-    private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+@TelegramCodegen.Method
+data class AnswerInlineQuery internal constructor(
     val inlineQueryId: String,
     val results: List<InlineQuery.Result>,
     val cacheTime: Duration? = null,

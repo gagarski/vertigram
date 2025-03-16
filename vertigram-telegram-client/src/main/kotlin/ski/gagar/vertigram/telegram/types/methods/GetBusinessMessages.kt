@@ -9,9 +9,7 @@ import ski.gagar.vertigram.util.NoPosArgs
  *
  * For up-to-date documentation please consult the official Telegram docs.
  */
-@TelegramCodegen
-data class GetBusinessConnection(
-    @JsonIgnore
-    private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+@TelegramCodegen.Method
+data class GetBusinessConnection internal constructor(
     val businessConnectionId: String
 ) : JsonTelegramCallable<Boolean>()

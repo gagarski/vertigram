@@ -2,6 +2,7 @@ package ski.gagar.vertigram.telegram.types
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonValue
+import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.util.NoPosArgs
 
 /**
@@ -9,9 +10,8 @@ import ski.gagar.vertigram.util.NoPosArgs
  *
  * For up-to-date documentation please consult the official Telegram docs.
  */
-data class Dice(
-    @JsonIgnore
-    private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+@TelegramCodegen.Type
+data class Dice internal constructor(
     val emoji: Emoji,
     val value: Int
 ) {
@@ -24,4 +24,5 @@ data class Dice(
         SLOT("\uD83C\uDFB0");
     }
 
+    companion object
 }

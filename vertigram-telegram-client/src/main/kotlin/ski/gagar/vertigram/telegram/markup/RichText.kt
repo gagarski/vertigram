@@ -577,7 +577,11 @@ class BlockQuote internal constructor(val expandable: Boolean = false, siblings:
     private val afterBlock = siblings.lastOrNull() is BlockElement || siblings.lastOrNull() == null
 
     override fun createEntity(offset: Int, length: Int): MessageEntity =
-        MessageEntity.BlockQuote(offset = offset, length = length)
+        if (expandable) {
+            MessageEntity.ExpandableBlockQuote(offset = offset, length = length)
+        } else {
+            MessageEntity.BlockQuote(offset = offset, length = length)
+        }
 
     override fun StringBuilder.renderMarkdown() {
         val childBuilder = StringBuilder()

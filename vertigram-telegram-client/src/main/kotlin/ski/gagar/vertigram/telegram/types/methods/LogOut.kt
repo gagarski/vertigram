@@ -7,5 +7,5 @@ import ski.gagar.vertigram.annotations.TelegramCodegen
  *
  * For up-to-date documentation please consult the official Telegram docs.
  */
-@TelegramCodegen
+@TelegramCodegen.Method
 object LogOut : JsonTelegramCallable<Boolean>()

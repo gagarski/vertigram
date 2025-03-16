@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
+import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.util.NoPosArgs
 import java.time.Instant
 
@@ -14,9 +15,8 @@ import java.time.Instant
  *
  * For up-to-date documentation please consult the official Telegram docs.
  */
-data class ChatBoost(
-    @JsonIgnore
-    private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+@TelegramCodegen.Type
+data class ChatBoost internal constructor(
     val boostId: String,
     val addDate: Instant,
     val expirationDate: Instant,
@@ -27,11 +27,12 @@ data class ChatBoost(
      *
      * For up-to-date documentation please consult the official Telegram docs.
      */
-    data class Added(
-        @JsonIgnore
-        private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+    @TelegramCodegen.Type
+    data class Added internal constructor(
         val boostCount: Int
-    )
+    ) {
+        companion object
+    }
 
     /**
      * Telegram [ChatBoostSource](https://core.telegram.org/bots/api#chatboostsource) type.
@@ -56,12 +57,12 @@ data class ChatBoost(
          *
          * For up-to-date documentation please consult the official Telegram docs.
          */
-        data class GiftCode(
-            @JsonIgnore
-            private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+        @TelegramCodegen.Type
+        data class GiftCode internal constructor(
             override val user: User
         ) : Source {
             override val source: Type = Type.GIFT_CODE
+            companion object
         }
 
         /**
@@ -69,15 +70,15 @@ data class ChatBoost(
          *
          * For up-to-date documentation please consult the official Telegram docs.
          */
-        data class Giveaway(
-            @JsonIgnore
-            private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+        @TelegramCodegen.Type
+        data class Giveaway internal constructor(
             val giveAwayMessageId: Long,
             override val user: User,
             @get:JvmName("getIsUnclaimed")
             val isUnclaimed: Boolean = false
         ) : Source {
             override val source: Type = Type.GIVEAWAY
+            companion object
         }
 
         /**
@@ -85,12 +86,12 @@ data class ChatBoost(
          *
          * For up-to-date documentation please consult the official Telegram docs.
          */
-        data class Premium(
-            @JsonIgnore
-            private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+        @TelegramCodegen.Type
+        data class Premium internal constructor(
             override val user: User
         ) : Source {
             override val source: Type = Type.PREMIUM
+            companion object
         }
 
         /**
@@ -113,4 +114,5 @@ data class ChatBoost(
 
     }
 
+    companion object
 }

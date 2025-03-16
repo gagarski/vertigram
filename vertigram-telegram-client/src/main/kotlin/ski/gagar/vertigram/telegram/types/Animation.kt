@@ -1,7 +1,6 @@
 package ski.gagar.vertigram.telegram.types
 
-import com.fasterxml.jackson.annotation.JsonIgnore
-import ski.gagar.vertigram.util.NoPosArgs
+import ski.gagar.vertigram.annotations.TelegramCodegen
 import java.time.Duration
 
 /**
@@ -9,9 +8,8 @@ import java.time.Duration
  *
  * For up-to-date documentation please consult the official Telegram docs.
  */
-data class Animation(
-    @JsonIgnore
-    private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+@TelegramCodegen.Type
+data class Animation internal constructor(
     val fileId: String,
     val fileUniqueId: String,
     val width: Int,
@@ -21,4 +19,6 @@ data class Animation(
     val fileName: String? = null,
     val mimeType: String? = null,
     val fileSize: Long? = null
-)
+) {
+    companion object
+}

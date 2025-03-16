@@ -8,5 +8,5 @@ import ski.gagar.vertigram.telegram.types.WebhookInfo
  *
  * For up-to-date documentation please consult the official Telegram docs.
  */
-@TelegramCodegen
+@TelegramCodegen.Method
 object GetWebHookInfo : JsonTelegramCallable<WebhookInfo>()

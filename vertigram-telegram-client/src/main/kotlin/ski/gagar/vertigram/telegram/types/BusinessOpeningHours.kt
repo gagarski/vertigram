@@ -1,6 +1,7 @@
 package ski.gagar.vertigram.telegram.types
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.util.NoPosArgs
 import java.time.DayOfWeek
 import java.time.LocalTime
@@ -10,9 +11,8 @@ import java.time.LocalTime
  *
  * For up-to-date documentation please consult the official Telegram docs.
  */
-data class BusinessOpeningHours(
-    @JsonIgnore
-    private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+@TelegramCodegen.Type
+data class BusinessOpeningHours internal constructor(
     val timeZoneName: String,
     val openingHours: List<Interval>
 ) {
@@ -21,15 +21,20 @@ data class BusinessOpeningHours(
      *
      * For up-to-date documentation please consult the official Telegram docs.
      */
-    data class Interval @Deprecated("Use factory function instead") constructor(
+    @TelegramCodegen.Type
+    data class Interval internal constructor(
         val openingMinute: OpeningTime,
         val closingMinute: OpeningTime
-    )
+    ) {
+        companion object
+    }
 
-    data class OpeningTime(
+    @TelegramCodegen.Type
+    data class OpeningTime internal constructor(
         val time: LocalTime,
         val dayOfWeek: DayOfWeek
     ) {
-
+        companion object
     }
+    companion object
 }

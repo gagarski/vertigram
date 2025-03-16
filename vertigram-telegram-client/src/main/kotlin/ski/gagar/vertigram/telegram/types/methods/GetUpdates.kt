@@ -1,7 +1,6 @@
 package ski.gagar.vertigram.telegram.types.methods
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.telegram.annotations.TelegramMethod
 import ski.gagar.vertigram.telegram.types.Update
 import ski.gagar.vertigram.util.NoPosArgs
@@ -22,9 +21,6 @@ import java.time.Duration
 @TelegramMethod(
     methodName = "getUpdates",
     generateVerticleConsumer = false
-)
-@TelegramCodegen(
-    generateMethod = false
 )
 internal data class GetUpdatesRaw(
     @JsonIgnore

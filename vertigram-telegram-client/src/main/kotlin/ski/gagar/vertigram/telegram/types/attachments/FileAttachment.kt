@@ -9,7 +9,7 @@ import java.io.File
 /**
  * An implementation of [Attachment] allowing to attach a local filesystem file.
  */
-data class FileAttachment(val file: File) : AbstractFileAttachment() {
+data class FileAttachment internal constructor(val file: File) : AbstractFileAttachment() {
     override fun doAttach(field: String, vertx: Vertx): FilePart =
         FilePart(field, file.toPath().fileName.toString(), { vertx.fileSystem().open(file.path, OpenOptions()).coAwait() } )
 }

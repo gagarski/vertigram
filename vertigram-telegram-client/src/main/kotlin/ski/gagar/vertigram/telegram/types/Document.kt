@@ -1,6 +1,7 @@
 package ski.gagar.vertigram.telegram.types
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.util.NoPosArgs
 
 /**
@@ -8,13 +9,14 @@ import ski.gagar.vertigram.util.NoPosArgs
  *
  * For up-to-date documentation please consult the official Telegram docs.
  */
-data class Document(
-    @JsonIgnore
-    private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+@TelegramCodegen.Type
+data class Document internal constructor(
     val fileId: String,
     val fileUniqueId: String,
     val thumbnail: PhotoSize? = null,
     val fileName: String? = null,
     val mimeType: String? = null,
     val fileSize: Long? = null
-)
+) {
+    companion object
+}

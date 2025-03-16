@@ -18,8 +18,12 @@ abstract class AbstractTelegram : ski.gagar.vertigram.telegram.client.Telegram {
     /**
      * Abstract method for calling [callable] with known [resultType]
      */
+    @Deprecated("Call Telegram.methodName() instead")
     abstract suspend fun <T> call(resultType: JavaType, callable: TelegramCallable<T>): T
 
-    override suspend fun <T> call(callable: TelegramCallable<T>): T =
-        call(VertigramTypeHints.responseTypeByClass.getOrAssert(callable.javaClass), callable)
+    @Deprecated("Call Telegram.methodName() instead")
+    override suspend fun <T> call(callable: TelegramCallable<T>): T {
+        @Suppress("DEPRECATION")
+        return call(VertigramTypeHints.responseTypeByClass.getOrAssert(callable.javaClass), callable)
+    }
 }

@@ -11,10 +11,8 @@ import ski.gagar.vertigram.util.NoPosArgs
  *
  * For up-to-date documentation please consult the official Telegram docs.
  */
-@TelegramCodegen
-data class UnbanChatMember(
-    @JsonIgnore
-    private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+@TelegramCodegen.Method
+data class UnbanChatMember internal constructor(
     override val chatId: ChatId,
     val userId: Long,
     val onlyIfBanned: Boolean = false

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
+import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.telegram.types.util.nullIfEpoch
 import ski.gagar.vertigram.util.NoPosArgs
 import java.time.Instant
@@ -38,9 +39,8 @@ sealed interface ChatMember {
      *
      * For up-to-date documentation please consult the official Telegram docs.
      */
-    data class Administrator(
-        @JsonIgnore
-        private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+    @TelegramCodegen.Type
+    data class Administrator internal constructor(
         override val user: User,
         val canBeEdited: Boolean = false,
         @get:JvmName("getIsAnonymous")
@@ -64,6 +64,8 @@ sealed interface ChatMember {
         override val status: Status = Status.ADMINISTRATOR
         @JsonIgnore
         override val isMember: Boolean = true
+
+        companion object
     }
 
     /**
@@ -71,9 +73,8 @@ sealed interface ChatMember {
      *
      * For up-to-date documentation please consult the official Telegram docs.
      */
-    data class Banned(
-        @JsonIgnore
-        private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+    @TelegramCodegen.Type
+    data class Banned internal constructor(
         override val user: User,
         /**
          * Date when restrictions will be lifted for this user; Unix time.
@@ -89,6 +90,8 @@ sealed interface ChatMember {
         @get:JsonIgnore
         val until: Instant?
             get() = untilDate.nullIfEpoch()
+
+        companion object
     }
 
     /**
@@ -96,14 +99,15 @@ sealed interface ChatMember {
      *
      * For up-to-date documentation please consult the official Telegram docs.
      */
-    data class Left(
-        @JsonIgnore
-        private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+    @TelegramCodegen.Type
+    data class Left internal constructor(
         override val user: User
     ) : ChatMember {
         override val status: Status = Status.LEFT
         @JsonIgnore
         override val isMember: Boolean = false
+
+        companion object
     }
 
     /**
@@ -111,14 +115,14 @@ sealed interface ChatMember {
      *
      * For up-to-date documentation please consult the official Telegram docs.
      */
-    data class Member(
-        @JsonIgnore
-        private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+    @TelegramCodegen.Type
+    data class Member internal constructor(
         override val user: User
     ) : ChatMember {
         override val status: Status = ChatMember.Status.MEMBER
         @JsonIgnore
         override val isMember: Boolean = true
+        companion object
     }
 
 
@@ -127,9 +131,8 @@ sealed interface ChatMember {
      *
      * For up-to-date documentation please consult the official Telegram docs.
      */
-    data class Owner(
-        @JsonIgnore
-        private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+    @TelegramCodegen.Type
+    data class Owner internal constructor(
         override val user: User,
         @get:JvmName("getIsAnonymous")
         val isAnonymous: Boolean = false,
@@ -138,6 +141,8 @@ sealed interface ChatMember {
         override val status: Status = Status.OWNER
         @JsonIgnore
         override val isMember: Boolean = true
+
+        companion object
     }
 
     /**
@@ -145,9 +150,8 @@ sealed interface ChatMember {
      *
      * For up-to-date documentation please consult the official Telegram docs.
      */
-    data class Restricted(
-        @JsonIgnore
-        private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+    @TelegramCodegen.Type
+    data class Restricted internal constructor(
         override val user: User,
         @get:JvmName("getIsMember")
         override val isMember: Boolean = false,
@@ -176,6 +180,8 @@ sealed interface ChatMember {
         override val status: Status = Status.RESTRICTED
         @get:JsonIgnore
         val until: Instant? = untilDate.nullIfEpoch()
+
+        companion object
     }
 
     /**

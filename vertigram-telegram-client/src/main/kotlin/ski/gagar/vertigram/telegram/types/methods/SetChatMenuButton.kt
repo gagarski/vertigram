@@ -11,10 +11,8 @@ import ski.gagar.vertigram.util.NoPosArgs
  *
  * For up-to-date documentation please consult the official Telegram docs.
  */
-@TelegramCodegen
-data class SetChatMenuButton(
-    @JsonIgnore
-    private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+@TelegramCodegen.Method
+data class SetChatMenuButton internal constructor(
     override val chatId: Long? = null,
     val menuButton: MenuButton? = null
 ) : JsonTelegramCallable<Boolean>(), HasChatIdLong

@@ -10,10 +10,8 @@ import ski.gagar.vertigram.util.NoPosArgs
  *
  * For up-to-date documentation please consult the official Telegram docs.
  */
-@TelegramCodegen
-data class GetUserProfilePhotos(
-    @JsonIgnore
-    private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+@TelegramCodegen.Method
+data class GetUserProfilePhotos internal constructor(
     val userId: Long,
     val offset: Long? = null,
     val limit: Long? = null

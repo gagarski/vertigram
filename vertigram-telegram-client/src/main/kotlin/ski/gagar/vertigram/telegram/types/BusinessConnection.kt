@@ -1,5 +1,6 @@
 package ski.gagar.vertigram.telegram.types
 
+import ski.gagar.vertigram.annotations.TelegramCodegen
 import java.time.Instant
 
 /**
@@ -7,7 +8,8 @@ import java.time.Instant
  *
  * For up-to-date documentation please consult the official Telegram docs.
  */
-data class BusinessConnection(
+@TelegramCodegen.Type
+data class BusinessConnection internal constructor(
     val id: String,
     val user: User,
     val userChatId: Long,
@@ -15,4 +17,6 @@ data class BusinessConnection(
     val canReply: Boolean,
     @get:JvmName("getIsEnabled")
     val isEnabled: Boolean
-)
+) {
+    companion object
+}

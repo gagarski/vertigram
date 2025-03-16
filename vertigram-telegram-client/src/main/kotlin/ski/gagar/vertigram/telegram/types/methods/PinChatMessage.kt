@@ -13,10 +13,8 @@ import ski.gagar.vertigram.util.NoPosArgs
  * For up-to-date documentation please consult the official Telegram docs.
  */
 @Throttled
-@TelegramCodegen
-data class PinChatMessage(
-    @JsonIgnore
-    private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+@TelegramCodegen.Method
+data class PinChatMessage internal constructor(
     override val chatId: ChatId,
     val messageId: Long,
     val disableNotification: Boolean = false

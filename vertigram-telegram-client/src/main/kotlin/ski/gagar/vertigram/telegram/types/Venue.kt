@@ -1,6 +1,7 @@
 package ski.gagar.vertigram.telegram.types
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.util.NoPosArgs
 
 /**
@@ -8,9 +9,8 @@ import ski.gagar.vertigram.util.NoPosArgs
  *
  * For up-to-date documentation please consult the official Telegram docs.
  */
-data class Venue(
-    @JsonIgnore
-    private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+@TelegramCodegen.Type
+data class Venue internal constructor(
     val location: Location,
     val title: String,
     val address: String,
@@ -18,4 +18,6 @@ data class Venue(
     val foursquareType: String? = null,
     val googlePlaceId: String? = null,
     val googlePlaceType: String? = null
-)
+) {
+    companion object {}
+}

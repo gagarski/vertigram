@@ -42,7 +42,7 @@ sealed interface MessageEntity {
 
     fun copyTo(offset: Int = this.offset, length: Int = this.length): MessageEntity
 
-    data class Mention(
+    data class Mention internal constructor(
         override val offset: Int,
         override val length: Int
     ) : MessageEntity {
@@ -50,7 +50,7 @@ sealed interface MessageEntity {
         override fun copyTo(offset: Int, length: Int) = copy(offset = offset, length = length)
     }
 
-    data class Hashtag(
+    data class Hashtag internal constructor(
         override val offset: Int,
         override val length: Int
     ) : MessageEntity {
@@ -58,7 +58,7 @@ sealed interface MessageEntity {
         override fun copyTo(offset: Int, length: Int) = copy(offset = offset, length = length)
     }
 
-    data class Cashtag(
+    data class Cashtag internal constructor(
         override val offset: Int,
         override val length: Int
     ) : MessageEntity {
@@ -66,7 +66,7 @@ sealed interface MessageEntity {
         override fun copyTo(offset: Int, length: Int) = copy(offset = offset, length = length)
     }
 
-    data class BotCommand(
+    data class BotCommand internal constructor(
         override val offset: Int,
         override val length: Int
     ) : MessageEntity {
@@ -74,7 +74,7 @@ sealed interface MessageEntity {
         override fun copyTo(offset: Int, length: Int) = copy(offset = offset, length = length)
     }
 
-    data class Url(
+    data class Url internal constructor(
         override val offset: Int,
         override val length: Int
     ) : MessageEntity {
@@ -82,7 +82,7 @@ sealed interface MessageEntity {
         override fun copyTo(offset: Int, length: Int) = copy(offset = offset, length = length)
     }
 
-    data class Email(
+    data class Email internal constructor(
         override val offset: Int,
         override val length: Int
     ) : MessageEntity {
@@ -90,7 +90,7 @@ sealed interface MessageEntity {
         override fun copyTo(offset: Int, length: Int) = copy(offset = offset, length = length)
     }
 
-    data class PhoneNumber(
+    data class PhoneNumber internal constructor(
         override val offset: Int,
         override val length: Int
     ) : MessageEntity {
@@ -98,7 +98,7 @@ sealed interface MessageEntity {
         override fun copyTo(offset: Int, length: Int) = copy(offset = offset, length = length)
     }
 
-    data class Bold(
+    data class Bold internal constructor(
         override val offset: Int,
         override val length: Int
     ) : MessageEntity {
@@ -106,7 +106,7 @@ sealed interface MessageEntity {
         override fun copyTo(offset: Int, length: Int) = copy(offset = offset, length = length)
     }
 
-    data class Italic(
+    data class Italic internal constructor(
         override val offset: Int,
         override val length: Int
     ) : MessageEntity {
@@ -114,7 +114,7 @@ sealed interface MessageEntity {
         override fun copyTo(offset: Int, length: Int) = copy(offset = offset, length = length)
     }
 
-    data class Underline(
+    data class Underline internal constructor(
         override val offset: Int,
         override val length: Int
     ) : MessageEntity {
@@ -122,7 +122,7 @@ sealed interface MessageEntity {
         override fun copyTo(offset: Int, length: Int) = copy(offset = offset, length = length)
     }
 
-    data class Strikethrough(
+    data class Strikethrough internal constructor(
         override val offset: Int,
         override val length: Int
     ) : MessageEntity {
@@ -130,7 +130,7 @@ sealed interface MessageEntity {
         override fun copyTo(offset: Int, length: Int) = copy(offset = offset, length = length)
     }
 
-    data class Spoiler(
+    data class Spoiler internal constructor(
         override val offset: Int,
         override val length: Int
     ) : MessageEntity {
@@ -138,7 +138,7 @@ sealed interface MessageEntity {
         override fun copyTo(offset: Int, length: Int) = copy(offset = offset, length = length)
     }
 
-    data class Code(
+    data class Code internal constructor(
         override val offset: Int,
         override val length: Int
     ) : MessageEntity {
@@ -146,7 +146,7 @@ sealed interface MessageEntity {
         override fun copyTo(offset: Int, length: Int) = copy(offset = offset, length = length)
     }
 
-    data class Pre(
+    data class Pre internal constructor(
         override val offset: Int,
         override val length: Int,
         val language: String? = null
@@ -155,7 +155,7 @@ sealed interface MessageEntity {
         override fun copyTo(offset: Int, length: Int) = copy(offset = offset, length = length)
     }
 
-    data class TextLink(
+    data class TextLink internal constructor(
         override val offset: Int,
         override val length: Int,
         val url: String
@@ -164,7 +164,7 @@ sealed interface MessageEntity {
         override fun copyTo(offset: Int, length: Int) = copy(offset = offset, length = length)
     }
 
-    data class TextMention(
+    data class TextMention internal constructor(
         override val offset: Int,
         override val length: Int,
         val user: User
@@ -173,7 +173,7 @@ sealed interface MessageEntity {
         override fun copyTo(offset: Int, length: Int) = copy(offset = offset, length = length)
     }
 
-    data class CustomEmoji(
+    data class CustomEmoji internal constructor(
         override val offset: Int,
         override val length: Int,
         val customEmojiId: String
@@ -182,7 +182,7 @@ sealed interface MessageEntity {
         override fun copyTo(offset: Int, length: Int) = copy(offset = offset, length = length)
     }
 
-    data class BlockQuote(
+    data class BlockQuote internal constructor(
         override val offset: Int,
         override val length: Int
     ) : MessageEntity {
@@ -190,7 +190,7 @@ sealed interface MessageEntity {
         override fun copyTo(offset: Int, length: Int) = copy(offset = offset, length = length)
     }
 
-    data class ExpandableBlockQuote(
+    data class ExpandableBlockQuote internal constructor(
         override val offset: Int,
         override val length: Int
     ) : MessageEntity {

@@ -2,6 +2,7 @@ package ski.gagar.vertigram.telegram.types
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
+import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.telegram.types.colors.AccentColor
 import ski.gagar.vertigram.telegram.types.colors.ProfileAccentColor
 import ski.gagar.vertigram.util.NoPosArgs
@@ -28,9 +29,8 @@ interface IChat {
  *
  * For up-to-date documentation please consult the official Telegram docs.
  */
-data class Chat(
-    @JsonIgnore
-    private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+@TelegramCodegen.Type
+data class Chat internal constructor(
     override val id: Long,
     override val type: Type,
     override val title: String? = null,
@@ -46,9 +46,8 @@ data class Chat(
      *
      * For up-to-date documentation please consult the official Telegram docs.
      */
-    data class FullInfo(
-        @JsonIgnore
-        private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+    @TelegramCodegen.Type
+    data class FullInfo internal constructor(
         override val id: Long,
         override val type: Type,
         override val title: String? = null,
@@ -106,6 +105,8 @@ data class Chat(
         @get:JsonIgnore
         val profileAccentColor: ProfileAccentColor?
             get() = ProfileAccentColor.byId[accentColorId]
+
+        companion object
     }
 
 
@@ -114,26 +115,28 @@ data class Chat(
      *
      * For up-to-date documentation please consult the official Telegram docs.
      */
-    data class Photo(
-        @JsonIgnore
-        private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+    @TelegramCodegen.Type
+    data class Photo internal constructor(
         val smallFileId: String,
         val smallFileUniqueId: String,
         val bigFileId: String,
         val bigFileUniqueId: String
-    )
+    ) {
+        companion object
+    }
 
     /**
      * Telegram [ChatLocation](https://core.telegram.org/bots/api#chatlocation) type.
      *
      * For up-to-date documentation please consult the official Telegram docs.
      */
-    data class Location(
-        @JsonIgnore
-        private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+    @TelegramCodegen.Type
+    data class Location internal constructor(
         val location: ski.gagar.vertigram.telegram.types.Location,
         val address: String
-    )
+    ) {
+        companion object
+    }
 
 
     enum class Type(val group: Boolean) {
@@ -146,6 +149,6 @@ data class Chat(
         @JsonProperty("channel")
         CHANNEL(false)
     }
-
+    companion object
 }
 

@@ -35,15 +35,11 @@ sealed interface EditMessageMedia {
     @TelegramMethod(
         methodName = "editMessageMedia"
     )
-    @TelegramCodegen(
-        methodName = "editMessageMedia",
-        generatePseudoConstructor = true,
-        pseudoConstructorName = "EditMessageMedia"
+    @TelegramCodegen.Method(
+        name = "editMessageMedia"
     )
     @Throttled
     data class InlineMessage internal constructor(
-        @JsonIgnore
-        private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
         val inlineMessageId: String,
         @ski.gagar.vertigram.telegram.annotations.TelegramMedia
         override val media: InputMedia,
@@ -56,10 +52,8 @@ sealed interface EditMessageMedia {
     @TelegramMethod(
         methodName = "editMessageMedia"
     )
-    @TelegramCodegen(
-        methodName = "editMessageMedia",
-        generatePseudoConstructor = true,
-        pseudoConstructorName = "EditMessageMedia"
+    @TelegramCodegen.Method(
+        name = "editMessageMedia"
     )
     @Throttled
     data class ChatMessage internal constructor(

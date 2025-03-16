@@ -50,6 +50,7 @@ class ThinTelegram(
         )
 
     @Suppress("UNCHECKED_CAST")
+    @Deprecated("Call Telegram.methodName() instead")
     override suspend fun <T> call(resultType: JavaType, callable: TelegramCallable<T>): T =
         vertigram.eventBus
             .request<TelegramCallable<T>, Any?>(

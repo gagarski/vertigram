@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
+import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.util.NoPosArgs
 import java.time.Instant
 
@@ -66,88 +67,110 @@ sealed interface Update<T> {
     /**
      * Case when [message] is set
      */
-    data class Message(
+    @TelegramCodegen.Type
+    data class Message internal constructor(
         override val updateId: Long,
         val message: ski.gagar.vertigram.telegram.types.Message
     ) : Parsed<ski.gagar.vertigram.telegram.types.Message> {
         override val payload: ski.gagar.vertigram.telegram.types.Message = message
         override val date: Instant = payload.date
+
+        companion object
     }
 
     /**
      * Case when [editedMessage] is set
      */
-    data class EditedMessage(
+    @TelegramCodegen.Type
+    data class EditedMessage internal constructor(
         override val updateId: Long,
         val editedMessage: ski.gagar.vertigram.telegram.types.Message
     ) : Parsed<ski.gagar.vertigram.telegram.types.Message> {
         override val payload: ski.gagar.vertigram.telegram.types.Message = editedMessage
         override val date: Instant = payload.date
+
+        companion object
     }
 
     /**
      * Case when [channelPost] is set
      */
-    data class ChannelPost(
+    @TelegramCodegen.Type
+    data class ChannelPost internal constructor(
         override val updateId: Long,
         val channelPost: ski.gagar.vertigram.telegram.types.Message
     ) : Parsed<ski.gagar.vertigram.telegram.types.Message> {
         override val payload: ski.gagar.vertigram.telegram.types.Message = channelPost
         override val date: Instant = payload.date
+
+        companion object
     }
 
     /**
      * Case when [editedChannelPost] is set
      */
-    data class EditedChannelPost(
+    @TelegramCodegen.Type
+    data class EditedChannelPost internal constructor(
         override val updateId: Long,
         val editedChannelPost: ski.gagar.vertigram.telegram.types.Message
     ) : Parsed<ski.gagar.vertigram.telegram.types.Message> {
         override val payload: ski.gagar.vertigram.telegram.types.Message = editedChannelPost
         override val date: Instant = payload.date
+
+        companion object
     }
 
     /**
      * Case when [businessConnection] is set
      */
-    data class BusinessConnection(
+    @TelegramCodegen.Type
+    data class BusinessConnection internal constructor(
         override val updateId: Long,
         val businessConnection: ski.gagar.vertigram.telegram.types.BusinessConnection
     ) : Parsed<ski.gagar.vertigram.telegram.types.BusinessConnection> {
         override val payload: ski.gagar.vertigram.telegram.types.BusinessConnection = businessConnection
         override val date: Instant = payload.date
+
+        companion object
     }
 
     /**
      * Case when [businessMessage] is set
      */
-    data class BusinessMessage(
+    @TelegramCodegen.Type
+    data class BusinessMessage internal constructor(
         override val updateId: Long,
         val businessMessage: ski.gagar.vertigram.telegram.types.Message
     ) : Parsed<ski.gagar.vertigram.telegram.types.Message> {
         override val payload: ski.gagar.vertigram.telegram.types.Message = businessMessage
         override val date: Instant = payload.date
+
+        companion object
     }
 
     /**
      * Case when [editedBusinessMessage] is set
      */
-    data class EditedBusinessMessage(
+    @TelegramCodegen.Type
+    data class EditedBusinessMessage internal constructor(
         override val updateId: Long,
         val editedBusinessMessage: ski.gagar.vertigram.telegram.types.Message
     ) : Parsed<ski.gagar.vertigram.telegram.types.Message> {
         override val payload: ski.gagar.vertigram.telegram.types.Message = editedBusinessMessage
         override val date: Instant = payload.date
+
+        companion object
     }
 
     /**
      * Case when [deletedBusinessMesages] is set
      */
-    data class DeletedBusinessMessages(
+    @TelegramCodegen.Type
+    data class DeletedBusinessMessages internal constructor(
         override val updateId: Long,
         val deletedBusinessMessaged: Payload
     ) : Parsed<DeletedBusinessMessages.Payload> {
-        override val payload: DeletedBusinessMessages.Payload = deletedBusinessMessaged
+        override val payload: Payload = deletedBusinessMessaged
         override val date: Instant? = null
 
         /**
@@ -155,17 +178,23 @@ sealed interface Update<T> {
          *
          * For up-to-date documentation please consult the official Telegram docs.
          */
-        data class Payload(
+        @TelegramCodegen.Type
+        data class Payload internal constructor(
             val businessConnectionId: String,
             val chat: Chat,
             val messageId: List<Long>
-        )
+        ) {
+            companion object
+        }
+
+        companion object
     }
 
     /**
      * Case when [messageReaction] is set
      */
-    data class MessageReaction(
+    @TelegramCodegen.Type
+    data class MessageReaction internal constructor(
         override val updateId: Long,
         val messageReaction: Payload
     ) : Parsed<MessageReaction.Payload> {
@@ -177,9 +206,8 @@ sealed interface Update<T> {
          *
          * For up-to-date documentation please consult the official Telegram docs.
          */
-        data class Payload(
-            @JsonIgnore
-            private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+        @TelegramCodegen.Type
+        data class Payload internal constructor(
             val chat: Chat,
             val messageId: Long,
             val user: User? = null,
@@ -187,13 +215,17 @@ sealed interface Update<T> {
             val date: Instant,
             val oldReaction: List<Reaction>,
             val newReaction: List<Reaction>
-        )
+        ) {
+            companion object
+        }
+        companion object
     }
 
     /**
      * Case when [messageReactionCount] is set
      */
-    data class MessageReactionCount(
+    @TelegramCodegen.Type
+    data class MessageReactionCount internal constructor(
         override val updateId: Long,
         val messageReactionCount: Payload
     ) : Parsed<MessageReactionCount.Payload> {
@@ -205,9 +237,8 @@ sealed interface Update<T> {
          *
          * For up-to-date documentation please consult the official Telegram docs.
          */
-        data class Payload(
-            @JsonIgnore
-            private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+        @TelegramCodegen.Type
+        data class Payload internal constructor(
             val chat: Chat,
             val messageId: Long,
             val date: Instant,
@@ -218,31 +249,38 @@ sealed interface Update<T> {
              *
              * For up-to-date documentation please consult the official Telegram docs.
              */
-            data class ReactionCount(
-                @JsonIgnore
-                private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+            @TelegramCodegen.Type
+            data class ReactionCount internal constructor(
                 val type: Reaction,
                 val totalCount: Int
-            )
-
+            ) {
+                companion object
+            }
+            companion object
         }
+
+        companion object
     }
 
     /**
      * Case when [inlineQuery] is set
      */
-    data class InlineQuery(
+    @TelegramCodegen.Type
+    data class InlineQuery internal constructor(
         override val updateId: Long,
         val inlineQuery: ski.gagar.vertigram.telegram.types.InlineQuery
     ) : Parsed<ski.gagar.vertigram.telegram.types.InlineQuery> {
         override val payload: ski.gagar.vertigram.telegram.types.InlineQuery = inlineQuery
         override val date: Instant? = null
+
+        companion object
     }
 
     /**
      * Case when [ChosenInlineResult] is set
      */
-    data class ChosenInlineResult(
+    @TelegramCodegen.Type
+    data class ChosenInlineResult internal constructor(
         override val updateId: Long,
         val chosenInlineResult: Payload
     ) : Parsed<ChosenInlineResult.Payload> {
@@ -254,21 +292,25 @@ sealed interface Update<T> {
          *
          * For up-to-date documentation please consult the official Telegram docs.
          */
-        data class Payload(
-            @JsonIgnore
-            private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+        @TelegramCodegen.Type
+        data class Payload internal constructor(
             val resultId: String,
             val from: User,
             val location: Location? = null,
             val inlineMessageId: String? = null,
             val query: String
-        )
+        ) {
+            companion object
+        }
+
+        companion object
     }
 
     /**
      * Case when [callbackQuery] is set
      */
-    data class CallbackQuery(
+    @TelegramCodegen.Type
+    data class CallbackQuery internal constructor(
         override val updateId: Long,
         val callbackQuery: Payload
     ) : Parsed<CallbackQuery.Payload> {
@@ -280,9 +322,8 @@ sealed interface Update<T> {
          *
          * For up-to-date documentation please consult the official Telegram docs.
          */
-        data class Payload(
-            @JsonIgnore
-            private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+        @TelegramCodegen.Type
+        data class Payload internal constructor(
             val id: String,
             val from: User,
             val message: ski.gagar.vertigram.telegram.types.Message? = null,
@@ -290,13 +331,18 @@ sealed interface Update<T> {
             val chatInstance: String,
             val data: String? = null,
             val gameShortName: String? = null
-        )
+        ) {
+            companion object
+        }
+
+        companion object
     }
 
     /**
      * Case when [shippingQuery] is set
      */
-    data class ShippingQuery(
+    @TelegramCodegen.Type
+    data class ShippingQuery internal constructor(
         override val updateId: Long,
         val shippingQuery: Payload
     ) : Parsed<ShippingQuery.Payload> {
@@ -308,20 +354,24 @@ sealed interface Update<T> {
          *
          * For up-to-date documentation please consult the official Telegram docs.
          */
-        data class Payload(
-            @JsonIgnore
-            private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+        @TelegramCodegen.Type
+        data class Payload internal constructor(
             val id: String,
             val from: User,
             val invoicePayload: String,
             val shippingAddress: ShippingAddress
-        )
+        ) {
+            companion object
+        }
+
+        companion object
     }
 
     /**
      * Case when [preCheckoutQuery] is set
      */
-    data class PreCheckoutQuery(
+    @TelegramCodegen.Type
+    data class PreCheckoutQuery internal constructor(
         override val updateId: Long,
         val preCheckoutQuery: Payload
     ) : Parsed<PreCheckoutQuery.Payload> {
@@ -333,9 +383,8 @@ sealed interface Update<T> {
          *
          * For up-to-date documentation please consult the official Telegram docs.
          */
-        data class Payload(
-            @JsonIgnore
-            private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+        @TelegramCodegen.Type
+        data class Payload internal constructor(
             val id: String,
             val from: User,
             val currency: String,
@@ -343,30 +392,39 @@ sealed interface Update<T> {
             val invoicePayload: String,
             val shippingOptionId: String? = null,
             val orderInfo: OrderInfo? = null
-        )
+        ) {
+            companion object
+        }
+
+        companion object
     }
 
     /**
      * Case when [poll] is set
      */
-    data class Poll(
+    @TelegramCodegen.Type
+    data class Poll internal constructor(
         override val updateId: Long,
         val poll: ski.gagar.vertigram.telegram.types.Poll
     ) : Parsed<ski.gagar.vertigram.telegram.types.Poll> {
         override val payload: ski.gagar.vertigram.telegram.types.Poll = poll
         override val date: Instant? = null
+
+        companion object
     }
 
     /**
      * Case when [pollAnswer] is set
      */
-    data class PollAnswer(
+    @TelegramCodegen.Type
+    data class PollAnswer internal constructor(
         override val updateId: Long,
         val pollAnswer: ski.gagar.vertigram.telegram.types.Poll.Answer
     ) : Parsed<ski.gagar.vertigram.telegram.types.Poll.Answer> {
         override val payload: ski.gagar.vertigram.telegram.types.Poll.Answer = pollAnswer
         override val date: Instant? = null
 
+        companion object
     }
 
     /**
@@ -374,19 +432,22 @@ sealed interface Update<T> {
      *
      * Intentionally reuses [ChatMember.Payload]
      */
-    data class MyChatMember(
+    @TelegramCodegen.Type
+    data class MyChatMember internal constructor(
         override val updateId: Long,
         val myChatMember: ChatMember.Payload
-    ) : Parsed<Update.ChatMember.Payload> {
+    ) : Parsed<ChatMember.Payload> {
         override val payload: ChatMember.Payload = myChatMember
         override val date: Instant = payload.date
 
+        companion object
     }
 
     /**
      * Case when [chatMember] is set
      */
-    data class ChatMember(
+    @TelegramCodegen.Type
+    data class ChatMember internal constructor(
         override val updateId: Long,
         val chatMember: Payload
     ) : Parsed<ChatMember.Payload> {
@@ -398,9 +459,8 @@ sealed interface Update<T> {
          *
          * For up-to-date documentation please consult the official Telegram docs.
          */
-        data class Payload(
-            @JsonIgnore
-            private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+        @TelegramCodegen.Type
+        data class Payload internal constructor(
             val chat: Chat,
             val from: User,
             val date: Instant,
@@ -409,13 +469,18 @@ sealed interface Update<T> {
             val inviteLink: ChatInviteLink? = null,
             val viaJoinRequest: Boolean = false,
             val viaChatFolderInviteLink: Boolean = false
-        )
+        ) {
+            companion object
+        }
+
+        companion object
     }
 
     /**
      * Case when [chatJoinRequest] is set
      */
-    data class ChatJoinRequest(
+    @TelegramCodegen.Type
+    data class ChatJoinRequest internal constructor(
         override val updateId: Long,
         val chatJoinRequest: Payload
     ) : Parsed<ChatJoinRequest.Payload> {
@@ -427,22 +492,26 @@ sealed interface Update<T> {
          *
          * For up-to-date documentation please consult the official Telegram docs.
          */
-        data class Payload(
-            @JsonIgnore
-            private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+        @TelegramCodegen.Type
+        data class Payload internal constructor(
             val chat: Chat,
             val from: User,
             val userChatId: Long,
             val date: Instant,
             val bio: String? = null,
             val inviteLink: ChatInviteLink? = null
-        )
+        ) {
+            companion object
+        }
+
+        companion object
     }
 
     /**
      * Case when [chatBoost] is set
      */
-    data class ChatBoost(
+    @TelegramCodegen.Type
+    data class ChatBoost internal constructor(
         override val updateId: Long,
         val chatBoost: Payload
     ) : Parsed<ChatBoost.Payload> {
@@ -454,18 +523,22 @@ sealed interface Update<T> {
          *
          * For up-to-date documentation please consult the official Telegram docs.
          */
-        data class Payload(
-            @JsonIgnore
-            private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+        @TelegramCodegen.Type
+        data class Payload internal constructor(
             val chat: Chat,
             val boost: ski.gagar.vertigram.telegram.types.ChatBoost
-        )
+        ) {
+            companion object
+        }
+
+        companion object
     }
 
     /**
      * Case when [chatBoostRemoved] is set
      */
-    data class RemovedChatBoost(
+    @TelegramCodegen.Type
+    data class RemovedChatBoost internal constructor(
         override val updateId: Long,
         val chatBoostRemoved: Payload
     ) : Parsed<RemovedChatBoost.Payload> {
@@ -477,25 +550,31 @@ sealed interface Update<T> {
          *
          * For up-to-date documentation please consult the official Telegram docs.
          */
-        data class Payload(
-            @JsonIgnore
-            private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+        @TelegramCodegen.Type
+        data class Payload internal constructor(
             val chat: Chat,
             val boostId: String,
             val removeDate: Instant,
             val source: ski.gagar.vertigram.telegram.types.ChatBoost.Source
-        )
+        ) {
+            companion object
+        }
+
+        companion object
     }
 
     /**
      * Case for malformed update
      */
-    data class Malformed(
+    @TelegramCodegen.Type
+    data class Malformed internal constructor(
         override val updateId: Long,
         val malformedRawData: Map<String, Any?>
     ) : Update<Map<String, Any?>> {
         override val payload: Map<String, Any?> = malformedRawData
         override val date: Instant? = null
+
+        companion object
     }
 
     /**

@@ -1,6 +1,7 @@
 package ski.gagar.vertigram.telegram.types
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.util.NoPosArgs
 import java.time.Instant
 
@@ -9,9 +10,8 @@ import java.time.Instant
  *
  * For up-to-date documentation please consult the official Telegram docs.
  */
-data class ChatInviteLink(
-    @JsonIgnore
-    private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+@TelegramCodegen.Type
+data class ChatInviteLink internal constructor(
     val inviteLink: String,
     val creator: User,
     val createsJoinRequest: Boolean = false,
@@ -23,4 +23,6 @@ data class ChatInviteLink(
     val expireDate: Instant? = null,
     val memberLimit: Int? = null,
     val pendingJoinRequestCount: Int? = null
-)
+) {
+    companion object
+}

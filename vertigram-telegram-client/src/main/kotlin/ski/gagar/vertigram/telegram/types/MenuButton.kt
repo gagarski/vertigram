@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
+import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.util.NoPosArgs
 
 /**
@@ -47,13 +48,14 @@ sealed interface MenuButton {
      *
      * For up-to-date documentation please consult the official Telegram docs.
      */
-    data class WebApp(
-        @JsonIgnore
-        private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+    @TelegramCodegen.Type(wrapRichText = false)
+    data class WebApp internal constructor(
         val text: String,
         val webApp: WebAppInfo
     ) : MenuButton {
         override val type: Type = Type.WEB_APP
+
+        companion object
     }
 
     /**

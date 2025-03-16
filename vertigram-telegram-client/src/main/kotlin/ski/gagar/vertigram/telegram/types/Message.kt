@@ -1,13 +1,12 @@
 package ski.gagar.vertigram.telegram.types
 
-import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
+import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.telegram.types.colors.RgbColor
 import ski.gagar.vertigram.telegram.types.richtext.HasOptionalCaptionWithEntities
 import ski.gagar.vertigram.telegram.types.richtext.HasOptionalTextWithEntities
-import ski.gagar.vertigram.util.NoPosArgs
 import java.time.Duration
 import java.time.Instant
 
@@ -16,9 +15,8 @@ import java.time.Instant
  *
  * For up-to-date documentation please consult the official Telegram docs.
  */
-data class Message(
-    @JsonIgnore
-    private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+@TelegramCodegen.Type(wrapRichText = false)
+data class Message internal constructor(
     val messageId: Long,
     val messageThreadId: Long? = null,
     val from: User? = null,
@@ -111,9 +109,8 @@ data class Message(
      *
      * For up-to-date documentation please consult the official Telegram docs.
      */
-    data class ExternalReplyInfo(
-        @JsonIgnore
-        private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+    @TelegramCodegen.Type
+    data class ExternalReplyInfo internal constructor(
         val origin: Message.Origin,
         val chat: Chat? = null,
         val messageId: Long? = null,
@@ -137,7 +134,9 @@ data class Message(
         val location: Location? = null,
         val poll: Poll? = null,
         val venue: Venue? = null
-    )
+    ) {
+        companion object
+    }
 
 
     /**
@@ -160,13 +159,14 @@ data class Message(
          *
          * For up-to-date documentation please consult the official Telegram docs.
          */
-        data class User(
-            @JsonIgnore
-            private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+        @TelegramCodegen.Type
+        data class User internal constructor(
             val date: Instant,
             val senderUser: ski.gagar.vertigram.telegram.types.User
         ) : Origin {
             override val type: Type = Type.USER
+
+            companion object
         }
 
         /**
@@ -174,13 +174,14 @@ data class Message(
          *
          * For up-to-date documentation please consult the official Telegram docs.
          */
-        data class HiddenUser(
-            @JsonIgnore
-            private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+        @TelegramCodegen.Type
+        data class HiddenUser internal constructor(
             val date: Instant,
             val senderUserName: String
         ) : Origin {
             override val type: Type = Type.HIDDEN_USER
+
+            companion object
         }
 
         /**
@@ -188,14 +189,15 @@ data class Message(
          *
          * For up-to-date documentation please consult the official Telegram docs.
          */
-        data class Chat(
-            @JsonIgnore
-            private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+        @TelegramCodegen.Type
+        data class Chat internal constructor(
             val date: Instant,
             val senderChat: ski.gagar.vertigram.telegram.types.Chat,
             val authorSignature: String? = null
         ) : Origin {
             override val type: Type = Type.CHAT
+
+            companion object
         }
 
         /**
@@ -203,15 +205,16 @@ data class Message(
          *
          * For up-to-date documentation please consult the official Telegram docs.
          */
-        data class Channel(
-            @JsonIgnore
-            private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+        @TelegramCodegen.Type
+        data class Channel internal constructor(
             val date: Instant,
             val chat: ski.gagar.vertigram.telegram.types.Chat,
             val messageId: Long,
             val authorSignature: String? = null
         ) : Origin {
             override val type: Type = Type.CHANNEL
+
+            companion object
         }
 
         /**
@@ -241,31 +244,33 @@ data class Message(
      *
      * For up-to-date documentation please consult the official Telegram docs.
      */
-    data class TextQuote(
-        @JsonIgnore
-        private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+    @TelegramCodegen.Type(wrapRichText = false)
+    data class TextQuote internal constructor(
         override val text: String,
         val position: Int,
         override val entities: List<MessageEntity>? = null,
         @get:JvmName("getIsManual")
         val isManual: Boolean = false
-    ) : HasOptionalTextWithEntities
+    ) : HasOptionalTextWithEntities {
+        companion object
+    }
 
     /**
      * Telegram [LinkPreviewOptions](https://core.telegram.org/bots/api#linkpreviewoptions) type.
      *
      * For up-to-date documentation please consult the official Telegram docs.
      */
-    data class LinkPreviewOptions(
-        @JsonIgnore
-        private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+    @TelegramCodegen.Type
+    data class LinkPreviewOptions internal constructor(
         @get:JvmName("getIsDisabled")
         val isDisabled: Boolean = false,
         val url: String? = null,
         val preferSmallMedia: Boolean = false,
         val preferLargeMedia: Boolean = false,
         val showAboveText: Boolean = false
-    )
+    ) {
+        companion object
+    }
 
     /**
      * Contains types, which act only as fields of [Message] and represent service messages according to docs.
@@ -281,20 +286,20 @@ data class Message(
          *
          * For up-to-date documentation please consult the official Telegram docs.
          */
-        data class MessageAutoDeleteTimerChanged(
-            @JsonIgnore
-            private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+        @TelegramCodegen.Type
+        data class MessageAutoDeleteTimerChanged internal constructor(
             val messageAutoDeleteTime: Duration
-        )
+        ) {
+            companion object
+        }
 
         /**
          * Telegram [SuccessfulPayment](https://core.telegram.org/bots/api#successfulpayment) type.
          *
          * For up-to-date documentation please consult the official Telegram docs.
          */
-        data class SuccessfulPayment(
-            @JsonIgnore
-            private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+        @TelegramCodegen.Type
+        data class SuccessfulPayment internal constructor(
             val currency: String,
             val totalAmount: Int,
             val invoicePayload: String,
@@ -302,16 +307,17 @@ data class Message(
             val orderInfo: OrderInfo? = null,
             val telegramPaymentChargeId: String,
             val providerPaymentChargeId: String
-        )
+        ) {
+            companion object
+        }
 
         /**
          * Telegram [UsersShared](https://core.telegram.org/bots/api#usersshared) type.
          *
          * For up-to-date documentation please consult the official Telegram docs.
          */
-        data class UsersShared(
-            @JsonIgnore
-            private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+        @TelegramCodegen.Type
+        data class UsersShared internal constructor(
             val requestId: Long,
             val users: List<SharedUser>
         ) {
@@ -320,15 +326,18 @@ data class Message(
              *
              * For up-to-date documentation please consult the official Telegram docs.
              */
-            data class SharedUser(
-                @JsonIgnore
-                private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+            @TelegramCodegen.Type
+            data class SharedUser internal constructor(
                 val userId: Long,
                 val firstName: String? = null,
                 val lastName: String? = null,
                 val username: String? = null,
                 val photo: List<PhotoSize>? = null
-            )
+            ) {
+                companion object
+            }
+
+            companion object
         }
 
         /**
@@ -336,15 +345,16 @@ data class Message(
          *
          * For up-to-date documentation please consult the official Telegram docs.
          */
-        data class ChatShared(
-            @JsonIgnore
-            private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+        @TelegramCodegen.Type
+        data class ChatShared internal constructor(
             val requestId: Long,
             val chatId: Long,
             val title: String? = null,
             val username: String? = null,
             val photo: List<PhotoSize>? = null
-        )
+        ) {
+            companion object
+        }
 
         /**
          * Telegram [WriteAccessAllowed](https://core.telegram.org/bots/api#writeaccessallowed) type.
@@ -365,27 +375,42 @@ data class Message(
              * Case when the access was granted after the user accepted an explicit request from a Web App sent by the method
              * `requestWriteAccess`.
              */
-            data class FromRequest(val fromRequest: Boolean = true) : WriteAccessAllowed {
+            // @TelegramCodegen.Type // intentionally disabled
+            data class FromRequest internal constructor(val fromRequest: Boolean = true) : WriteAccessAllowed {
                 init {
                     require(fromRequest)
+                }
+
+                companion object {
+                    fun create() = FromRequest()
+                    operator fun invoke() = FromRequest()
                 }
             }
 
             /**
              * Case when the access was granted when the Web App was launched from a link
              */
-            data class WebApp(
+            @TelegramCodegen.Type
+            data class WebApp internal constructor(
                 val webAppName: String
-            ) : WriteAccessAllowed
+            ) : WriteAccessAllowed {
+                companion object
+            }
 
             /**
              * Case when the access was granted when the bot was added to the attachment or side menu
              */
-            data class FromAttachmentMenu(
+            // @TelegramCodegen.Type // intentionally disabled
+            data class FromAttachmentMenu internal constructor(
                 val fromAttachmentMenu: Boolean = true
             ) : WriteAccessAllowed {
                 init {
                     require(fromAttachmentMenu)
+                }
+
+                companion object {
+                    fun create() = FromRequest()
+                    operator fun invoke() = FromRequest()
                 }
             }
         }
@@ -395,13 +420,14 @@ data class Message(
          *
          * For up-to-date documentation please consult the official Telegram docs.
          */
-        data class ProximityAlertTriggered(
-            @JsonIgnore
-            private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+        @TelegramCodegen.Type
+        data class ProximityAlertTriggered internal constructor(
             val traveler: User,
             val watcher: User,
             val distance: Int
-        )
+        ) {
+            companion object
+        }
 
         /**
          * Service messages related to [ski.gagar.vertigram.telegram.types.ForumTopic]
@@ -419,25 +445,27 @@ data class Message(
              *
              * For up-to-date documentation please consult the official Telegram docs.
              */
-            data class Created(
-                @JsonIgnore
-                private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+            @TelegramCodegen.Type
+            data class Created internal constructor(
                 val name: String,
                 val iconColor: RgbColor,
                 val iconCustomEmojiId: String? = null
-            )
+            ) {
+                companion object
+            }
 
             /**
              * Telegram [ForumTopicEdited](https://core.telegram.org/bots/api#forumtopicedited) type.
              *
              * For up-to-date documentation please consult the official Telegram docs.
              */
-            data class Edited(
-                @JsonIgnore
-                private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+            @TelegramCodegen.Type
+            data class Edited internal constructor(
                 val name: String? = null,
                 val iconCustomEmojiId: String? = null
-            )
+            ) {
+                companion object
+            }
 
             /**
              * Telegram [ForumTopicReopened](https://core.telegram.org/bots/api#forumtopicreopened) type.
@@ -470,13 +498,14 @@ data class Message(
              *
              * For up-to-date documentation please consult the official Telegram docs.
              */
-            data class Completed(
-                @JsonIgnore
-                private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+            @TelegramCodegen.Type
+            data class Completed internal constructor(
                 val winnerCount: Int,
                 val unclaimedPrizeCount: Int? = null,
                 val giveawayMessage: Message? = null
-            )
+            ) {
+                companion object
+            }
 
             /**
              * Telegram [GiveawayCreated](https://core.telegram.org/bots/api#giveawaycreated) type.
@@ -495,11 +524,12 @@ data class Message(
              *
              * For up-to-date documentation please consult the official Telegram docs.
              */
-            data class Scheduled(
-                @JsonIgnore
-                private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+            @TelegramCodegen.Type
+            data class Scheduled internal constructor(
                 val startDate: Instant
-            )
+            ) {
+                companion object
+            }
 
             /**
              * Telegram [VideoChatStarted](https://core.telegram.org/bots/api#videochatstarted) type.
@@ -513,22 +543,24 @@ data class Message(
              *
              * For up-to-date documentation please consult the official Telegram docs.
              */
-            data class Ended(
-                @JsonIgnore
-                private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+            @TelegramCodegen.Type
+            data class Ended internal constructor(
                 val duration: Duration
-            )
+            ) {
+                companion object
+            }
 
             /**
              * Telegram [VideoChatParticipantsInvited](https://core.telegram.org/bots/api#videochatparticipantsinvited) type.
              *
              * For up-to-date documentation please consult the official Telegram docs.
              */
-            data class ParticipantsInvited(
-                @JsonIgnore
-                private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+            @TelegramCodegen.Type
+            data class ParticipantsInvited internal constructor(
                 val users: List<User>
-            )
+            ) {
+                companion object
+            }
         }
 
         /**
@@ -536,12 +568,13 @@ data class Message(
          *
          * For up-to-date documentation please consult the official Telegram docs.
          */
-        data class WebAppData(
-            @JsonIgnore
-            private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+        @TelegramCodegen.Type
+        data class WebAppData internal constructor(
             val data: String,
             val buttonText: String
-        )
+        ) {
+            companion object
+        }
 
     }
 
@@ -550,12 +583,14 @@ data class Message(
      *
      * For up-to-date documentation please consult the official Telegram docs.
      */
-    data class Id(
-        @JsonIgnore
-        private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+    @TelegramCodegen.Type
+    data class Id internal constructor(
         val messageId: Long
-    )
+    ) {
+        companion object
+    }
 
+    companion object
 }
 
 /**

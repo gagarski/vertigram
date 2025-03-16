@@ -7,7 +7,6 @@ import ski.gagar.vertigram.telegram.client.impl.TelegramImpl
 import ski.gagar.vertigram.telegram.client.impl.TelegramImplOptions
 import ski.gagar.vertigram.telegram.types.methods.TelegramCallable
 import ski.gagar.vertigram.telegram.types.Update
-import ski.gagar.vertigram.telegram.types.methods.GetUpdatesRaw
 import ski.gagar.vertigram.util.lazy
 import ski.gagar.vertigram.util.logger
 import java.time.Duration
@@ -45,7 +44,8 @@ class DirectTelegram(
             )
         )
 
-     override suspend fun <T> call(
+    @Deprecated("Call Telegram.methodName() instead")
+    override suspend fun <T> call(
          resultType: JavaType,
          callable: TelegramCallable<T>
     ): T =
@@ -55,7 +55,7 @@ class DirectTelegram(
     override suspend fun getUpdates(offset: Long?, limit: Int?, allowedUpdates: List<Update.Type>): List<Update<*>> =
         impl.call(
             typeFactory.constructParametricType(List::class.java, Map::class.java),
-            GetUpdatesRaw(
+            ski.gagar.vertigram.telegram.types.methods.GetUpdatesRaw(
                 offset = offset,
                 limit = limit,
                 timeout = options.getUpdatesTimeoutParam,

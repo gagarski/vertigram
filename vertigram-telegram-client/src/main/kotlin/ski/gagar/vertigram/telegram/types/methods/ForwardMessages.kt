@@ -14,10 +14,8 @@ import ski.gagar.vertigram.util.NoPosArgs
  * For up-to-date documentation please consult the official Telegram docs.
  */
 @Throttled
-@TelegramCodegen
-data class ForwardMessages(
-    @JsonIgnore
-    private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+@TelegramCodegen.Method
+data class ForwardMessages internal constructor(
     override val chatId: ChatId,
     val messageThreadId: Long? = null,
     val fromChatId: ChatId,

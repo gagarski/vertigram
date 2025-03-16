@@ -18,9 +18,8 @@ import java.time.Duration
  *
  * For up-to-date documentation please consult the official Telegram docs.
  */
-data class InlineQuery(
-    @JsonIgnore
-    private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+@TelegramCodegen.Type
+data class InlineQuery internal constructor(
     val id: String,
     val from: User,
     val query: String,
@@ -52,13 +51,8 @@ data class InlineQuery(
          *
          * For up-to-date documentation please consult the official Telegram docs.
          */
-        @TelegramCodegen(
-            generateMethod = false,
-            generatePseudoConstructor = true
-        )
+        @TelegramCodegen.Type
         data class Text internal constructor(
-            @JsonIgnore
-            private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
             val messageText: String,
             override val parseMode: RichText.ParseMode? = null,
             override val entities: List<MessageEntity>? = null,
@@ -67,25 +61,7 @@ data class InlineQuery(
             @JsonIgnore
             override val text = messageText
 
-            companion object {
-                /**
-                 * Manually generated pseudo-constructor.
-                 *
-                 * This is the only case when text parameter is named [messageText] instead of `text`,
-                 * therefore code generation is not working yet
-                 */
-                operator fun invoke(
-                    @Suppress("UNUSED_PARAMETER")
-                    noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
-                    richText: RichText,
-                    linkPreviewOptions: Message.LinkPreviewOptions? = null
-                ) = Text(
-                    messageText = richText.text,
-                    parseMode = richText.parseMode,
-                    entities = richText.entities,
-                    linkPreviewOptions = linkPreviewOptions
-                )
-            }
+            companion object
         }
 
         /**
@@ -93,25 +69,25 @@ data class InlineQuery(
          *
          * For up-to-date documentation please consult the official Telegram docs.
          */
-        data class Location(
-            @JsonIgnore
-            private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+        @TelegramCodegen.Type
+        data class Location internal constructor(
             val latitude: Double,
             val longitude: Double,
             val horizontalAccuracy: Double? = null,
             val livePeriod: Duration? = null,
             val heading: Int? = null,
             val proximityAlertRadius: Int? = null,
-        ) : InputMessageContent
+        ) : InputMessageContent {
+            companion object
+        }
 
         /**
          * Telegram [InputVenueMessageContent](https://core.telegram.org/bots/api#inputvenuemessagecontent) type.
          *
          * For up-to-date documentation please consult the official Telegram docs.
          */
-        data class Venue(
-            @JsonIgnore
-            private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+        @TelegramCodegen.Type
+        data class Venue internal constructor(
             val latitude: Double,
             val longitude: Double,
             val title: String,
@@ -120,30 +96,32 @@ data class InlineQuery(
             val foursquareType: String? = null,
             val googlePlaceId: String? = null,
             val googlePlaceType: String? = null
-        ) : InputMessageContent
+        ) : InputMessageContent {
+            companion object
+        }
 
         /**
          * Telegram [InputContactMessageContent](https://core.telegram.org/bots/api#inputcontactmessagecontent) type.
          *
          * For up-to-date documentation please consult the official Telegram docs.
          */
-        data class Contact(
-            @JsonIgnore
-            private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+        @TelegramCodegen.Type
+        data class Contact internal constructor(
             val phoneNumber: String,
             val firstName: String,
             val lastName: String? = null,
             val vcard: String? = null
-        ) : InputMessageContent
+        ) : InputMessageContent {
+            companion object
+        }
 
         /**
          * Telegram [InputInvoiceMessageContent](https://core.telegram.org/bots/api#inputinvoicemessagecontent) type.
          *
          * For up-to-date documentation please consult the official Telegram docs.
          */
-        data class Invoice(
-            @JsonIgnore
-            private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+        @TelegramCodegen.Type
+        data class Invoice internal constructor(
             val title: String,
             val description: String,
             val payload: String,
@@ -165,7 +143,9 @@ data class InlineQuery(
             val sendEmailToProvider: Boolean = false,
             @get:JvmName("getIsFlexible")
             val isFlexible: Boolean? = false
-        ) : InputMessageContent
+        ) : InputMessageContent {
+            companion object
+        }
     }
 
 
@@ -216,26 +196,22 @@ data class InlineQuery(
          *
          * For up-to-date documentation please consult the official Telegram docs.
          */
-        data class Button(
-            @JsonIgnore
-            private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+        @TelegramCodegen.Type(wrapRichText = false)
+        data class Button internal constructor(
             val text: String,
             val webApp: WebAppInfo? = null,
             val startParameter: String? = null
-        )
+        ) {
+            companion object
+        }
 
         /**
          * Telegram [InlineQueryResultArticle](https://core.telegram.org/bots/api#inlinequeryresultarticle) type.
          *
          * For up-to-date documentation please consult the official Telegram docs.
          */
-        @TelegramCodegen(
-            generateMethod = false,
-            generatePseudoConstructor = true
-        )
+        @TelegramCodegen.Type
         data class Article internal constructor(
-            @JsonIgnore
-            private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
             override val id: String,
             val title: String,
             val inputMessageContent: InputMessageContent,
@@ -257,13 +233,8 @@ data class InlineQuery(
          *
          * For up-to-date documentation please consult the official Telegram docs.
          */
-        @TelegramCodegen(
-            generateMethod = false,
-            generatePseudoConstructor = true
-        )
+        @TelegramCodegen.Type
         data class Audio internal constructor(
-            @JsonIgnore
-            private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
             override val id: String,
             val audioUrl: String,
             val title: String,
@@ -282,13 +253,8 @@ data class InlineQuery(
              *
              * For up-to-date documentation please consult the official Telegram docs.
              */
-            @TelegramCodegen(
-                generateMethod = false,
-                generatePseudoConstructor = true
-            )
+            @TelegramCodegen.Type
             data class Cached internal constructor(
-                @JsonIgnore
-                private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
                 override val id: String,
                 val audioFileId: String,
                 override val caption: String? = null,
@@ -311,9 +277,8 @@ data class InlineQuery(
          *
          * For up-to-date documentation please consult the official Telegram docs.
          */
-        data class Contact(
-            @JsonIgnore
-            private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+        @TelegramCodegen.Type
+        data class Contact internal constructor(
             override val id: String,
             val phoneNumber: String,
             val firstName: String,
@@ -326,6 +291,7 @@ data class InlineQuery(
             val thumbnailHeight: Int? = null
         ) : Result {
             override val type: Type = Type.CONTACT
+            companion object
         }
 
 
@@ -334,13 +300,8 @@ data class InlineQuery(
          *
          * For up-to-date documentation please consult the official Telegram docs.
          */
-        @TelegramCodegen(
-            generateMethod = false,
-            generatePseudoConstructor = true
-        )
+        @TelegramCodegen.Type
         data class Document internal constructor(
-            @JsonIgnore
-            private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
             override val id: String,
             val title: String,
             override val caption: String? = null,
@@ -362,13 +323,8 @@ data class InlineQuery(
              *
              * For up-to-date documentation please consult the official Telegram docs.
              */
-            @TelegramCodegen(
-                generateMethod = false,
-                generatePseudoConstructor = true
-            )
+            @TelegramCodegen.Type
             data class Cached internal constructor(
-                @JsonIgnore
-                private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
                 override val id: String,
                 val title: String,
                 val documentFileId: String,
@@ -392,14 +348,15 @@ data class InlineQuery(
          *
          * For up-to-date documentation please consult the official Telegram docs.
          */
-        data class Game(
-            @JsonIgnore
-            private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+        @TelegramCodegen.Type
+        data class Game internal constructor(
             override val id: String,
             val gameShortName: String,
             val replyMarkup: ReplyMarkup.InlineKeyboard? = null
         ) : Result {
             override val type: Type = Type.GAME
+
+            companion object
         }
 
         /**
@@ -407,13 +364,8 @@ data class InlineQuery(
          *
          * For up-to-date documentation please consult the official Telegram docs.
          */
-        @TelegramCodegen(
-            generateMethod = false,
-            generatePseudoConstructor = true
-        )
+        @TelegramCodegen.Type
         data class Gif internal constructor(
-            @JsonIgnore
-            private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
             override val id: String,
             val gifUrl: String,
             val gifWidth: Int? = null,
@@ -436,13 +388,8 @@ data class InlineQuery(
              *
              * For up-to-date documentation please consult the official Telegram docs.
              */
-            @TelegramCodegen(
-                generateMethod = false,
-                generatePseudoConstructor = true
-            )
+            @TelegramCodegen.Type
             data class Cached internal constructor(
-                @JsonIgnore
-                private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
                 override val id: String,
                 val gifFileId: String,
                 val title: String? = null,
@@ -466,9 +413,8 @@ data class InlineQuery(
          *
          * For up-to-date documentation please consult the official Telegram docs.
          */
-        data class Location(
-            @JsonIgnore
-            private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+        @TelegramCodegen.Type
+        data class Location internal constructor(
             override val id: String,
             val latitude: Double,
             val longitude: Double,
@@ -484,6 +430,8 @@ data class InlineQuery(
             val thumbnailHeight: Int? = null
         ) : Result {
             override val type: Type = Type.LOCATION
+
+            companion object
         }
 
 
@@ -492,13 +440,8 @@ data class InlineQuery(
          *
          * For up-to-date documentation please consult the official Telegram docs.
          */
-        @TelegramCodegen(
-            generateMethod = false,
-            generatePseudoConstructor = true
-        )
+        @TelegramCodegen.Type
         data class Mpeg4Gif internal constructor(
-            @JsonIgnore
-            private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
             override val id: String,
             val mpeg4Url: String,
             val mpeg4Width: Int? = null,
@@ -521,13 +464,8 @@ data class InlineQuery(
              *
              * For up-to-date documentation please consult the official Telegram docs.
              */
-            @TelegramCodegen(
-                generateMethod = false,
-                generatePseudoConstructor = true
-            )
+            @TelegramCodegen.Type
             data class Cached internal constructor(
-                @JsonIgnore
-                private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
                 override val id: String,
                 val mpeg4FileId: String,
                 val title: String? = null,
@@ -552,13 +490,8 @@ data class InlineQuery(
          *
          * For up-to-date documentation please consult the official Telegram docs.
          */
-        @TelegramCodegen(
-            generateMethod = false,
-            generatePseudoConstructor = true
-        )
+        @TelegramCodegen.Type
         data class Photo internal constructor(
-            @JsonIgnore
-            private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
             override val id: String,
             val photoUrl: String,
             val thumbnailUrl: String,
@@ -581,13 +514,8 @@ data class InlineQuery(
              *
              * For up-to-date documentation please consult the official Telegram docs.
              */
-            @TelegramCodegen(
-                generateMethod = false,
-                generatePseudoConstructor = true
-            )
+            @TelegramCodegen.Type
             data class Cached internal constructor(
-                @JsonIgnore
-                private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
                 override val id: String,
                 val photoFileId: String,
                 val title: String? = null,
@@ -613,13 +541,8 @@ data class InlineQuery(
              *
              * For up-to-date documentation please consult the official Telegram docs.
              */
-            @TelegramCodegen(
-                generateMethod = false,
-                generatePseudoConstructor = true
-            )
+            @TelegramCodegen.Type
             data class Cached internal constructor(
-                @JsonIgnore
-                private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
                 override val id: String,
                 val stickerFileId: String,
                 val replyMarkup: ReplyMarkup.InlineKeyboard? = null,
@@ -636,9 +559,8 @@ data class InlineQuery(
          *
          * For up-to-date documentation please consult the official Telegram docs.
          */
+        @TelegramCodegen.Type
         data class Venue internal constructor(
-            @JsonIgnore
-            private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
             override val id: String,
             val latitude: Double,
             val longitude: Double,
@@ -655,6 +577,8 @@ data class InlineQuery(
             val thumbnailHeight: Int? = null
         ) : Result {
             override val type: Type = Type.VENUE
+
+            companion object
         }
 
         /**
@@ -662,13 +586,8 @@ data class InlineQuery(
          *
          * For up-to-date documentation please consult the official Telegram docs.
          */
-        @TelegramCodegen(
-            generateMethod = false,
-            generatePseudoConstructor = true
-        )
+        @TelegramCodegen.Type
         data class Video internal constructor(
-            @JsonIgnore
-            private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
             override val id: String,
             val videoUrl: String,
             val mimeType: String,
@@ -692,13 +611,8 @@ data class InlineQuery(
              *
              * For up-to-date documentation please consult the official Telegram docs.
              */
-            @TelegramCodegen(
-                generateMethod = false,
-                generatePseudoConstructor = true
-            )
+            @TelegramCodegen.Type
             data class Cached internal constructor(
-                @JsonIgnore
-                private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
                 override val id: String,
                 val videoFileId: String,
                 val title: String,
@@ -723,13 +637,8 @@ data class InlineQuery(
          *
          * For up-to-date documentation please consult the official Telegram docs.
          */
-        @TelegramCodegen(
-            generateMethod = false,
-            generatePseudoConstructor = true
-        )
+        @TelegramCodegen.Type
         data class Voice internal constructor(
-            @JsonIgnore
-            private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
             override val id: String,
             val voiceUrl: String,
             val title: String,
@@ -747,13 +656,8 @@ data class InlineQuery(
              *
              * For up-to-date documentation please consult the official Telegram docs.
              */
-            @TelegramCodegen(
-                generateMethod = false,
-                generatePseudoConstructor = true
-            )
+            @TelegramCodegen.Type
             data class Cached internal constructor(
-                @JsonIgnore
-                private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
                 override val id: String,
                 val voiceFileId: String,
                 val title: String,
@@ -819,4 +723,5 @@ data class InlineQuery(
         }
 
     }
+    companion object
 }

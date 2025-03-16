@@ -32,10 +32,8 @@ sealed interface SetGameScore {
     @TelegramMethod(
         methodName = "setGameScore"
     )
-    @TelegramCodegen(
-        methodName = "setGameScore",
-        generatePseudoConstructor = true,
-        pseudoConstructorName = "SetGameScore"
+    @TelegramCodegen.Method(
+        name = "setGameScore"
     )
     @Throttled
     data class InlineMessage internal constructor(
@@ -52,10 +50,8 @@ sealed interface SetGameScore {
     @TelegramMethod(
         methodName = "setGameScore"
     )
-    @TelegramCodegen(
-        methodName = "setGameScore",
-        generatePseudoConstructor = true,
-        pseudoConstructorName = "SetGameScore"
+    @TelegramCodegen.Method(
+        name = "setGameScore"
     )
     @Throttled
     data class ChatMessage internal constructor(

@@ -42,13 +42,8 @@ sealed interface InputMedia {
      *
      * For up-to-date documentation please consult the official Telegram docs.
      */
-    @TelegramCodegen(
-        generateMethod = false,
-        generatePseudoConstructor = true,
-    )
+    @TelegramCodegen.Type
     data class Animation internal constructor(
-        @JsonIgnore
-        private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
         override val media: Attachment,
         override val thumbnail: Attachment? = null,
         override val caption: String? = null,
@@ -72,13 +67,8 @@ sealed interface InputMedia {
      *
      * For up-to-date documentation please consult the official Telegram docs.
      */
-    @TelegramCodegen(
-        generateMethod = false,
-        generatePseudoConstructor = true,
-    )
+    @TelegramCodegen.Type
     data class Audio internal constructor(
-        @JsonIgnore
-        private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
         override val media: Attachment,
         override val thumbnail: Attachment? = null,
         override val caption: String? = null,
@@ -99,13 +89,8 @@ sealed interface InputMedia {
      *
      * For up-to-date documentation please consult the official Telegram docs.
      */
-    @TelegramCodegen(
-        generateMethod = false,
-        generatePseudoConstructor = true,
-    )
+    @TelegramCodegen.Type
     data class Document internal constructor(
-        @JsonIgnore
-        private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
         override val media: Attachment,
         override val thumbnail: Attachment? = null,
         override val caption: String? = null,
@@ -124,13 +109,8 @@ sealed interface InputMedia {
      *
      * For up-to-date documentation please consult the official Telegram docs.
      */
-    @TelegramCodegen(
-        generateMethod = false,
-        generatePseudoConstructor = true,
-    )
+    @TelegramCodegen.Type
     data class Photo internal constructor(
-        @JsonIgnore
-        private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
         override val media: Attachment,
         override val caption: String? = null,
         override val parseMode: RichText.ParseMode? = null,
@@ -150,13 +130,8 @@ sealed interface InputMedia {
      *
      * For up-to-date documentation please consult the official Telegram docs.
      */
-    @TelegramCodegen(
-        generateMethod = false,
-        generatePseudoConstructor = true,
-    )
+    @TelegramCodegen.Type
     data class Video internal constructor(
-        @JsonIgnore
-        private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
         override val media: Attachment,
         override val thumbnail: Attachment? = null,
         override val caption: String? = null,
@@ -180,9 +155,8 @@ sealed interface InputMedia {
      *
      * For up-to-date documentation please consult the official Telegram docs.
      */
-    data class Sticker(
-        @JsonIgnore
-        private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+    @TelegramCodegen.Type
+    data class Sticker internal constructor(
         val sticker: Attachment,
         val format: ski.gagar.vertigram.telegram.types.Sticker.Format,
         val emojiList: List<String>,

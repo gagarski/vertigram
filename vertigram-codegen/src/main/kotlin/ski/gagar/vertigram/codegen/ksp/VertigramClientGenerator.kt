@@ -13,14 +13,21 @@ import ski.gagar.vertigram.annotations.TelegramCodegen
 import java.util.*
 
 class VertigramClientGenerator(
-    private val codeGenerator: CodeGenerator
+    private val codeGenerator: CodeGenerator,
+    private val logger: KSPLogger,
 ) : SymbolProcessor {
     override fun process(resolver: Resolver): List<KSAnnotated> {
-        val classes = resolver.getProcessedClasses()
         val builders = mutableMapOf<FileSpecBuilderKey, FileSpec.Builder>()
+        val methods = resolver.getMethodsToGenerate()
+        for (clazz in methods.values) {
+            clazz.processMethod(builders, methods)
+        }
 
-        for (clazz in classes.values) {
-            clazz.process(builders, classes)
+        val types = resolver.getTypesToGenerate()
+
+
+        for (clazz in types.values) {
+            clazz.processType(builders, types)
         }
 
         for (bld in builders.values) {
@@ -30,9 +37,9 @@ class VertigramClientGenerator(
         return emptyList()
     }
 
-    private fun TypeInfo.process(
+    private fun TypeInfoMethod.processMethod(
         fileSpecBuilders: MutableMap<FileSpecBuilderKey, FileSpec.Builder>,
-        typeInfos: Map<ClassName, TypeInfo>
+        typeInfos: Map<ClassName, TypeInfoMethod>
     ) {
         val (className, classDecl, annotation) = this
 
@@ -45,15 +52,6 @@ class VertigramClientGenerator(
             FileSpec.builder(METHODS_PACKAGE, TG_METHODS)
         }
 
-        val constructorsFile = fileSpecBuilders.computeIfAbsent(
-            FileSpecBuilderKey(
-                className.packageName,
-                TG_CONSTRUCTORS
-            )
-        ) {
-            FileSpec.builder(className.packageName, TG_CONSTRUCTORS)
-        }
-
         when (classDecl.classKind) {
             ClassKind.OBJECT -> {
                 val method = kotlinMethodForObject(classDecl, className, annotation, typeInfos)
@@ -64,12 +62,46 @@ class VertigramClientGenerator(
                 if (classDecl.modifiers.contains(Modifier.ABSTRACT) || classDecl.modifiers.contains(Modifier.SEALED))
                     return
                 val method = kotlinMethodForClass(classDecl, className, annotation, typeInfos)
-                method?.let { methodsFile.addFunction(it) }
+                methodsFile.addFunction(method)
+            }
+            else -> throw IllegalStateException("$className has a kind ${classDecl.classKind} which is not supported")
 
-                val constructor = pseudoConstructor(classDecl, className, annotation)
+        }
+    }
 
-                constructor?.let { constructorsFile.addFunction(it) }
+    private fun TypeInfoType.processType(
+        fileSpecBuilders: MutableMap<FileSpecBuilderKey, FileSpec.Builder>,
+        typeInfos: Map<ClassName, TypeInfoType>
+    ) {
+        val (className, classDecl, annotation) = this
 
+        val creatorsFile = fileSpecBuilders.computeIfAbsent(
+            FileSpecBuilderKey(
+                className.packageName,
+                TG_CREATORS
+            )
+        ) {
+            FileSpec.builder(className.packageName, TG_CREATORS)
+        }
+
+        val constructorsFile = fileSpecBuilders.computeIfAbsent(
+            FileSpecBuilderKey(
+                className.packageName,
+                TG_CONSTRUCTORS
+            )
+        ) {
+            FileSpec.builder(className.packageName, TG_CONSTRUCTORS)
+        }
+
+        when (classDecl.classKind) {
+            ClassKind.CLASS -> {
+                val creator = creator(classDecl, className, annotation)
+
+                creatorsFile.addFunction(creator)
+
+                val constructor = creator(classDecl, className, annotation, INVOKE, true)
+
+                constructorsFile.addFunction(constructor)
             }
             else -> throw IllegalStateException("$className has a kind ${classDecl.classKind} which is not supported")
 
@@ -95,8 +127,7 @@ class VertigramClientGenerator(
                     } else if (param.type.resolve().rawClassName == BOOLEAN) {
                         defaultValue("false")
                     } else if (param.type.resolve().rawClassName == ClassName("ski.gagar.vertigram.util", "NoPosArgs")) {
-                        addAnnotation(AnnotationSpec.builder(ClassName("kotlin", "Suppress")).addMember("\"UNUSED_PARAMETER\"").build())
-                        defaultValue("ski.gagar.vertigram.util.NoPosArgs.INSTANCE")
+                        throw IllegalArgumentException("Please remove NoPosArgs from constructor for $className")
                     }
                 }
             }.build()
@@ -105,11 +136,14 @@ class VertigramClientGenerator(
         classDecl: KSClassDeclaration,
         className: ClassName,
         actuallyWrapped: MutableSet<String>,
-        anno: TelegramCodegen
+        wrapRichText: Boolean
     ) {
         val constructor = classDecl.primaryConstructor
             ?: throw IllegalStateException("Cannot add parameters to ${this}, " +
                     "${classDecl.simpleName.getShortName()} has no primary constructor")
+
+        if (!constructor.modifiers.contains(Modifier.INTERNAL))
+            throw IllegalArgumentException("Constructor for $className should be internal")
 
         val defaults = classDecl.declarations
             .firstOrNull {
@@ -122,8 +156,14 @@ class VertigramClientGenerator(
 
         val alreadyWrapped = mutableSetOf<String>()
 
+        this.addParameter(
+            ParameterSpec.builder(NO_POS_ARGS, NO_POS_ARGS_TYPE)
+                .defaultValue("ski.gagar.vertigram.util.NoPosArgs.INSTANCE")
+                .build()
+        )
+
         for (param in constructor.parameters) {
-            val wrapConfig = if (anno.wrapRichText) WRAP_CONFIGS_BY_TRIGGER[param.name!!.getShortName()] else null
+            val wrapConfig = if (wrapRichText) WRAP_CONFIGS_BY_TRIGGER[param.name!!.getShortName()] else null
 
             if (param.name!!.getShortName() in alreadyWrapped) {
                 continue
@@ -162,9 +202,7 @@ class VertigramClientGenerator(
     ): FunctionCall {
         val format = sequence {
             for (param in parameters) {
-                if (param.type == NO_POS_ARGS_TYPE) {
-                    continue
-                }
+                if (param.name == NO_POS_ARGS) continue
                 val wrapperConfig =
                     if (param.name in actuallyWrapped)
                         WRAP_CONFIGS_BY_WRAPPER[param.name] else null
@@ -185,9 +223,7 @@ class VertigramClientGenerator(
 
         val params = sequence {
             for (param in parameters) {
-                if (param.type == NO_POS_ARGS_TYPE) {
-                    continue
-                }
+                if (param.name == NO_POS_ARGS) continue
                 val wrapperConfig =
                     if (param.name in actuallyWrapped)
                         WRAP_CONFIGS_BY_WRAPPER[param.name] else null
@@ -225,13 +261,13 @@ class VertigramClientGenerator(
 
     private fun getNames(
         classDecl: KSClassDeclaration,
-        anno: TelegramCodegen): Names {
-        val kotlinMethodName = anno.methodName
+        anno: TelegramCodegen.Method): Names {
+        val kotlinMethodName = anno.name
         val declName = kotlinMethodName.ifEmpty { null }
         val name = declName
             ?: implicitTgMethodName(classDecl)
 
-        val telegramName = anno.docMethodName.ifEmpty { null }
+        val telegramName = anno.telegramName.ifEmpty { null }
             ?: name
         return Names(name, telegramName)
     }
@@ -239,22 +275,21 @@ class VertigramClientGenerator(
     private fun kotlinMethodForClass(
         classDecl: KSClassDeclaration,
         className: ClassName,
-        anno: TelegramCodegen,
-        typeInfo: Map<ClassName, TypeInfo>
-    ): FunSpec? {
-        if (!anno.generateMethod)
-            return null
+        anno: TelegramCodegen.Method,
+        typeInfo: Map<ClassName, TypeInfoMethod>
+    ): FunSpec {
         val returnType = methodReturnType(classDecl, typeInfo)
 
         val names = getNames(classDecl, anno)
 
         return FunSpec.builder(names.methodName)
+            .addAnnotation(AnnotationSpec.builder(Suppress::class).addMember("\"DEPRECATION\"").build())
             .addModifiers(KModifier.SUSPEND)
             .receiver(ClassName("ski.gagar.vertigram.telegram.client", "Telegram"))
             .returns(returnType)
             .apply {
                 val actuallyWrapped = mutableSetOf<String>()
-                addParametersFromPrimaryConstructor(classDecl, className, actuallyWrapped, anno)
+                addParametersFromPrimaryConstructor(classDecl, className, actuallyWrapped, anno.wrapRichText)
                 val call = callPrimaryConstructor(className, actuallyWrapped)
                 addStatement("return call(${call.formatString})", *call.parameters.toTypedArray())
             }
@@ -264,15 +299,13 @@ class VertigramClientGenerator(
 
     private fun kotlinMethodForObject(classDecl: KSClassDeclaration,
                                       className: ClassName,
-                                      anno: TelegramCodegen,
-                                      typeInfos: Map<ClassName, TypeInfo>): FunSpec? {
-        if (!anno.generateMethod)
-            return null
+                                      anno: TelegramCodegen.Method,
+                                      typeInfos: Map<ClassName, TypeInfoMethod>): FunSpec? {
         val returnType = methodReturnType(classDecl, typeInfos)
         val names = getNames(classDecl, anno)
 
-
         return FunSpec.builder(names.methodName)
+            .addAnnotation(AnnotationSpec.builder(Suppress::class).addMember("\"DEPRECATION\"").build())
             .addModifiers(KModifier.SUSPEND)
             .receiver(ClassName("ski.gagar.vertigram.telegram.client", "Telegram"))
             .returns(returnType)
@@ -292,7 +325,7 @@ class VertigramClientGenerator(
     private val KSType.rawClassName: ClassName
         get() = (declaration as KSClassDeclaration).toClassName()
 
-    private fun methodReturnType(clazz: KSClassDeclaration, typeInfo: Map<ClassName, TypeInfo>): TypeName {
+    private fun methodReturnType(clazz: KSClassDeclaration, typeInfo: Map<ClassName, TypeInfoMethod>): TypeName {
         var superclass = clazz.superClass
         var prevSuperclass: KSType? = null
         var superclassDecl =
@@ -328,49 +361,33 @@ class VertigramClientGenerator(
         addKdoc("Auto-generated function, please see [%T] docs.", className)
     }
 
-    private fun pseudoConstructor(
+    private fun creator(
         classDecl: KSClassDeclaration,
         className: ClassName,
-        anno: TelegramCodegen
-    ): FunSpec? {
-        if (!anno.generatePseudoConstructor)
-            return null
+        anno: TelegramCodegen.Type,
+        name: String = CREATE,
+        isOperator: Boolean = false
+    ): FunSpec {
+        val receiver = sequence {
+            yieldAll(className.simpleNames)
+            yield("Companion")
+        }.toList()
 
-        val consName = anno.pseudoConstructorName.ifEmpty { null }
+        classDecl.declarations
+            .filterIsInstance<KSClassDeclaration>()
+            .filter { it.isCompanionObject }
+            .firstOrNull() ?: throw IllegalArgumentException("$className should have a companion object")
 
-        val name = when {
-            null != consName -> consName
-            className.simpleNames.size == 1 -> className.simpleName
-            else -> "invoke"
-        }
-
-        val receiver = when {
-            null != consName -> null
-            className.simpleNames.size == 1 -> null
-            else -> sequence {
-                yieldAll(className.simpleNames)
-                yield("Companion")
-            }.toList()
-        }
-
-        val constructor = classDecl.primaryConstructor
-            ?: throw IllegalStateException("Cannot add parameters to ${this}, ${classDecl.toClassName().simpleName} has no primary constructor")
-
-        if (Modifier.INTERNAL !in constructor.modifiers) {
-            throw IllegalStateException("In order to generate pseudoConstructor for ${className}, " +
-                    "primary constructor has to be declared as internal")
-        }
         return FunSpec.builder(name)
             .returns(className)
+            .receiver(ClassName(className.packageName, receiver))
             .apply {
-                receiver?.let {
+
+                if (isOperator) {
                     addModifiers(KModifier.OPERATOR)
-                    receiver(ClassName(className.packageName, it))
                 }
-            }
-            .apply {
                 val actuallyWrapped = mutableSetOf<String>()
-                addParametersFromPrimaryConstructor(classDecl, className, actuallyWrapped, anno)
+                addParametersFromPrimaryConstructor(classDecl, className, actuallyWrapped, anno.wrapRichText)
                 val call = callPrimaryConstructor(className, actuallyWrapped)
                 addStatement("return ${call.formatString}", *call.parameters.toTypedArray())
             }
@@ -379,19 +396,33 @@ class VertigramClientGenerator(
     }
 
     @OptIn(KspExperimental::class)
-    private fun Resolver.getProcessedClasses(): Map<ClassName, TypeInfo> {
-        val types = this.getSymbolsWithAnnotation("ski.gagar.vertigram.annotations.TelegramCodegen")
+    private fun Resolver.getMethodsToGenerate(): Map<ClassName, TypeInfoMethod> {
+        val types = this.getSymbolsWithAnnotation("ski.gagar.vertigram.annotations.TelegramCodegen.Method")
             .filterIsInstance(KSClassDeclaration::class.java)
             .filter { it.validate() }
-            .map { it to it.getAnnotationsByType(TelegramCodegen::class).first() }
+            .map { it to it.getAnnotationsByType(TelegramCodegen.Method::class).first() }
             .toList()
         return types.asSequence().map { (classDecl, anno) ->
             val className = classDecl.toClassName()
-            className to TypeInfo(className, classDecl, anno)
+            className to TypeInfoMethod(className, classDecl, anno)
         }.toMap()
     }
 
-    data class TypeInfo(val className: ClassName, val classDecl: KSClassDeclaration, val annotation: TelegramCodegen)
+    @OptIn(KspExperimental::class)
+    private fun Resolver.getTypesToGenerate(): Map<ClassName, TypeInfoType> {
+        val types = this.getSymbolsWithAnnotation("ski.gagar.vertigram.annotations.TelegramCodegen.Type")
+            .filterIsInstance(KSClassDeclaration::class.java)
+            .filter { it.validate() }
+            .map { it to it.getAnnotationsByType(TelegramCodegen.Type::class).first() }
+            .toList()
+        return types.asSequence().map { (classDecl, anno) ->
+            val className = classDecl.toClassName()
+            className to TypeInfoType(className, classDecl, anno)
+        }.toMap()
+    }
+
+    data class TypeInfoMethod(val className: ClassName, val classDecl: KSClassDeclaration, val annotation: TelegramCodegen.Method)
+    data class TypeInfoType(val className: ClassName, val classDecl: KSClassDeclaration, val annotation: TelegramCodegen.Type)
     data class FileSpecBuilderKey(val packageName: String, val fileName: String)
 
     data class FunctionCall(
@@ -410,6 +441,7 @@ class VertigramClientGenerator(
 
     companion object {
         private const val TG_METHODS = "TelegramMethods"
+        private const val TG_CREATORS = "TelegramCreators"
         private const val TG_CONSTRUCTORS = "TelegramConstructors"
         private val SUPERTYPES = setOf(
             "ski.gagar.vertigram.telegram.types.methods.JsonTelegramCallable",
@@ -475,6 +507,9 @@ class VertigramClientGenerator(
         private val WRAP_CONFIGS_BY_TRIGGER = WRAP_CONFIGS.associateBy { it.triggerParam }
         private val WRAP_CONFIGS_BY_WRAPPER = WRAP_CONFIGS.associateBy { it.wrapperParam }
         private val NO_POS_ARGS_TYPE = ClassName("ski.gagar.vertigram.util", "NoPosArgs")
+        private const val NO_POS_ARGS = "noPosArgs"
         private const val METHODS_PACKAGE = "ski.gagar.vertigram.telegram.methods"
+        private const val CREATE = "create"
+        private const val INVOKE = "invoke"
     }
 }

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
+import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.util.NoPosArgs
 
 /**
@@ -24,12 +25,12 @@ sealed interface Reaction {
      *
      * For up-to-date documentation please consult the official Telegram docs.
      */
-    data class Emoji(
-        @JsonIgnore
-        private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+    @TelegramCodegen.Type
+    data class Emoji internal constructor(
         val emoji: String
     ) : Reaction {
         override val type: Type = Type.EMOJI
+        companion object
     }
 
     /**
@@ -37,12 +38,12 @@ sealed interface Reaction {
      *
      * For up-to-date documentation please consult the official Telegram docs.
      */
-    data class CustomEmoji(
-        @JsonIgnore
-        private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+    @TelegramCodegen.Type
+    data class CustomEmoji internal constructor(
         val customEmojiId: String
     ) : Reaction {
         override val type: Type = Type.CUSTOM_EMOJI
+        companion object
     }
 
     enum class Type {

@@ -10,10 +10,8 @@ import ski.gagar.vertigram.util.NoPosArgs
  *
  * For up-to-date documentation please consult the official Telegram docs.
  */
-@TelegramCodegen
-data class SetMyDefaultAdministratorRights(
-    @JsonIgnore
-    private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+@TelegramCodegen.Method
+data class SetMyDefaultAdministratorRights internal constructor(
     val rights: ChatAdministratorRights? = null,
     val forChannels: Boolean = false
 ) : JsonTelegramCallable<Boolean>()

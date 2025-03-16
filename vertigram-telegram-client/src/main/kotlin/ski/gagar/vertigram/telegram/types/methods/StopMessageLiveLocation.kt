@@ -31,14 +31,10 @@ sealed interface StopMessageLiveLocation {
     @TelegramMethod(
         methodName = "stopMessageLiveLocation"
     )
-    @TelegramCodegen(
-        methodName = "stopMessageLiveLocation",
-        generatePseudoConstructor = true,
-        pseudoConstructorName = "StopMessageLiveLocation"
+    @TelegramCodegen.Method(
+        name = "stopMessageLiveLocation"
     )
     data class InlineMessage internal constructor(
-        @JsonIgnore
-        private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
         val inlineMessageId: String,
         override val replyMarkup: ReplyMarkup? = null
     ) : JsonTelegramCallable<Boolean>(), StopMessageLiveLocation
@@ -49,18 +45,12 @@ sealed interface StopMessageLiveLocation {
     @TelegramMethod(
         methodName = "stopMessageLiveLocation"
     )
-    @TelegramCodegen(
-        methodName = "stopMessageLiveLocation",
-        generatePseudoConstructor = true,
-        pseudoConstructorName = "StopMessageLiveLocation"
+    @TelegramCodegen.Method(
+        name = "stopMessageLiveLocation"
     )
     data class ChatMessage internal constructor(
-        @JsonIgnore
-        private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
         override val chatId: ChatId,
         val messageId: Long,
         override val replyMarkup: ReplyMarkup? = null
     ) : JsonTelegramCallable<Boolean>(), StopMessageLiveLocation, HasChatId
-
-
 }

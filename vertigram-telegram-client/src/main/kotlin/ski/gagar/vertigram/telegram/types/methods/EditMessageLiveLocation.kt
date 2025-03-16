@@ -10,7 +10,6 @@ import ski.gagar.vertigram.telegram.throttling.Throttled
 import ski.gagar.vertigram.telegram.types.Message
 import ski.gagar.vertigram.telegram.types.ReplyMarkup
 import ski.gagar.vertigram.telegram.types.util.ChatId
-import ski.gagar.vertigram.util.NoPosArgs
 import java.time.Duration
 import java.time.temporal.ChronoUnit
 
@@ -46,15 +45,11 @@ sealed interface EditMessageLiveLocation {
     @TelegramMethod(
         methodName = "editMessageLiveLocation"
     )
-    @TelegramCodegen(
-        methodName = "editMessageLiveLocation",
-        generatePseudoConstructor = true,
-        pseudoConstructorName = "EditMessageLiveLocation"
+    @TelegramCodegen.Method(
+        name = "editMessageLiveLocation",
     )
     @Throttled
     data class InlineMessage internal constructor(
-        @JsonIgnore
-        private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
         val inlineMessageId: String,
         override val latitude: Double,
         override val longitude: Double,
@@ -71,15 +66,11 @@ sealed interface EditMessageLiveLocation {
     @TelegramMethod(
         methodName = "editMessageLiveLocation"
     )
-    @TelegramCodegen(
-        methodName = "editMessageLiveLocation",
-        generatePseudoConstructor = true,
-        pseudoConstructorName = "EditMessageLiveLocation"
+    @TelegramCodegen.Method(
+        name = "editMessageLiveLocation",
     )
     @Throttled
     data class ChatMessage internal constructor(
-        @JsonIgnore
-        private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
         override val chatId: ChatId,
         val messageId: Long,
         override val latitude: Double,

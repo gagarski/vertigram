@@ -10,9 +10,7 @@ import ski.gagar.vertigram.util.NoPosArgs
  *
  * For up-to-date documentation please consult the official Telegram docs.
  */
-@TelegramCodegen
-data class GetMyShortDescription(
-    @JsonIgnore
-    private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+@TelegramCodegen.Method
+data class GetMyShortDescription internal constructor(
     val languageCode: String? = null
 ) : JsonTelegramCallable<BotShortDescription>()

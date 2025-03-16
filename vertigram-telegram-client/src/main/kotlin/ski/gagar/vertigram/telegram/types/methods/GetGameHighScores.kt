@@ -22,7 +22,7 @@ import ski.gagar.vertigram.util.NoPosArgs
     JsonSubTypes.Type(GetGameHighScores.InlineMessage::class),
     JsonSubTypes.Type(GetGameHighScores.ChatMessage::class)
 )
-@TelegramCodegen
+@TelegramCodegen.Method
 sealed class GetGameHighScores : JsonTelegramCallable<List<GameHighScore>>() {
     abstract val userId: Long
     /**
@@ -31,14 +31,10 @@ sealed class GetGameHighScores : JsonTelegramCallable<List<GameHighScore>>() {
     @TelegramMethod(
         methodName = "getGameHighScores"
     )
-    @TelegramCodegen(
-        methodName = "getGameHighScores",
-        generatePseudoConstructor = true,
-        pseudoConstructorName = "GetGameHighScores"
+    @TelegramCodegen.Method(
+        name = "getGameHighScores"
     )
     data class InlineMessage internal constructor(
-        @JsonIgnore
-        private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
         override val userId: Long,
         val inlineMessageId: String
     ) : GetGameHighScores()
@@ -49,14 +45,10 @@ sealed class GetGameHighScores : JsonTelegramCallable<List<GameHighScore>>() {
     @TelegramMethod(
         methodName = "getGameHighScores"
     )
-    @TelegramCodegen(
-        methodName = "getGameHighScores",
-        generatePseudoConstructor = true,
-        pseudoConstructorName = "GetGameHighScores"
+    @TelegramCodegen.Method(
+        name = "getGameHighScores"
     )
     data class ChatMessage internal constructor(
-        @JsonIgnore
-        private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
         override val userId: Long,
         override val chatId: Long,
         val messageId: Long,

@@ -12,9 +12,7 @@ import ski.gagar.vertigram.util.NoPosArgs
  *
  * For up-to-date documentation please consult the official Telegram docs.
  */
-@TelegramCodegen
-data class GetChat(
-    @JsonIgnore
-    private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+@TelegramCodegen.Method
+data class GetChat internal constructor(
     override val chatId: ChatId
 ) : JsonTelegramCallable<Chat.FullInfo>(), HasChatId

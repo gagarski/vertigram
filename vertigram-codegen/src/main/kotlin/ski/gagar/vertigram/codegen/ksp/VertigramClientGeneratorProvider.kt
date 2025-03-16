@@ -6,5 +6,5 @@ import com.google.devtools.ksp.processing.SymbolProcessorProvider
 
 class VertigramClientGeneratorProvider : SymbolProcessorProvider {
     override fun create(environment: SymbolProcessorEnvironment): SymbolProcessor =
-        VertigramClientGenerator(environment.codeGenerator)
+        VertigramClientGenerator(environment.codeGenerator, environment.logger)
 }

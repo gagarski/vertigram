@@ -42,10 +42,12 @@ class ThrottlingTelegram(
     private val perChat: MutableMap<ChatId, NavigableSet<Instant>> = mutableMapOf()
     private val global: NavigableSet<Instant> = TreeSet()
 
+    @Deprecated("Call Telegram.methodName() instead")
     override suspend fun <T> call(callable: TelegramCallable<T>): T {
         if (callable.javaClass !in TO_THROTTLE) {
             // Won't do any logic if it's a non-throttled-method
             translateRateLimit {
+                @Suppress("DEPRECATION")
                 return delegate.call(callable)
             }
         }
@@ -72,6 +74,7 @@ class ThrottlingTelegram(
 
             try {
                 val res = translateRateLimit {
+                    @Suppress("DEPRECATION")
                     delegate.call(callable)
                 }
                 registerCall(callable)

@@ -30,6 +30,7 @@ interface Telegram {
      *
      * @see TelegramCallable
      */
+    @Deprecated("Call Telegram.methodName() instead")
     suspend fun <T> call(callable: TelegramCallable<T>): T
 
     /**

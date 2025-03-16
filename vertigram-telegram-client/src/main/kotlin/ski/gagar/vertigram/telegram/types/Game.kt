@@ -1,9 +1,11 @@
 package ski.gagar.vertigram.telegram.types
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.telegram.types.richtext.HasOptionalTextWithEntities
 
-data class Game(
+@TelegramCodegen.Type(wrapRichText = false)
+data class Game internal constructor(
     val title: String,
     val description: String,
     val photo: List<PhotoSize>,
@@ -13,4 +15,6 @@ data class Game(
 ) : HasOptionalTextWithEntities {
     @JsonIgnore
     override val entities = textEntities
+
+    companion object
 }

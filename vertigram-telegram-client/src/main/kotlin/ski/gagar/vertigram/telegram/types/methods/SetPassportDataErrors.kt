@@ -10,10 +10,8 @@ import ski.gagar.vertigram.util.NoPosArgs
  *
  * For up-to-date documentation please consult the official Telegram docs.
  */
-@TelegramCodegen
-data class SetPassportDataErrors(
-    @JsonIgnore
-    private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+@TelegramCodegen.Method
+data class SetPassportDataErrors internal constructor(
     val userId: Long,
     val errors: List<Passport.ElementError>
 ) : JsonTelegramCallable<Boolean>()

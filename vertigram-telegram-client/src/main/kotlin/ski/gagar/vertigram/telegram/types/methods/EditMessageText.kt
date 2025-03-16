@@ -1,6 +1,5 @@
 package ski.gagar.vertigram.telegram.types.methods
 
-import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 import ski.gagar.vertigram.annotations.TelegramCodegen
@@ -13,7 +12,6 @@ import ski.gagar.vertigram.telegram.types.ReplyMarkup
 import ski.gagar.vertigram.telegram.types.richtext.HasRichText
 import ski.gagar.vertigram.telegram.types.richtext.RichText
 import ski.gagar.vertigram.telegram.types.util.ChatId
-import ski.gagar.vertigram.util.NoPosArgs
 
 /**
  * Telegram [editMessageText](https://core.telegram.org/bots/api#editmessagetext) method.
@@ -37,15 +35,11 @@ sealed interface EditMessageText : HasRichText {
     @TelegramMethod(
         methodName = "editMessageText"
     )
-    @TelegramCodegen(
-        methodName = "editMessageText",
-        generatePseudoConstructor = true,
-        pseudoConstructorName = "EditMessageText"
+    @TelegramCodegen.Method(
+        name = "editMessageText"
     )
     @Throttled
     data class InlineMessage internal constructor(
-        @JsonIgnore
-        private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
         val inlineMessageId: String,
         override val text: String,
         override val parseMode: RichText.ParseMode? = null,
@@ -60,10 +54,8 @@ sealed interface EditMessageText : HasRichText {
     @TelegramMethod(
         methodName = "editMessageText"
     )
-    @TelegramCodegen(
-        methodName = "editMessageText",
-        generatePseudoConstructor = true,
-        pseudoConstructorName = "EditMessageText"
+    @TelegramCodegen.Method(
+        name = "editMessageText"
     )
     @Throttled
     data class ChatMessage internal constructor(

@@ -9,10 +9,8 @@ import ski.gagar.vertigram.util.NoPosArgs
  *
  * For up-to-date documentation please consult the official Telegram docs.
  */
-@TelegramCodegen
-data class SetStickerPositionInSet(
-    @JsonIgnore
-    private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+@TelegramCodegen.Method
+data class SetStickerPositionInSet internal constructor(
     val sticker: String,
     val position: Int
 ) : JsonTelegramCallable<Boolean>()

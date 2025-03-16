@@ -11,10 +11,8 @@ import ski.gagar.vertigram.util.NoPosArgs
  *
  * For up-to-date documentation please consult the official Telegram docs.
  */
-@TelegramCodegen
-data class PromoteChatMember(
-    @JsonIgnore
-    private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+@TelegramCodegen.Method
+data class PromoteChatMember internal constructor(
     override val chatId: ChatId,
     val userId: Long,
     @get:JvmName("getIsAnonymous")

@@ -36,15 +36,11 @@ sealed interface EditMessageCaption : HasOptionalRichCaption {
     @TelegramMethod(
         methodName = "editMessageCaption"
     )
-    @TelegramCodegen(
-        methodName = "editMessageCaption",
-        generatePseudoConstructor = true,
-        pseudoConstructorName = "EditMessageCaption"
+    @TelegramCodegen.Method(
+        name = "editMessageCaption"
     )
     @Throttled
     data class InlineMessage internal constructor(
-        @JsonIgnore
-        private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
         val inlineMessageId: String,
         override val caption: String? = null,
         override val parseMode: RichText.ParseMode? = null,
@@ -59,15 +55,11 @@ sealed interface EditMessageCaption : HasOptionalRichCaption {
     @TelegramMethod(
         methodName = "editMessageCaption"
     )
-    @TelegramCodegen(
-        methodName = "editMessageCaption",
-        generatePseudoConstructor = true,
-        pseudoConstructorName = "EditMessageCaption"
+    @TelegramCodegen.Method(
+        name = "editMessageCaption"
     )
     @Throttled
     data class ChatMessage internal constructor(
-        @JsonIgnore
-        private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
         override val chatId: ChatId,
         val messageId: Long,
         override val caption: String? = null,
