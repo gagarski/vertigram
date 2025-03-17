@@ -28,4 +28,5 @@ class Args {
 
 fun main(args: Array<String>) {
     Args(args).operation.perform()
+    println("Done!")
 }

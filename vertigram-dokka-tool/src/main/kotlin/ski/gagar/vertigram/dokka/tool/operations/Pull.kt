@@ -32,9 +32,8 @@ class Pull : Operation {
         val out = StreamingProcessOutput(Output())
         out.monitor(rsync.builder())
 
-        val res = rsync.execute()
-        if (res.exitCode != 0) {
-            throw IllegalStateException("non-zero exit code: ${res.exitCode}")
+        if (out.exitCode != 0) {
+            throw IllegalStateException("non-zero exit code: ${out.exitCode}")
         }
     }
 }
