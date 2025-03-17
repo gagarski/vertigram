@@ -160,8 +160,7 @@ You can see the following operations inside rich text markup:
 [textMarkdown](ski.gagar.vertigram.telegram.markup.textMarkdown) is a builder producing 
 [MarkdownV2Text](ski.gagar.vertigram.telegram.types.richtext.MarkdownV2Text) instance, 
 representing a rich-text entity with Markdown V2 format. 
-Note that Markdown V1 is considered deprecated and there is no builder for it. You can still use deprecated
-[MarkdownText](ski.gagar.vertigram.telegram.types.richtext.MarkdownText) directly though. Besides,
+Note that Markdown V1 is considered deprecated and there is no builder for it. Besides,
 [textMarkdown](ski.gagar.vertigram.telegram.markup.textMarkdown) there are 
 [textHtml](ski.gagar.vertigram.telegram.markup.textHtml) and 
 [textWithEntities](ski.gagar.vertigram.telegram.markup.textWithEntities) builders. They all support the same markup 

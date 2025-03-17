@@ -5,8 +5,6 @@ import io.vertx.core.streams.ReadStream
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-typealias RSW<T> = ReadStreamWrapper<T, ReadStream<T>>
-
 /**
  * [ReadStream] which yields data from concatenated `streams`
  *
@@ -15,7 +13,7 @@ typealias RSW<T> = ReadStreamWrapper<T, ReadStream<T>>
  */
 class ConcatStream<T> internal constructor(
     private val scope: CoroutineScope,
-    streams: Sequence<RSW<T>>
+    streams: Sequence<ReadStreamWrapper<T, ReadStream<T>>>
 ) : ReadStream<T> {
     private enum class State {
         INITIAL,
@@ -28,11 +26,11 @@ class ConcatStream<T> internal constructor(
     private var endHandler: Handler<Void?>? = null
     private var exceptionHandler: Handler<Throwable>? = null
 
-    private val iter: Iterator<RSW<T>> = streams.iterator()
+    private val iter: Iterator<ReadStreamWrapper<T, ReadStream<T>>> = streams.iterator()
 
     private var paused = false
     private var state = State.INITIAL
-    private var current: RSW<T>? = null
+    private var current: ReadStreamWrapper<T, ReadStream<T>>? = null
     private var demand: Long = Long.MAX_VALUE
 
     private inline fun doCatching(block: () -> Unit) {
@@ -156,16 +154,16 @@ class ConcatStream<T> internal constructor(
 }
 
 
-suspend fun <T> CoroutineScope.ConcatStream(streams: Sequence<RSW<T>>) =
+suspend fun <T> CoroutineScope.ConcatStream(streams: Sequence<ReadStreamWrapper<T, ReadStream<T>>>) =
     ConcatStream(this, streams).apply {
         prefetchFirst()
     }
 
-suspend fun <T> CoroutineScope.ConcatStream(streams: Collection<RSW<T>>) =
+suspend fun <T> CoroutineScope.ConcatStream(streams: Collection<ReadStreamWrapper<T, ReadStream<T>>>) =
     ConcatStream(this, streams.asSequence()).apply {
         prefetchFirst()
     }
-suspend fun <T> CoroutineScope.ConcatStream(vararg streams: RSW<T>) =
+suspend fun <T> CoroutineScope.ConcatStream(vararg streams: ReadStreamWrapper<T, ReadStream<T>>) =
     ConcatStream(this, streams.asSequence()).apply {
         prefetchFirst()
     }

@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 
 /**
- * An exception, which is serializable vor [ski.gagar.vertigram.Vertigram.EventBus]
+ * An exception, which is serializable for [ski.gagar.vertigram.Vertigram.EventBus]
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
 @JsonIgnoreProperties(ignoreUnknown = true)

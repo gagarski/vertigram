@@ -1,7 +1,7 @@
 package ski.gagar.vertigram.util.exceptions
 
 /**
- * An exception, which is serializable vor [ski.gagar.vertigram.Vertigram.EventBus]
+ * An exception, which is serializable for [ski.gagar.vertigram.Vertigram.EventBus]
  *
  * Unknown exceptions (not inherited from [VertigramException]) will be mapped to this one.
  */

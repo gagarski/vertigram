@@ -26,6 +26,11 @@ val Logger.lazy
  */
 @JvmInline
 value class LazyLogger(@PublishedApi internal val delegate: Logger) {
+    /**
+     * Trace log record.
+     *
+     * [msgProvider] is executed lazily if the log writing will actually happen
+     */
     inline fun trace(throwable: Throwable? = null, crossinline msgProvider: () -> String) {
         if (delegate.isTraceEnabled) {
             if (null == throwable)

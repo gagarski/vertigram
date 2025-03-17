@@ -53,13 +53,9 @@ data class TelegramEnsembleDeploymentDescriptor(
  *  @param updateDispatchAddressBase Address for publishing updates dispatched and unwrapped by [UpdateDispatcher]
  */
 suspend fun Vertigram.deployTelegramEnsemble(
-
     token: String,
-
     allowedUpdates: List<Update.Type>,
-
     telegramAddress: String = TelegramAddress.TELEGRAM_VERTICLE_BASE,
-
     telegramOptions: DirectTelegram.Options = DirectTelegram.Options(),
     throttling: ThrottlingOptions = ThrottlingOptions(),
     updatePublishingAddress: String? = null,
