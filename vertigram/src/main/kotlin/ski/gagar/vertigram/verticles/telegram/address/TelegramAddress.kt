@@ -68,7 +68,7 @@ object TelegramAddress {
         )
 
     /**
-     * Addresses for [ski.gagar.vertigram.verticles.telegram.AbstractTelegramDialogVerticle]
+     * Addresses for [ski.gagar.vertigram.verticles.telegram.StatefulTelegramDialogVerticle]
      */
     object Dialog {
         /**

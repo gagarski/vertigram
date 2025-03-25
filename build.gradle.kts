@@ -55,25 +55,3 @@ tasks {
         }
     }
 }
-
-//if (null != project.properties["vertigram.ssh.host"]) {
-//    apply(from = "./ssh.gradle")
-//
-//    tasks.named("dokkaDownloadOld").configure {
-//        onlyIf { project.properties["vertigram.dokka.skipOld"] != "true" }
-//        dependsOn(":vertigram-dokka-tool:bootJar")
-//    }
-//    tasks.named("dokkaHtmlMultiModule").configure {
-//        dependsOn("dokkaDownloadOld")
-//    }
-//
-//    tasks.register<Zip>("dokkaZip") {
-//        dependsOn("dokkaHtmlMultiModule")
-//        archiveFileName = "dokka.zip"
-//        from(layout.buildDirectory.dir("dokka/htmlMultiModule"))
-//    }
-//
-//    tasks.named("dokkaUpload").configure {
-//        dependsOn("dokkaZip")
-//    }
-//}

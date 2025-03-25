@@ -72,7 +72,7 @@ abstract class AbstractHierarchyVerticle<Config> : VertigramVerticle<Config>() {
      *
      * Can be overridden, by default, do nothing.
      */
-    protected open fun onChildDeath(
+    protected open suspend fun onChildDeath(
         /**
          * Death notice message
          */
@@ -174,7 +174,7 @@ abstract class AbstractHierarchyVerticle<Config> : VertigramVerticle<Config>() {
         }
     }
 
-    private fun handleDeathNotice(deathNotice: DeathNotice) {
+    private suspend fun handleDeathNotice(deathNotice: DeathNotice) {
         if (isDead) return
         if (deathNotice.id !in children) return
         logger.lazy.debug {

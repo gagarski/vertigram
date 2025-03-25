@@ -12,7 +12,7 @@ import ski.gagar.vertigram.util.json.TELEGRAM_JSON_MAPPER
  *
  * It uses [VertigramTypeHints] to implement [call]
  */
-abstract class AbstractTelegram : ski.gagar.vertigram.telegram.client.Telegram {
+abstract class AbstractTelegram : Telegram {
     protected val typeFactory: TypeFactory = TELEGRAM_JSON_MAPPER.typeFactory
 
     /**

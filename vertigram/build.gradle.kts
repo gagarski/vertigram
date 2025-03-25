@@ -16,6 +16,7 @@ dependencies {
     api(project(":vertigram-telegram-client"))
     api(project(":vertigram-core"))
     api(project(":vertigram-annotations"))
+    implementation(libs.bundles.logback)
 
 }
 

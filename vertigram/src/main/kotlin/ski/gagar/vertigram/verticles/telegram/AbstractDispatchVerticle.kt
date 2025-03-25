@@ -11,12 +11,13 @@ import ski.gagar.vertigram.telegram.types.util.toChatId
 import ski.gagar.vertigram.verticles.common.AbstractHierarchyVerticle
 import ski.gagar.vertigram.verticles.common.messages.DeathNotice
 import ski.gagar.vertigram.verticles.common.messages.DeathReason
+import ski.gagar.vertigram.verticles.telegram.AbstractDispatchVerticle.DialogKey
 import ski.gagar.vertigram.verticles.telegram.address.TelegramAddress
 
 /**
  * A verticle that does message dispatching to child verticles unique for given [DialogKey].
  *
- * Can be useful together with [AbstractTelegramDialogVerticle].
+ * Can be useful together with [StatefulTelegramDialogVerticle].
  *
  * For each [DialogKey] (e.g. `chatId`+`userId`) this verticle will spawn a child
  * (spawning should be implemented by subclass in [doStart]). If there is already a child with given [DialogKey],
@@ -24,7 +25,7 @@ import ski.gagar.vertigram.verticles.telegram.address.TelegramAddress
  *
  * The spawned verticle can maintain its state given the condition that it receives messages only for a single dialog.
  */
-abstract class AbstractDispatchVerticle<Config : AbstractDispatchVerticle.Config, DialogKey> : AbstractHierarchyVerticle<Config>() {
+abstract class AbstractDispatchVerticle<Config : AbstractDispatchVerticle.Config, DialogKey : AbstractDispatchVerticle.DialogKey> : AbstractHierarchyVerticle<Config>() {
     protected val tg: Telegram by lazy {
         ThinTelegram(vertigram, typedConfig.verticleAddress)
     }
@@ -58,21 +59,21 @@ abstract class AbstractDispatchVerticle<Config : AbstractDispatchVerticle.Config
      *
      * To be overridden by subclass.
      */
-    protected abstract fun toChatId(key: DialogKey): Long?
+    protected open fun toChatId(key: DialogKey): Long? = key.chatId
 
     /**
      * Should [q] be handled.
      *
-     * To be overridden by subclass.
+     * May be overridden by subclass, by default returns true
      */
-    protected abstract suspend fun shouldHandleCallbackQuery(q: Update.CallbackQuery.Payload): Boolean
+    protected open suspend fun shouldHandleCallbackQuery(q: Update.CallbackQuery.Payload): Boolean = true
 
     /**
      * Should [msg] be handled
      *
-     * To be overridden by subclass.
+     * May be overridden by subclass, by default returns true.
      */
-    protected abstract suspend fun shouldHandleMessage(msg: Message): Boolean
+    protected open suspend fun shouldHandleMessage(msg: Message): Boolean = true
 
     /**
      * Deploy a verticle to dispatch updates to and return [DialogDescriptor]
@@ -121,7 +122,7 @@ abstract class AbstractDispatchVerticle<Config : AbstractDispatchVerticle.Config
         dialogsInv[desc.id] = dialogKey
     }
 
-    private fun passMessageToOngoing(message: Message, desc: DialogDescriptor) {
+    protected fun passMessageToOngoing(message: Message, desc: DialogDescriptor) {
         vertigram.eventBus.send(
             desc.messageAddress,
             message
@@ -135,7 +136,7 @@ abstract class AbstractDispatchVerticle<Config : AbstractDispatchVerticle.Config
         )
     }
 
-    override fun onChildDeath(deathNotice: DeathNotice) {
+    override suspend fun onChildDeath(deathNotice: DeathNotice) {
         val key = dialogsInv[deathNotice.id] ?: return
         val chatId = toChatId(key)
 
@@ -170,5 +171,26 @@ abstract class AbstractDispatchVerticle<Config : AbstractDispatchVerticle.Config
          * Telegram verticle base address
          */
         val verticleAddress: String
+    }
+
+    interface DialogKey {
+        val chatId: Long
+        private data class ChatAndUser(override val chatId: Long, val userId: Long) : DialogKey
+        private data class Chat(override val chatId: Long) : DialogKey
+
+        companion object {
+            fun chatAndUser(msg: Message): DialogKey? = msg.from ?.let { from ->
+                ChatAndUser(chatId = msg.chat.id, userId = from.id)
+            }
+            fun chatAndUser(q: Update.CallbackQuery.Payload): DialogKey? = q.message ?.let { msg ->
+                ChatAndUser(chatId = msg.chat.id, userId = q.from.id)
+            }
+            fun chat(msg: Message): DialogKey? = msg.from ?.let { from ->
+                Chat(chatId = msg.chat.id)
+            }
+            fun chat(q: Update.CallbackQuery.Payload): DialogKey? = q.message ?.let { msg ->
+                Chat(chatId = msg.chat.id)
+            }
+        }
     }
 }

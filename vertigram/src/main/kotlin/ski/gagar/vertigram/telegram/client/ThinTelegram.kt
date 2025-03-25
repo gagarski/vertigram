@@ -3,9 +3,9 @@ package ski.gagar.vertigram.telegram.client
 import com.fasterxml.jackson.databind.JavaType
 import io.vertx.core.eventbus.DeliveryOptions
 import ski.gagar.vertigram.Vertigram
-import ski.gagar.vertigram.telegram.types.methods.TelegramCallable
 import ski.gagar.vertigram.telegram.types.Update
 import ski.gagar.vertigram.telegram.types.UpdateList
+import ski.gagar.vertigram.telegram.types.methods.TelegramCallable
 import ski.gagar.vertigram.util.TELEGRAM_TYPE_FACTORY
 import ski.gagar.vertigram.verticles.telegram.TelegramVerticle
 import ski.gagar.vertigram.verticles.telegram.address.TelegramAddress
@@ -41,13 +41,15 @@ class ThinTelegram(
         return longPollDeliveryOptions
     }
 
-    override suspend fun getUpdates(offset: Long?, limit: Int?, allowedUpdates: List<Update.Type>): List<Update<*>> =
-        vertigram.eventBus.request(
+    override suspend fun getUpdates(offset: Long?, limit: Int?, allowedUpdates: List<Update.Type>): List<Update<*>> {
+        val ul: UpdateList = vertigram.eventBus.request(
             TelegramVerticle.Config.updatesAddress(baseAddress),
             TelegramVerticle.GetUpdates(offset, limit, allowedUpdates),
             UPDATE_LIST_TYPE,
             options = getLongPollDeliveryOptions()
         )
+        return ul.list
+    }
 
     @Suppress("UNCHECKED_CAST")
     @Deprecated("Call Telegram.methodName() instead")

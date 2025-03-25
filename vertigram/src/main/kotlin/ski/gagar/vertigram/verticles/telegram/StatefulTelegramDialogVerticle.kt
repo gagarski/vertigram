@@ -23,7 +23,7 @@ import ski.gagar.vertigram.verticles.common.AbstractHierarchyVerticle
 import ski.gagar.vertigram.verticles.common.address.VertigramCommonAddress
 import ski.gagar.vertigram.verticles.common.messages.DeathNotice
 import ski.gagar.vertigram.verticles.common.messages.DeathReason
-import ski.gagar.vertigram.verticles.telegram.AbstractTelegramDialogVerticle.State
+import ski.gagar.vertigram.verticles.telegram.StatefulTelegramDialogVerticle.State
 import ski.gagar.vertigram.verticles.telegram.address.TelegramAddress
 import java.time.Duration
 
@@ -36,10 +36,10 @@ import java.time.Duration
  *
  * It optionally supports some opinionated ways to manage state history, cancellations and timeouts.
  *
- * This verticle can be combined with [AbstractDispatchVerticle], in that case [AbstractTelegramDialogVerticle]
+ * This verticle can be combined with [AbstractDispatchVerticle], in that case [StatefulTelegramDialogVerticle]
  * will keep only one dialog state.
  */
-abstract class AbstractTelegramDialogVerticle<Config> : AbstractHierarchyVerticle<Config>() {
+abstract class StatefulTelegramDialogVerticle<Config> : AbstractHierarchyVerticle<Config>() {
     /**
      * Bot identity (a response from `getMe` Telegram method).
      *
@@ -157,10 +157,20 @@ abstract class AbstractTelegramDialogVerticle<Config> : AbstractHierarchyVerticl
         scheduleTimeout()
     }
 
-    protected suspend inline fun withLock(block: () -> Unit) {
-        val oldState = state
+    /**
+     * Execute `block` with an exclusive lock
+     * @param discardWhenBusy if true, any pending `block`s will be discarded if the verticle is busy
+     *      otherwise, they'll be enqueued
+     * @param block block of code to execute
+     */
+    protected suspend inline fun withLock(discardWhenBusy: Boolean = true, block: () -> Unit) {
+        if (discardWhenBusy && mutex.isLocked) {
+            logger.lazy.debug {
+                "Discarded, $this is busy"
+            }
+        }
+
         mutex.withLock {
-            if (state != oldState) return
             block()
         }
     }
@@ -200,6 +210,11 @@ abstract class AbstractTelegramDialogVerticle<Config> : AbstractHierarchyVerticl
         }
     }
 
+    override suspend fun onChildDeath(deathNotice: DeathNotice) {
+        state!!.onChildDeath(deathNotice)
+    }
+
+
     private fun handleHistory(state: State, historyBehavior: HistoryBehavior) {
         if (0 == historySize) {
             return
@@ -218,6 +233,7 @@ abstract class AbstractTelegramDialogVerticle<Config> : AbstractHierarchyVerticl
             history.removeFirst()
         }
     }
+
 
     private suspend fun become(
         toState: State,
@@ -351,20 +367,20 @@ abstract class AbstractTelegramDialogVerticle<Config> : AbstractHierarchyVerticl
      * or have some internally-managed "microstate". This "microstate" is not a subject of [history] management of
      * the verticle. You can choose appropriate approach based on you needs in your case and combine both approaches.
      *
-     * This class has methods delegating to the most of the [AbstractTelegramDialogVerticle] methods, meaning,
+     * This class has methods delegating to the most of the [StatefulTelegramDialogVerticle] methods, meaning,
      * you probably should not call verticle methods directly.
      */
     abstract class State(
         /**
          * The verticle
          */
-        @PublishedApi internal val v: AbstractTelegramDialogVerticle<*>
+        @PublishedApi internal val v: StatefulTelegramDialogVerticle<*>
     ) {
         /**
          * Execute [block] with per-dialog lock
          */
         protected suspend inline fun withLock(block: () -> Unit) {
-            v.withLock(block)
+            v.withLock(block = block)
         }
 
         /**
@@ -382,7 +398,7 @@ abstract class AbstractTelegramDialogVerticle<Config> : AbstractHierarchyVerticl
         open suspend fun handleMessage(message: Message) {}
 
         /**
-         * Handle child death of [AbstractTelegramDialogVerticle]. By default, die.
+         * Handle child death of [StatefulTelegramDialogVerticle]. By default, die.
          *
          * Can be overridden by subclasses.
          */
@@ -493,7 +509,7 @@ abstract class AbstractTelegramDialogVerticle<Config> : AbstractHierarchyVerticl
         }
 
         /**
-         * Call [AbstractTelegramDialogVerticle.sendOrEdit]
+         * Call [StatefulTelegramDialogVerticle.sendOrEdit]
          */
         protected suspend fun sendOrEdit(
             richText: RichText, buttons: ReplyMarkup.InlineKeyboard? = null, forceSend: Boolean = false
@@ -502,7 +518,7 @@ abstract class AbstractTelegramDialogVerticle<Config> : AbstractHierarchyVerticl
         }
 
         /**
-         * Telegram client, same as [AbstractTelegramDialogVerticle.tg]
+         * Telegram client, same as [StatefulTelegramDialogVerticle.tg]
          */
         protected val tg: Telegram
             get() = v.tg
@@ -541,40 +557,40 @@ abstract class AbstractTelegramDialogVerticle<Config> : AbstractHierarchyVerticl
     protected fun checkmarkDone(): State = CheckmarkDone(this)
     protected fun silentDone(): State = SilentDone(this)
 
-    private class YawnTimeout(private val verticle: AbstractTelegramDialogVerticle<*>) : State(verticle) {
+    private class YawnTimeout(private val verticle: StatefulTelegramDialogVerticle<*>) : State(verticle) {
         override suspend fun sideEffect() {
             sendOrEdit("\uD83E\uDD71".toRichText())
             verticle.timeout()
         }
     }
 
-    private class SilentTimeout(private val verticle: AbstractTelegramDialogVerticle<*>) : State(verticle) {
+    private class SilentTimeout(private val verticle: StatefulTelegramDialogVerticle<*>) : State(verticle) {
         override suspend fun sideEffect() {
             verticle.timeout()
         }
     }
 
-    private class CrossCancelled(private val verticle: AbstractTelegramDialogVerticle<*>) : State(verticle) {
+    private class CrossCancelled(private val verticle: StatefulTelegramDialogVerticle<*>) : State(verticle) {
         override suspend fun sideEffect() {
             sendOrEdit("❌".toRichText())
             cancel()
         }
     }
 
-    private class SilentCancelled(private val verticle: AbstractTelegramDialogVerticle<*>) : State(verticle) {
+    private class SilentCancelled(private val verticle: StatefulTelegramDialogVerticle<*>) : State(verticle) {
         override suspend fun sideEffect() {
             cancel()
         }
     }
 
-    private class CheckmarkDone(private val verticle: AbstractTelegramDialogVerticle<*>) : State(verticle) {
+    private class CheckmarkDone(private val verticle: StatefulTelegramDialogVerticle<*>) : State(verticle) {
         override suspend fun sideEffect() {
             sendOrEdit("✅".toRichText())
             complete()
         }
     }
 
-    private class SilentDone(private val verticle: AbstractTelegramDialogVerticle<*>) : State(verticle) {
+    private class SilentDone(private val verticle: StatefulTelegramDialogVerticle<*>) : State(verticle) {
         override suspend fun sideEffect() {
             complete()
         }

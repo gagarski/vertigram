@@ -5,11 +5,10 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 import ski.gagar.vertigram.annotations.TelegramCodegen
-import ski.gagar.vertigram.util.NoPosArgs
 import java.time.Instant
 
-class UpdateList(private val delegate: List<Update<*>>) : List<Update<*>> by delegate
-class ParsedUpdateList(private val delegate: List<Update.Parsed<*>>) : List<Update.Parsed<*>> by delegate
+class UpdateList(val list: List<Update<*>>)
+class ParsedUpdateList(val delegate: List<Update.Parsed<*>>)
 
 /**
  * Telegram [Update](https://core.telegram.org/bots/api#update) type.
