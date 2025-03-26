@@ -8,37 +8,15 @@ import ski.gagar.vertigram.telegram.types.Message
 import ski.gagar.vertigram.telegram.types.Update
 import ski.gagar.vertigram.util.lazy
 import ski.gagar.vertigram.util.logger
-import ski.gagar.vertigram.verticles.common.AbstractHierarchyVerticle
-import ski.gagar.vertigram.verticles.common.address.VertigramCommonAddress
 import ski.gagar.vertigram.verticles.telegram.address.TelegramAddress
 
-abstract class SimpleTelegramDialogVerticle<Config> : AbstractHierarchyVerticle<Config>() {
+abstract class SimpleTelegramDialogVerticle<Config> : TelegramDialogVerticle<Config>() {
     /**
      * Base address for [TelegramVerticle] (used with [tg])
      *
      * May be overridden by subclasses
      */
     open val telegramAddressBase = TelegramAddress.TELEGRAM_VERTICLE_BASE
-
-    /**
-     * Callback query listen address. By default — a private address, meaning that only parent verticle knows it.
-     *
-     * May be overridden by subclasses
-     *
-     * @see AbstractHierarchyVerticle
-     */
-    open val callbackQueryListenAddress: String
-        get() = VertigramCommonAddress.Private.withClassifier(deploymentID, TelegramAddress.Dialog.Classifier.CallbackQuery)
-
-    /**
-     * Callback query listen address. By default — a private address, meaning that only parent verticle knows it.
-     *
-     * May be overridden by subclasses
-     *
-     * @see AbstractHierarchyVerticle
-     */
-    open val messageListenAddress: String
-        get() = VertigramCommonAddress.Private.withClassifier(deploymentID, TelegramAddress.Dialog.Classifier.Message)
 
     /**
      * Telegram client
@@ -79,7 +57,11 @@ abstract class SimpleTelegramDialogVerticle<Config> : AbstractHierarchyVerticle<
 
     override suspend fun start() {
         super.start()
-        consumer(callbackQueryListenAddress, function = ::handleCallbackQuery)
-        consumer(messageListenAddress, function = ::handleMessage)
+        callbackQueryListenAddress?.let {
+            consumer(it, function = ::handleCallbackQuery)
+        }
+        messageListenAddress?.let {
+            consumer(it, function = ::handleMessage)
+        }
     }
 }

@@ -287,27 +287,25 @@ class CounterVerticle : SimpleTelegramDialogVerticle<CounterVerticle.Config>() {
 }
 
 // (11) Dispatched for managing multiple dialogs simultaneously
-class CounterDispatchVerticle : AbstractDispatchVerticle<CounterDispatchVerticle.Config, AbstractDispatchVerticle.DialogKey>() {
+class CounterDispatchVerticle : AbstractDispatchVerticle.ByChatAndUser<CounterDispatchVerticle.Config, CounterVerticle, CounterVerticle.Config>() {
     override val configTypeReference: TypeReference<Config> = typeReference()
 
-    // (12) Defining logic for determining, what is a dialog
-    override fun dialogKey(msg: Message): DialogKey? = DialogKey.chatAndUser(msg)
-    override fun dialogKey(q: Update.CallbackQuery.Payload): DialogKey? = DialogKey.chatAndUser(q)
-    
+    // (12) By default initial message is not passed to dialog verticle, you can do it manually
+    // override val passInitialMessageToChild: Boolean = true
+
     // (13) Init logic for a new dialog
-    override suspend fun doStart(dialogKey: DialogKey, msg: Message): DialogDescriptor? {
+    override fun initChild(dialogKey: DialogKey, msg: Message): Deployment<CounterVerticle, CounterVerticle.Config>? {
         if (!msg.isCommandForBot(CounterVerticle.CMD, typedConfig.me))
             return null
-        val v = CounterVerticle()
-        val id = deployChild(v, CounterVerticle.Config(
-            chatId = msg.chat.id,
-            me = typedConfig.me,
-            timeout = Duration.ofMinutes(1)
-        ))
-        val desc = DialogDescriptor(id, v.messageListenAddress, v.callbackQueryListenAddress)
-        // (14) By default initial message is not passed to dialog verticle, you can do it manually 
-        // passMessageToOngoing(msg, desc)
-        return desc
+
+        return Deployment(
+            CounterVerticle(),
+            CounterVerticle.Config(
+                chatId = msg.chat.id,
+                me = typedConfig.me,
+                timeout = Duration.ofMinutes(1)
+            )
+        )
     }
 
     data class Config(
@@ -326,7 +324,7 @@ fun main() {
             )
             val tg = ThinTelegram(vertigram = this@apply)
             val me = tg.getMe()
-            // (15) Deploying dispatcher. Note that we do not explicitly deploying CounterVerticle here
+            // (14) Deploying dispatcher. Note that we do not explicitly deploying CounterVerticle here
             deployVerticle(CounterDispatchVerticle(), CounterDispatchVerticle.Config(me))
         }
     }
@@ -351,31 +349,34 @@ to tell the user that we're done
 checking if we've got a command from the user and if so, incrementing the counter and replying user with function from 
 steps 5-8
 10. An extra config parameter which we'll use later
-11. Now let's implement **dispatch verticle** which will manage state for multiple dialogs
-12. First, we nedd to tell it *what a dialog is*. Let's start with defining a dialog as chat id + user id by
-using shortcut function for it
-13. The complex part: we're describing how to create a new **dialog verticle**. `doStart` is called
-only if the dialog is not yet started for current **dialog key** First, filtering out all messages, that are not for us,
-i.e. not containing a command we expect. Then we create a `CounterVerticle` and deploying it using `deployChild` function.
-In response we create `DialogDescriptor` which tells **dispatch verticle** how it should interact with **dialog verticle**.
-By default **SimpleTelegramDialogVerticle** uses mangled (i.e. private addresses), but we can extract them after we've
-created an isntance of the verticle
-14. At this step, initial message is not passed by default to the freshly deployed verticle. This happens because
+11. Now let's implement **dispatch verticle** which will manage state for multiple dialogs. We extend
+`AbstractDispatchVerticle.ByChatAndUser` to make it dispatch updates by chat id + user id. Generic parameters are 
+config for dispatch verticle itself, type of child verticle and type of config for child verticle
+12. Initial message is not passed by default to the freshly deployed verticle. This happens because
 there is no right way to separate initialization logic from here to `SimpleTelegramDialogVerticle`. You may have done
-some complex work while deciding to start the verticle (e.g. parsing the command) which you don't want to redo. 
-However, in our case it's safe to pass the inital message to the `CounterVerticle`. Try it out while playing around 
+some complex work while deciding to start the verticle (e.g. parsing the command) which you don't want to redo.
+However, in our case it's safe to pass the initial message to the `CounterVerticle`. Try it out while playing around
 with the code. The behavior will be slightly different: the right behavior depends on what you want.
-15. Finally, deploying the `CounterDispatchVerticle`. Do not forget to enable receiving `CALLBACK_QUERY` updates.
+13. We're describing how to create a new **dialog verticle**. `initChild` is called
+only if the dialog is not yet started for current **dialog key**. `AbstractDispatchVerticle` logic expects you to return
+`Deployment` object if you decide to deploy something based on message content or `null` if the message should be ignored.
+14. Finally, deploying the `CounterDispatchVerticle`. Do not forget to enable receiving `CALLBACK_QUERY` updates.
 
 Start the bot and try to play around with it. If you have multiple accounts, you can notice that every one of them
 will have separate counter.
 
 ### Dialog keys
 
-In previous example we boldly used `DialogKey.chatAndUser(msg)` as a dialog key. 
-Other viable option is `DialogKey.chat(msg)`. You can notice the difference in group chats: in first case, if you start
-the counting party in the group chat, each member will have a separate counter, while with chat id dialog key, all
-chat members will count together!
+In previous example we boldly used `AbstractDispatchVerticle.ByChatAndUser` as a base class to dispatch dialogs by
+chat id + user id pair. 
+Other viable option is `AbstractDispatchVerticle.ByChat`. 
+
+You can notice the difference in group chats: in first case, if you start the counting party in the group chat, 
+each member will have a separate counter, while with chat id dialog key, all chat members will count together!
+
+If both of these options do not work for you, you can implement `AbstractDispatchVerticle.DialogKey` yourself
+and use `AbstractDispatchVerticle` directly and override the corresponding methods to extract dialog keys from
+messages and callback queries.
 
 ### Concurrency and locks
 

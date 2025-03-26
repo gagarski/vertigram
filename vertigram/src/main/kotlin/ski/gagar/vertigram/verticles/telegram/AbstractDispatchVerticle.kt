@@ -17,7 +17,7 @@ import ski.gagar.vertigram.verticles.telegram.address.TelegramAddress
 /**
  * A verticle that does message dispatching to child verticles unique for given [DialogKey].
  *
- * Can be useful together with [StatefulTelegramDialogVerticle].
+ * Can be useful together with [StatefulTelegramDialogVerticle] or [SimpleTelegramDialogVerticle].
  *
  * For each [DialogKey] (e.g. `chatId`+`userId`) this verticle will spawn a child
  * (spawning should be implemented by subclass in [doStart]). If there is already a child with given [DialogKey],
@@ -25,7 +25,11 @@ import ski.gagar.vertigram.verticles.telegram.address.TelegramAddress
  *
  * The spawned verticle can maintain its state given the condition that it receives messages only for a single dialog.
  */
-abstract class AbstractDispatchVerticle<Config : AbstractDispatchVerticle.Config, DialogKey : AbstractDispatchVerticle.DialogKey> : AbstractHierarchyVerticle<Config>() {
+abstract class AbstractDispatchVerticle<
+        C : AbstractDispatchVerticle.Config,
+        V: TelegramDialogVerticle<VC>,
+        VC,
+        > : AbstractHierarchyVerticle<C>() {
     protected val tg: Telegram by lazy {
         ThinTelegram(vertigram, typedConfig.verticleAddress)
     }
@@ -33,12 +37,17 @@ abstract class AbstractDispatchVerticle<Config : AbstractDispatchVerticle.Config
     /**
      * [DialogKey] to [DialogDescriptor] map
      */
-    protected val dialogs = mutableMapOf<DialogKey, DialogDescriptor>()
+    private val dialogs = mutableMapOf<DialogKey, DialogDescriptor>()
 
     /**
      * [io.vertx.kotlin.coroutines.CoroutineVerticle.deploymentID] to [DialogKey] map
      */
-    protected val dialogsInv = mutableMapOf<String, DialogKey>()
+    private val dialogsInv = mutableMapOf<String, DialogKey>()
+
+    /**
+     * Should initial message be passed to a child, may be overriden
+     */
+    protected open val passInitialMessageToChild = false
 
     /**
      * Create [DialogKey] from incoming [Message]
@@ -75,12 +84,16 @@ abstract class AbstractDispatchVerticle<Config : AbstractDispatchVerticle.Config
      */
     protected open suspend fun shouldHandleMessage(msg: Message): Boolean = true
 
-    /**
-     * Deploy a verticle to dispatch updates to and return [DialogDescriptor]
-     *
-     * To be overridden by subclass.
-     */
-    protected abstract suspend fun doStart(dialogKey: DialogKey, msg: Message): DialogDescriptor?
+    protected abstract fun initChild(dialogKey: DialogKey, msg: Message): Deployment<V, VC>?
+
+    private suspend fun doStart(dialogKey: DialogKey, msg: Message): DialogDescriptor? {
+        val deployment = initChild(dialogKey, msg) ?: return null
+
+        val id = deployChild(deployment.verticle, deployment.config)
+
+        val desc = DialogDescriptor(id, deployment.verticle.messageListenAddress, deployment.verticle.callbackQueryListenAddress)
+        return desc
+    }
 
     override suspend fun start() {
         super.start()
@@ -109,9 +122,12 @@ abstract class AbstractDispatchVerticle<Config : AbstractDispatchVerticle.Config
 
         val dialogKey = dialogKey(message) ?: return
         val ongoing = dialogs[dialogKey] // after suspending
+
         if (ongoing == null) {
             startAndInitialize(dialogKey, message)
-        } else {
+        }
+
+        if (null != ongoing || passInitialMessageToChild) {
             passMessageToOngoing(message, dialogs[dialogKey]!!)
         }
     }
@@ -122,18 +138,23 @@ abstract class AbstractDispatchVerticle<Config : AbstractDispatchVerticle.Config
         dialogsInv[desc.id] = dialogKey
     }
 
-    protected fun passMessageToOngoing(message: Message, desc: DialogDescriptor) {
-        vertigram.eventBus.send(
-            desc.messageAddress,
-            message
-        )
+    private fun passMessageToOngoing(message: Message, desc: DialogDescriptor) {
+        desc.messageAddress?.let {
+            vertigram.eventBus.send(
+                it,
+                message
+            )
+        }
     }
 
     private fun passCallbackQueryToOngoing(callbackQuery: Update.CallbackQuery.Payload, desc: DialogDescriptor) {
-        vertigram.eventBus.send(
-            desc.callbackQueryAddress,
-            callbackQuery
-        )
+        desc.callbackQueryAddress?.let {
+            vertigram.eventBus.send(
+                it,
+                callbackQuery
+            )
+        }
+
     }
 
     override suspend fun onChildDeath(deathNotice: DeathNotice) {
@@ -156,7 +177,7 @@ abstract class AbstractDispatchVerticle<Config : AbstractDispatchVerticle.Config
     /**
      * Dialog descriptor returned by [doStart]
      */
-    data class DialogDescriptor(val id: String, val messageAddress: String, val callbackQueryAddress: String)
+    private data class DialogDescriptor(val id: String, val messageAddress: String?, val callbackQueryAddress: String?)
 
     /**
      * Base interface for verticle configuration
@@ -173,6 +194,9 @@ abstract class AbstractDispatchVerticle<Config : AbstractDispatchVerticle.Config
         val verticleAddress: String
     }
 
+    /**
+     * Interface for DialogKey. Implementation must propely implement equals/hashCode.
+     */
     interface DialogKey {
         val chatId: Long
         private data class ChatAndUser(override val chatId: Long, val userId: Long) : DialogKey
@@ -192,5 +216,34 @@ abstract class AbstractDispatchVerticle<Config : AbstractDispatchVerticle.Config
                 Chat(chatId = msg.chat.id)
             }
         }
+    }
+
+    data class Deployment<V: TelegramDialogVerticle<VC>, VC>(
+        val verticle: V,
+        val config: VC
+    )
+
+    /**
+     * [AbstractDispatchVerticle] that dispatches updates by chat id + user id
+     */
+    abstract class ByChatAndUser<
+            C : Config,
+            V: TelegramDialogVerticle<VC>,
+            VC,
+            > : AbstractDispatchVerticle<C, V, VC>() {
+        override fun dialogKey(msg: Message): DialogKey? = DialogKey.chatAndUser(msg)
+        override fun dialogKey(q: Update.CallbackQuery.Payload): DialogKey? = DialogKey.chatAndUser(q)
+    }
+
+    /**
+     * [AbstractDispatchVerticle] that dispatches updates by chat id
+     */
+    abstract class ByChat<
+            C : Config,
+            V: TelegramDialogVerticle<VC>,
+            VC,
+            > : AbstractDispatchVerticle<C, V, VC>() {
+        override fun dialogKey(msg: Message): DialogKey? = DialogKey.chat(msg)
+        override fun dialogKey(q: Update.CallbackQuery.Payload): DialogKey? = DialogKey.chat(q)
     }
 }

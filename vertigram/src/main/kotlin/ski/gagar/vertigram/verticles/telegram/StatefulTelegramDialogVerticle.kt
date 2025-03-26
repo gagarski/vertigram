@@ -20,7 +20,6 @@ import ski.gagar.vertigram.telegram.types.util.toChatId
 import ski.gagar.vertigram.util.lazy
 import ski.gagar.vertigram.util.logger
 import ski.gagar.vertigram.verticles.common.AbstractHierarchyVerticle
-import ski.gagar.vertigram.verticles.common.address.VertigramCommonAddress
 import ski.gagar.vertigram.verticles.common.messages.DeathNotice
 import ski.gagar.vertigram.verticles.common.messages.DeathReason
 import ski.gagar.vertigram.verticles.telegram.StatefulTelegramDialogVerticle.State
@@ -39,7 +38,7 @@ import java.time.Duration
  * This verticle can be combined with [AbstractDispatchVerticle], in that case [StatefulTelegramDialogVerticle]
  * will keep only one dialog state.
  */
-abstract class StatefulTelegramDialogVerticle<Config> : AbstractHierarchyVerticle<Config>() {
+abstract class StatefulTelegramDialogVerticle<Config> : TelegramDialogVerticle<Config>() {
     /**
      * Bot identity (a response from `getMe` Telegram method).
      *
@@ -67,26 +66,6 @@ abstract class StatefulTelegramDialogVerticle<Config> : AbstractHierarchyVerticl
      * Should be overridden by subclasses
      */
     abstract val initialState: State
-
-    /**
-     * Callback query listen address. By default — a private address, meaning that only parent verticle knows it.
-     *
-     * May be overridden by subclasses
-     *
-     * @see AbstractHierarchyVerticle
-     */
-    open val callbackQueryListenAddress: String
-        get() = VertigramCommonAddress.Private.withClassifier(deploymentID, TelegramAddress.Dialog.Classifier.CallbackQuery)
-
-    /**
-     * Callback query listen address. By default — a private address, meaning that only parent verticle knows it.
-     *
-     * May be overridden by subclasses
-     *
-     * @see AbstractHierarchyVerticle
-     */
-    open val messageListenAddress: String
-        get() = VertigramCommonAddress.Private.withClassifier(deploymentID, TelegramAddress.Dialog.Classifier.Message)
 
     /**
      * Should handle cancel message (/cancel) or cancel query callback
@@ -152,8 +131,12 @@ abstract class StatefulTelegramDialogVerticle<Config> : AbstractHierarchyVerticl
     override suspend fun start() {
         super.start()
         becomeWithLock(initialState, defaultHistoryBehavior)
-        consumer(callbackQueryListenAddress, function = ::handleCallbackQuery)
-        consumer(messageListenAddress, function = ::handleMessage)
+        callbackQueryListenAddress?.let {
+            consumer(it, function = ::handleCallbackQuery)
+        }
+        messageListenAddress?.let {
+            consumer(it, function = ::handleMessage)
+        }
         scheduleTimeout()
     }
 
