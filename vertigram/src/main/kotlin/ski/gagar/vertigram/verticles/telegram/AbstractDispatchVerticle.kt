@@ -25,9 +25,7 @@ import ski.gagar.vertigram.verticles.telegram.address.TelegramAddress
  *
  * The spawned verticle can maintain its state given the condition that it receives messages only for a single dialog.
  */
-abstract class AbstractDispatchVerticle<
-        C : AbstractDispatchVerticle.Config,
-        VC> : AbstractHierarchyVerticle<C>() {
+abstract class AbstractDispatchVerticle<C : AbstractDispatchVerticle.Config, VC> : AbstractHierarchyVerticle<C>() {
     protected val tg: Telegram by lazy {
         ThinTelegram(vertigram, typedConfig.verticleAddress)
     }
@@ -224,10 +222,7 @@ abstract class AbstractDispatchVerticle<
     /**
      * [AbstractDispatchVerticle] that dispatches updates by chat id + user id
      */
-    abstract class ByChatAndUser<
-            C : Config,
-            VC,
-            > : AbstractDispatchVerticle<C, VC>() {
+    abstract class ByChatAndUser<C : Config, VC> : AbstractDispatchVerticle<C, VC>() {
         override fun dialogKey(msg: Message): DialogKey? = DialogKey.chatAndUser(msg)
         override fun dialogKey(q: Update.CallbackQuery.Payload): DialogKey? = DialogKey.chatAndUser(q)
     }
@@ -235,11 +230,7 @@ abstract class AbstractDispatchVerticle<
     /**
      * [AbstractDispatchVerticle] that dispatches updates by chat id
      */
-    abstract class ByChat<
-            C : Config,
-            V: TelegramDialogVerticle<VC>,
-            VC,
-            > : AbstractDispatchVerticle<C, VC>() {
+    abstract class ByChat<C : Config, VC> : AbstractDispatchVerticle<C, VC>() {
         override fun dialogKey(msg: Message): DialogKey? = DialogKey.chat(msg)
         override fun dialogKey(q: Update.CallbackQuery.Payload): DialogKey? = DialogKey.chat(q)
     }
