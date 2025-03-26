@@ -27,9 +27,7 @@ import ski.gagar.vertigram.verticles.telegram.address.TelegramAddress
  */
 abstract class AbstractDispatchVerticle<
         C : AbstractDispatchVerticle.Config,
-        V: TelegramDialogVerticle<VC>,
-        VC,
-        > : AbstractHierarchyVerticle<C>() {
+        VC> : AbstractHierarchyVerticle<C>() {
     protected val tg: Telegram by lazy {
         ThinTelegram(vertigram, typedConfig.verticleAddress)
     }
@@ -84,7 +82,7 @@ abstract class AbstractDispatchVerticle<
      */
     protected open suspend fun shouldHandleMessage(msg: Message): Boolean = true
 
-    protected abstract fun initChild(dialogKey: DialogKey, msg: Message): Deployment<V, VC>?
+    protected abstract fun initChild(dialogKey: DialogKey, msg: Message): Deployment<VC>?
 
     private suspend fun doStart(dialogKey: DialogKey, msg: Message): DialogDescriptor? {
         val deployment = initChild(dialogKey, msg) ?: return null
@@ -218,8 +216,8 @@ abstract class AbstractDispatchVerticle<
         }
     }
 
-    data class Deployment<V: TelegramDialogVerticle<VC>, VC>(
-        val verticle: V,
+    data class Deployment<VC>(
+        val verticle: TelegramDialogVerticle<VC>,
         val config: VC
     )
 
@@ -228,9 +226,8 @@ abstract class AbstractDispatchVerticle<
      */
     abstract class ByChatAndUser<
             C : Config,
-            V: TelegramDialogVerticle<VC>,
             VC,
-            > : AbstractDispatchVerticle<C, V, VC>() {
+            > : AbstractDispatchVerticle<C, VC>() {
         override fun dialogKey(msg: Message): DialogKey? = DialogKey.chatAndUser(msg)
         override fun dialogKey(q: Update.CallbackQuery.Payload): DialogKey? = DialogKey.chatAndUser(q)
     }
@@ -242,7 +239,7 @@ abstract class AbstractDispatchVerticle<
             C : Config,
             V: TelegramDialogVerticle<VC>,
             VC,
-            > : AbstractDispatchVerticle<C, V, VC>() {
+            > : AbstractDispatchVerticle<C, VC>() {
         override fun dialogKey(msg: Message): DialogKey? = DialogKey.chat(msg)
         override fun dialogKey(q: Update.CallbackQuery.Payload): DialogKey? = DialogKey.chat(q)
     }

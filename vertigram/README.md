@@ -287,14 +287,14 @@ class CounterVerticle : SimpleTelegramDialogVerticle<CounterVerticle.Config>() {
 }
 
 // (11) Dispatched for managing multiple dialogs simultaneously
-class CounterDispatchVerticle : AbstractDispatchVerticle.ByChatAndUser<CounterDispatchVerticle.Config, CounterVerticle, CounterVerticle.Config>() {
+class CounterDispatchVerticle : AbstractDispatchVerticle.ByChatAndUser<CounterDispatchVerticle.Config, CounterVerticle.Config>() {
     override val configTypeReference: TypeReference<Config> = typeReference()
 
     // (12) By default initial message is not passed to dialog verticle, you can do it manually
     // override val passInitialMessageToChild: Boolean = true
 
     // (13) Init logic for a new dialog
-    override fun initChild(dialogKey: DialogKey, msg: Message): Deployment<CounterVerticle, CounterVerticle.Config>? {
+    override fun initChild(dialogKey: DialogKey, msg: Message): Deployment<CounterVerticle.Config>? {
         if (!msg.isCommandForBot(CounterVerticle.CMD, typedConfig.me))
             return null
 
@@ -351,7 +351,7 @@ steps 5-8
 10. An extra config parameter which we'll use later
 11. Now let's implement **dispatch verticle** which will manage state for multiple dialogs. We extend
 `AbstractDispatchVerticle.ByChatAndUser` to make it dispatch updates by chat id + user id. Generic parameters are 
-config for dispatch verticle itself, type of child verticle and type of config for child verticle
+config for dispatch verticle itself and config for child verticle.
 12. Initial message is not passed by default to the freshly deployed verticle. This happens because
 there is no right way to separate initialization logic from here to `SimpleTelegramDialogVerticle`. You may have done
 some complex work while deciding to start the verticle (e.g. parsing the command) which you don't want to redo.
