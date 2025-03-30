@@ -33,17 +33,12 @@ abstract class AbstractDispatchVerticle<C : AbstractDispatchVerticle.Config, VC>
     /**
      * [DialogKey] to [DialogDescriptor] map
      */
-    private val dialogs = mutableMapOf<DialogKey, DialogDescriptor>()
+    protected val dialogs = mutableMapOf<DialogKey, DialogDescriptor>()
 
     /**
      * [io.vertx.kotlin.coroutines.CoroutineVerticle.deploymentID] to [DialogKey] map
      */
-    private val dialogsInv = mutableMapOf<String, DialogKey>()
-
-    /**
-     * Should initial message be passed to a child, may be overriden
-     */
-    protected open val passInitialMessageToChild = false
+    protected val dialogsInv = mutableMapOf<String, DialogKey>()
 
     /**
      * Create [DialogKey] from incoming [Message]
@@ -82,7 +77,7 @@ abstract class AbstractDispatchVerticle<C : AbstractDispatchVerticle.Config, VC>
 
     protected abstract fun initChild(dialogKey: DialogKey, msg: Message): Deployment<VC>?
 
-    private suspend fun doStart(dialogKey: DialogKey, msg: Message): DialogDescriptor? {
+    protected open suspend fun doStart(dialogKey: DialogKey, msg: Message): DialogDescriptor? {
         val deployment = initChild(dialogKey, msg) ?: return null
 
         val id = deployChild(deployment.verticle, deployment.config)
@@ -123,9 +118,7 @@ abstract class AbstractDispatchVerticle<C : AbstractDispatchVerticle.Config, VC>
             startAndInitialize(dialogKey, message)
         }
 
-        if (null != ongoing || passInitialMessageToChild) {
-            passMessageToOngoing(message, dialogs[dialogKey]!!)
-        }
+        passMessageToOngoing(message, dialogs[dialogKey]!!)
     }
 
     private suspend fun startAndInitialize(dialogKey: DialogKey, msg: Message) {
@@ -173,7 +166,7 @@ abstract class AbstractDispatchVerticle<C : AbstractDispatchVerticle.Config, VC>
     /**
      * Dialog descriptor returned by [doStart]
      */
-    private data class DialogDescriptor(val id: String, val messageAddress: String?, val callbackQueryAddress: String?)
+    protected data class DialogDescriptor(val id: String, val messageAddress: String?, val callbackQueryAddress: String?)
 
     /**
      * Base interface for verticle configuration

@@ -25,6 +25,7 @@ gradlePlugin {
 dependencies {
     implementation(libs.bundles.kotlin.std)
     implementation(project(":vertigram-jooq-app-api"))
+    implementation(project(":vertigram-jooq-app"))
     implementation(libs.bundles.jackson)
 }
 

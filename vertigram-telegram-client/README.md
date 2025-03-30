@@ -64,7 +64,7 @@ Here we see three parameters:
   to sending formatted text later.
  - `disableNotifications` is a Telegram `disable_notifications` parameter.
 
-You may notice that `camelCase` notation is used for parameters instean of `snake_case` used by Telegram. Even though,
+You may notice that `camelCase` notation is used for parameters instead of `snake_case` used by Telegram. Even though,
 this example shows some difference between Kotlin API and raw Telegram Bot API, this example covers most of the difference
 there is. In most cases you can refer to Telegram Bot API docs and straightforwardly interpret the docs to 
 `vertigram-telegram-client` API.
@@ -240,7 +240,7 @@ Vertigram currently supports two kind of attachments:
  - [FileAttachment](ski.gagar.vertigram.telegram.types.attachments.FileAttachment) representing a local FS attachment
 
 While this might be not so much in Vert.x environment, [Attachment](ski.gagar.vertigram.telegram.types.attachments.Attachment)
-is open for external extension. With a reasonable ammount of effort you can implement your own kind of attachments:
+is open for external extension. With a reasonable amount of effort you can implement your own kind of attachments:
 for example, database attachment or event-bus-streamed attachment. Follow the Javadoc to figure out the way to extend it
 if you're up to it.
 
@@ -256,7 +256,7 @@ tg.sendMediaGroup(
             richCaption = "A cat from local FS".toRichText()
         ),
         InputMedia.Photo(
-            media = File("/home/cat_owner/cat.jpg").toAttachment(),
+            media = Attachment.url("https://example.com/cat.jpg"),
             richCaption = "A cat from web".toRichText()
         )
     )

@@ -205,33 +205,22 @@ class CounterVerticle : SimpleTelegramDialogVerticle<CounterVerticle.Config>() {
 
     override suspend fun start() {
         super.start()
-        // (2) Implementing start
-        val msg = tg.sendMessage(
-            chatId = typedConfig.chatId.toChatId(),
-            richText = "Let's count together! Type $CMD or click the button".toRichText(),
-            replyMarkup = inlineKeyboard {
-                row {
-                    callback("+1", PLUS_CALLBACK)
-                }
-            }
-        )
-        // (3) Remembering last message so we can edit it
-        lastMessageId = msg.messageId
+
     }
 
-    // (4) Ste state changing logic
+    // (2) Ste state changing logic
     private fun inc() = ++count
 
-    // (5) Replying as a message to report curent count and possibly exit
+    // (3) Replying as a message to report current count and possibly exit
     private suspend fun reply() {
         if (lastMessageId != null) {
-            // (6) Removing buttons from old message
+            // (4) Removing buttons from old message
             tg.editMessageReplyMarkup(
                 chatId = typedConfig.chatId.toChatId(),
                 messageId = lastMessageId!!,
             )
         }
-        // (7) If we're done, telling user so and completing our work, CounterVerticle's live is over here (die() call)
+        // (5) If we're done, telling user so and completing our work, CounterVerticle's live is over here (die() call)
         if (count == MAX_COUNT) {
             tg.sendMessage(
                 chatId = typedConfig.chatId.toChatId(),
@@ -240,10 +229,17 @@ class CounterVerticle : SimpleTelegramDialogVerticle<CounterVerticle.Config>() {
             die(DeathReason.COMPLETED)
             return
         }
-        // (8) Proceeding? Let's report current status to the user
+        // (6) Proceeding? Let's report current status to the user
         val msg = tg.sendMessage(
             chatId = typedConfig.chatId.toChatId(),
-            richText = "Current count is $count. Type $CMD or click the button to proceed.".toRichText(),
+            richText = textMarkdown {
+
+                if (count == 0) {
+                    +"Hello! Let's count together!"
+                    space()
+                }
+                +"Current count is $count. Type $CMD or click the button to proceed."
+            },
             replyMarkup = inlineKeyboard {
                 row {
                     callback("+1", PLUS_CALLBACK)
@@ -253,7 +249,7 @@ class CounterVerticle : SimpleTelegramDialogVerticle<CounterVerticle.Config>() {
         lastMessageId = msg.messageId
     }
 
-    // (9) Handler for a message. Only messages from current dialog can arrive here. You can avoid boilerplate 
+    // (7) Handler for a message. Only messages from current dialog can arrive here. You can avoid boilerplate
     //     checking for chatId
     override suspend fun handleMessage(message: Message) {
         if (!message.isCommandForBot(CMD, typedConfig.me)) {
@@ -263,7 +259,7 @@ class CounterVerticle : SimpleTelegramDialogVerticle<CounterVerticle.Config>() {
         reply()
     }
 
-    // (9) Handler for a callback query. Only messages from current dialog can arrive here. You can avoid boilerplate 
+    // (8) Handler for a callback query. Only messages from current dialog can arrive here. You can avoid boilerplate
     //     checking for chatId
     override suspend fun handleCallbackQuery(callbackQuery: Update.CallbackQuery.Payload) {
         if (callbackQuery.data != PLUS_CALLBACK) {
@@ -276,7 +272,7 @@ class CounterVerticle : SimpleTelegramDialogVerticle<CounterVerticle.Config>() {
     data class Config(
         val chatId: Long,
         val me: User.Me,
-        val timeout: Duration // (10) We'll come to timeout implementation later, for now, ignore it
+        val timeout: Duration // (9) We'll come to timeout implementation later, for now, ignore it
     )
 
     companion object {
@@ -286,14 +282,11 @@ class CounterVerticle : SimpleTelegramDialogVerticle<CounterVerticle.Config>() {
     }
 }
 
-// (11) Dispatched for managing multiple dialogs simultaneously
+// (10) Dispatched for managing multiple dialogs simultaneously
 class CounterDispatchVerticle : AbstractDispatchVerticle.ByChatAndUser<CounterDispatchVerticle.Config, CounterVerticle.Config>() {
     override val configTypeReference: TypeReference<Config> = typeReference()
 
-    // (12) By default initial message is not passed to dialog verticle, you can do it manually
-    // override val passInitialMessageToChild: Boolean = true
-
-    // (13) Init logic for a new dialog
+    // (11) Init logic for a new dialog
     override fun initChild(dialogKey: DialogKey, msg: Message): Deployment<CounterVerticle.Config>? {
         if (!msg.isCommandForBot(CounterVerticle.CMD, typedConfig.me))
             return null
@@ -324,7 +317,7 @@ fun main() {
             )
             val tg = ThinTelegram(vertigram = this@apply)
             val me = tg.getMe()
-            // (14) Deploying dispatcher. Note that we do not explicitly deploying CounterVerticle here
+            // (12) Deploying dispatcher. Note that we do not explicitly deploying CounterVerticle here
             deployVerticle(CounterDispatchVerticle(), CounterDispatchVerticle.Config(me))
         }
     }
@@ -334,33 +327,25 @@ fun main() {
 Let's walk through it step-by-step:
 1. `CounterVerticle` is a subclass of `SimpleTelegramDialogVerticle`. If used correctly in conjunction with dispatch 
 verticle, it willr eceive only updates for a specific dialog. That means you don't have to bother with checking chat ids.
-2. When the verticle is started, it's a good thing to greet user and give him instructions by sending a message in 
-response.
-3. We save `lastMessageId` because later we're going to edit messages which are already sent. This is a part of
-a **dialog state**
-4. Other *useful* part of the **state** is a counter itself.
-5. Let's define a *response function* which will send the reaction to the current state update
-6. First, we remove the buttons from old message, so there are not too many buttons. (Remember the step 3?)
-7. If we're reached 10, our job is done, we can terminate `CounterVerticle` by calling `die()` (for more info on the lifecycle,
+2. *Useful* part of the **state** is a counter itself.
+3. Let's define a *response function* which will send the reaction to the current state update
+4. First, we remove the buttons from old message, so there are not too many buttons. (Remember the step 3?)
+5. If we're reached 10, our job is done, we can terminate `CounterVerticle` by calling `die()` (for more info on the lifecycle,
 please consult [AbstractHierarchyVerticle](ski.gagar.vertigram.verticles.common.AbstractHierarchyVerticle). Don't forget
 to tell the user that we're done
-8. Otherwise, updating the user with new counter value
-9. Now we override `handleMessage` function to implement bot's reaction to the message from user:
+6. Otherwise, updating the user with new counter value
+7. Now we override `handleMessage` function to implement bot's reaction to the message from user:
 checking if we've got a command from the user and if so, incrementing the counter and replying user with function from 
 steps 5-8
-10. An extra config parameter which we'll use later
-11. Now let's implement **dispatch verticle** which will manage state for multiple dialogs. We extend
+8. Also let's override `handleCallbackQuery` to work with keyboard.
+9. An extra config parameter which we'll use later
+10. Now let's implement **dispatch verticle** which will manage state for multiple dialogs. We extend
 `AbstractDispatchVerticle.ByChatAndUser` to make it dispatch updates by chat id + user id. Generic parameters are 
 config for dispatch verticle itself and config for child verticle.
-12. Initial message is not passed by default to the freshly deployed verticle. This happens because
-there is no right way to separate initialization logic from here to `SimpleTelegramDialogVerticle`. You may have done
-some complex work while deciding to start the verticle (e.g. parsing the command) which you don't want to redo.
-However, in our case it's safe to pass the initial message to the `CounterVerticle`. Try it out while playing around
-with the code. The behavior will be slightly different: the right behavior depends on what you want.
-13. We're describing how to create a new **dialog verticle**. `initChild` is called
+11. We're describing how to create a new **dialog verticle**. `initChild` is called
 only if the dialog is not yet started for current **dialog key**. `AbstractDispatchVerticle` logic expects you to return
 `Deployment` object if you decide to deploy something based on message content or `null` if the message should be ignored.
-14. Finally, deploying the `CounterDispatchVerticle`. Do not forget to enable receiving `CALLBACK_QUERY` updates.
+12. Finally, deploying the `CounterDispatchVerticle`. Do not forget to enable receiving `CALLBACK_QUERY` updates.
 
 Start the bot and try to play around with it. If you have multiple accounts, you can notice that every one of them
 will have separate counter.
