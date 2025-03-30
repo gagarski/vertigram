@@ -9,15 +9,15 @@ import ski.gagar.vertigram.verticles.common.messages.DeathReason
 /**
  * A verticle that introduces a concept of verticle hierarchy.
  *
- * [AbstractHierarchyVerticle] can have children, spawned by [deployChild]ю
+ * [HierarchyVerticle] can have children, spawned by [deployChild]ю
  *
- * The main traits of [AbstractHierarchyVerticle] are;
+ * The main traits of [HierarchyVerticle] are;
  *  - it can deploy children
  *  - it has lifecycle, specifically it can optionally [die]
  *  - parents and children are notified on each other death and can act accordingly, based on death reason
  *  - parents and children can optionally talk to each other using private addresses based on [deploymentID]
  */
-abstract class AbstractHierarchyVerticle<Config> : VertigramVerticle<Config>() {
+abstract class HierarchyVerticle<Config> : VertigramVerticle<Config>() {
     private val children = mutableSetOf<String>()
     private var deathReason: DeathReason? = null
 

@@ -139,9 +139,9 @@ fun main() {
 
 So far you know `vertigram-core` basics. Besides the concepts described above, provides you some generic verticles for common usage
 in [ski.gagar.vertigram.verticles.common] package. Currently the following verticles are provided:
- - [AbstractHierarchyVerticle](ski.gagar.vertigram.verticles.common.AbstractHierarchyVerticle), providing you with
+ - [HierarchyVerticle](ski.gagar.vertigram.verticles.common.AbstractHierarchyVerticle), providing you with
    a concept of hierarchy in verticles (i.e. spawning child verticles and notifying parents and child about termination of each other)
- - [AbstractPostOfficeVerticle](ski.gagar.vertigram.verticles.common.AbstractPostOfficeVerticle) which provides you 
+ - [PostOfficeVerticle](ski.gagar.vertigram.verticles.common.AbstractPostOfficeVerticle) which provides you 
    a concept of mailboxes for replaying messages to a consumer which have subscribed to them later than messages were
    published
 

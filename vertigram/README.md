@@ -101,10 +101,10 @@ consume them from your verticles and call Telegram methods in response. This set
 command. Hooray!
 
 Note that `HelloVerticle` was implemented in more boilerplate way than it could be to show you the basics of interaction
-with Telegram verticles. In fact for handling commands there is a shortcut, `AbstractSimpleCommandVerticle`, so our
+with Telegram verticles. In fact for handling commands there is a shortcut, `SimpleCommandVerticle`, so our
 `HelloVerticle` can look like this:
 ```kotlin
-class HelloVerticle : AbstractSimpleCommandVerticle<HelloVerticle.Config>() {
+class HelloVerticle : SimpleCommandVerticle<HelloVerticle.Config>() {
     override val configTypeReference: TypeReference<Config> = typeReference()
 
     private val tg by lazy {
@@ -125,7 +125,7 @@ class HelloVerticle : AbstractSimpleCommandVerticle<HelloVerticle.Config>() {
 
     data class Config(
         override val me: User.Me
-    ) : AbstractSimpleCommandVerticle.Config {
+    ) : SimpleCommandVerticle.Config {
         override val baseAddress: String = TelegramAddress.DEMUX_BASE
     }
 }
@@ -180,7 +180,7 @@ to customize it, you should add a corresponding change to `TelegramAddress.dispa
         handle(it) 
     }
     ```
-When you use `AbstractSimpleCommandVerticle` or other common verticles, `baseAddress` is this address.
+When you use `SimpleCommandVerticle` or other common verticles, `baseAddress` is this address.
 
 ## Keeping dialog state
 
@@ -283,7 +283,7 @@ class CounterVerticle : SimpleTelegramDialogVerticle<CounterVerticle.Config>() {
 }
 
 // (10) Dispatched for managing multiple dialogs simultaneously
-class CounterDispatchVerticle : AbstractDispatchVerticle.ByChatAndUser<CounterDispatchVerticle.Config, CounterVerticle.Config>() {
+class CounterDispatchVerticle : DispatchVerticle.ByChatAndUser<CounterDispatchVerticle.Config, CounterVerticle.Config>() {
     override val configTypeReference: TypeReference<Config> = typeReference()
 
     // (11) Init logic for a new dialog
@@ -305,7 +305,7 @@ class CounterDispatchVerticle : AbstractDispatchVerticle.ByChatAndUser<CounterDi
         val me: User.Me,
         override val baseAddress: String = TelegramAddress.DEMUX_BASE,
         override val verticleAddress: String = TelegramAddress.TELEGRAM_VERTICLE_BASE
-    ) : AbstractDispatchVerticle.Config
+    ) : DispatchVerticle.Config
 }
 
 fun main() {
@@ -331,19 +331,19 @@ verticle, it willr eceive only updates for a specific dialog. That means you don
 3. Let's define a *response function* which will send the reaction to the current state update
 4. First, we remove the buttons from old message, so there are not too many buttons. (Remember the step 3?)
 5. If we're reached 10, our job is done, we can terminate `CounterVerticle` by calling `die()` (for more info on the lifecycle,
-please consult [AbstractHierarchyVerticle](ski.gagar.vertigram.verticles.common.AbstractHierarchyVerticle). Don't forget
+please consult [HierarchyVerticle](ski.gagar.vertigram.verticles.common.AbstractHierarchyVerticle). Don't forget
 to tell the user that we're done
 6. Otherwise, updating the user with new counter value
 7. Now we override `handleMessage` function to implement bot's reaction to the message from user:
 checking if we've got a command from the user and if so, incrementing the counter and replying user with function from 
-steps 5-8
+steps 2-6.
 8. Also let's override `handleCallbackQuery` to work with keyboard.
 9. An extra config parameter which we'll use later
 10. Now let's implement **dispatch verticle** which will manage state for multiple dialogs. We extend
-`AbstractDispatchVerticle.ByChatAndUser` to make it dispatch updates by chat id + user id. Generic parameters are 
+`DispatchVerticle.ByChatAndUser` to make it dispatch updates by chat id + user id. Generic parameters are 
 config for dispatch verticle itself and config for child verticle.
 11. We're describing how to create a new **dialog verticle**. `initChild` is called
-only if the dialog is not yet started for current **dialog key**. `AbstractDispatchVerticle` logic expects you to return
+only if the dialog is not yet started for current **dialog key**. `DispatchVerticle` logic expects you to return
 `Deployment` object if you decide to deploy something based on message content or `null` if the message should be ignored.
 12. Finally, deploying the `CounterDispatchVerticle`. Do not forget to enable receiving `CALLBACK_QUERY` updates.
 
@@ -352,15 +352,15 @@ will have separate counter.
 
 ### Dialog keys
 
-In previous example we boldly used `AbstractDispatchVerticle.ByChatAndUser` as a base class to dispatch dialogs by
+In previous example we boldly used `DispatchVerticle.ByChatAndUser` as a base class to dispatch dialogs by
 chat id + user id pair. 
-Other viable option is `AbstractDispatchVerticle.ByChat`. 
+Other viable option is `DispatchVerticle.ByChat`. 
 
 You can notice the difference in group chats: in first case, if you start the counting party in the group chat, 
 each member will have a separate counter, while with chat id dialog key, all chat members will count together!
 
-If both of these options do not work for you, you can implement `AbstractDispatchVerticle.DialogKey` yourself
-and use `AbstractDispatchVerticle` directly and override the corresponding methods to extract dialog keys from
+If both of these options do not work for you, you can implement `DispatchVerticle.DialogKey` yourself
+and use `DispatchVerticle` directly and override the corresponding methods to extract dialog keys from
 messages and callback queries.
 
 ### Concurrency and locks
@@ -492,9 +492,514 @@ to forget about this child and properly free up resources associated with it.
 
 ## Advanced State Management
 
-`SimpleTelegramDialogVerticle` in conjunction with `AbstractDispatchVerticle` give you a simple way to manage 
+`SimpleTelegramDialogVerticle` in conjunction with `DispatchVerticle` give you a simple way to manage 
 individual dialog states. In real bots, dialog states may be more complicated (imagine typical step-by-step 
 questionnaire). While it is still possible to manage it manually with `SimpleTelegramDialogVerticle`, Vertigram provides
 an opinionated way to maintain more complex dialog state, named `StatefulTelegramDialogVerticle`. Besides more advanced
-state management it provides some out-of-the-box ways to manage timeouts, cancellation and completion. Let's try
-to implement a bot that collects user age, name and his favourite color:
+state management it provides some out-of-the-box ways to manage timeouts, cancellation, completion and time traveling. 
+Let's try to implement a bot that collects user age, name and his favourite color:
+
+```kotlin
+// (1) Some helper for reply markup
+fun InlineKeyboardMarkupRowBuilder.backAndCancelButtons(canGoBack: Boolean) {
+    if (canGoBack) {
+        callback(
+            text = "↩️ Back",
+            callbackData = BACK
+        )
+    }
+
+    callback(
+        text = "\uD83D\uDEAB Cancel",
+        callbackData = CANCEL
+    )
+}
+
+// (2) Single-dialog logic
+class RegisterVerticle : StatefulTelegramDialogVerticle<RegisterVerticle.Config>() {
+    override val handleCancel: Boolean = true
+    override val handleRollback: Boolean = true
+    
+    // (3) Defining the states
+    sealed class State(private val verticle: RegisterVerticle) : StatefulTelegramDialogVerticle.State(verticle) {
+        protected val typedConfig: Config
+            get() = verticle.typedConfig
+    }
+
+    // (4) Handling initial message
+    class Initial(private val verticle: RegisterVerticle) : State(verticle) {
+        override suspend fun handleMessage(message: Message) {
+            if (!message.isCommandForBot(CMD, typedConfig.me)) {
+                die(DeathReason.FAILED)
+                return
+            }
+            become(AskName(verticle), HistoryBehavior.SKIP)
+        }
+    }
+
+    // (5) Handling response
+    class AskName(private val verticle: RegisterVerticle) : State(verticle) {
+        // (6) A side effect that is happening when you enter the state
+        override suspend fun sideEffect() {
+            // (7) sendOrEdit is a helper function to implement "in-place" responses for callback responses
+            sendOrEdit(
+                richText = "Type your name".toRichText(),
+                replyMarkup = inlineKeyboard {
+                    row {
+                        // (8) Buttons for cancelling and going back
+                        backAndCancelButtons(canRollback())
+                    }
+                }
+            )
+        }
+
+        // (9) handling the name
+        override suspend fun handleMessage(message: Message) {
+            val name = message.text ?: return
+            become(
+                AskAge(
+                    verticle = verticle,
+                    name = name
+                )
+            )
+        }
+    }
+
+    class AskAge(
+        private val verticle: RegisterVerticle,
+        private val name: String
+    ) : State(verticle) {
+        override suspend fun sideEffect() {
+            sendOrEdit(
+                richText = "Type your age".toRichText(),
+                replyMarkup = inlineKeyboard {
+                    row {
+                        backAndCancelButtons(canRollback())
+                    }
+                }
+            )
+        }
+
+        override suspend fun handleMessage(message: Message) {
+            val age = message.text?.toIntOrNull() ?: return
+            become(
+                AskFavouriteColor(
+                    verticle = verticle,
+                    name = name,
+                    age = age
+                )
+            )
+        }
+    }
+
+    class AskFavouriteColor(
+        private val verticle: RegisterVerticle,
+        private val name: String,
+        private val age: Int
+    ) : State(verticle) {
+        override suspend fun sideEffect() {
+            sendOrEdit(
+                richText = "Type or select your favourite color:".toRichText(),
+                replyMarkup = inlineKeyboard {
+                    row {
+                        callback(
+                            text = "\uD83D\uDFE2",
+                            callbackData = "green"
+                        )
+                        callback(
+                            text = "\uD83D\uDD34",
+                            callbackData = "red"
+                        )
+                        callback(
+                            text = "\uD83D\uDD35",
+                            callbackData = "blue"
+                        )
+                        callback(
+                            text = "⚫\uFE0F",
+                            callbackData = "black"
+                        )
+                    }
+                    row {
+                        backAndCancelButtons(canRollback())
+                    }
+                }
+            )
+        }
+        override suspend fun handleMessage(message: Message) {
+            val color = message.text ?: return
+            become(
+                Persist(
+                    verticle = verticle,
+                    name = name,
+                    age = age,
+                    favouriteColor = color
+                )
+            )
+        }
+
+        override suspend fun handleCallbackQuery(callbackQuery: Update.CallbackQuery.Payload) {
+            val color = callbackQuery.data ?: return
+            become(
+                Persist(
+                    verticle = verticle,
+                    name = name,
+                    age = age,
+                    favouriteColor = color
+                )
+            )
+        }
+    }
+
+    // (10) Final state
+    class Persist(
+        private val verticle: RegisterVerticle,
+        private val name: String,
+        private val age: Int,
+        private val favouriteColor: String
+    ) : State(verticle) {
+        override suspend fun sideEffect() {
+            persist()
+            sendOrEdit(
+                richText = textMarkdown {
+                    +"We've recorded your response"
+                    br()
+                    b {
+                        +"Your name: "
+                        +name
+                        br()
+                        +"Your age: "
+                        +age.toString()
+                        br()
+                        +"Your favourite color: "
+                        +favouriteColor
+                        br()
+                    }
+                }
+            )
+            // (11) We're done
+            complete()
+        }
+        
+        // (12) Only pretending to persist
+        suspend fun persist() {
+            // TODO
+        }
+    }
+
+    override val chatId: Long
+        get() = typedConfig.chatId
+    override val initialState: State
+        get() = Initial(this)
+    override val timeout: Duration?
+        get() = Duration.ofMinutes(3)
+
+    override val configTypeReference: TypeReference<Config> = typeReference()
+
+    data class Config(
+        val chatId: Long,
+        val me: User.Me
+    )
+
+    companion object {
+        const val CMD = "register"
+    }
+}
+
+// (13) Dispatch verticle, pretty much similar to the one we've seen before
+class RegisterDispatchVerticle : DispatchVerticle.ByChatAndUser<RegisterDispatchVerticle.Config, RegisterVerticle.Config>() {
+    override val configTypeReference: TypeReference<Config> = typeReference()
+
+    override fun initChild(dialogKey: DialogKey, msg: Message): Deployment<RegisterVerticle.Config>? {
+        if (!msg.isCommandForBot(RegisterVerticle.CMD, typedConfig.me))
+            return null
+
+        return Deployment(
+            RegisterVerticle(),
+            RegisterVerticle.Config(
+                chatId = msg.chat.id,
+                me = typedConfig.me,
+            )
+        )
+    }
+
+    data class Config(
+        val me: User.Me,
+        override val baseAddress: String = TelegramAddress.DEMUX_BASE,
+        override val verticleAddress: String = TelegramAddress.TELEGRAM_VERTICLE_BASE
+    ) : DispatchVerticle.Config
+}
+
+fun main() {
+    // (14) Deploying stuff, same as before
+    Vertx.vertx().runBlocking {
+        attachVertigram().apply {
+            deployTelegramEnsemble(
+                token = "xxx:yyy",
+                allowedUpdates = listOf(Update.Type.MESSAGE, Update.Type.CALLBACK_QUERY)
+            )
+            val tg = ThinTelegram(vertigram = this@apply)
+            val me = tg.getMe()
+            deployVerticle(RegisterDispatchVerticle(), RegisterDispatchVerticle.Config(me))
+        }
+    }
+}
+```
+
+Let's walk through it, step by step:
+1. First we define a reply markup helper function that will add back and cancel buttons to our reply markup. We're using
+constants defined in the base class to make it handle this logic automatically.
+2. Dialog logic is defined in a class inherited from `StatefulTelegramDialogVerticle`. Again, you can assume
+that all interaction happens in the same dialog (as you defined it in dispatch verticle). Handling cancelling and 
+time-travel is an opt-in feature, so it needs to be enabled explicitly by overriding fields.
+3. Defining *states* for a dialog. Each state defines a part of dialog logic and inherited from `StatefulTelegramDialogVerticle.State`.
+4. Handling the initial state which immediately transfers the dialog to the `AskName` state. `become` is a function to
+perform a **state transition**. It accepts a new states an **optional** parameter for history behavior. Here we use
+`SKIP` option, because we do not want our time-travel mechanism to return to initial state. In all other cases
+we use the default behavior which records the history. 
+5. Our first **state** will ask user for their name and handle the response.
+6. First thing state "does" is executing a `sideEffect` function. This is a good place to ask user a question. 
+7. Note the `sendOrEdit` function: first it does not have a `chatId`
+parameter because it knows the chat id from the way we've overridden `chatId` property, second thing to note is its
+behavior: it sometimes decides to edit a previous message (which it tracks itself), specifically when there is no
+messages after it (e.g., when user has clicked an inline keyboard button). You can use it if you're fine with the logic
+it implements, or you can implement your own logic on top of the telegram client.
+8. Note the use of our helper from step 1. We're adding a row for **back** and **cancel** function.
+9. Here we are reading user's name from their response and transitioning to the next step: `AskAge`. Two next steps are
+pretty similar.
+10. Last state is `Persist`. Here we (pretend to) persist the data we've collected, sharing the feedback to the user and
+`complete()`ing the dialog.
+11. `complete()` completes the verticle successfully and freeing up the resources assouciated with it.
+12. Note that we do not actually persist anything because it's is outside the scope of this tutorial. You can
+implement any persistence logic you want here, consider using <a href="../vertigram-jooq/index.html">`vertigram-jooq`</a>
+module to store the responses in a relational database.
+13. **Dispatch verticle** is pretty much the same as we had before
+4Deployment logic is also the same.
+
+### Handling micro-state
+
+While state transitions are good in case of changing some "big" state, sometimes the notation can be too verbose.
+You can combine **state** mechanism with maintaining some state inside toyr state using class fields. Let's "improve"
+UI of our `AskAge` stel by adding some buttons (yes, I understand that this is barely an improvement, but this is good
+for demo purposes):
+```kotlin
+    class AskAge(
+        private val verticle: RegisterVerticle,
+        private val name: String,
+    ) : State(verticle) {
+        var age = DEFAULT_AGE
+
+        private suspend fun proceed(age: Int = this.age) {
+            become(
+                AskFavouriteColor(
+                    verticle = verticle,
+                    name = name,
+                    age = age
+                )
+            )
+        }
+
+        private suspend fun update() {
+            sendOrEdit(
+                richText = "Type your age".toRichText(),
+                replyMarkup = inlineKeyboard {
+                    row {
+                        if (age > MIN_AGE) {
+                            callback(
+                                text = "-",
+                                callbackData = MINUS
+                            )
+                        }
+                        callback(
+                            text = "I am $age years old",
+                            callbackData = OK
+                        )
+                        if (age < MAX_AGE) {
+                            callback(
+                                text = "+",
+                                callbackData = PLUS
+                            )
+                        }
+                    }
+                    row {
+                        backAndCancelButtons(canRollback())
+                    }
+
+                }
+            )
+        }
+
+        override suspend fun sideEffect() {
+            update()
+        }
+
+        override suspend fun handleMessage(message: Message) {
+            val age = message.text?.toIntOrNull() ?: return
+            proceed(age)
+        }
+
+        override suspend fun handleCallbackQuery(callbackQuery: Update.CallbackQuery.Payload) {
+            when (callbackQuery.data) {
+                MINUS -> {
+                    age--
+                    update()
+                }
+                PLUS -> {
+                    age++
+                    update()
+                }
+                OK -> {
+                    tg.answerCallbackQuery(
+                        callbackQueryId = callbackQuery.id,
+                    )
+                    proceed()
+                }
+            }
+        }
+
+        companion object {
+            const val PLUS = "+"
+            const val MINUS = "-"
+            const val OK = "OK"
+            const val DEFAULT_AGE = 18
+            const val MAX_AGE = 150
+            const val MIN_AGE = 0
+        }
+    }
+```
+
+Here we handle some callback queries inside the state and store currently selected age as a class field. You can notice
+that the back button still works as expected.
+
+Alternatively you can treat `State` objects as immutable and handle callbacks with `become`, but in that case
+you'd have to deal with history behavior, so your state history does not become too verbose 
+(note the second argument to `become`):
+```kotlin
+    class AskAge(
+        private val verticle: RegisterVerticle,
+        private val name: String,
+        private val age: Int = DEFAULT_AGE
+    ) : State(verticle) {
+        override suspend fun sideEffect() {
+            sendOrEdit(
+                richText = "Type your age".toRichText(),
+                replyMarkup = inlineKeyboard {
+                    row {
+                        if (age > MIN_AGE) {
+                            callback(
+                                text = "-",
+                                callbackData = MINUS
+                            )
+                        }
+                        callback(
+                            text = "I am $age years old",
+                            callbackData = OK
+                        )
+                        if (age < MAX_AGE) {
+                            callback(
+                                text = "+",
+                                callbackData = PLUS
+                            )
+                        }
+                    }
+                    row {
+                        backAndCancelButtons(canRollback())
+                    }
+
+                }
+            )
+        }
+
+        override suspend fun handleMessage(message: Message) {
+            val age = message.text?.toIntOrNull() ?: return
+            become(
+                AskFavouriteColor(
+                    verticle = verticle,
+                    name = name,
+                    age = age
+                )
+            )
+        }
+
+        override suspend fun handleCallbackQuery(callbackQuery: Update.CallbackQuery.Payload) {
+            when (callbackQuery.data) {
+                MINUS -> {
+                    become(
+                        AskAge(
+                            verticle = verticle,
+                            name = name,
+                            age = age - 1
+                        ),
+                        HistoryBehavior.SKIP
+                    )
+                }
+                PLUS -> {
+                    become(
+                        AskAge(
+                            verticle = verticle,
+                            name = name,
+                            age = age + 1
+                        ),
+                        HistoryBehavior.SKIP
+                    )
+                }
+                OK -> {
+                    tg.answerCallbackQuery(
+                        callbackQueryId = callbackQuery.id,
+                    )
+                    become(
+                        AskFavouriteColor(
+                            verticle = verticle,
+                            name = name,
+                            age = age
+                        )
+                    )
+                }
+            }
+        }
+
+        companion object {
+            const val PLUS = "+"
+            const val MINUS = "-"
+            const val OK = "OK"
+            const val DEFAULT_AGE = 18
+            const val MAX_AGE = 150
+            const val MIN_AGE = 0
+        }
+    }
+```
+
+### Default states
+
+We've added some override to the initial implementation which we have not properly discussed:
+```kotlin
+    override val cancelState: StatefulTelegramDialogVerticle.State = crossCancelled()
+```
+
+This defines a default behavior on **cancel**. The behavior is chosen based on the state to which the verticle will
+be transfered when handling default cancel requests. You can use some default states provided to you by base class
+or implement a final state yourself. Do not forget to call `cancel()`, `complete()` or `timeout()` in the side effect.
+The following conventional states are available:
+ - `yawnTimeout()` — send a yawn emoji to the user and complete the dialog verticle as timed out
+ - `silentTimeout()` — complete the dialog verticle as timed out without sending anything
+ - `crossCancelled()` — send a red cross emoji and complete the dialog verticle as cancelled
+ - `silentCancelled()` — complete the dialog verticle as cancelled without sending anything
+ - `checkmarkDone()` — send a green checkmark emoji to the user and complete the dialog verticle as done
+ - `silentDone()` — complete the dialog verticle as done without sending anything
+
+By default silent versions of completed states are used.
+
+### Timeouts
+
+Unlike `SimpleTelegramDialogVerticle`, you don't have to implement timeout logic yourself. However, you have to opt in for
+timeout handling by overriding the `timeout` field of the verticle:
+```kotlin
+    override val timeout: Duration?
+        get() = Duration.ofMinutes(3)
+```
+
+## What's Next?
+
+Now you're familiar with using Telegram client from Vertigram and some basic building blocks for your bots.
+You can optionally look into <a href="../vertigram-jooq/index.html">`vertigram-jooq`</a> module docs. This module is
+more or less isolated from the rest of Vertigram and allows you to interact with relational database in an opinionated
+way with the power of (Flyway and jOOQ).

@@ -7,8 +7,8 @@ import kotlinx.coroutines.sync.withLock
 import ski.gagar.vertigram.util.jackson.typeReference
 import ski.gagar.vertigram.util.lazy
 import ski.gagar.vertigram.util.logger
-import ski.gagar.vertigram.verticles.common.AbstractPostOfficeVerticle.Discriminator
-import ski.gagar.vertigram.verticles.common.AbstractPostOfficeVerticle.SubscriptionInfo
+import ski.gagar.vertigram.verticles.common.PostOfficeVerticle.Discriminator
+import ski.gagar.vertigram.verticles.common.PostOfficeVerticle.SubscriptionInfo
 import ski.gagar.vertigram.verticles.common.address.VertigramCommonAddress
 import java.time.Duration
 import java.time.Instant
@@ -32,11 +32,11 @@ import java.util.*
  *  - New subscriber will receive new messages with given discriminator to his address as they arrive
  *
  *  When message arrives at [unsubscribeAddress]
- *  - [AbstractPostOfficeVerticle] stops publishing messages to the subscriber as they arrive
+ *  - [PostOfficeVerticle] stops publishing messages to the subscriber as they arrive
  *  - Nothing is removed from the mailboxes
  *
- *  [AbstractPostOfficeVerticle] tracks forward receipts, meaning if the subscriber unsibscribes and then subscribes
- *  again using the same address (only addresses are used to identify subscribers), [AbstractPostOfficeVerticle]
+ *  [PostOfficeVerticle] tracks forward receipts, meaning if the subscriber unsibscribes and then subscribes
+ *  again using the same address (only addresses are used to identify subscribers), [PostOfficeVerticle]
  *  will track which of the stored messages the subscriber has already received and won't resend them.
  *
  *  @param Config Configuration type
@@ -44,11 +44,11 @@ import java.util.*
  *  @param Discriminator Discriminator to get a receiver by message
  *  @param SubscriptionInfo Subscription info message type
  */
-abstract class AbstractPostOfficeVerticle<
+abstract class PostOfficeVerticle<
         Config,
         Message,
-        Discriminator: AbstractPostOfficeVerticle.Discriminator,
-        SubscriptionInfo : AbstractPostOfficeVerticle.SubscriptionInfo<Discriminator>> : AbstractHierarchyVerticle<Config>() {
+        Discriminator: PostOfficeVerticle.Discriminator,
+        SubscriptionInfo : PostOfficeVerticle.SubscriptionInfo<Discriminator>> : HierarchyVerticle<Config>() {
     /**
      * Incoming messages address, should be overridden by subclasses.
      */
@@ -198,7 +198,7 @@ abstract class AbstractPostOfficeVerticle<
         }
     }
 
-    private fun unsubscribeSingle(req: AbstractPostOfficeVerticle.SubscriptionInfo<Discriminator>, discriminator: Discriminator) {
+    private fun unsubscribeSingle(req: PostOfficeVerticle.SubscriptionInfo<Discriminator>, discriminator: Discriminator) {
         (subscriptions[discriminator] ?: mutableSetOf()).remove(req)
     }
 

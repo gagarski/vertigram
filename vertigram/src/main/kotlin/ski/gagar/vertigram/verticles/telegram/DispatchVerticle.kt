@@ -8,10 +8,10 @@ import ski.gagar.vertigram.telegram.methods.sendMessage
 import ski.gagar.vertigram.telegram.types.Message
 import ski.gagar.vertigram.telegram.types.Update
 import ski.gagar.vertigram.telegram.types.util.toChatId
-import ski.gagar.vertigram.verticles.common.AbstractHierarchyVerticle
+import ski.gagar.vertigram.verticles.common.HierarchyVerticle
 import ski.gagar.vertigram.verticles.common.messages.DeathNotice
 import ski.gagar.vertigram.verticles.common.messages.DeathReason
-import ski.gagar.vertigram.verticles.telegram.AbstractDispatchVerticle.DialogKey
+import ski.gagar.vertigram.verticles.telegram.DispatchVerticle.DialogKey
 import ski.gagar.vertigram.verticles.telegram.address.TelegramAddress
 
 /**
@@ -25,7 +25,7 @@ import ski.gagar.vertigram.verticles.telegram.address.TelegramAddress
  *
  * The spawned verticle can maintain its state given the condition that it receives messages only for a single dialog.
  */
-abstract class AbstractDispatchVerticle<C : AbstractDispatchVerticle.Config, VC> : AbstractHierarchyVerticle<C>() {
+abstract class DispatchVerticle<C : DispatchVerticle.Config, VC> : HierarchyVerticle<C>() {
     protected val tg: Telegram by lazy {
         ThinTelegram(vertigram, typedConfig.verticleAddress)
     }
@@ -213,17 +213,17 @@ abstract class AbstractDispatchVerticle<C : AbstractDispatchVerticle.Config, VC>
     )
 
     /**
-     * [AbstractDispatchVerticle] that dispatches updates by chat id + user id
+     * [DispatchVerticle] that dispatches updates by chat id + user id
      */
-    abstract class ByChatAndUser<C : Config, VC> : AbstractDispatchVerticle<C, VC>() {
+    abstract class ByChatAndUser<C : Config, VC> : DispatchVerticle<C, VC>() {
         override fun dialogKey(msg: Message): DialogKey? = DialogKey.chatAndUser(msg)
         override fun dialogKey(q: Update.CallbackQuery.Payload): DialogKey? = DialogKey.chatAndUser(q)
     }
 
     /**
-     * [AbstractDispatchVerticle] that dispatches updates by chat id
+     * [DispatchVerticle] that dispatches updates by chat id
      */
-    abstract class ByChat<C : Config, VC> : AbstractDispatchVerticle<C, VC>() {
+    abstract class ByChat<C : Config, VC> : DispatchVerticle<C, VC>() {
         override fun dialogKey(msg: Message): DialogKey? = DialogKey.chat(msg)
         override fun dialogKey(q: Update.CallbackQuery.Payload): DialogKey? = DialogKey.chat(q)
     }

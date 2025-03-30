@@ -26,7 +26,7 @@ enum class DeathReason {
 }
 
 /**
- * Death notice for [ski.gagar.vertigram.verticles.common.AbstractHierarchyVerticle]
+ * Death notice for [ski.gagar.vertigram.verticles.common.HierarchyVerticle]
  */
 data class DeathNotice(
     /**

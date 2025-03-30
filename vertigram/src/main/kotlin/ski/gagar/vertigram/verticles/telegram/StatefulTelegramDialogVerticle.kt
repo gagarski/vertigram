@@ -7,6 +7,7 @@ import ski.gagar.vertigram.coroutines.setTimerNonCancellable
 import ski.gagar.vertigram.telegram.client.Telegram
 import ski.gagar.vertigram.telegram.client.ThinTelegram
 import ski.gagar.vertigram.telegram.markup.toRichText
+import ski.gagar.vertigram.telegram.methods.answerCallbackQuery
 import ski.gagar.vertigram.telegram.methods.editMessageReplyMarkup
 import ski.gagar.vertigram.telegram.methods.editMessageText
 import ski.gagar.vertigram.telegram.methods.sendMessage
@@ -19,7 +20,7 @@ import ski.gagar.vertigram.telegram.types.util.isCommandForBot
 import ski.gagar.vertigram.telegram.types.util.toChatId
 import ski.gagar.vertigram.util.lazy
 import ski.gagar.vertigram.util.logger
-import ski.gagar.vertigram.verticles.common.AbstractHierarchyVerticle
+import ski.gagar.vertigram.verticles.common.HierarchyVerticle
 import ski.gagar.vertigram.verticles.common.messages.DeathNotice
 import ski.gagar.vertigram.verticles.common.messages.DeathReason
 import ski.gagar.vertigram.verticles.telegram.StatefulTelegramDialogVerticle.State
@@ -35,7 +36,7 @@ import java.time.Duration
  *
  * It optionally supports some opinionated ways to manage state history, cancellations and timeouts.
  *
- * This verticle can be combined with [AbstractDispatchVerticle], in that case [StatefulTelegramDialogVerticle]
+ * This verticle can be combined with [DispatchVerticle], in that case [StatefulTelegramDialogVerticle]
  * will keep only one dialog state.
  */
 abstract class StatefulTelegramDialogVerticle<Config> : TelegramDialogVerticle<Config>() {
@@ -161,11 +162,17 @@ abstract class StatefulTelegramDialogVerticle<Config> : TelegramDialogVerticle<C
     private suspend fun handleCallbackQuery(callbackQuery: Update.CallbackQuery.Payload) = messageHandler {
         withLock {
             if (handleCancel && callbackQuery.data == CANCEL) {
+                tg.answerCallbackQuery(
+                    callbackQueryId = callbackQuery.id,
+                )
                 become(cancelState, HistoryBehavior.WIPE)
                 return@messageHandler
             }
 
             if (handleRollback && callbackQuery.data == BACK) {
+                tg.answerCallbackQuery(
+                    callbackQueryId = callbackQuery.id,
+                )
                 rollback()
                 return@messageHandler
             }
@@ -264,7 +271,7 @@ abstract class StatefulTelegramDialogVerticle<Config> : TelegramDialogVerticle<C
     private fun canRollback() = history.isNotEmpty()
 
     private suspend fun rollback() {
-        val state = history.removeLast()
+        val state = history.removeLastOrNull() ?: return
         become(state, HistoryBehavior.SKIP)
     }
 
@@ -459,7 +466,7 @@ abstract class StatefulTelegramDialogVerticle<Config> : TelegramDialogVerticle<C
         /**
          * End the dialog and undeploy verticle.
          *
-         * @see AbstractHierarchyVerticle.die
+         * @see HierarchyVerticle.die
          */
         protected fun die(
             /**
@@ -495,9 +502,9 @@ abstract class StatefulTelegramDialogVerticle<Config> : TelegramDialogVerticle<C
          * Call [StatefulTelegramDialogVerticle.sendOrEdit]
          */
         protected suspend fun sendOrEdit(
-            richText: RichText, buttons: ReplyMarkup.InlineKeyboard? = null, forceSend: Boolean = false
+            richText: RichText, replyMarkup: ReplyMarkup? = null, forceSend: Boolean = false
         ) {
-            v.sendOrEdit(richText, buttons, forceSend)
+            v.sendOrEdit(richText, replyMarkup, forceSend)
         }
 
         /**

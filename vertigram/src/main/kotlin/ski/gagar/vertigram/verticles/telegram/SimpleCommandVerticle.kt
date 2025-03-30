@@ -11,7 +11,7 @@ import ski.gagar.vertigram.verticles.telegram.address.TelegramAddress
 /**
  * Handle a command without saving any state
  */
-abstract class AbstractSimpleCommandVerticle<Config : AbstractSimpleCommandVerticle.Config> : VertigramVerticle<Config>() {
+abstract class SimpleCommandVerticle<Config : SimpleCommandVerticle.Config> : VertigramVerticle<Config>() {
     /**
      * Command to handle (/command or /command@me).
      *
