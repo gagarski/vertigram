@@ -775,7 +775,7 @@ module to store the responses in a relational database.
 13. **Dispatch verticle** is pretty much the same as we had before
 4Deployment logic is also the same.
 
-### Handling micro-state
+### Handling Micro-State
 
 While state transitions are good in case of changing some "big" state, sometimes the notation can be too verbose.
 You can combine **state** mechanism with maintaining some state inside toyr state using class fields. Let's "improve"
@@ -968,7 +968,7 @@ you'd have to deal with history behavior, so your state history does not become 
     }
 ```
 
-### Default states
+### Default States
 
 We've added some override to the initial implementation which we have not properly discussed:
 ```kotlin
