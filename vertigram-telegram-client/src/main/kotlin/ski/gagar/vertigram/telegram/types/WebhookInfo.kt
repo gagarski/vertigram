@@ -8,7 +8,7 @@ import java.time.Instant
 /**
  * Telegram [WebhookInfo](https://core.telegram.org/bots/api#webhookinfo) type.
  *
- * For up-to-date documentation please consult the official Telegram docs.
+ * For up-to-date documentation, please consult the official Telegram docs.
  */
 @TelegramCodegen.Type
 data class WebhookInfo internal constructor(

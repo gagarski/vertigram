@@ -40,6 +40,15 @@ dependencies {
     }
 }
 
+fun getGitCommitHash(): String {
+    val processBuilder = ProcessBuilder("git", "rev-parse", "--short", "HEAD")
+    val output = File.createTempFile("getGitCommitHash", "")
+    processBuilder.redirectOutput(output)
+    val process = processBuilder.start()
+    process.waitFor()
+    return output.readText().trim()
+}
+
 dokka {
     pluginsConfiguration.html {
         footerMessage.set("© ${years()} <a href=\"https://github.com/gagarski/\">Kirill Gagarski</a>")
@@ -50,7 +59,7 @@ dokka {
         includes.from("README.md")
         suppressGeneratedFiles = false
 
-        jdkVersion = 21
+        jdkVersion = 22
 
         documentedVisibilities.set(setOf(
             VisibilityModifier.Public,
@@ -69,14 +78,7 @@ dokka {
         sourceLink {
             val isSnapshot = version.toString().split("-").let { it[it.lastIndex] } == "SNAPSHOT"
             val urlVersion = if (isSnapshot) {
-                val os = ByteArrayOutputStream()
-                exec {
-                    workingDir = rootDir
-                    commandLine("git", "rev-parse", "--short", "HEAD")
-
-                    standardOutput = os
-                }
-                os.toString().trim()
+                getGitCommitHash()
             } else {
                 "v${version}"
             }

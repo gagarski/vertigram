@@ -10,7 +10,7 @@ import ski.gagar.vertigram.util.NoPosArgs
 /**
  * Telegram [setStickerSetThumbnail](https://core.telegram.org/bots/api#setstickersetthumbnail) method.
  *
- * For up-to-date documentation please consult the official Telegram docs.
+ * For up-to-date documentation, please consult the official Telegram docs.
  */
 @TelegramCodegen.Method
 data class SetStickerSetThumbnail internal constructor(

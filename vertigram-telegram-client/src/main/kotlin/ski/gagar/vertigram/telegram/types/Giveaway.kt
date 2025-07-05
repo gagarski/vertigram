@@ -8,7 +8,7 @@ import java.time.Instant
 /**
  * Telegram [Giveaway](https://core.telegram.org/bots/api#giveaway) type.
  *
- * For up-to-date documentation please consult the official Telegram docs.
+ * For up-to-date documentation, please consult the official Telegram docs.
  */
 @TelegramCodegen.Type
 data class Giveaway internal constructor(
@@ -25,7 +25,7 @@ data class Giveaway internal constructor(
     /**
      * Telegram [GiveawayWinners](https://core.telegram.org/bots/api#giveawaywinners) type.
      *
-     * For up-to-date documentation please consult the official Telegram docs.
+     * For up-to-date documentation, please consult the official Telegram docs.
      */
     @TelegramCodegen.Type
     data class Winners internal constructor(

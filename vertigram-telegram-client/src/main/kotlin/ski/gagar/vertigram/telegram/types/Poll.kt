@@ -19,7 +19,7 @@ import java.time.Instant
  *
  * Also classes directly related to polls are nested
  *
- * For up-to-date documentation please consult the official Telegram docs.
+ * For up-to-date documentation, please consult the official Telegram docs.
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", include = JsonTypeInfo.As.EXISTING_PROPERTY)
 @JsonSubTypes(
@@ -94,7 +94,7 @@ interface Poll : HasQuestionWithEntities {
     /**
      * Telegram [PollOption](https://core.telegram.org/bots/api#polloption) type.
      *
-     * For up-to-date documentation please consult the official Telegram docs.
+     * For up-to-date documentation, please consult the official Telegram docs.
      */
     @TelegramCodegen.Type(wrapRichText = false)
     data class Option internal constructor(
@@ -108,7 +108,7 @@ interface Poll : HasQuestionWithEntities {
     /**
      * Telegram [PollAnswer](https://core.telegram.org/bots/api#pollanswer) type.
      *
-     * For up-to-date documentation please consult the official Telegram docs.
+     * For up-to-date documentation, please consult the official Telegram docs.
      */
     @TelegramCodegen.Type
     data class Answer internal constructor(

@@ -11,7 +11,7 @@ import ski.gagar.vertigram.util.NoPosArgs
  *
  * This class has all the class related to forum topics nested
  *
- * For up-to-date documentation please consult the official Telegram docs.
+ * For up-to-date documentation, please consult the official Telegram docs.
  */
 @TelegramCodegen.Type
 data class ForumTopic internal constructor(

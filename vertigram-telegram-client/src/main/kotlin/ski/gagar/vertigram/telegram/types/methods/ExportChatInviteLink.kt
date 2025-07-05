@@ -7,7 +7,7 @@ import ski.gagar.vertigram.telegram.types.util.ChatId
 /**
  * Telegram [exportChatInviteLink](https://core.telegram.org/bots/api#exportchatinvitelink) method.
  *
- * For up-to-date documentation please consult the official Telegram docs.
+ * For up-to-date documentation, please consult the official Telegram docs.
  */
 @TelegramCodegen.Method
 data class ExportChatInviteLink internal constructor(

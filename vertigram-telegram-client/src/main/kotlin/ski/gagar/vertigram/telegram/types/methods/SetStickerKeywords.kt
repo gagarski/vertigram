@@ -7,7 +7,7 @@ import ski.gagar.vertigram.util.NoPosArgs
 /**
  * Telegram [setStickerKeywords](https://core.telegram.org/bots/api#setstickerkeywords) method.
  *
- * For up-to-date documentation please consult the official Telegram docs.
+ * For up-to-date documentation, please consult the official Telegram docs.
  */
 @TelegramCodegen.Method
 data class SetStickerKeywords internal constructor(

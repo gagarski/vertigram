@@ -7,7 +7,7 @@ import ski.gagar.vertigram.util.NoPosArgs
 /**
  * Telegram [GameHighScore](https://core.telegram.org/bots/api#gamehighscore) type.
  *
- * For up-to-date documentation please consult the official Telegram docs.
+ * For up-to-date documentation, please consult the official Telegram docs.
  */
 @TelegramCodegen.Type
 data class GameHighScore internal constructor(

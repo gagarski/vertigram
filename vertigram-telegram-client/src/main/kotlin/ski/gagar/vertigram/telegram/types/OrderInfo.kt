@@ -7,7 +7,7 @@ import ski.gagar.vertigram.util.NoPosArgs
 /**
  * Telegram [OrderInfo](https://core.telegram.org/bots/api#orderinfo) type.
  *
- * For up-to-date documentation please consult the official Telegram docs.
+ * For up-to-date documentation, please consult the official Telegram docs.
  */
 @TelegramCodegen.Type
 data class OrderInfo internal constructor(

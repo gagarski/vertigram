@@ -7,7 +7,7 @@ import ski.gagar.vertigram.util.NoPosArgs
 /**
  * Telegram [SentWebAppMessage](https://core.telegram.org/bots/api#sentwebappmessage) type.
  *
- * For up-to-date documentation please consult the official Telegram docs.
+ * For up-to-date documentation, please consult the official Telegram docs.
  */
 @TelegramCodegen.Type
 data class SentWebAppMessage internal constructor(

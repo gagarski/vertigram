@@ -8,7 +8,7 @@ import ski.gagar.vertigram.util.NoPosArgs
 /**
  * Telegram [getStickerSet](https://core.telegram.org/bots/api#getstickerset) method.
  *
- * For up-to-date documentation please consult the official Telegram docs.
+ * For up-to-date documentation, please consult the official Telegram docs.
  */
 @TelegramCodegen.Method
 data class GetStickerSet internal constructor(

@@ -8,7 +8,7 @@ import java.time.Instant
 /**
  * Telegram [ChatBoostRemoved](https://core.telegram.org/bots/api#chatboostremoved) type.
  *
- * For up-to-date documentation please consult the official Telegram docs.
+ * For up-to-date documentation, please consult the official Telegram docs.
  */
 @TelegramCodegen.Type
 data class ChatBoostRemoved internal constructor(

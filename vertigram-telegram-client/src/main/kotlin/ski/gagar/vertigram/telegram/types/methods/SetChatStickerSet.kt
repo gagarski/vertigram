@@ -9,7 +9,7 @@ import ski.gagar.vertigram.util.NoPosArgs
 /**
  * Telegram [setChatStickerSet](https://core.telegram.org/bots/api#setchatstickerset) method.
  *
- * For up-to-date documentation please consult the official Telegram docs.
+ * For up-to-date documentation, please consult the official Telegram docs.
  */
 @TelegramCodegen.Method
 data class SetChatStickerSet internal constructor(

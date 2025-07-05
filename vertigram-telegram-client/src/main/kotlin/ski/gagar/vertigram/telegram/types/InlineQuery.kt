@@ -16,7 +16,7 @@ import java.time.Duration
 /**
  * Telegram [InlineQuery](https://core.telegram.org/bots/api#inlinequery) type.
  *
- * For up-to-date documentation please consult the official Telegram docs.
+ * For up-to-date documentation, please consult the official Telegram docs.
  */
 @TelegramCodegen.Type
 data class InlineQuery internal constructor(
@@ -33,7 +33,7 @@ data class InlineQuery internal constructor(
      * Subtypes (which are nested) represent the subtypes, described by Telegram docs with more
      * names given they are nested into [InlineQuery.InputMessageContent] class. The rule here is the following:
      * `InputXxxMessageContent` Telegram type becomes `InlineQuery.InputMessageContent.Xxx`.
-     * For up-to-date documentation please consult the official Telegram docs.
+     * For up-to-date documentation, please consult the official Telegram docs.
      */
     @JsonTypeInfo(use = JsonTypeInfo.Id.DEDUCTION,
         defaultImpl = InputMessageContent.Location::class // Looks VERY flaky, see https://github.com/FasterXML/jackson-databind/issues/2976
@@ -49,7 +49,7 @@ data class InlineQuery internal constructor(
         /**
          * Telegram [InputTextMessageContent](https://core.telegram.org/bots/api#inputtextmessagecontent) type.
          *
-         * For up-to-date documentation please consult the official Telegram docs.
+         * For up-to-date documentation, please consult the official Telegram docs.
          */
         @TelegramCodegen.Type
         data class Text internal constructor(
@@ -67,7 +67,7 @@ data class InlineQuery internal constructor(
         /**
          * Telegram [InputLocationMessageContent](https://core.telegram.org/bots/api#inputlocationmessagecontent) type.
          *
-         * For up-to-date documentation please consult the official Telegram docs.
+         * For up-to-date documentation, please consult the official Telegram docs.
          */
         @TelegramCodegen.Type
         data class Location internal constructor(
@@ -84,7 +84,7 @@ data class InlineQuery internal constructor(
         /**
          * Telegram [InputVenueMessageContent](https://core.telegram.org/bots/api#inputvenuemessagecontent) type.
          *
-         * For up-to-date documentation please consult the official Telegram docs.
+         * For up-to-date documentation, please consult the official Telegram docs.
          */
         @TelegramCodegen.Type
         data class Venue internal constructor(
@@ -103,7 +103,7 @@ data class InlineQuery internal constructor(
         /**
          * Telegram [InputContactMessageContent](https://core.telegram.org/bots/api#inputcontactmessagecontent) type.
          *
-         * For up-to-date documentation please consult the official Telegram docs.
+         * For up-to-date documentation, please consult the official Telegram docs.
          */
         @TelegramCodegen.Type
         data class Contact internal constructor(
@@ -118,7 +118,7 @@ data class InlineQuery internal constructor(
         /**
          * Telegram [InputInvoiceMessageContent](https://core.telegram.org/bots/api#inputinvoicemessagecontent) type.
          *
-         * For up-to-date documentation please consult the official Telegram docs.
+         * For up-to-date documentation, please consult the official Telegram docs.
          */
         @TelegramCodegen.Type
         data class Invoice internal constructor(
@@ -157,7 +157,7 @@ data class InlineQuery internal constructor(
      * `InlineQueryResultXxx` Telegram type becomes `InlineQuery.Result.Xxx` and
      * `InlineQueryResultCachedXxx` Telegram type becomes `InlineQuery.Result.Xxx.Cached`.
      *
-     * For up-to-date documentation please consult the official Telegram docs.
+     * For up-to-date documentation, please consult the official Telegram docs.
      */
     @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", include = JsonTypeInfo.As.EXISTING_PROPERTY)
     @JsonSubTypes(
@@ -194,7 +194,7 @@ data class InlineQuery internal constructor(
          *
          * This class is NOT a subclass of [Result]
          *
-         * For up-to-date documentation please consult the official Telegram docs.
+         * For up-to-date documentation, please consult the official Telegram docs.
          */
         @TelegramCodegen.Type(wrapRichText = false)
         data class Button internal constructor(
@@ -208,7 +208,7 @@ data class InlineQuery internal constructor(
         /**
          * Telegram [InlineQueryResultArticle](https://core.telegram.org/bots/api#inlinequeryresultarticle) type.
          *
-         * For up-to-date documentation please consult the official Telegram docs.
+         * For up-to-date documentation, please consult the official Telegram docs.
          */
         @TelegramCodegen.Type
         data class Article internal constructor(
@@ -230,7 +230,7 @@ data class InlineQuery internal constructor(
         /**
          * Telegram [InlineQueryResultAudio](https://core.telegram.org/bots/api#inlinequeryresultaudio) type.
          *
-         * For up-to-date documentation please consult the official Telegram docs.
+         * For up-to-date documentation, please consult the official Telegram docs.
          */
         @TelegramCodegen.Type
         data class Audio internal constructor(
@@ -250,7 +250,7 @@ data class InlineQuery internal constructor(
             /**
              * Telegram [InlineQueryResultCachedAudio](https://core.telegram.org/bots/api#inlinequeryresultcachedaudio) type.
              *
-             * For up-to-date documentation please consult the official Telegram docs.
+             * For up-to-date documentation, please consult the official Telegram docs.
              */
             @TelegramCodegen.Type
             data class Cached internal constructor(
@@ -274,7 +274,7 @@ data class InlineQuery internal constructor(
         /**
          * Telegram [InlineQueryResultContact](https://core.telegram.org/bots/api#inlinequeryresultcontact) type.
          *
-         * For up-to-date documentation please consult the official Telegram docs.
+         * For up-to-date documentation, please consult the official Telegram docs.
          */
         @TelegramCodegen.Type
         data class Contact internal constructor(
@@ -297,7 +297,7 @@ data class InlineQuery internal constructor(
         /**
          * Telegram [InlineQueryResultDocument](https://core.telegram.org/bots/api#inlinequeryresultdocument) type.
          *
-         * For up-to-date documentation please consult the official Telegram docs.
+         * For up-to-date documentation, please consult the official Telegram docs.
          */
         @TelegramCodegen.Type
         data class Document internal constructor(
@@ -320,7 +320,7 @@ data class InlineQuery internal constructor(
             /**
              * Telegram [InlineQueryResultCachedDocument](https://core.telegram.org/bots/api#inlinequeryresultcacheddocument) type.
              *
-             * For up-to-date documentation please consult the official Telegram docs.
+             * For up-to-date documentation, please consult the official Telegram docs.
              */
             @TelegramCodegen.Type
             data class Cached internal constructor(
@@ -345,7 +345,7 @@ data class InlineQuery internal constructor(
         /**
          * Telegram [InlineQueryResultGame](https://core.telegram.org/bots/api#inlinequeryresultgame) type.
          *
-         * For up-to-date documentation please consult the official Telegram docs.
+         * For up-to-date documentation, please consult the official Telegram docs.
          */
         @TelegramCodegen.Type
         data class Game internal constructor(
@@ -361,7 +361,7 @@ data class InlineQuery internal constructor(
         /**
          * Telegram [InlineQueryResultGif](https://core.telegram.org/bots/api#inlinequeryresultgif) type.
          *
-         * For up-to-date documentation please consult the official Telegram docs.
+         * For up-to-date documentation, please consult the official Telegram docs.
          */
         @TelegramCodegen.Type
         data class Gif internal constructor(
@@ -385,7 +385,7 @@ data class InlineQuery internal constructor(
             /**
              * Telegram [InlineQueryResultCachedGif](https://core.telegram.org/bots/api#inlinequeryresultcachedgif) type.
              *
-             * For up-to-date documentation please consult the official Telegram docs.
+             * For up-to-date documentation, please consult the official Telegram docs.
              */
             @TelegramCodegen.Type
             data class Cached internal constructor(
@@ -410,7 +410,7 @@ data class InlineQuery internal constructor(
         /**
          * Telegram [InlineQueryResultLocation](https://core.telegram.org/bots/api#inlinequeryresultlocation) type.
          *
-         * For up-to-date documentation please consult the official Telegram docs.
+         * For up-to-date documentation, please consult the official Telegram docs.
          */
         @TelegramCodegen.Type
         data class Location internal constructor(
@@ -437,7 +437,7 @@ data class InlineQuery internal constructor(
         /**
          * Telegram [InlineQueryResultMpeg4Gif](https://core.telegram.org/bots/api#inlinequeryresultmpeg4gif) type.
          *
-         * For up-to-date documentation please consult the official Telegram docs.
+         * For up-to-date documentation, please consult the official Telegram docs.
          */
         @TelegramCodegen.Type
         data class Mpeg4Gif internal constructor(
@@ -461,7 +461,7 @@ data class InlineQuery internal constructor(
             /**
              * Telegram [InlineQueryResultCachedMpeg4Gif](https://core.telegram.org/bots/api#inlinequeryresultcachedmpeg4gif) type.
              *
-             * For up-to-date documentation please consult the official Telegram docs.
+             * For up-to-date documentation, please consult the official Telegram docs.
              */
             @TelegramCodegen.Type
             data class Cached internal constructor(
@@ -487,7 +487,7 @@ data class InlineQuery internal constructor(
         /**
          * Telegram [InlineQueryResultPhoto](https://core.telegram.org/bots/api#inlinequeryresultphoto) type.
          *
-         * For up-to-date documentation please consult the official Telegram docs.
+         * For up-to-date documentation, please consult the official Telegram docs.
          */
         @TelegramCodegen.Type
         data class Photo internal constructor(
@@ -511,7 +511,7 @@ data class InlineQuery internal constructor(
             /**
              * Telegram [InlineQueryResultCachedPhoto](https://core.telegram.org/bots/api#inlinequeryresultcachedphoto) type.
              *
-             * For up-to-date documentation please consult the official Telegram docs.
+             * For up-to-date documentation, please consult the official Telegram docs.
              */
             @TelegramCodegen.Type
             data class Cached internal constructor(
@@ -538,7 +538,7 @@ data class InlineQuery internal constructor(
             /**
              * Telegram [InlineQueryResultCachedSticker](https://core.telegram.org/bots/api#inlinequeryresultcachedsticker) type.
              *
-             * For up-to-date documentation please consult the official Telegram docs.
+             * For up-to-date documentation, please consult the official Telegram docs.
              */
             @TelegramCodegen.Type
             data class Cached internal constructor(
@@ -556,7 +556,7 @@ data class InlineQuery internal constructor(
         /**
          * Telegram [InlineQueryResultVenue](https://core.telegram.org/bots/api#inlinequeryresultvenue) type.
          *
-         * For up-to-date documentation please consult the official Telegram docs.
+         * For up-to-date documentation, please consult the official Telegram docs.
          */
         @TelegramCodegen.Type
         data class Venue internal constructor(
@@ -583,7 +583,7 @@ data class InlineQuery internal constructor(
         /**
          * Telegram [InlineQueryResultVideo](https://core.telegram.org/bots/api#inlinequeryresultvideo) type.
          *
-         * For up-to-date documentation please consult the official Telegram docs.
+         * For up-to-date documentation, please consult the official Telegram docs.
          */
         @TelegramCodegen.Type
         data class Video internal constructor(
@@ -608,7 +608,7 @@ data class InlineQuery internal constructor(
             /**
              * Telegram [InlineQueryResultCachedVideo](https://core.telegram.org/bots/api#inlinequeryresultcachedvideo) type.
              *
-             * For up-to-date documentation please consult the official Telegram docs.
+             * For up-to-date documentation, please consult the official Telegram docs.
              */
             @TelegramCodegen.Type
             data class Cached internal constructor(
@@ -634,7 +634,7 @@ data class InlineQuery internal constructor(
         /**
          * Telegram [InlineQueryResultVoice](https://core.telegram.org/bots/api#inlinequeryresultvoice) type.
          *
-         * For up-to-date documentation please consult the official Telegram docs.
+         * For up-to-date documentation, please consult the official Telegram docs.
          */
         @TelegramCodegen.Type
         data class Voice internal constructor(
@@ -653,7 +653,7 @@ data class InlineQuery internal constructor(
             /**
              * Telegram [InlineQueryResultCachedVoice](https://core.telegram.org/bots/api#inlinequeryresultcachedvoice) type.
              *
-             * For up-to-date documentation please consult the official Telegram docs.
+             * For up-to-date documentation, please consult the official Telegram docs.
              */
             @TelegramCodegen.Type
             data class Cached internal constructor(

@@ -11,7 +11,7 @@ import ski.gagar.vertigram.util.NoPosArgs
 /**
  * Telegram [ChatBackground](https://core.telegram.org/bots/api#chatbackground) type.
  *
- * For up-to-date documentation please consult the official Telegram docs.
+ * For up-to-date documentation, please consult the official Telegram docs.
  */
 @TelegramCodegen.Type
 data class ChatBackground internal constructor(
@@ -30,7 +30,7 @@ data class ChatBackground internal constructor(
         /**
          * Telegram [BackgroundFill](https://core.telegram.org/bots/api#backgroundfill) type.
          *
-         * For up-to-date documentation please consult the official Telegram docs.
+         * For up-to-date documentation, please consult the official Telegram docs.
          */
         @TelegramCodegen.Type
         data class Fill internal constructor(
@@ -51,7 +51,7 @@ data class ChatBackground internal constructor(
                 /**
                  * Telegram [BackgroundFillSolid](https://core.telegram.org/bots/api#backgroundfillsolid) type.
                  *
-                 * For up-to-date documentation please consult the official Telegram docs.
+                 * For up-to-date documentation, please consult the official Telegram docs.
                  */
                 @TelegramCodegen.Type
                 data class Solid internal constructor(
@@ -64,7 +64,7 @@ data class ChatBackground internal constructor(
                 /**
                  * Telegram [BackgroundFillGradient](https://core.telegram.org/bots/api#backgroundfillgradient) type.
                  *
-                 * For up-to-date documentation please consult the official Telegram docs.
+                 * For up-to-date documentation, please consult the official Telegram docs.
                  */
                 @TelegramCodegen.Type
                 data class Gradient internal constructor(
@@ -79,7 +79,7 @@ data class ChatBackground internal constructor(
                 /**
                  * Telegram [BackgroundFillFreeformGradient](https://core.telegram.org/bots/api#backgroundfillfreeformgradient) type.
                  *
-                 * For up-to-date documentation please consult the official Telegram docs.
+                 * For up-to-date documentation, please consult the official Telegram docs.
                  */
                 @TelegramCodegen.Type
                 data class FreeformGradient internal constructor(
@@ -114,7 +114,7 @@ data class ChatBackground internal constructor(
         /**
          * Telegram [BackgroundTypeWallpaper](https://core.telegram.org/bots/api#backgroundtypewallpaper) type.
          *
-         * For up-to-date documentation please consult the official Telegram docs.
+         * For up-to-date documentation, please consult the official Telegram docs.
          */
         @TelegramCodegen.Type
         data class Wallpaper internal constructor(
@@ -132,7 +132,7 @@ data class ChatBackground internal constructor(
         /**
          * Telegram [BackgroundTypePattern](https://core.telegram.org/bots/api#backgroundtypepattern) type.
          *
-         * For up-to-date documentation please consult the official Telegram docs.
+         * For up-to-date documentation, please consult the official Telegram docs.
          */
         @TelegramCodegen.Type
         data class Pattern internal constructor(
@@ -151,7 +151,7 @@ data class ChatBackground internal constructor(
         /**
          * Telegram [BackgroundTypeChatTheme](https://core.telegram.org/bots/api#backgroundtypechattheme) type.
          *
-         * For up-to-date documentation please consult the official Telegram docs.
+         * For up-to-date documentation, please consult the official Telegram docs.
          */
         @TelegramCodegen.Type
         data class ChatTheme internal constructor(

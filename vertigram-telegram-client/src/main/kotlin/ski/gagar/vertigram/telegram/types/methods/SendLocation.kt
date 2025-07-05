@@ -8,14 +8,13 @@ import ski.gagar.vertigram.telegram.types.Message
 import ski.gagar.vertigram.telegram.types.ReplyMarkup
 import ski.gagar.vertigram.telegram.types.ReplyParameters
 import ski.gagar.vertigram.telegram.types.util.ChatId
-import ski.gagar.vertigram.util.NoPosArgs
 import java.time.Duration
 import java.time.temporal.ChronoUnit
 
 /**
  * Telegram [sendLocation](https://core.telegram.org/bots/api#sendlocation) method.
  *
- * For up-to-date documentation please consult the official Telegram docs.
+ * For up-to-date documentation, please consult the official Telegram docs.
  */
 @Throttled
 @TelegramCodegen.Method
@@ -40,6 +39,6 @@ data class SendLocation internal constructor(
     val isLivePeriodIndefinite = livePeriod?.truncatedTo(ChronoUnit.SECONDS) == DURATION_INDEFINITE
 
     companion object {
-        val DURATION_INDEFINITE = Duration.ofSeconds(0x7FFFFFFF)
+        val DURATION_INDEFINITE: Duration = Duration.ofSeconds(0x7FFFFFFF)
     }
 }

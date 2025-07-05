@@ -87,7 +87,7 @@ class AsPropertyTypeWithDeductionDeserializer(
             config: DeserializationConfig,
             subTypeValidator: PolymorphicTypeValidator
         ): Map<String, AsDeductionTypeDeserializer> {
-            val idRes = ClassNameIdResolver.construct(bt, config, subTypeValidator)
+            val idRes = ClassNameIdResolver(bt, config.typeFactory, subtypes, subTypeValidator)
             return subtypes
                 .groupBy {
                     it.getId(config.isEnabled(MapperFeature.ACCEPT_CASE_INSENSITIVE_VALUES))

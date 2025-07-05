@@ -7,7 +7,7 @@ import ski.gagar.vertigram.util.NoPosArgs
 /**
  * Telegram [refundStarPayment](https://core.telegram.org/bots/api#refundstarpayment) method.
  *
- * For up-to-date documentation please consult the official Telegram docs.
+ * For up-to-date documentation, please consult the official Telegram docs.
  */
 @TelegramCodegen.Method
 data class RefundStarPayment internal constructor(

@@ -9,7 +9,7 @@ import ski.gagar.vertigram.telegram.types.ForumTopic
 /**
  * Telegram [createForumTopic](https://core.telegram.org/bots/api#createforumtopic) method.
  *
- * For up-to-date documentation please consult the official Telegram docs.
+ * For up-to-date documentation, please consult the official Telegram docs.
  */
 @Throttled
 @TelegramCodegen.Method

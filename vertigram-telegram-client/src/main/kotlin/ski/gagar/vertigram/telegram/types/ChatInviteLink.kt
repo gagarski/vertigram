@@ -9,7 +9,7 @@ import java.time.Instant
 /**
  * Telegram [ChatInviteLink](https://core.telegram.org/bots/api#chatinvitelink) type.
  *
- * For up-to-date documentation please consult the official Telegram docs.
+ * For up-to-date documentation, please consult the official Telegram docs.
  */
 @TelegramCodegen.Type
 data class ChatInviteLink internal constructor(

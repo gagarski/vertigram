@@ -8,7 +8,7 @@ import ski.gagar.vertigram.telegram.types.util.ChatId
 /**
  * Telegram [deleteChatPhoto](https://core.telegram.org/bots/api#deletechatphoto) method.
  *
- * For up-to-date documentation please consult the official Telegram docs.
+ * For up-to-date documentation, please consult the official Telegram docs.
  */
 @Throttled
 @TelegramCodegen.Method

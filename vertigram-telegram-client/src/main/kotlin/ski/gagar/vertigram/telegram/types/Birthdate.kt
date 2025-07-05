@@ -8,7 +8,7 @@ import java.time.MonthDay
 /**
  * Telegram [Birthdate](https://core.telegram.org/bots/api#birthdate) type.
  *
- * For up-to-date documentation please consult the official Telegram docs.
+ * For up-to-date documentation, please consult the official Telegram docs.
  */
 sealed interface Birthdate {
     @TelegramCodegen.Type

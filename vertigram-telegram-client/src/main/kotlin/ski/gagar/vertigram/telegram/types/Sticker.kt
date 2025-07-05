@@ -8,7 +8,7 @@ import ski.gagar.vertigram.util.NoPosArgs
 /**
  * Telegram [Sticker](https://core.telegram.org/bots/api#sticker) type.
  *
- * For up-to-date documentation please consult the official Telegram docs.
+ * For up-to-date documentation, please consult the official Telegram docs.
  */
 @TelegramCodegen.Type
 data class Sticker internal constructor(
@@ -33,7 +33,7 @@ data class Sticker internal constructor(
     /**
      * Telegram [MaskPosition](https://core.telegram.org/bots/api#maskposition) type.
      *
-     * For up-to-date documentation please consult the official Telegram docs.
+     * For up-to-date documentation, please consult the official Telegram docs.
      */
     @TelegramCodegen.Type
     data class MaskPosition internal constructor(

@@ -9,7 +9,7 @@ import java.time.Duration
 /**
  * Telegram [Video](https://core.telegram.org/bots/api#video) type.
  *
- * For up-to-date documentation please consult the official Telegram docs.
+ * For up-to-date documentation, please consult the official Telegram docs.
  */
 @TelegramCodegen.Type
 data class Video internal constructor(

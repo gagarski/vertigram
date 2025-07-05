@@ -11,7 +11,7 @@ import ski.gagar.vertigram.telegram.annotations.TelegramMethod
  *
  * Subtypes (which are nested) are two mutually-exclusive cases: OK and error.
  *
- * For up-to-date documentation please consult the official Telegram docs.
+ * For up-to-date documentation, please consult the official Telegram docs.
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "ok", include = JsonTypeInfo.As.EXISTING_PROPERTY)
 @JsonSubTypes(

@@ -10,7 +10,7 @@ import ski.gagar.vertigram.util.NoPosArgs
 /**
  * Telegram [removeUserVerification](https://core.telegram.org/bots/api#removeuserverification) method.
  *
- * For up-to-date documentation please consult the official Telegram docs.
+ * For up-to-date documentation, please consult the official Telegram docs.
  */
 @TelegramCodegen.Method
 data class RemoveUserVerification internal constructor(

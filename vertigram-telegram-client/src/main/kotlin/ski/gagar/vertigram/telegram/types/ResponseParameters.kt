@@ -8,7 +8,7 @@ import java.time.Duration
 /**
  * Telegram [ResponseParameters](https://core.telegram.org/bots/api#responseparameters) type.
  *
- * For up-to-date documentation please consult the official Telegram docs.
+ * For up-to-date documentation, please consult the official Telegram docs.
  */
 @TelegramCodegen.Type
 data class ResponseParameters internal constructor(

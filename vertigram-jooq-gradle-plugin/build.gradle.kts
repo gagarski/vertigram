@@ -29,13 +29,15 @@ dependencies {
     implementation(libs.bundles.jackson)
 }
 
-val generateResources = tasks.create("generateResources") {
+val version = project.version
+
+val generateResources = tasks.register("generateResources") {
     val propFile = file("${layout.buildDirectory.get()}/generated/vertigram-jooq.properties")
     outputs.file(propFile)
     doLast {
         mkdir(propFile.parentFile)
         propFile.writeText("""
-            version=${project.version}
+            version=${version}
             test-containers.version=${libs.versions.testcontainers.get()}
             postgresql-driver.version=${libs.versions.postgresql.get()}
             flyway.version=${libs.versions.flyway.get()}

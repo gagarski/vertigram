@@ -13,7 +13,7 @@ import java.time.Instant
  *
  * The related types (e.g. `ChatBoostSource`) are nested and renamed to more concise name.
  *
- * For up-to-date documentation please consult the official Telegram docs.
+ * For up-to-date documentation, please consult the official Telegram docs.
  */
 @TelegramCodegen.Type
 data class ChatBoost internal constructor(
@@ -25,7 +25,7 @@ data class ChatBoost internal constructor(
     /**
      * Telegram [ChatBoostAdded](https://core.telegram.org/bots/api#chatboostadded) type.
      *
-     * For up-to-date documentation please consult the official Telegram docs.
+     * For up-to-date documentation, please consult the official Telegram docs.
      */
     @TelegramCodegen.Type
     data class Added internal constructor(
@@ -41,7 +41,7 @@ data class ChatBoost internal constructor(
      * names given they are nested into [ChatBoost.Source] class. The rule here is the following:
      * `ChatBoostSourceXxx` Telegram type becomes `ChatBoost.Source.Xxx`.
      *
-     * For up-to-date documentation please consult the official Telegram docs.
+     * For up-to-date documentation, please consult the official Telegram docs.
      */
     @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "source", include = JsonTypeInfo.As.EXISTING_PROPERTY)
     @JsonSubTypes(
@@ -55,7 +55,7 @@ data class ChatBoost internal constructor(
         /**
          * Telegram [ChatBoostSourceGiftCode](https://core.telegram.org/bots/api#chatboostsourcegiftcode) type.
          *
-         * For up-to-date documentation please consult the official Telegram docs.
+         * For up-to-date documentation, please consult the official Telegram docs.
          */
         @TelegramCodegen.Type
         data class GiftCode internal constructor(
@@ -68,7 +68,7 @@ data class ChatBoost internal constructor(
         /**
          * Telegram [ChatBoostSourceGiveaway](https://core.telegram.org/bots/api#chatboostsourcegiveaway) type.
          *
-         * For up-to-date documentation please consult the official Telegram docs.
+         * For up-to-date documentation, please consult the official Telegram docs.
          */
         @TelegramCodegen.Type
         data class Giveaway internal constructor(
@@ -85,7 +85,7 @@ data class ChatBoost internal constructor(
         /**
          * Telegram [ChatBoostSourcePremium](https://core.telegram.org/bots/api#chatboostsourcepremium) type.
          *
-         * For up-to-date documentation please consult the official Telegram docs.
+         * For up-to-date documentation, please consult the official Telegram docs.
          */
         @TelegramCodegen.Type
         data class Premium internal constructor(

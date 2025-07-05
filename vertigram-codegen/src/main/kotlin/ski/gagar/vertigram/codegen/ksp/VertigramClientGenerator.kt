@@ -253,7 +253,7 @@ class VertigramClientGenerator(
         addKdoc("""
              Telegram [${telegramName}](https://core.telegram.org/bots/api#${telegramName.lowercase()}) method.
              
-             For up-to-date documentation please consult the official Telegram docs.
+             For up-to-date documentation, please consult the official Telegram docs.
              
              This function is auto-generated from [%T]
         """.trimIndent(), from)

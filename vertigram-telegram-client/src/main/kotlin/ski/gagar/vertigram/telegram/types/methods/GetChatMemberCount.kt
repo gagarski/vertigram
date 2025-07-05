@@ -9,7 +9,7 @@ import ski.gagar.vertigram.util.NoPosArgs
 /**
  * Telegram [getChatMemberCount](https://core.telegram.org/bots/api#getchatmembercount) method.
  *
- * For up-to-date documentation please consult the official Telegram docs.
+ * For up-to-date documentation, please consult the official Telegram docs.
  */
 @TelegramCodegen.Method
 data class GetChatMemberCount internal constructor(

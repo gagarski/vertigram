@@ -7,7 +7,7 @@ import ski.gagar.vertigram.telegram.types.StarTransactions
 /**
  * Telegram [getStarTransactions](https://core.telegram.org/bots/api#getstartransactions) method.
  *
- * For up-to-date documentation please consult the official Telegram docs.
+ * For up-to-date documentation, please consult the official Telegram docs.
  */
 @TelegramCodegen.Method
 data class GetStarTransactions internal constructor(

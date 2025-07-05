@@ -28,7 +28,7 @@ interface BaseInputMedia<T> {
  * `InputMediaXxx` Telegram type becomes `InputMedia.Xxx`. The exception is [InputMedia.Sticker]
  * which is not a subtype of [InputMedia].
  *
- * For up-to-date documentation please consult the official Telegram docs.
+ * For up-to-date documentation, please consult the official Telegram docs.
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", include = JsonTypeInfo.As.EXISTING_PROPERTY)
 @JsonSubTypes(
@@ -47,7 +47,7 @@ sealed interface InputMedia : BaseInputMedia<InputMedia.Type> {
     /**
      * Telegram [InputMediaAnimation](https://core.telegram.org/bots/api#inputmediaanimation) type.
      *
-     * For up-to-date documentation please consult the official Telegram docs.
+     * For up-to-date documentation, please consult the official Telegram docs.
      */
     @TelegramCodegen.Type
     data class Animation internal constructor(
@@ -73,7 +73,7 @@ sealed interface InputMedia : BaseInputMedia<InputMedia.Type> {
     /**
      * Telegram [InputMediaAudio](https://core.telegram.org/bots/api#inputmediaaudio) type.
      *
-     * For up-to-date documentation please consult the official Telegram docs.
+     * For up-to-date documentation, please consult the official Telegram docs.
      */
     @TelegramCodegen.Type
     data class Audio internal constructor(
@@ -97,7 +97,7 @@ sealed interface InputMedia : BaseInputMedia<InputMedia.Type> {
     /**
      * Telegram [InputMediaDocument](https://core.telegram.org/bots/api#inputmediadocument) type.
      *
-     * For up-to-date documentation please consult the official Telegram docs.
+     * For up-to-date documentation, please consult the official Telegram docs.
      */
     @TelegramCodegen.Type
     data class Document internal constructor(
@@ -119,7 +119,7 @@ sealed interface InputMedia : BaseInputMedia<InputMedia.Type> {
     /**
      * Telegram [InputMediaPhoto](https://core.telegram.org/bots/api#inputmediaphoto) type.
      *
-     * For up-to-date documentation please consult the official Telegram docs.
+     * For up-to-date documentation, please consult the official Telegram docs.
      */
     @TelegramCodegen.Type
     data class Photo internal constructor(
@@ -142,7 +142,7 @@ sealed interface InputMedia : BaseInputMedia<InputMedia.Type> {
     /**
      * Telegram [InputMediaVideo](https://core.telegram.org/bots/api#inputmediavideo) type.
      *
-     * For up-to-date documentation please consult the official Telegram docs.
+     * For up-to-date documentation, please consult the official Telegram docs.
      */
     @TelegramCodegen.Type
     data class Video internal constructor(
@@ -170,7 +170,7 @@ sealed interface InputMedia : BaseInputMedia<InputMedia.Type> {
     /**
      * Telegram [InputSticker](https://core.telegram.org/bots/api#inputsticker) type.
      *
-     * For up-to-date documentation please consult the official Telegram docs.
+     * For up-to-date documentation, please consult the official Telegram docs.
      */
     @TelegramCodegen.Type
     data class Sticker internal constructor(
@@ -188,7 +188,7 @@ sealed interface InputMedia : BaseInputMedia<InputMedia.Type> {
     /**
      * Telegram [InputPaidMedia](https://core.telegram.org/bots/api#inputpaidmedia) type.
      *
-     * For up-to-date documentation please consult the official Telegram docs.
+     * For up-to-date documentation, please consult the official Telegram docs.
      */
     sealed interface Paid : BaseInputMedia<Paid.Type> {
         override val type: Type
@@ -199,7 +199,7 @@ sealed interface InputMedia : BaseInputMedia<InputMedia.Type> {
         /**
          * Telegram [InputPaidMediaPhoto](https://core.telegram.org/bots/api#inputpaidmediaphoto) type.
          *
-         * For up-to-date documentation please consult the official Telegram docs.
+         * For up-to-date documentation, please consult the official Telegram docs.
          */
         @TelegramCodegen.Type
         data class Photo internal constructor(
@@ -222,7 +222,7 @@ sealed interface InputMedia : BaseInputMedia<InputMedia.Type> {
         /**
          * Telegram [InputPaidMediaVideo](https://core.telegram.org/bots/api#inputpaidmediavideo) type.
          *
-         * For up-to-date documentation please consult the official Telegram docs.
+         * For up-to-date documentation, please consult the official Telegram docs.
          */
         @TelegramCodegen.Type
         data class Video internal constructor(

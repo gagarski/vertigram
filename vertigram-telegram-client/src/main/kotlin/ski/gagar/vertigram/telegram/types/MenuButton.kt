@@ -14,7 +14,7 @@ import ski.gagar.vertigram.util.NoPosArgs
  * names given they are nested into [MenuButton] class. The rule here is the following:
  * `MenuButtonXxx` Telegram type becomes `MenuButton.Xxx`.
  *
- * For up-to-date documentation please consult the official Telegram docs.
+ * For up-to-date documentation, please consult the official Telegram docs.
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", include = JsonTypeInfo.As.EXISTING_PROPERTY)
 @JsonSubTypes(
@@ -28,7 +28,7 @@ sealed interface MenuButton {
     /**
      * Telegram [MenuButtonCommands](https://core.telegram.org/bots/api#menubuttoncommands) type.
      *
-     * For up-to-date documentation please consult the official Telegram docs.
+     * For up-to-date documentation, please consult the official Telegram docs.
      */
     data object Commands : MenuButton {
         override val type: Type = Type.COMMANDS
@@ -37,7 +37,7 @@ sealed interface MenuButton {
     /**
      * Telegram [MenuButtonDefault](https://core.telegram.org/bots/api#menubuttondefault) type.
      *
-     * For up-to-date documentation please consult the official Telegram docs.
+     * For up-to-date documentation, please consult the official Telegram docs.
      */
     data object Default : MenuButton {
         override val type: Type = Type.DEFAULT
@@ -46,7 +46,7 @@ sealed interface MenuButton {
     /**
      * Telegram [MenuButtonWebApp](https://core.telegram.org/bots/api#menubuttonwebapp) type.
      *
-     * For up-to-date documentation please consult the official Telegram docs.
+     * For up-to-date documentation, please consult the official Telegram docs.
      */
     @TelegramCodegen.Type(wrapRichText = false)
     data class WebApp internal constructor(

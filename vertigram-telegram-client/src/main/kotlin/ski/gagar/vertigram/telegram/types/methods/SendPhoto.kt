@@ -18,7 +18,7 @@ import ski.gagar.vertigram.util.NoPosArgs
 /**
  * Telegram [sendPhoto](https://core.telegram.org/bots/api#sendphoto) method.
  *
- * For up-to-date documentation please consult the official Telegram docs.
+ * For up-to-date documentation, please consult the official Telegram docs.
  */
 @Throttled
 @TelegramCodegen.Method

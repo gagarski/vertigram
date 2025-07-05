@@ -23,7 +23,7 @@ interface IUser {
  *
  * This class does not have fields which are marked as "Returned only in `getMe`"
  *
- * For up-to-date documentation please consult the official Telegram docs.
+ * For up-to-date documentation, please consult the official Telegram docs.
  *
  * @see Me
  */
@@ -43,7 +43,7 @@ data class User internal constructor(
      * Telegram [User](https://core.telegram.org/bots/api#user) type, including fields,
      * marked as "Returned only in `getMe`".
      *
-     * For up-to-date documentation please consult the official Telegram docs.
+     * For up-to-date documentation, please consult the official Telegram docs.
      */
     @Suppress("INAPPLICABLE_JVM_NAME")
     @TelegramCodegen.Type

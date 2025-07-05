@@ -19,7 +19,7 @@ import java.time.Duration
 /**
  * Telegram [sendVoice](https://core.telegram.org/bots/api#sendvoice) method.
  *
- * For up-to-date documentation please consult the official Telegram docs.
+ * For up-to-date documentation, please consult the official Telegram docs.
  */
 @Throttled
 @TelegramCodegen.Method

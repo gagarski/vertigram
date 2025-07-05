@@ -9,7 +9,6 @@ plugins {
     signing
     alias(libsInternal.plugins.release)
     alias(libsInternal.plugins.nexus)
-    alias(libsInternal.plugins.ssh)
 }
 
 dependencies {

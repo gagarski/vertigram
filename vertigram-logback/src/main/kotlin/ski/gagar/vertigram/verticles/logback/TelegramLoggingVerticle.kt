@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.type.TypeReference
 import kotlinx.coroutines.Job
 import ski.gagar.vertigram.Vertigram
 import ski.gagar.vertigram.coroutines.setTimerNonCancellable
-import ski.gagar.vertigram.util.jackson.typeReference
 import ski.gagar.vertigram.logback.Level
 import ski.gagar.vertigram.logback.LogEvent
 import ski.gagar.vertigram.logback.asString
@@ -15,8 +14,8 @@ import ski.gagar.vertigram.telegram.markup.textMarkdown
 import ski.gagar.vertigram.telegram.methods.sendMessage
 import ski.gagar.vertigram.telegram.types.User
 import ski.gagar.vertigram.telegram.types.util.toChatId
+import ski.gagar.vertigram.util.jackson.typeReference
 import ski.gagar.vertigram.verticles.common.VertigramVerticle
-import ski.gagar.vertigram.verticles.logback.TelegramLoggingVerticle.Config
 import java.time.Duration
 
 /**
@@ -24,8 +23,8 @@ import java.time.Duration
  *
  * The _first_ logging event appears in the chat immediately.
  * Then (if [Config.accumulationPeriod] is set), the log events are accumulated during this period and the stats
- * are sent in the end of the period.
- * After the end of accumulation period, the next log event considered _first_ again.
+ * are sent at the end of the period.
+ * After the end of the accumulation period, the next log event considered _first_ again.
  */
 class TelegramLoggingVerticle : VertigramVerticle<TelegramLoggingVerticle.Config>() {
     override val configTypeReference: TypeReference<Config> = typeReference()

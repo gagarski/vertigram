@@ -6,7 +6,7 @@ import java.time.Instant
 /**
  * Telegram [BusinessConnection](https://core.telegram.org/bots/api#businessconnection) type.
  *
- * For up-to-date documentation please consult the official Telegram docs.
+ * For up-to-date documentation, please consult the official Telegram docs.
  */
 @TelegramCodegen.Type
 data class BusinessConnection internal constructor(

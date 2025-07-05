@@ -11,7 +11,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo
  * Most of the subtypes are effectively the same (type+offset+length),
  * which means you can access the fields using the [MessageEntity] interface.
  *
- * For up-to-date documentation please consult the official Telegram docs.
+ * For up-to-date documentation, please consult the official Telegram docs.
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", include = JsonTypeInfo.As.EXISTING_PROPERTY)
 @JsonSubTypes(

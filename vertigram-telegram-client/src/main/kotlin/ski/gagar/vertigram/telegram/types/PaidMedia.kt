@@ -8,7 +8,7 @@ import ski.gagar.vertigram.annotations.TelegramCodegen
 /**
  * Telegram [PaidMedia](https://core.telegram.org/bots/api#paidmedia) type.
  *
- * For up-to-date documentation please consult the official Telegram docs.
+ * For up-to-date documentation, please consult the official Telegram docs.
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", include = JsonTypeInfo.As.EXISTING_PROPERTY)
 @JsonSubTypes(
@@ -22,7 +22,7 @@ sealed interface PaidMedia {
     /**
      * Telegram [PaidMediaPreview](https://core.telegram.org/bots/api#paidmediapreview) type.
      *
-     * For up-to-date documentation please consult the official Telegram docs.
+     * For up-to-date documentation, please consult the official Telegram docs.
      */
     @TelegramCodegen.Type
     data class Preview internal constructor(
@@ -38,7 +38,7 @@ sealed interface PaidMedia {
     /**
      * Telegram [PaidMediaPhoto](https://core.telegram.org/bots/api#paidmediaphoto) type.
      *
-     * For up-to-date documentation please consult the official Telegram docs.
+     * For up-to-date documentation, please consult the official Telegram docs.
      */
     @TelegramCodegen.Type
     data class Photo internal constructor(
@@ -52,7 +52,7 @@ sealed interface PaidMedia {
     /**
      * Telegram [PaidMediaVideo](https://core.telegram.org/bots/api#paidmediavideo) type.
      *
-     * For up-to-date documentation please consult the official Telegram docs.
+     * For up-to-date documentation, please consult the official Telegram docs.
      */
     @TelegramCodegen.Type
     data class Video internal constructor(

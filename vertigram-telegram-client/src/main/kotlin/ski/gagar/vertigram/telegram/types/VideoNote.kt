@@ -8,7 +8,7 @@ import java.time.Duration
 /**
  * Telegram [VideoNote](https://core.telegram.org/bots/api#videonote) type.
  *
- * For up-to-date documentation please consult the official Telegram docs.
+ * For up-to-date documentation, please consult the official Telegram docs.
  */
 @TelegramCodegen.Type
 data class VideoNote internal constructor(

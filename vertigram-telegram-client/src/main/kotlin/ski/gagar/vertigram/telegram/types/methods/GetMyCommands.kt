@@ -8,7 +8,7 @@ import ski.gagar.vertigram.util.NoPosArgs
 /**
  * Telegram [getMyCommands](https://core.telegram.org/bots/api#getmycommands) method.
  *
- * For up-to-date documentation please consult the official Telegram docs.
+ * For up-to-date documentation, please consult the official Telegram docs.
  */
 @TelegramCodegen.Method
 data class GetMyCommands internal constructor(

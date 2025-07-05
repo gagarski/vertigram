@@ -18,7 +18,7 @@ object Passport {
      * Subtypes are introduced to represent document types for [type], given each of them has its own set
      * of mandatory an optional fields described [here](https://core.telegram.org/passport#fields).
      *
-     * For up-to-date documentation please consult the official Telegram docs.
+     * For up-to-date documentation, please consult the official Telegram docs.
      */
     @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", include = JsonTypeInfo.As.EXISTING_PROPERTY)
     @JsonSubTypes(
@@ -274,7 +274,7 @@ object Passport {
     /**
      * Telegram [EncryptedCredentials](https://core.telegram.org/bots/api#encryptedcredentials) type.
      *
-     * For up-to-date documentation please consult the official Telegram docs.
+     * For up-to-date documentation, please consult the official Telegram docs.
      */
     @TelegramCodegen.Type
     data class EncryptedCredentials internal constructor(
@@ -288,7 +288,7 @@ object Passport {
     /**
      * Telegram [PassportData](https://core.telegram.org/bots/api#passportdata) type.
      *
-     * For up-to-date documentation please consult the official Telegram docs.
+     * For up-to-date documentation, please consult the official Telegram docs.
      */
     @TelegramCodegen.Type
     data class Data internal constructor(
@@ -301,7 +301,7 @@ object Passport {
     /**
      * Telegram [PassportFile](https://core.telegram.org/bots/api#passportfile) type.
      *
-     * For up-to-date documentation please consult the official Telegram docs.
+     * For up-to-date documentation, please consult the official Telegram docs.
      */
     @TelegramCodegen.Type
     data class File internal constructor(
@@ -320,7 +320,7 @@ object Passport {
      * names given they are nested into [Passport.ElementError] class. The rule here is the following:
      * `PassportElementErrorXxx` Telegram type becomes `PassportElementErrorXxx`.
      *
-     * For up-to-date documentation please consult the official Telegram docs.
+     * For up-to-date documentation, please consult the official Telegram docs.
      */
     @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "source", include = JsonTypeInfo.As.EXISTING_PROPERTY)
     @JsonSubTypes(
@@ -340,7 +340,7 @@ object Passport {
         /**
          * Telegram [PassportElementErrorDataField](https://core.telegram.org/bots/api#passportelementerrordatafield) type.
          *
-         * For up-to-date documentation please consult the official Telegram docs.
+         * For up-to-date documentation, please consult the official Telegram docs.
          */
         @TelegramCodegen.Type
         data class DataField internal constructor(
@@ -357,7 +357,7 @@ object Passport {
         /**
          * Telegram [PassportElementErrorFrontSide](https://core.telegram.org/bots/api#passportelementerrorfrontside) type.
          *
-         * For up-to-date documentation please consult the official Telegram docs.
+         * For up-to-date documentation, please consult the official Telegram docs.
          */
         @TelegramCodegen.Type
         data class FrontSide internal constructor(
@@ -373,7 +373,7 @@ object Passport {
         /**
          * Telegram [PassportElementErrorReverseSide](https://core.telegram.org/bots/api#passportelementerrorreverseside) type.
          *
-         * For up-to-date documentation please consult the official Telegram docs.
+         * For up-to-date documentation, please consult the official Telegram docs.
          */
         @TelegramCodegen.Type
         data class ReverseSide internal constructor(
@@ -389,7 +389,7 @@ object Passport {
         /**
          * Telegram [PassportElementErrorSelfie](https://core.telegram.org/bots/api#passportelementerrorselfie) type.
          *
-         * For up-to-date documentation please consult the official Telegram docs.
+         * For up-to-date documentation, please consult the official Telegram docs.
          */
         @TelegramCodegen.Type
         data class Selfie internal constructor(
@@ -405,7 +405,7 @@ object Passport {
         /**
          * Telegram [PassportElementErrorFile](https://core.telegram.org/bots/api#passportelementerrorfile) type.
          *
-         * For up-to-date documentation please consult the official Telegram docs.
+         * For up-to-date documentation, please consult the official Telegram docs.
          */
         @TelegramCodegen.Type
         data class File internal constructor(
@@ -421,7 +421,7 @@ object Passport {
         /**
          * Telegram [PassportElementErrorFiles](https://core.telegram.org/bots/api#passportelementerrorfiles) type.
          *
-         * For up-to-date documentation please consult the official Telegram docs.
+         * For up-to-date documentation, please consult the official Telegram docs.
          */
         @TelegramCodegen.Type
         data class Files internal constructor(
@@ -437,7 +437,7 @@ object Passport {
         /**
          * Telegram [PassportElementErrorTranslationFile](https://core.telegram.org/bots/api#passportelementerrortranslationfile) type.
          *
-         * For up-to-date documentation please consult the official Telegram docs.
+         * For up-to-date documentation, please consult the official Telegram docs.
          */
         @TelegramCodegen.Type
         data class TranslationFile internal constructor(
@@ -453,7 +453,7 @@ object Passport {
         /**
          * Telegram [PassportElementErrorTranslationFiles](https://core.telegram.org/bots/api#passportelementerrortranslationfiles) type.
          *
-         * For up-to-date documentation please consult the official Telegram docs.
+         * For up-to-date documentation, please consult the official Telegram docs.
          */
         @TelegramCodegen.Type
         data class TranslationFiles internal constructor(
@@ -469,7 +469,7 @@ object Passport {
         /**
          * Telegram [PassportElementErrorUnspecified](https://core.telegram.org/bots/api#passportelementerrorunspecified) type.
          *
-         * For up-to-date documentation please consult the official Telegram docs.
+         * For up-to-date documentation, please consult the official Telegram docs.
          */
         @TelegramCodegen.Type
         data class Unspecified internal constructor(

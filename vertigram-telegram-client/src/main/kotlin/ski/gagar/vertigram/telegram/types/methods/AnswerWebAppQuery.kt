@@ -7,7 +7,7 @@ import ski.gagar.vertigram.telegram.types.SentWebAppMessage
 /**
  * Telegram [answerWebAppQuery](https://core.telegram.org/bots/api#answerwebappquery) method.
  *
- * For up-to-date documentation please consult the official Telegram docs.
+ * For up-to-date documentation, please consult the official Telegram docs.
  */
 @TelegramCodegen.Method
 data class AnswerWebAppQuery internal constructor(

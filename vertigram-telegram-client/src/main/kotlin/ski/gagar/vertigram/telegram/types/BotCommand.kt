@@ -15,7 +15,7 @@ import ski.gagar.vertigram.util.NoPosArgs
  * names given they are nested into [BotCommand] class. The rule here is the following:
  * `BotCommandXxx` Telegram type becomes `BotCommand.Xxx`.
  *
- * For up-to-date documentation please consult the official Telegram docs.
+ * For up-to-date documentation, please consult the official Telegram docs.
  */
 @TelegramCodegen.Type
 data class BotCommand internal constructor(
@@ -29,7 +29,7 @@ data class BotCommand internal constructor(
      * names given they are nested into [BotCommand.Scope] class. The rule here is the following:
      * `BotCommandScopeXxx` Telegram type becomes `BotCommand.Scope.Xxx`
      *
-     * For up-to-date documentation please consult the official Telegram docs.
+     * For up-to-date documentation, please consult the official Telegram docs.
      */
     @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", include = JsonTypeInfo.As.EXISTING_PROPERTY)
     @JsonSubTypes(
@@ -49,7 +49,7 @@ data class BotCommand internal constructor(
         /**
          * Telegram [BotCommandScopeAllChatAdministrators](https://core.telegram.org/bots/api#botcommandscopeallchatadministrators) type.
          *
-         * For up-to-date documentation please consult the official Telegram docs.
+         * For up-to-date documentation, please consult the official Telegram docs.
          */
         data object AllChatAdministrators : Scope {
             override val type: Type = Type.ALL_CHAT_ADMINISTRATORS
@@ -58,7 +58,7 @@ data class BotCommand internal constructor(
         /**
          * Telegram [BotCommandScopeAllGroupChats](https://core.telegram.org/bots/api#botcommandscopeallgroupchats) type.
          *
-         * For up-to-date documentation please consult the official Telegram docs.
+         * For up-to-date documentation, please consult the official Telegram docs.
          */
         data object AllGroupChats : Scope {
             override val type: Type = Type.ALL_GROUP_CHATS
@@ -67,7 +67,7 @@ data class BotCommand internal constructor(
         /**
          * Telegram [BotCommandScopeAllPrivateChats](https://core.telegram.org/bots/api#botcommandscopeallprivatechats) type.
          *
-         * For up-to-date documentation please consult the official Telegram docs.
+         * For up-to-date documentation, please consult the official Telegram docs.
          */
         data object AllPrivateChats : Scope {
             override val type: Type = Type.ALL_PRIVATE_CHATS
@@ -76,7 +76,7 @@ data class BotCommand internal constructor(
         /**
          * Telegram [BotCommandScopeChat](https://core.telegram.org/bots/api#botcommandscopechat) type.
          *
-         * For up-to-date documentation please consult the official Telegram docs.
+         * For up-to-date documentation, please consult the official Telegram docs.
          */
         @TelegramCodegen.Type
         data class Chat internal constructor(
@@ -89,7 +89,7 @@ data class BotCommand internal constructor(
         /**
          * Telegram [BotCommandScopeChatAdministrators](https://core.telegram.org/bots/api#botcommandscopechatadministrators) type.
          *
-         * For up-to-date documentation please consult the official Telegram docs.
+         * For up-to-date documentation, please consult the official Telegram docs.
          */
         @TelegramCodegen.Type
         data class ChatAdministrators internal constructor(
@@ -102,7 +102,7 @@ data class BotCommand internal constructor(
         /**
          * Telegram [BotCommandScopeChatMember](https://core.telegram.org/bots/api#botcommandscopechatmember) type.
          *
-         * For up-to-date documentation please consult the official Telegram docs.
+         * For up-to-date documentation, please consult the official Telegram docs.
          */
         @TelegramCodegen.Type
         data class ChatMember internal constructor(
@@ -116,7 +116,7 @@ data class BotCommand internal constructor(
         /**
          * Telegram [BotCommandScopeDefault](https://core.telegram.org/bots/api#botcommandscopedefault) type.
          *
-         * For up-to-date documentation please consult the official Telegram docs.
+         * For up-to-date documentation, please consult the official Telegram docs.
          */
         data object Default : Scope {
             override val type: Type = Type.DEFAULT

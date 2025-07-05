@@ -36,18 +36,18 @@ dokka {
     }
 }
 
-task("dokkaInitArchive") {
+tasks.register("dokkaInitArchive") {
     doLast {
         layout.buildDirectory.dir("dokkaRepo/archive").get().asFile.absoluteFile.mkdirs()
     }
 }
 
-task("dokkaPull") {
+tasks.register("dokkaPull") {
     onlyIf { project.properties["vertigram.dokka.repo"] != null }
     dependsOn(":vertigram-dokka-tool:bootJar")
     dependsOn("dokkaInitArchive")
     doLast {
-        javaexec {
+        providers.javaexec {
             mainClass = "-jar"
             args(
                 rootProject.rootDir.resolve("vertigram-dokka-tool/build/libs/vertigram-dokka-tool.jar"),
@@ -63,12 +63,13 @@ task("dokkaPull") {
 
 
 
-task("dokkaHousekeep") {
+tasks.register("dokkaHousekeep") {
     onlyIf { project.properties["vertigram.dokka.repo"] != null }
     dependsOn(":vertigram-dokka-tool:bootJar")
     dependsOn("dokkaPull")
+
     doLast {
-        javaexec {
+        providers.javaexec {
             mainClass = "-jar"
             args(
                 rootProject.rootDir.resolve("vertigram-dokka-tool/build/libs/vertigram-dokka-tool.jar"),
@@ -92,12 +93,12 @@ tasks {
     }
 }
 
-task("dokkaInject") {
+tasks.register("dokkaInject") {
     onlyIf { project.properties["vertigram.dokka.repo"] != null }
     dependsOn(":vertigram-dokka-tool:bootJar")
     dependsOn("dokkaGenerate")
     doLast {
-        javaexec {
+        providers.javaexec {
             mainClass = "-jar"
             args(
                 rootProject.rootDir.resolve("vertigram-dokka-tool/build/libs/vertigram-dokka-tool.jar"),
@@ -114,13 +115,14 @@ task("dokkaInject") {
     }
 }
 
-task("dokkaPush") {
+tasks.register("dokkaPush") {
     onlyIf { project.properties["vertigram.dokka.repo"] != null }
     dependsOn(":vertigram-dokka-tool:bootJar")
     dependsOn("dokkaGenerate")
     dependsOn("dokkaInject")
+
     doLast {
-        javaexec {
+        providers.javaexec {
             mainClass = "-jar"
             args(
                 rootProject.rootDir.resolve("vertigram-dokka-tool/build/libs/vertigram-dokka-tool.jar"),

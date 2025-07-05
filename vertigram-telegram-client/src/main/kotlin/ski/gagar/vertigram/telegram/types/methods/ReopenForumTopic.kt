@@ -9,7 +9,7 @@ import ski.gagar.vertigram.util.NoPosArgs
 /**
  * Telegram [reopenForumTopic](https://core.telegram.org/bots/api#reopenforumtopic) method.
  *
- * For up-to-date documentation please consult the official Telegram docs.
+ * For up-to-date documentation, please consult the official Telegram docs.
  */
 @TelegramCodegen.Method
 data class ReopenForumTopic internal constructor(

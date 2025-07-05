@@ -17,7 +17,7 @@ import java.time.Instant
  * names given they are nested into [ChatMember] class. The rule here is the following:
  * `ChatMemberXxx` Telegram type becomes `ChatMember.Xxx`.
  *
- * For up-to-date documentation please consult the official Telegram docs.
+ * For up-to-date documentation, please consult the official Telegram docs.
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "status", include = JsonTypeInfo.As.EXISTING_PROPERTY)
 @JsonSubTypes(
@@ -37,7 +37,7 @@ sealed interface ChatMember {
     /**
      * Telegram [ChatMemberAdministrator](https://core.telegram.org/bots/api#chatmemberadministrator) type.
      *
-     * For up-to-date documentation please consult the official Telegram docs.
+     * For up-to-date documentation, please consult the official Telegram docs.
      */
     @TelegramCodegen.Type
     data class Administrator internal constructor(
@@ -71,7 +71,7 @@ sealed interface ChatMember {
     /**
      * Telegram [ChatMemberBanned](https://core.telegram.org/bots/api#chatmemberbanned) type.
      *
-     * For up-to-date documentation please consult the official Telegram docs.
+     * For up-to-date documentation, please consult the official Telegram docs.
      */
     @TelegramCodegen.Type
     data class Banned internal constructor(
@@ -97,7 +97,7 @@ sealed interface ChatMember {
     /**
      * Telegram [ChatMemberLeft](https://core.telegram.org/bots/api#chatmemberleft) type.
      *
-     * For up-to-date documentation please consult the official Telegram docs.
+     * For up-to-date documentation, please consult the official Telegram docs.
      */
     @TelegramCodegen.Type
     data class Left internal constructor(
@@ -113,7 +113,7 @@ sealed interface ChatMember {
     /**
      * Telegram [ChatMemberMember](https://core.telegram.org/bots/api#chatmembermember) type.
      *
-     * For up-to-date documentation please consult the official Telegram docs.
+     * For up-to-date documentation, please consult the official Telegram docs.
      */
     @TelegramCodegen.Type
     data class Member internal constructor(
@@ -130,7 +130,7 @@ sealed interface ChatMember {
     /**
      * Telegram [ChatMemberOwner](https://core.telegram.org/bots/api#chatmemberowner) type.
      *
-     * For up-to-date documentation please consult the official Telegram docs.
+     * For up-to-date documentation, please consult the official Telegram docs.
      */
     @TelegramCodegen.Type
     data class Owner internal constructor(
@@ -149,7 +149,7 @@ sealed interface ChatMember {
     /**
      * Telegram [ChatMemberRestricted](https://core.telegram.org/bots/api#chatmemberrestricted) type.
      *
-     * For up-to-date documentation please consult the official Telegram docs.
+     * For up-to-date documentation, please consult the official Telegram docs.
      */
     @TelegramCodegen.Type
     data class Restricted internal constructor(

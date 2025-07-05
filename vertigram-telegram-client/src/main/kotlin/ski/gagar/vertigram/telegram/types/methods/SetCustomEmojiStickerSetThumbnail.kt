@@ -8,7 +8,7 @@ import ski.gagar.vertigram.util.NoPosArgs
 /**
  * Telegram [setCustomEmojiStickerSetThumbnail](https://core.telegram.org/bots/api#setcustomemojistickersetthumbnail) method.
  *
- * For up-to-date documentation please consult the official Telegram docs.
+ * For up-to-date documentation, please consult the official Telegram docs.
  */
 @TelegramCodegen.Method
 data class SetCustomEmojiStickerSetThumbnail internal constructor(

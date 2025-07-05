@@ -13,7 +13,7 @@ import java.time.Instant
 /**
  * Telegram [Message](https://core.telegram.org/bots/api#message) type.
  *
- * For up-to-date documentation please consult the official Telegram docs.
+ * For up-to-date documentation, please consult the official Telegram docs.
  */
 @TelegramCodegen.Type(wrapRichText = false)
 data class Message internal constructor(
@@ -109,7 +109,7 @@ data class Message internal constructor(
     /**
      * Telegram [ExternalReplyInfo](https://core.telegram.org/bots/api#externalreplyinfo) type.
      *
-     * For up-to-date documentation please consult the official Telegram docs.
+     * For up-to-date documentation, please consult the official Telegram docs.
      */
     @TelegramCodegen.Type
     data class ExternalReplyInfo internal constructor(
@@ -144,7 +144,7 @@ data class Message internal constructor(
     /**
      * Telegram [PaidMediaInfo](https://core.telegram.org/bots/api#paidmediainfo) type.
      *
-     * For up-to-date documentation please consult the official Telegram docs.
+     * For up-to-date documentation, please consult the official Telegram docs.
      */
     @TelegramCodegen.Type
     data class PaidMediaInfo internal constructor(
@@ -157,7 +157,7 @@ data class Message internal constructor(
     /**
      * Telegram [MessageOrigin](https://core.telegram.org/bots/api#messageorigin) type.
      *
-     * For up-to-date documentation please consult the official Telegram docs.
+     * For up-to-date documentation, please consult the official Telegram docs.
      */
     @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", include = JsonTypeInfo.As.EXISTING_PROPERTY)
     @JsonSubTypes(
@@ -172,7 +172,7 @@ data class Message internal constructor(
         /**
          * Telegram [MessageOriginUser](https://core.telegram.org/bots/api#messageoriginuser) type.
          *
-         * For up-to-date documentation please consult the official Telegram docs.
+         * For up-to-date documentation, please consult the official Telegram docs.
          */
         @TelegramCodegen.Type
         data class User internal constructor(
@@ -187,7 +187,7 @@ data class Message internal constructor(
         /**
          * Telegram [MessageOriginHiddenUser](https://core.telegram.org/bots/api#messageoriginhiddenuser) type.
          *
-         * For up-to-date documentation please consult the official Telegram docs.
+         * For up-to-date documentation, please consult the official Telegram docs.
          */
         @TelegramCodegen.Type
         data class HiddenUser internal constructor(
@@ -202,7 +202,7 @@ data class Message internal constructor(
         /**
          * Telegram [MessageOriginChat](https://core.telegram.org/bots/api#messageoriginchat) type.
          *
-         * For up-to-date documentation please consult the official Telegram docs.
+         * For up-to-date documentation, please consult the official Telegram docs.
          */
         @TelegramCodegen.Type
         data class Chat internal constructor(
@@ -218,7 +218,7 @@ data class Message internal constructor(
         /**
          * Telegram [MessageOriginChannel](https://core.telegram.org/bots/api#messageoriginchannel) type.
          *
-         * For up-to-date documentation please consult the official Telegram docs.
+         * For up-to-date documentation, please consult the official Telegram docs.
          */
         @TelegramCodegen.Type
         data class Channel internal constructor(
@@ -257,7 +257,7 @@ data class Message internal constructor(
     /**
      * Telegram [TextQuote](https://core.telegram.org/bots/api#textquote) type.
      *
-     * For up-to-date documentation please consult the official Telegram docs.
+     * For up-to-date documentation, please consult the official Telegram docs.
      */
     @TelegramCodegen.Type(wrapRichText = false)
     data class TextQuote internal constructor(
@@ -273,7 +273,7 @@ data class Message internal constructor(
     /**
      * Telegram [LinkPreviewOptions](https://core.telegram.org/bots/api#linkpreviewoptions) type.
      *
-     * For up-to-date documentation please consult the official Telegram docs.
+     * For up-to-date documentation, please consult the official Telegram docs.
      */
     @TelegramCodegen.Type
     data class LinkPreviewOptions internal constructor(
@@ -299,7 +299,7 @@ data class Message internal constructor(
          * (not `Message.AutoDeleteTimerChanged`) to denote the fact that it changes auto-delete timer for all the
          * messages, not the one it belongs to as a field.
          *
-         * For up-to-date documentation please consult the official Telegram docs.
+         * For up-to-date documentation, please consult the official Telegram docs.
          */
         @TelegramCodegen.Type
         data class MessageAutoDeleteTimerChanged internal constructor(
@@ -311,7 +311,7 @@ data class Message internal constructor(
         /**
          * Telegram [SuccessfulPayment](https://core.telegram.org/bots/api#successfulpayment) type.
          *
-         * For up-to-date documentation please consult the official Telegram docs.
+         * For up-to-date documentation, please consult the official Telegram docs.
          */
         @TelegramCodegen.Type
         data class SuccessfulPayment internal constructor(
@@ -334,7 +334,7 @@ data class Message internal constructor(
         /**
          * Telegram [RefundedPayment](https://core.telegram.org/bots/api#refundedpayment) type.
          *
-         * For up-to-date documentation please consult the official Telegram docs.
+         * For up-to-date documentation, please consult the official Telegram docs.
          */
         @TelegramCodegen.Type
         data class RefundedPayment internal constructor(
@@ -350,7 +350,7 @@ data class Message internal constructor(
         /**
          * Telegram [UsersShared](https://core.telegram.org/bots/api#usersshared) type.
          *
-         * For up-to-date documentation please consult the official Telegram docs.
+         * For up-to-date documentation, please consult the official Telegram docs.
          */
         @TelegramCodegen.Type
         data class UsersShared internal constructor(
@@ -360,7 +360,7 @@ data class Message internal constructor(
             /**
              * Telegram [SharedUser](https://core.telegram.org/bots/api#shareduser) type.
              *
-             * For up-to-date documentation please consult the official Telegram docs.
+             * For up-to-date documentation, please consult the official Telegram docs.
              */
             @TelegramCodegen.Type
             data class SharedUser internal constructor(
@@ -379,7 +379,7 @@ data class Message internal constructor(
         /**
          * Telegram [ChatShared](https://core.telegram.org/bots/api#chatshared) type.
          *
-         * For up-to-date documentation please consult the official Telegram docs.
+         * For up-to-date documentation, please consult the official Telegram docs.
          */
         @TelegramCodegen.Type
         data class ChatShared internal constructor(
@@ -398,7 +398,7 @@ data class Message internal constructor(
          * Subtypes (which are nested) are synthetic subtypes representing cases when exactly one of the original type field
          * is present.
          *
-         * For up-to-date documentation please consult the official Telegram docs.
+         * For up-to-date documentation, please consult the official Telegram docs.
          */
         @JsonTypeInfo(use = JsonTypeInfo.Id.DEDUCTION)
         @JsonSubTypes(
@@ -454,7 +454,7 @@ data class Message internal constructor(
         /**
          * Telegram [ProximityAlertTriggered](https://core.telegram.org/bots/api#proximityalerttriggered) type.
          *
-         * For up-to-date documentation please consult the official Telegram docs.
+         * For up-to-date documentation, please consult the official Telegram docs.
          */
         @TelegramCodegen.Type
         data class ProximityAlertTriggered internal constructor(
@@ -472,14 +472,14 @@ data class Message internal constructor(
             /**
              * Telegram [ForumTopicClosed](https://core.telegram.org/bots/api#forumtopicclosed) type.
              *
-             * For up-to-date documentation please consult the official Telegram docs.
+             * For up-to-date documentation, please consult the official Telegram docs.
              */
             data object Closed
 
             /**
              * Telegram [ForumTopicCreated](https://core.telegram.org/bots/api#forumtopiccreated) type.
              *
-             * For up-to-date documentation please consult the official Telegram docs.
+             * For up-to-date documentation, please consult the official Telegram docs.
              */
             @TelegramCodegen.Type
             data class Created internal constructor(
@@ -493,7 +493,7 @@ data class Message internal constructor(
             /**
              * Telegram [ForumTopicEdited](https://core.telegram.org/bots/api#forumtopicedited) type.
              *
-             * For up-to-date documentation please consult the official Telegram docs.
+             * For up-to-date documentation, please consult the official Telegram docs.
              */
             @TelegramCodegen.Type
             data class Edited internal constructor(
@@ -506,21 +506,21 @@ data class Message internal constructor(
             /**
              * Telegram [ForumTopicReopened](https://core.telegram.org/bots/api#forumtopicreopened) type.
              *
-             * For up-to-date documentation please consult the official Telegram docs.
+             * For up-to-date documentation, please consult the official Telegram docs.
              */
             data object Reopened
 
             /**
              * Telegram [GeneralForumTopicHidden](https://core.telegram.org/bots/api#generalforumtopichidden) type.
              *
-             * For up-to-date documentation please consult the official Telegram docs.
+             * For up-to-date documentation, please consult the official Telegram docs.
              */
             data object GeneralHidden
 
             /**
              * Telegram [GeneralForumTopicUnhidden](https://core.telegram.org/bots/api#generalforumtopicunhidden) type.
              *
-             * For up-to-date documentation please consult the official Telegram docs.
+             * For up-to-date documentation, please consult the official Telegram docs.
              */
             data object GeneralUnhidden
         }
@@ -532,7 +532,7 @@ data class Message internal constructor(
             /**
              * Telegram [GiveawayCompleted](https://core.telegram.org/bots/api#giveawaycompleted) type.
              *
-             * For up-to-date documentation please consult the official Telegram docs.
+             * For up-to-date documentation, please consult the official Telegram docs.
              */
             @TelegramCodegen.Type
             data class Completed internal constructor(
@@ -548,7 +548,7 @@ data class Message internal constructor(
             /**
              * Telegram [GiveawayCreated](https://core.telegram.org/bots/api#giveawaycreated) type.
              *
-             * For up-to-date documentation please consult the official Telegram docs.
+             * For up-to-date documentation, please consult the official Telegram docs.
              */
             @TelegramCodegen.Type
             data class Created internal constructor(
@@ -565,7 +565,7 @@ data class Message internal constructor(
             /**
              * Telegram [VideoChatScheduled](https://core.telegram.org/bots/api#videochatscheduled) type.
              *
-             * For up-to-date documentation please consult the official Telegram docs.
+             * For up-to-date documentation, please consult the official Telegram docs.
              */
             @TelegramCodegen.Type
             data class Scheduled internal constructor(
@@ -577,14 +577,14 @@ data class Message internal constructor(
             /**
              * Telegram [VideoChatStarted](https://core.telegram.org/bots/api#videochatstarted) type.
              *
-             * For up-to-date documentation please consult the official Telegram docs.
+             * For up-to-date documentation, please consult the official Telegram docs.
              */
             data object Started
 
             /**
              * Telegram [VideoChatEnded](https://core.telegram.org/bots/api#videochatended) type.
              *
-             * For up-to-date documentation please consult the official Telegram docs.
+             * For up-to-date documentation, please consult the official Telegram docs.
              */
             @TelegramCodegen.Type
             data class Ended internal constructor(
@@ -596,7 +596,7 @@ data class Message internal constructor(
             /**
              * Telegram [VideoChatParticipantsInvited](https://core.telegram.org/bots/api#videochatparticipantsinvited) type.
              *
-             * For up-to-date documentation please consult the official Telegram docs.
+             * For up-to-date documentation, please consult the official Telegram docs.
              */
             @TelegramCodegen.Type
             data class ParticipantsInvited internal constructor(
@@ -609,7 +609,7 @@ data class Message internal constructor(
         /**
          * Telegram [WebAppData](https://core.telegram.org/bots/api#webappdata) type.
          *
-         * For up-to-date documentation please consult the official Telegram docs.
+         * For up-to-date documentation, please consult the official Telegram docs.
          */
         @TelegramCodegen.Type
         data class WebAppData internal constructor(
@@ -624,7 +624,7 @@ data class Message internal constructor(
     /**
      * Telegram [MessageId](https://core.telegram.org/bots/api#messageid) type.
      *
-     * For up-to-date documentation please consult the official Telegram docs.
+     * For up-to-date documentation, please consult the official Telegram docs.
      */
     @TelegramCodegen.Type
     data class Id internal constructor(

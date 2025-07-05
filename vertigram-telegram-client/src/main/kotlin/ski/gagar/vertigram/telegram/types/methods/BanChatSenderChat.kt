@@ -7,7 +7,7 @@ import ski.gagar.vertigram.telegram.types.util.ChatId
 /**
  * Telegram [banChatSenderChat](https://core.telegram.org/bots/api#banchatsenderchat) method.
  *
- * For up-to-date documentation please consult the official Telegram docs.
+ * For up-to-date documentation, please consult the official Telegram docs.
  */
 @TelegramCodegen.Method
 data class BanChatSenderChat internal constructor(

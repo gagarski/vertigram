@@ -10,7 +10,7 @@ import ski.gagar.vertigram.util.NoPosArgs
 /**
  * Telegram [unpinAllChatMessages](https://core.telegram.org/bots/api#unpinallchatmessages) method.
  *
- * For up-to-date documentation please consult the official Telegram docs.
+ * For up-to-date documentation, please consult the official Telegram docs.
  */
 @Throttled
 @TelegramCodegen.Method

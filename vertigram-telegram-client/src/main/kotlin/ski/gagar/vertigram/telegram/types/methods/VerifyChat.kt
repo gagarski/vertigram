@@ -11,7 +11,7 @@ import ski.gagar.vertigram.util.NoPosArgs
 /**
  * Telegram [verifyChat](https://core.telegram.org/bots/api#verifychat) method.
  *
- * For up-to-date documentation please consult the official Telegram docs.
+ * For up-to-date documentation, please consult the official Telegram docs.
  */
 @TelegramCodegen.Method
 data class VerifyChat internal constructor(

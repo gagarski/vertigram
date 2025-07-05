@@ -29,7 +29,7 @@ import java.time.Instant
  *
  * Each case has multiple mutually-exclusive cases for different auto-closure settings.
  *
- * For up-to-date documentation please consult the official Telegram docs.
+ * For up-to-date documentation, please consult the official Telegram docs.
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", include = JsonTypeInfo.As.EXISTING_PROPERTY)
 @JsonSubTypes(
@@ -307,7 +307,7 @@ sealed class SendPoll : JsonTelegramCallable<Message>(), HasChatId, HasRichQuest
     /**
      * Telegram [InputPollOption](https://core.telegram.org/bots/api#inputpolloption) type.
      *
-     * For up-to-date documentation please consult the official Telegram docs.
+     * For up-to-date documentation, please consult the official Telegram docs.
      */
 //    @TelegramCodegen.Type
     data class InputOption internal constructor(

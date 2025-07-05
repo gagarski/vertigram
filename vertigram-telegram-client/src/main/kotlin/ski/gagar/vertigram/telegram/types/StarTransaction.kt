@@ -10,7 +10,7 @@ import java.time.Instant
 /**
  * Telegram [StarTransaction](https://core.telegram.org/bots/api#startransaction) type.
  *
- * For up-to-date documentation please consult the official Telegram docs.
+ * For up-to-date documentation, please consult the official Telegram docs.
  */
 @TelegramCodegen.Type
 data class StarTransaction internal constructor(
@@ -24,7 +24,7 @@ data class StarTransaction internal constructor(
     /**
      * Telegram [TransactionPartner](https://core.telegram.org/bots/api#transactionpartner) type.
      *
-     * For up-to-date documentation please consult the official Telegram docs.
+     * For up-to-date documentation, please consult the official Telegram docs.
      */
     @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", include = JsonTypeInfo.As.EXISTING_PROPERTY)
     @JsonSubTypes(
@@ -41,7 +41,7 @@ data class StarTransaction internal constructor(
         /**
          * Telegram [TransactionPartnerUser](https://core.telegram.org/bots/api#transactionpartneruser) type.
          *
-         * For up-to-date documentation please consult the official Telegram docs.
+         * For up-to-date documentation, please consult the official Telegram docs.
          */
         @TelegramCodegen.Type
         data class User internal constructor(
@@ -59,7 +59,7 @@ data class StarTransaction internal constructor(
             /**
              * Telegram [AffiliateInfo](https://core.telegram.org/bots/api#affiliateinfo) type.
              *
-             * For up-to-date documentation please consult the official Telegram docs.
+             * For up-to-date documentation, please consult the official Telegram docs.
              */
             @TelegramCodegen.Type
             data class AffiliateInfo internal constructor(
@@ -78,7 +78,7 @@ data class StarTransaction internal constructor(
         /**
          * Telegram [TransactionPartnerChat](https://core.telegram.org/bots/api#transactionpartnerchat) type.
          *
-         * For up-to-date documentation please consult the official Telegram docs.
+         * For up-to-date documentation, please consult the official Telegram docs.
          */
         @TelegramCodegen.Type
         data class Chat internal constructor(
@@ -93,7 +93,7 @@ data class StarTransaction internal constructor(
         /**
          * Telegram [TransactionPartnerAffiliateProgram](https://core.telegram.org/bots/api#transactionpartneraffiliateprogram) type.
          *
-         * For up-to-date documentation please consult the official Telegram docs.
+         * For up-to-date documentation, please consult the official Telegram docs.
          */
         @TelegramCodegen.Type
         data class AffiliateProgram internal constructor(
@@ -108,7 +108,7 @@ data class StarTransaction internal constructor(
         /**
          * Telegram [TransactionPartnerFragment](https://core.telegram.org/bots/api#transactionpartnerfragment) type.
          *
-         * For up-to-date documentation please consult the official Telegram docs.
+         * For up-to-date documentation, please consult the official Telegram docs.
          */
         @TelegramCodegen.Type
         data class Fragment internal constructor(
@@ -121,7 +121,7 @@ data class StarTransaction internal constructor(
             /**
              * Telegram [RevenueWithdrawalState](https://core.telegram.org/bots/api#revenuewithdrawalstate) type.
              *
-             * For up-to-date documentation please consult the official Telegram docs.
+             * For up-to-date documentation, please consult the official Telegram docs.
              */
             @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", include = JsonTypeInfo.As.EXISTING_PROPERTY)
             @JsonSubTypes(
@@ -135,7 +135,7 @@ data class StarTransaction internal constructor(
                 /**
                  * Telegram [RevenueWithdrawalStatePending](https://core.telegram.org/bots/api#revenuewithdrawalstatepending) type.
                  *
-                 * For up-to-date documentation please consult the official Telegram docs.
+                 * For up-to-date documentation, please consult the official Telegram docs.
                  */
                 data object Pending : RevenueWithdrawalState {
                     override val type: Type = Type.PENDING
@@ -144,7 +144,7 @@ data class StarTransaction internal constructor(
                 /**
                  * Telegram [RevenueWithdrawalStateSucceeded](https://core.telegram.org/bots/api#revenuewithdrawalstatesucceded) type.
                  *
-                 * For up-to-date documentation please consult the official Telegram docs.
+                 * For up-to-date documentation, please consult the official Telegram docs.
                  */
                 @TelegramCodegen.Type
                 data class Succeeded internal constructor(
@@ -159,7 +159,7 @@ data class StarTransaction internal constructor(
                 /**
                  * Telegram [RevenueWithdrawalStateFailed](https://core.telegram.org/bots/api#revenuewithdrawalstatefailed) type.
                  *
-                 * For up-to-date documentation please consult the official Telegram docs.
+                 * For up-to-date documentation, please consult the official Telegram docs.
                  */
                 data object Failed : RevenueWithdrawalState {
                     override val type: Type = Type.FAILED
@@ -190,7 +190,7 @@ data class StarTransaction internal constructor(
         /**
          * Telegram [TransactionPartnerTelegramAds](https://core.telegram.org/bots/api#transactionpartnertelegramads) type.
          *
-         * For up-to-date documentation please consult the official Telegram docs.
+         * For up-to-date documentation, please consult the official Telegram docs.
          */
         data object TelegramAds : TransactionPartner {
             override val type: Type = Type.TELEGRAM_ADS
@@ -199,7 +199,7 @@ data class StarTransaction internal constructor(
         /**
          * Telegram [TransactionPartnerTelegramApi](https://core.telegram.org/bots/api#transactionpartnertelegramapi) type.
          *
-         * For up-to-date documentation please consult the official Telegram docs.
+         * For up-to-date documentation, please consult the official Telegram docs.
          */
         @TelegramCodegen.Type
         data class TelegramApi internal constructor(
@@ -213,7 +213,7 @@ data class StarTransaction internal constructor(
         /**
          * Telegram [TransactionPartnerOther](https://core.telegram.org/bots/api#transactionpartnerother) type.
          *
-         * For up-to-date documentation please consult the official Telegram docs.
+         * For up-to-date documentation, please consult the official Telegram docs.
          */
         data object Other : TransactionPartner {
             override val type: Type = Type.OTHER

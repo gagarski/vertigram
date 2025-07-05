@@ -7,7 +7,7 @@ import java.time.Duration
 /**
  * Telegram [createInvoiceLink](https://core.telegram.org/bots/api#createinvoicelink) method.
  *
- * For up-to-date documentation please consult the official Telegram docs.
+ * For up-to-date documentation, please consult the official Telegram docs.
  */
 @TelegramCodegen.Method
 data class CreateInvoiceLink internal constructor(

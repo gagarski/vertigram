@@ -20,7 +20,7 @@ class ParsedUpdateList(val delegate: List<Update.Parsed<*>>)
  * under name `Payload`, though there are exceptions for some fundamental types such as
  * [ski.gagar.vertigram.telegram.types.InlineQuery] or [ski.gagar.vertigram.telegram.types.Message].
  *
- * For up-to-date documentation please consult the official Telegram docs.
+ * For up-to-date documentation, please consult the official Telegram docs.
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.DEDUCTION)
 @JsonSubTypes(
@@ -176,7 +176,7 @@ sealed interface Update<T> {
         /**
          * Telegram [BusinessMessagesDeleted](https://core.telegram.org/bots/api#businessmessagesdeleted) type.
          *
-         * For up-to-date documentation please consult the official Telegram docs.
+         * For up-to-date documentation, please consult the official Telegram docs.
          */
         @TelegramCodegen.Type
         data class Payload internal constructor(
@@ -204,7 +204,7 @@ sealed interface Update<T> {
         /**
          * Telegram [MessageReactionUpdated](https://core.telegram.org/bots/api#messagereactionupdated) type.
          *
-         * For up-to-date documentation please consult the official Telegram docs.
+         * For up-to-date documentation, please consult the official Telegram docs.
          */
         @TelegramCodegen.Type
         data class Payload internal constructor(
@@ -235,7 +235,7 @@ sealed interface Update<T> {
         /**
          * Telegram [MessageReactionCountUpdated](https://core.telegram.org/bots/api#messagereactioncountupdated) type.
          *
-         * For up-to-date documentation please consult the official Telegram docs.
+         * For up-to-date documentation, please consult the official Telegram docs.
          */
         @TelegramCodegen.Type
         data class Payload internal constructor(
@@ -247,7 +247,7 @@ sealed interface Update<T> {
             /**
              * Telegram [ReactionCount](https://core.telegram.org/bots/api#reactioncount) type.
              *
-             * For up-to-date documentation please consult the official Telegram docs.
+             * For up-to-date documentation, please consult the official Telegram docs.
              */
             @TelegramCodegen.Type
             data class ReactionCount internal constructor(
@@ -290,7 +290,7 @@ sealed interface Update<T> {
         /**
          * Telegram [ChosenInlineResult](https://core.telegram.org/bots/api#choseninlineresult) type.
          *
-         * For up-to-date documentation please consult the official Telegram docs.
+         * For up-to-date documentation, please consult the official Telegram docs.
          */
         @TelegramCodegen.Type
         data class Payload internal constructor(
@@ -320,7 +320,7 @@ sealed interface Update<T> {
         /**
          * Telegram [CallbackQuery](https://core.telegram.org/bots/api#callbackquery) type.
          *
-         * For up-to-date documentation please consult the official Telegram docs.
+         * For up-to-date documentation, please consult the official Telegram docs.
          */
         @TelegramCodegen.Type
         data class Payload internal constructor(
@@ -352,7 +352,7 @@ sealed interface Update<T> {
         /**
          * Telegram [ShippingQuery](https://core.telegram.org/bots/api#shippingquery) type.
          *
-         * For up-to-date documentation please consult the official Telegram docs.
+         * For up-to-date documentation, please consult the official Telegram docs.
          */
         @TelegramCodegen.Type
         data class Payload internal constructor(
@@ -381,7 +381,7 @@ sealed interface Update<T> {
         /**
          * Telegram [PreCheckoutQuery](https://core.telegram.org/bots/api#precheckoutquery) type.
          *
-         * For up-to-date documentation please consult the official Telegram docs.
+         * For up-to-date documentation, please consult the official Telegram docs.
          */
         @TelegramCodegen.Type
         data class Payload internal constructor(
@@ -413,7 +413,7 @@ sealed interface Update<T> {
         /**
          * Telegram [PreCheckoutQuery](https://core.telegram.org/bots/api#precheckoutquery) type.
          *
-         * For up-to-date documentation please consult the official Telegram docs.
+         * For up-to-date documentation, please consult the official Telegram docs.
          */
         @TelegramCodegen.Type
         data class Payload internal constructor(
@@ -485,7 +485,7 @@ sealed interface Update<T> {
         /**
          * Telegram [ChatMemberUpdated](https://core.telegram.org/bots/api#chatmemberupdated) type.
          *
-         * For up-to-date documentation please consult the official Telegram docs.
+         * For up-to-date documentation, please consult the official Telegram docs.
          */
         @TelegramCodegen.Type
         data class Payload internal constructor(
@@ -518,7 +518,7 @@ sealed interface Update<T> {
         /**
          * Telegram [ChatJoinRequest](https://core.telegram.org/bots/api#chatjoinrequest) type.
          *
-         * For up-to-date documentation please consult the official Telegram docs.
+         * For up-to-date documentation, please consult the official Telegram docs.
          */
         @TelegramCodegen.Type
         data class Payload internal constructor(
@@ -549,7 +549,7 @@ sealed interface Update<T> {
         /**
          * Telegram [ChatBoostUpdated](https://core.telegram.org/bots/api#chatboostupdated) type.
          *
-         * For up-to-date documentation please consult the official Telegram docs.
+         * For up-to-date documentation, please consult the official Telegram docs.
          */
         @TelegramCodegen.Type
         data class Payload internal constructor(
@@ -576,7 +576,7 @@ sealed interface Update<T> {
         /**
          * Telegram [ChatBoostRemoved](https://core.telegram.org/bots/api#chatboostremoved) type.
          *
-         * For up-to-date documentation please consult the official Telegram docs.
+         * For up-to-date documentation, please consult the official Telegram docs.
          */
         @TelegramCodegen.Type
         data class Payload internal constructor(

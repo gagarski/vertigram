@@ -14,7 +14,7 @@ import java.time.Instant
 
  * Subtypes (which are nested) are two mutually-exclusive cases: invite link with member limit and with join request.
  *
- * For up-to-date documentation please consult the official Telegram docs.
+ * For up-to-date documentation, please consult the official Telegram docs.
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.DEDUCTION)
 @JsonSubTypes(

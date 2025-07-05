@@ -11,7 +11,7 @@ import ski.gagar.vertigram.util.NoPosArgs
 /**
  * Telegram [removeChatVerification](https://core.telegram.org/bots/api#removechatverification) method.
  *
- * For up-to-date documentation please consult the official Telegram docs.
+ * For up-to-date documentation, please consult the official Telegram docs.
  */
 @TelegramCodegen.Method
 data class RemoveChatVerification internal constructor(

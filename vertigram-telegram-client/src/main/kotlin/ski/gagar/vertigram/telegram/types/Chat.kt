@@ -27,7 +27,7 @@ interface IChat {
 /**
  * Telegram [Chat](https://core.telegram.org/bots/api#chat) type.
  *
- * For up-to-date documentation please consult the official Telegram docs.
+ * For up-to-date documentation, please consult the official Telegram docs.
  */
 @TelegramCodegen.Type
 data class Chat internal constructor(
@@ -44,7 +44,7 @@ data class Chat internal constructor(
      * Telegram [ChatFullInfo](https://core.telegram.org/bots/api#chatfullinfo) type, representing the data
      * returned from [ski.gagar.vertigram.telegram.methods.GetChat]
      *
-     * For up-to-date documentation please consult the official Telegram docs.
+     * For up-to-date documentation, please consult the official Telegram docs.
      */
     @TelegramCodegen.Type
     data class FullInfo internal constructor(
@@ -115,7 +115,7 @@ data class Chat internal constructor(
     /**
      * Telegram [ChatPhoto](https://core.telegram.org/bots/api#chatphoto) type.
      *
-     * For up-to-date documentation please consult the official Telegram docs.
+     * For up-to-date documentation, please consult the official Telegram docs.
      */
     @TelegramCodegen.Type
     data class Photo internal constructor(
@@ -130,7 +130,7 @@ data class Chat internal constructor(
     /**
      * Telegram [ChatLocation](https://core.telegram.org/bots/api#chatlocation) type.
      *
-     * For up-to-date documentation please consult the official Telegram docs.
+     * For up-to-date documentation, please consult the official Telegram docs.
      */
     @TelegramCodegen.Type
     data class Location internal constructor(

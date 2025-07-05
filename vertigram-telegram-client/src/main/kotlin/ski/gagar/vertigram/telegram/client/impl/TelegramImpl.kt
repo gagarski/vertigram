@@ -7,6 +7,7 @@ import io.netty.handler.codec.http.HttpHeaderValues
 import io.vertx.core.Vertx
 import io.vertx.core.buffer.Buffer
 import io.vertx.core.file.OpenOptions
+import io.vertx.core.http.PoolOptions
 import io.vertx.core.json.DecodeException
 import io.vertx.core.json.JsonObject
 import io.vertx.core.json.jackson.DatabindCodec
@@ -19,10 +20,10 @@ import io.vertx.ext.web.codec.BodyCodec
 import io.vertx.kotlin.coroutines.coAwait
 import ski.gagar.vertigram.telegram.exceptions.TelegramCallException
 import ski.gagar.vertigram.telegram.exceptions.TelegramDownloadException
+import ski.gagar.vertigram.telegram.types.Wrapper
 import ski.gagar.vertigram.telegram.types.methods.JsonTelegramCallable
 import ski.gagar.vertigram.telegram.types.methods.MultipartTelegramCallable
 import ski.gagar.vertigram.telegram.types.methods.TelegramCallable
-import ski.gagar.vertigram.telegram.types.Wrapper
 import ski.gagar.vertigram.util.VertigramTypeHints
 import ski.gagar.vertigram.util.getOrAssert
 import ski.gagar.vertigram.util.internal.toMap
@@ -94,14 +95,14 @@ internal class TelegramImpl(
     private val proxy: ProxyOptions? = null,
     private val options: TelegramImplOptions = TelegramImplOptions()
 ) {
-    private fun makeClientOptions(poolSize: Int?) =
-        WebClientOptions().apply {
-            proxy?.let {
-                this.proxyOptions = proxy
-            }
-
+    private val WEB_CLIENT_OPTIONS = WebClientOptions().apply {
+        proxyOptions = proxy
+    }
+    private fun poolOptions(poolSize: Int?) =
+        PoolOptions().apply {
             poolSize?.let {
-                this.maxPoolSize = poolSize
+                this.http1MaxSize = poolSize
+                this.http2MaxSize = poolSize
             }
         }
 
@@ -109,10 +110,10 @@ internal class TelegramImpl(
         vertx.fileSystem()
     }
 
-    private val regularClient = WebClient.create(vertx, makeClientOptions(options.pools?.regular))
-    private val uploadClient = WebClient.create(vertx, makeClientOptions(options.pools?.upload))
-    private val longPollClient = WebClient.create(vertx, makeClientOptions(options.pools?.longPoll))
-    private val downloadClient = WebClient.create(vertx, makeClientOptions(options.pools?.download))
+    private val regularClient = WebClient.create(vertx, WEB_CLIENT_OPTIONS,poolOptions(options.pools?.regular))
+    private val uploadClient = WebClient.create(vertx, WEB_CLIENT_OPTIONS, poolOptions(options.pools?.upload))
+    private val longPollClient = WebClient.create(vertx, WEB_CLIENT_OPTIONS, poolOptions(options.pools?.longPoll))
+    private val downloadClient = WebClient.create(vertx, WEB_CLIENT_OPTIONS, poolOptions(options.pools?.download))
 
     internal val mapper = TELEGRAM_JSON_MAPPER
     private val mapperMp = telegramJsonMapperWithMultipart(mapper, vertx)

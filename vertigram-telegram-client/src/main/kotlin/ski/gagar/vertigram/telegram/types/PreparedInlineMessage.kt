@@ -8,7 +8,7 @@ import java.time.Instant
 /**
  * Telegram [PreparedInlineMessage](https://core.telegram.org/bots/api#preparedinlinemessage) type.
  *
- * For up-to-date documentation please consult the official Telegram docs.
+ * For up-to-date documentation, please consult the official Telegram docs.
  */
 @TelegramCodegen.Type
 data class PreparedInlineMessage internal constructor(

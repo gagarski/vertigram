@@ -16,10 +16,10 @@ import java.time.temporal.ChronoUnit
 /**
  * Telegram [editMessageLiveLocation](https://core.telegram.org/bots/api#editmessagelivelication) method.
  *
- * Subtypes (which are nested) are two mutually-exclusive cases: for inline message and for chat message.
+ * Subtypes (which are nested) are two mutually exclusive cases: for inline message and for chat message.
  * Note the different return types in these cases.
  *
- * For up-to-date documentation please consult the official Telegram docs.
+ * For up-to-date documentation, please consult the official Telegram docs.
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.DEDUCTION)
 @JsonSubTypes(
@@ -38,7 +38,7 @@ sealed interface EditMessageLiveLocation {
 
     @get:JsonIgnore
     val isLivePeriodIndefinite
-        get() = livePeriod?.truncatedTo(ChronoUnit.SECONDS) == SendLocation.DURATION_INDEFINITE
+        get() = livePeriod?.truncatedTo(ChronoUnit.SECONDS) == DURATION_INDEFINITE
 
     /**
      * Inline message case

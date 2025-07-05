@@ -18,7 +18,7 @@ import ski.gagar.vertigram.util.NoPosArgs
 /**
  * Telegram [sendGift](https://core.telegram.org/bots/api#sendgift) method.
  *
- * For up-to-date documentation please consult the official Telegram docs.
+ * For up-to-date documentation, please consult the official Telegram docs.
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.DEDUCTION)
 @JsonSubTypes(

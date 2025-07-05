@@ -8,7 +8,7 @@ import ski.gagar.vertigram.telegram.types.attachments.Attachment
 /**
  * Telegram [setWebhook](https://core.telegram.org/bots/api#setwebhook) method.
  *
- * For up-to-date documentation please consult the official Telegram docs.
+ * For up-to-date documentation, please consult the official Telegram docs.
  */
 @TelegramCodegen.Method
 data class SetWebhook internal constructor(

@@ -18,7 +18,7 @@ import ski.gagar.vertigram.util.NoPosArgs
  *
  * All the types, related to reply markup are nested (on one or few levels) inside this class.
  * More concise name is given where possible, given the fact that the class are nested to their related type.
- * For up-to-date documentation please consult the official Telegram docs.
+ * For up-to-date documentation, please consult the official Telegram docs.
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.DEDUCTION)
 @JsonSubTypes(
@@ -34,7 +34,7 @@ sealed interface ReplyMarkup {
      * The original type is split into subtypes given "You __must__ use exactly one of the optional fields."
      * condition, each of the subclasses represent the case of respecting field being set.
      *
-     * For up-to-date documentation please consult the official Telegram docs.
+     * For up-to-date documentation, please consult the official Telegram docs.
      *
      * Consider using [ski.gagar.vertigram.telegram.markup.inlineKeyboard] for building the button layout.
      */
@@ -48,7 +48,7 @@ sealed interface ReplyMarkup {
          * The original type is split into subtypes given "You __must__ use exactly one of the optional fields."
          * condition, each of the subclasses represent the case of respecting field being set.
          *
-         * For up-to-date documentation please consult the official Telegram docs.
+         * For up-to-date documentation, please consult the official Telegram docs.
          */
         @JsonTypeInfo(use = JsonTypeInfo.Id.DEDUCTION, defaultImpl = Button.Text::class)
         @JsonSubTypes(
@@ -119,7 +119,7 @@ sealed interface ReplyMarkup {
                 /**
                  * Telegram [LoginUrl](https://core.telegram.org/bots/api#loginurl) type.
                  *
-                 * For up-to-date documentation please consult the official Telegram docs.
+                 * For up-to-date documentation, please consult the official Telegram docs.
                  */
                 data class Payload(
                     @JsonIgnore
@@ -165,7 +165,7 @@ sealed interface ReplyMarkup {
                 /**
                  * Telegram [SwitchInlineQueryChosenChat](https://core.telegram.org/bots/api#switchinlinequerychosenchat) type.
                  *
-                 * For up-to-date documentation please consult the official Telegram docs.
+                 * For up-to-date documentation, please consult the official Telegram docs.
                  */
                 // @TelegramCodegen.Type
                 data class Payload internal constructor(
@@ -192,7 +192,7 @@ sealed interface ReplyMarkup {
                 /**
                  * Telegram [CopyTextButton](https://core.telegram.org/bots/api#copytextbutton) type.
                  *
-                 * For up-to-date documentation please consult the official Telegram docs.
+                 * For up-to-date documentation, please consult the official Telegram docs.
                  */
                 // @TelegramCodegen.Type
                 data class Payload internal constructor(
@@ -216,7 +216,7 @@ sealed interface ReplyMarkup {
                 /**
                  * Telegram [CallbackGame](https://core.telegram.org/bots/api#callbackgame) type.
                  *
-                 * For up-to-date documentation please consult the official Telegram docs.
+                 * For up-to-date documentation, please consult the official Telegram docs.
                  */
                 data object Payload
 
@@ -248,7 +248,7 @@ sealed interface ReplyMarkup {
      *
      * Consider using [ski.gagar.vertigram.telegram.markup.keyboard] for building the button layout.
      *
-     * For up-to-date documentation please consult the official Telegram docs.
+     * For up-to-date documentation, please consult the official Telegram docs.
      *
      */
     // @TelegramCodegen.Type
@@ -264,7 +264,7 @@ sealed interface ReplyMarkup {
         /**
          * Telegram [KeyboardButton](https://core.telegram.org/bots/api#keyboardbutton) type.
          *
-         * For up-to-date documentation please consult the official Telegram docs.
+         * For up-to-date documentation, please consult the official Telegram docs.
          */
         @JsonTypeInfo(use = JsonTypeInfo.Id.DEDUCTION, defaultImpl = Button.Text::class)
         @JsonSubTypes(
@@ -298,7 +298,7 @@ sealed interface ReplyMarkup {
                 /**
                  * Telegram [KeyboardButtonRequestUsers](https://core.telegram.org/bots/api#keyboardbuttonrequestusers) type.
                  *
-                 * For up-to-date documentation please consult the official Telegram docs.
+                 * For up-to-date documentation, please consult the official Telegram docs.
                  */
                 // @TelegramCodegen.Type
                 data class Payload internal constructor(
@@ -328,7 +328,7 @@ sealed interface ReplyMarkup {
                 /**
                  * Telegram [KeyboardButtonRequestChat](https://core.telegram.org/bots/api#keyboardbuttonrequestchat) type.
                  *
-                 * For up-to-date documentation please consult the official Telegram docs.
+                 * For up-to-date documentation, please consult the official Telegram docs.
                  */
                 // @TelegramCodegen.Type
                 data class Payload internal constructor(
@@ -384,7 +384,7 @@ sealed interface ReplyMarkup {
                 /**
                  * Telegram [KeyboardButtonPollType](https://core.telegram.org/bots/api#keyboardbuttonpolltype) type.
                  *
-                 * For up-to-date documentation please consult the official Telegram docs.
+                 * For up-to-date documentation, please consult the official Telegram docs.
                  */
                 // @TelegramCodegen.Type
                 data class Payload internal constructor(
@@ -414,7 +414,7 @@ sealed interface ReplyMarkup {
     /**
      * Telegram [ReplyKeyboardRemove](https://core.telegram.org/bots/api#replykeyboardremove) type.
      *
-     * For up-to-date documentation please consult the official Telegram docs.
+     * For up-to-date documentation, please consult the official Telegram docs.
      */
     // @TelegramCodegen.Type
     data class KeyboardRemove internal constructor(
@@ -429,7 +429,7 @@ sealed interface ReplyMarkup {
     /**
      * Telegram [ForceReply](https://core.telegram.org/bots/api#forcereply) type.
      *
-     * For up-to-date documentation please consult the official Telegram docs.
+     * For up-to-date documentation, please consult the official Telegram docs.
      */
     // @TelegramCodegen.Type
     data class ForceReply internal constructor(

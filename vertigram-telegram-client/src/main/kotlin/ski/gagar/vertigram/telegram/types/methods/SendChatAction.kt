@@ -11,7 +11,7 @@ import ski.gagar.vertigram.util.NoPosArgs
 /**
  * Telegram [sendChatAction](https://core.telegram.org/bots/api#sendchataction) method.
  *
- * For up-to-date documentation please consult the official Telegram docs.
+ * For up-to-date documentation, please consult the official Telegram docs.
  */
 @Throttled
 @TelegramCodegen.Method
@@ -24,7 +24,7 @@ data class SendChatAction internal constructor(
     /**
      * Telegram [ChatAction](https://core.telegram.org/bots/api#chataction) type.
      *
-     * For up-to-date documentation please consult the official Telegram docs.
+     * For up-to-date documentation, please consult the official Telegram docs.
      */
     enum class Action {
         @JsonProperty("typing")

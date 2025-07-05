@@ -9,14 +9,14 @@ It somehow combines functionality of the following plugins:
  - `org.jooq.jooq-codegen-gradle`
  - `org.flywaydb.flyway`
 
-The migration and code generation process can be run either agains live database, running on your machine 
+The migration and code generation process can be run either against live database, running on your machine 
 or against a database deployed internally in Docker container. For the latter, running Docker daemon is required.
 
 ## Examples
 Basic example with embedded Postgres:
 ```kotlin
 plugins {
-    id("ski.gagar.vertigram.jooq") version "0.0.1"
+    id("ski.gagar.vertigram.jooq")
 }
 
 vertigramJooq {
@@ -30,7 +30,7 @@ vertigramJooq {
 Verbose syntax for fine-tuning:
 ```kotlin
 plugins {
-    id("ski.gagar.vertigram.jooq") version "0.0.1"
+    id("ski.gagar.vertigram.jooq")
 }
 
 vertigramJooq {

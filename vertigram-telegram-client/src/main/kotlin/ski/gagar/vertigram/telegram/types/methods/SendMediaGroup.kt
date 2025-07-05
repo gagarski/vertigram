@@ -14,7 +14,7 @@ import ski.gagar.vertigram.util.NoPosArgs
 /**
  * Telegram [sendMediaGroup](https://core.telegram.org/bots/api#sendmediagroup) method.
  *
- * For up-to-date documentation please consult the official Telegram docs.
+ * For up-to-date documentation, please consult the official Telegram docs.
  */
 @Throttled
 @TelegramCodegen.Method

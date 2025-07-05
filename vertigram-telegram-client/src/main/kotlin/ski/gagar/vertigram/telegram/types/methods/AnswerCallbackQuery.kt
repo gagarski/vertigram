@@ -6,7 +6,7 @@ import java.time.Duration
 /**
  * Telegram [answerCallbackQuery](https://core.telegram.org/bots/api#answercallbackquery) method.
  *
- * For up-to-date documentation please consult the official Telegram docs.
+ * For up-to-date documentation, please consult the official Telegram docs.
  */
 @TelegramCodegen.Method(wrapRichText = false)
 data class AnswerCallbackQuery internal constructor(

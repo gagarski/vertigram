@@ -30,4 +30,3 @@ dependencyResolutionManagement {
         gradlePluginPortal()
     }
 }
-include("vertigram-docs")

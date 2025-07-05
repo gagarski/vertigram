@@ -9,7 +9,7 @@ import java.time.LocalTime
 /**
  * Telegram [BusinessOpeningHours](https://core.telegram.org/bots/api#businessopeninghours) type.
  *
- * For up-to-date documentation please consult the official Telegram docs.
+ * For up-to-date documentation, please consult the official Telegram docs.
  */
 @TelegramCodegen.Type
 data class BusinessOpeningHours internal constructor(
@@ -19,7 +19,7 @@ data class BusinessOpeningHours internal constructor(
     /**
      * Telegram [BusinessOpeningHoursInterval](https://core.telegram.org/bots/api#businessopeninghoursinterval) type.
      *
-     * For up-to-date documentation please consult the official Telegram docs.
+     * For up-to-date documentation, please consult the official Telegram docs.
      */
     @TelegramCodegen.Type
     data class Interval internal constructor(

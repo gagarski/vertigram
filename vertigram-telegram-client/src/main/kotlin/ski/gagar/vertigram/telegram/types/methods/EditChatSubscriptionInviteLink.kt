@@ -11,7 +11,7 @@ import java.time.Duration
 /**
  * Telegram [editChatSubscriptionInviteLink](https://core.telegram.org/bots/api#editchatsubscriptioninvitelink) method.
  *
- * For up-to-date documentation please consult the official Telegram docs.
+ * For up-to-date documentation, please consult the official Telegram docs.
  */
 @TelegramCodegen.Method
 data class EditChatSubscriptionInviteLink internal constructor(

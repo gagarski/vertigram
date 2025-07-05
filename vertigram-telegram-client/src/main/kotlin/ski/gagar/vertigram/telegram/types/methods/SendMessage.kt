@@ -14,7 +14,7 @@ import ski.gagar.vertigram.telegram.types.util.ChatId
 /**
  * Telegram [sendMessage](https://core.telegram.org/bots/api#sendmessage) method.
  *
- * For up-to-date documentation please consult the official Telegram docs.
+ * For up-to-date documentation, please consult the official Telegram docs.
  */
 @Throttled
 @TelegramCodegen.Method

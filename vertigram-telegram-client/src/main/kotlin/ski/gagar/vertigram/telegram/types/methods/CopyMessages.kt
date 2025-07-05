@@ -9,7 +9,7 @@ import ski.gagar.vertigram.telegram.types.util.ChatId
 /**
  * Telegram [copyMessages](https://core.telegram.org/bots/api#copymessages) method.
  *
- * For up-to-date documentation please consult the official Telegram docs.
+ * For up-to-date documentation, please consult the official Telegram docs.
  */
 @Throttled
 @TelegramCodegen.Method

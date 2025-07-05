@@ -8,7 +8,7 @@ import ski.gagar.vertigram.telegram.types.util.ChatId
 /**
  * Telegram [editGeneralForumTopic](https://core.telegram.org/bots/api#editgeneralforumtopic) method.
  *
- * For up-to-date documentation please consult the official Telegram docs.
+ * For up-to-date documentation, please consult the official Telegram docs.
  */
 @Throttled
 @TelegramCodegen.Method

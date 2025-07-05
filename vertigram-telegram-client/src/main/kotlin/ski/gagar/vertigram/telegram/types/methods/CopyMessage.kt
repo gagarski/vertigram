@@ -15,7 +15,7 @@ import java.time.Duration
 /**
  * Telegram [copyMessage](https://core.telegram.org/bots/api#copymessage) method.
  *
- * For up-to-date documentation please consult the official Telegram docs.
+ * For up-to-date documentation, please consult the official Telegram docs.
  */
 @TelegramCodegen.Method
 @Throttled

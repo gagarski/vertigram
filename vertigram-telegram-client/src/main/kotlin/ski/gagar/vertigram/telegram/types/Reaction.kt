@@ -10,7 +10,7 @@ import ski.gagar.vertigram.util.NoPosArgs
 /**
  * Telegram [ReactionType](https://core.telegram.org/bots/api#reactiontype) type.
  *
- * For up-to-date documentation please consult the official Telegram docs.
+ * For up-to-date documentation, please consult the official Telegram docs.
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", include = JsonTypeInfo.As.EXISTING_PROPERTY)
 @JsonSubTypes(
@@ -24,7 +24,7 @@ sealed interface Reaction {
     /**
      * Telegram [ReactionTypeEmoji](https://core.telegram.org/bots/api#reactiontypeemoji) type.
      *
-     * For up-to-date documentation please consult the official Telegram docs.
+     * For up-to-date documentation, please consult the official Telegram docs.
      */
     @TelegramCodegen.Type
     data class Emoji internal constructor(
@@ -37,7 +37,7 @@ sealed interface Reaction {
     /**
      * Telegram [ReactionTypeCustomEmoji](https://core.telegram.org/bots/api#reactiontypecustomemoji) type.
      *
-     * For up-to-date documentation please consult the official Telegram docs.
+     * For up-to-date documentation, please consult the official Telegram docs.
      */
     @TelegramCodegen.Type
     data class CustomEmoji internal constructor(
@@ -50,7 +50,7 @@ sealed interface Reaction {
     /**
      * Telegram [ReactionTypeEmoji](https://core.telegram.org/bots/api#reactiontypeemoji) type.
      *
-     * For up-to-date documentation please consult the official Telegram docs.
+     * For up-to-date documentation, please consult the official Telegram docs.
      */
     data object Paid : Reaction {
         override val type: Type = Type.PAID
