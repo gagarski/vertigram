@@ -126,6 +126,8 @@ class VertigramClientGenerator(
                         defaultValue("null")
                     } else if (param.type.resolve().rawClassName == BOOLEAN) {
                         defaultValue("false")
+                    } else if (param.type.resolve().rawClassName == DOUBLE) {
+                        defaultValue("0.0")
                     } else if (param.type.resolve().rawClassName == ClassName("ski.gagar.vertigram.util", "NoPosArgs")) {
                         throw IllegalArgumentException("Please remove NoPosArgs from constructor for $className")
                     }
@@ -452,6 +454,16 @@ class VertigramClientGenerator(
             ClassName("kotlin", "Any"),
         )
         private val WRAP_CONFIGS = listOf(
+//            WrapConfig(
+//                triggerParam = "title",
+//                wrapper = ClassName("ski.gagar.vertigram.telegram.types.richtext", "RichText"),
+//                wrapperParam = "richTitle",
+//                wrapperParamMapping = mapOf(
+//                    "title" to "text",
+//                    "parseMode" to "parseMode",
+//                    "titleEntities" to "entities"
+//                )
+//            ),
             WrapConfig(
                 triggerParam = "caption",
                 wrapper = ClassName("ski.gagar.vertigram.telegram.types.richtext", "RichText"),

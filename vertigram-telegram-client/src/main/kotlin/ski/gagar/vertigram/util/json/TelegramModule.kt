@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.Module
 import com.fasterxml.jackson.databind.module.SimpleDeserializers
 import com.fasterxml.jackson.databind.module.SimpleSerializers
 import ski.gagar.vertigram.telegram.types.BusinessOpeningHours
+import ski.gagar.vertigram.util.json.duration.DurationInSecondsContextualDeserializer
+import ski.gagar.vertigram.util.json.duration.DurationInSecondsContextualSerializer
 import java.time.Duration
 import java.time.Instant
 
@@ -20,7 +22,7 @@ internal object TelegramModule : Module() {
         context.addSerializers(SimpleSerializers().apply {
             addSerializer(AttachmentSerializer())
             addSerializer(UrlAttachmentSerializer())
-            addSerializer(DurationInSecondsSerializer())
+            addSerializer(DurationInSecondsContextualSerializer())
             addSerializer(UnixTimestampSerializer())
             addSerializer(OpeningTimeSerializer())
         })
@@ -31,7 +33,7 @@ internal object TelegramModule : Module() {
             )
             addDeserializer(
                 Duration::class.java,
-                DurationInSecondsDeserializer()
+                DurationInSecondsContextualDeserializer()
             )
             addDeserializer(
                 BusinessOpeningHours.OpeningTime::class.java,

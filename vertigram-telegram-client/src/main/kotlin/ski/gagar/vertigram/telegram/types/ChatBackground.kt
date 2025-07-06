@@ -1,12 +1,10 @@
 package ski.gagar.vertigram.telegram.types
 
-import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.telegram.types.colors.RgbColor
-import ski.gagar.vertigram.util.NoPosArgs
 
 /**
  * Telegram [ChatBackground](https://core.telegram.org/bots/api#chatbackground) type.
@@ -137,7 +135,7 @@ data class ChatBackground internal constructor(
         @TelegramCodegen.Type
         data class Pattern internal constructor(
             val document: Document,
-            val fill: Type.Fill.Value,
+            val fill: Fill.Value,
             val intensity: Int,
             @get:JvmName("getIsInverted")
             val isInverted: Boolean = false,

@@ -1,9 +1,7 @@
-package ski.gagar.vertigram.types
+package ski.gagar.vertigram.telegram.types
 
 import org.junit.jupiter.api.Test
 import ski.gagar.vertigram.BaseSerializationTest
-import ski.gagar.vertigram.telegram.types.*
-import java.time.Duration
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 
@@ -12,6 +10,7 @@ object StarTransactionSerializationTest : BaseSerializationTest() {
     fun `transaction partner should survive serialization`() {
         assertSerializable<StarTransaction.TransactionPartner>(
             StarTransaction.TransactionPartner.User.create(
+                transactionType = StarTransaction.TransactionPartner.User.TransactionType.INVOICE_PAYMENT,
                 user = User.create(id = 1)
             )
         )

@@ -42,6 +42,7 @@ data class Message internal constructor(
     val isFromOffline: Boolean = false,
     val mediaGroupId: String? = null,
     val authorSignature: String? = null,
+    val paidStarCount: Int? = null,
     override val text: String? = null,
     override val entities: List<MessageEntity>? = null,
     val linkPreviewOptions: LinkPreviewOptions? = null,
@@ -60,6 +61,7 @@ data class Message internal constructor(
     override val captionEntities: List<MessageEntity>? = null,
     val showCaptionAboveMedia: Boolean = false,
     val hasMediaSpoiler: Boolean = false,
+    val checklist: Checklist? = null,
     val contact: Contact? = null,
     val dice: Dice? = null,
     val game: Game? = null,
@@ -83,12 +85,17 @@ data class Message internal constructor(
     val refundedPayment: Service.RefundedPayment? = null,
     val usersShared: Service.UsersShared? = null,
     val chatShared: Service.ChatShared? = null,
+    val gift: Service.GiftInfo? = null,
+    val uniqueGift: Service.UniqueGiftInfo? = null,
     val connectedWebsite: String? = null,
     val writeAccessAllowed: Service.WriteAccessAllowed? = null,
     val passportData: Passport.Data? = null,
     val proximityAlertTriggered: Service.ProximityAlertTriggered? = null,
     val boostAdded: ChatBoost.Added? = null,
     val chatBackgroundSet: ChatBackground? = null,
+    val checklistTasksDone: Service.ChecklistTasks.Done? = null,
+    val checklistTasksAdded: Service.ChecklistTasks.Added? = null,
+    val directMessagePriceChanged: Service.DirectMessagePriceChanged? = null,
     val forumTopicCreated: Service.ForumTopic.Created? = null,
     val forumTopicEdited: Service.ForumTopic.Edited? = null,
     val forumTopicClosed: Service.ForumTopic.Closed? = null,
@@ -99,6 +106,7 @@ data class Message internal constructor(
     val giveaway: Giveaway? = null,
     val giveawayWinners: Giveaway.Winners? = null,
     val giveawayCompleted: Service.Giveaway.Completed? = null,
+    val paidMessagePriceChanged: Service.PaidMessagePriceChanged? = null,
     val videoChatScheduled: Service.VideoChat.Scheduled? = null,
     val videoChatStarted: Service.VideoChat.Started? = null,
     val videoChatEnded: Service.VideoChat.Ended? = null,
@@ -128,6 +136,7 @@ data class Message internal constructor(
         val videoNote: VideoNote? = null,
         val voice: Voice? = null,
         val hasMediaSpoiler: Boolean = false,
+        val checklist: Checklist? = null,
         val contact: Contact? = null,
         val dice: Dice? = null,
         val game: Game? = null,
@@ -381,7 +390,7 @@ data class Message internal constructor(
          *
          * For up-to-date documentation, please consult the official Telegram docs.
          */
-        @TelegramCodegen.Type
+        @TelegramCodegen.Type(wrapRichText = false)
         data class ChatShared internal constructor(
             val requestId: Long,
             val chatId: Long,
@@ -389,6 +398,57 @@ data class Message internal constructor(
             val username: String? = null,
             val photo: List<PhotoSize>? = null
         ) {
+            companion object
+        }
+
+        /**
+         * Telegram [GiftInfo](https://core.telegram.org/bots/api#giftinfo) type.
+         *
+         * For up-to-date documentation, please consult the official Telegram docs.
+         */
+        @TelegramCodegen.Type(wrapRichText = false)
+        data class GiftInfo internal constructor(
+            val gift: Gift,
+            val ownedGiftId: String? = null,
+            val convertStarCount: Int? = null,
+            val prepaidUpgradeStarCount: Int? = null,
+            val canBeUpgraded: Boolean = false,
+            val text: String? = null,
+            val entities: List<MessageEntity>? = null,
+            @get:JvmName("getIsPrivate")
+            val isPrivate: Boolean = false
+        ) {
+            companion object
+        }
+
+        /**
+         * Telegram [UniqueGiftInfo](https://core.telegram.org/bots/api#uniquegiftinfo) type.
+         *
+         * For up-to-date documentation, please consult the official Telegram docs.
+         */
+        @TelegramCodegen.Type(wrapRichText = false)
+        data class UniqueGiftInfo internal constructor(
+            val gift: UniqueGift,
+            val origin: Origin,
+            val lastResaleStarCount: Int? = null,
+            val ownedGiftId: String? = null,
+            val transferStarCount: Int? = null,
+            val nextTransferDate: Instant? = null,
+        ) {
+            enum class Origin {
+                @JsonProperty("upgrade")
+                UPGRADE,
+                @JsonProperty("transfer")
+                TRANSFER,
+                @JsonProperty("resale")
+                RESALE;
+
+                companion object {
+                    const val UPGRADE_STR = "upgrade"
+                    const val TRANSFER_STR = "transfer"
+                    const val RESALE_STR = "resale"
+                }
+            }
             companion object
         }
 
@@ -464,6 +524,50 @@ data class Message internal constructor(
         ) {
             companion object
         }
+
+        object ChecklistTasks {
+            /**
+             * Telegram [ChecklistTasksDone](https://core.telegram.org/bots/api#checklisttasksdone) type.
+             *
+             * For up-to-date documentation, please consult the official Telegram docs.
+             */
+            @TelegramCodegen.Type
+            data class Done internal constructor(
+                val checklistMessage: Message,
+                val markedAsDoneTaskIds: List<Int>? = null,
+                val markedAsNotDoneTaskIds: List<Int>? = null
+            ) {
+                companion object
+            }
+
+            /**
+             * Telegram [ChecklistTasksAdded](https://core.telegram.org/bots/api#checklisttasksadded) type.
+             *
+             * For up-to-date documentation, please consult the official Telegram docs.
+             */
+            @TelegramCodegen.Type
+            data class Added internal constructor(
+                val checklistMessage: Message,
+                val tasks: List<Checklist.Task>? = null
+            ) {
+                companion object
+            }
+
+        }
+
+        /**
+         * Telegram [DirectMessagePriceChanged](https://core.telegram.org/bots/api#directmessagepricechanged) type.
+         *
+         * For up-to-date documentation, please consult the official Telegram docs.
+         */
+        @TelegramCodegen.Type
+        data class DirectMessagePriceChanged internal constructor(
+            val areDirectMessagesEnabled: Boolean,
+            val directMessageStarCount: Int
+        ) {
+            companion object
+        }
+
 
         /**
          * Service messages related to [ski.gagar.vertigram.telegram.types.ForumTopic]
@@ -556,6 +660,18 @@ data class Message internal constructor(
             ) {
                 companion object
             }
+        }
+
+        /**
+         * Telegram [PaidMessagePriceChanged](https://core.telegram.org/bots/api#paidmessagepricechanged) type.
+         *
+         * For up-to-date documentation, please consult the official Telegram docs.
+         */
+        @TelegramCodegen.Type
+        data class PaidMessagePriceChanged internal constructor(
+            val paidMessageStarCount: Int
+        ) {
+            companion object
         }
 
         /**

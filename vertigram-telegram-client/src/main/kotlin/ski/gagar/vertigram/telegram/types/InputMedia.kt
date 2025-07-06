@@ -8,7 +8,7 @@ import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.telegram.types.attachments.Attachment
 import ski.gagar.vertigram.telegram.types.richtext.HasOptionalRichCaption
 import ski.gagar.vertigram.telegram.types.richtext.RichText
-import ski.gagar.vertigram.util.NoPosArgs
+import ski.gagar.vertigram.util.json.annotations.Fractional
 import java.time.Duration
 
 interface BaseInputMedia<T> {
@@ -183,6 +183,149 @@ sealed interface InputMedia : BaseInputMedia<InputMedia.Type> {
         fun instantiate(sticker: Attachment) = copy(sticker = sticker)
 
         companion object
+    }
+
+    /**
+     * Telegram [InputProfilePhoto](https://core.telegram.org/bots/api#inputprofilephoto) type.
+     *
+     * For up-to-date documentation, please consult the official Telegram docs.
+     */
+    @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", include = JsonTypeInfo.As.EXISTING_PROPERTY)
+    @JsonSubTypes(
+        JsonSubTypes.Type(value = ProfilePhoto.Static::class, name = ProfilePhoto.Type.STATIC_STR),
+        JsonSubTypes.Type(value = ProfilePhoto.Animated::class, name = ProfilePhoto.Type.ANIMATED_STR)
+    )
+    sealed interface ProfilePhoto {
+        val type: Type
+        val attachment: Attachment
+
+        fun instantiate(inst: Attachment): ProfilePhoto
+
+        /**
+         * Telegram [InputProfilePhotoStatic](https://core.telegram.org/bots/api#inputprofilephotostatic) type.
+         *
+         * For up-to-date documentation, please consult the official Telegram docs.
+         */
+        @TelegramCodegen.Type
+        data class Static internal constructor(
+            val photo: Attachment
+        ) : ProfilePhoto {
+            override val type: Type = Type.STATIC
+            @JsonIgnore
+            override val attachment: Attachment = photo
+
+            override fun instantiate(inst: Attachment): Static = copy(photo = photo)
+
+            companion object
+        }
+
+        /**
+         * Telegram [InputProfilePhotoAnimated](https://core.telegram.org/bots/api#inputprofilephotoanimated) type.
+         *
+         * For up-to-date documentation, please consult the official Telegram docs.
+         */
+        @TelegramCodegen.Type
+        data class Animated internal constructor(
+            val animation: Attachment,
+            @Fractional
+            val mainFrameTimestamp: Duration? = null,
+        ) : ProfilePhoto {
+            override val type: Type = Type.ANIMATED
+            @JsonIgnore
+            override val attachment: Attachment = animation
+
+            override fun instantiate(inst: Attachment): Animated = copy(animation = inst)
+
+            companion object
+        }
+
+        enum class Type {
+            @JsonProperty(STATIC_STR)
+            STATIC,
+            @JsonProperty(ANIMATED_STR)
+            ANIMATED;
+
+            companion object {
+                const val STATIC_STR = "static"
+                const val ANIMATED_STR = "animated"
+            }
+        }
+
+        companion object
+    }
+
+    /**
+     * Telegram [InputStoryContent](https://core.telegram.org/bots/api#inputstorycontent) type.
+     *
+     * For up-to-date documentation, please consult the official Telegram docs.
+     */
+    @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", include = JsonTypeInfo.As.EXISTING_PROPERTY)
+    @JsonSubTypes(
+        JsonSubTypes.Type(value = StoryContent.Photo::class, name = StoryContent.Type.PHOTO_STR),
+        JsonSubTypes.Type(value = StoryContent.Video::class, name = StoryContent.Type.VIDEO_STR)
+    )
+    sealed interface StoryContent {
+        val type: Type
+        val attachment: Attachment
+
+        fun instantiate(inst: Attachment): StoryContent
+
+        /**
+         * Telegram [InputStoryContentPhoto](https://core.telegram.org/bots/api#inputstorycontentphoto) type.
+         *
+         * For up-to-date documentation, please consult the official Telegram docs.
+         */
+        @TelegramCodegen.Type
+        data class Photo internal constructor(
+            val photo: Attachment
+        ) : StoryContent {
+            override val type: Type = Type.PHOTO
+            @JsonIgnore
+            override val attachment: Attachment = photo
+
+            override fun instantiate(inst: Attachment): Photo =
+                copy(photo = inst)
+
+            companion object
+        }
+
+        /**
+         * Telegram [InputStoryContentPhoto](https://core.telegram.org/bots/api#inputstorycontentphoto) type.
+         *
+         * For up-to-date documentation, please consult the official Telegram docs.
+         */
+        @TelegramCodegen.Type
+        data class Video internal constructor(
+            val video: Attachment,
+            val duration: Duration? = null,
+            val coverFrameTimestamp: Duration? = null,
+            @get:JvmName("getIsAnimation")
+            val isAnimation: Boolean = false
+        ) : StoryContent {
+            override val type: Type = Type.VIDEO
+            @JsonIgnore
+            override val attachment: Attachment = video
+
+            override fun instantiate(inst: Attachment): Video =
+                copy(video = inst)
+
+            companion object
+        }
+
+        /**
+         * A value for [StoryContent.type] field.
+         */
+        enum class Type {
+            @JsonProperty(PHOTO_STR)
+            PHOTO,
+            @JsonProperty(VIDEO_STR)
+            VIDEO;
+
+            companion object {
+                const val PHOTO_STR = "photo"
+                const val VIDEO_STR = "video"
+            }
+        }
     }
 
     /**

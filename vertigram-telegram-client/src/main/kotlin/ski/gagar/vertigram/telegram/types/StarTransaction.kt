@@ -1,5 +1,6 @@
 package ski.gagar.vertigram.telegram.types
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
@@ -21,6 +22,14 @@ data class StarTransaction internal constructor(
     val source: TransactionPartner? = null,
     val target: TransactionPartner? = null
 ) {
+    @get:JsonIgnore
+    val starAmount
+        get() = StarAmount(amount, nanostarAmount)
+
+    @get:JsonIgnore
+    val bigDecimalAmount
+        get() = starAmount.bigDecimalValue
+
     /**
      * Telegram [TransactionPartner](https://core.telegram.org/bots/api#transactionpartner) type.
      *
@@ -45,6 +54,7 @@ data class StarTransaction internal constructor(
          */
         @TelegramCodegen.Type
         data class User internal constructor(
+            val transactionType: TransactionType, // TODO: type hierarchies are not supported with JsonSubTypes, think about it
             val user: ski.gagar.vertigram.telegram.types.User,
             val affiliate: AffiliateInfo? = null,
             val invoicePayload: String? = null,
@@ -52,7 +62,7 @@ data class StarTransaction internal constructor(
             val paidMedia: List<PaidMedia>? = null,
             val paidMediaPayload: String? = null,
             val gift: Gift? = null,
-
+            val premiumSubscriptionDuration: Int? = null
         ) : TransactionPartner {
             override val type: Type = Type.USER
 
@@ -70,6 +80,24 @@ data class StarTransaction internal constructor(
                 val nanostarAmount: Int
             ) {
                 companion object
+            }
+
+            enum class TransactionType {
+                @JsonProperty(INVOICE_PAYMENT_STR)
+                INVOICE_PAYMENT,
+                @JsonProperty(PAID_MEDIA_PAYMENT_STR)
+                PAID_MEDIA_PAYMENT,
+                @JsonProperty(GIFT_PURCHASE_STR)
+                GIFT_PURCHASE,
+                @JsonProperty(PREMIUM_PURCHASE_STR)
+                PREMIUM_PURCHASE;
+
+                companion object {
+                    const val INVOICE_PAYMENT_STR = "invoice_payment"
+                    const val PAID_MEDIA_PAYMENT_STR = "paid_media_payment"
+                    const val GIFT_PURCHASE_STR = "gift_purchase_str"
+                    const val PREMIUM_PURCHASE_STR = "premium_purchase_str"
+                }
             }
 
             companion object
@@ -249,9 +277,6 @@ data class StarTransaction internal constructor(
             }
         }
     }
-
-
-
 
     companion object
 }

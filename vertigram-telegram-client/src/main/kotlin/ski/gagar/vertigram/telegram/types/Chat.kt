@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.telegram.types.colors.AccentColor
 import ski.gagar.vertigram.telegram.types.colors.ProfileAccentColor
-import ski.gagar.vertigram.util.NoPosArgs
 import java.time.Duration
 import java.time.Instant
 
@@ -80,7 +79,7 @@ data class Chat internal constructor(
         val inviteLink: String? = null,
         val pinnedMessage: Message? = null,
         val permissions: ChatPermissions? = null,
-        val canSendGift: Boolean = false,
+        val acceptedGiftTypes: AcceptedGiftTypes,
         val canSendPaidMedia: Boolean = false,
         val slowModeDelay: Duration? = null,
         val unrestrictBoostCount: Int? = null,

@@ -12,9 +12,9 @@ data class Gift internal constructor(
     val id: String,
     val sticker: Sticker,
     val starCount: Int,
-    val upgradeStarCount: Int,
-    val totalCount: Int,
-    val remainingCount: Int
+    val upgradeStarCount: Int? = null,
+    val totalCount: Int? = null,
+    val remainingCount: Int? = null
 ) {
     companion object
 }

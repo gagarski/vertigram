@@ -44,7 +44,7 @@ internal class BeanSerializerWithMultipart(delegate: BeanSerializer) : BeanSeria
             val deferredMedia = mutableMapOf<String, AttachmentInfo>()
             for (prop in props) {
                 prop?.let {
-                    if (null != prop.getAnnotation(ski.gagar.vertigram.telegram.annotations.TelegramMedia::class.java)) {
+                    if (null != prop.getAnnotation(TelegramMedia::class.java)) {
                         deferredMedia.putAll(MediaInstantiatingBeanPropertyWriter(prop).serializeMedia(bean, gen, provider))
                     } else {
                         prop.serializeAsField(bean, gen, provider)

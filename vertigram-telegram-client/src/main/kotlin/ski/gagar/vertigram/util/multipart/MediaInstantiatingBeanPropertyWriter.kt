@@ -58,6 +58,44 @@ internal class MediaInstantiatingBeanPropertyWriter(delegate: BeanPropertyWriter
         return processedSticker
     }
 
+    private fun processSingleProfilePhoto(
+        value: InputMedia.ProfilePhoto,
+        deferred: MutableMap<String, AttachmentInfo>,
+        index: Int? = null
+    ): InputMedia.ProfilePhoto {
+        val indexStr = index?.let {
+            "_$it"
+        }
+        val name = "${ATTACHMENT}_${_name}${indexStr}_${PROFILE_PHOTO}"
+
+        val processed = value.instantiate(
+            inst = value.attachment.getReference(name)
+        )
+
+        deferred[name] = AttachmentInfo(value.attachment, true)
+
+        return processed
+    }
+
+    private fun processSingleStoryContent(
+        value: InputMedia.StoryContent,
+        deferred: MutableMap<String, AttachmentInfo>,
+        index: Int? = null
+    ): InputMedia.StoryContent {
+        val indexStr = index?.let {
+            "_$it"
+        }
+        val name = "${ATTACHMENT}_${_name}${indexStr}_${STORY_CONTENT}"
+
+        val processed = value.instantiate(
+            inst = value.attachment.getReference(name)
+        )
+
+        deferred[name] = AttachmentInfo(value.attachment, true)
+
+        return processed
+    }
+
     fun serializeMedia(
         bean: Any, gen: JsonGenerator,
         prov: SerializerProvider?
@@ -77,11 +115,19 @@ internal class MediaInstantiatingBeanPropertyWriter(delegate: BeanPropertyWriter
             is InputMedia.Sticker -> {
                 processSingleSticker(value, deferredAttachments)
             }
+            is InputMedia.ProfilePhoto -> {
+                processSingleProfilePhoto(value, deferredAttachments)
+            }
+            is InputMedia.StoryContent -> {
+                processSingleStoryContent(value, deferredAttachments)
+            }
             is Collection<*> -> {
                 value.withIndex().map { (index, it) ->
                     when (it) {
                         is BaseInputMedia<*> -> processSingleMedia(it, deferredAttachments, index)
                         is InputMedia.Sticker -> processSingleSticker(it, deferredAttachments, index)
+                        is InputMedia.ProfilePhoto -> processSingleProfilePhoto(it, deferredAttachments, index)
+                        is InputMedia.StoryContent -> processSingleStoryContent(it, deferredAttachments)
                         else -> it
                     }
                 }.toList()
@@ -137,5 +183,7 @@ internal class MediaInstantiatingBeanPropertyWriter(delegate: BeanPropertyWriter
         const val THUMB = "thumb"
         const val COVER = "cover"
         const val STICKER = "sticker"
+        const val PROFILE_PHOTO = "profile_photo"
+        const val STORY_CONTENT = "story_content"
     }
 }

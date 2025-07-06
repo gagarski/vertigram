@@ -6,26 +6,21 @@ import io.vertx.core.http.HttpServer
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.handler.BodyHandler
 import kotlinx.coroutines.delay
-import ski.gagar.vertigram.util.jackson.mapTo
-import ski.gagar.vertigram.util.jackson.typeReference
+import ski.gagar.vertigram.internal.server.IpNetworkAddress
+import ski.gagar.vertigram.internal.server.RealIpLoggerHandler
 import ski.gagar.vertigram.retrying
 import ski.gagar.vertigram.telegram.client.Telegram
 import ski.gagar.vertigram.telegram.client.ThinTelegram
 import ski.gagar.vertigram.telegram.methods.deleteWebhook
 import ski.gagar.vertigram.telegram.methods.setWebhook
 import ski.gagar.vertigram.telegram.types.Update
+import ski.gagar.vertigram.util.jackson.mapTo
+import ski.gagar.vertigram.util.jackson.typeReference
 import ski.gagar.vertigram.util.json.TELEGRAM_JSON_MAPPER
 import ski.gagar.vertigram.util.lazy
 import ski.gagar.vertigram.util.logger
-import ski.gagar.vertigram.verticles.telegram.WebHook.Config
 import ski.gagar.vertigram.verticles.telegram.address.TelegramAddress
 import ski.gagar.vertigram.verticles.telegram.config.WebHookConfig
-import ski.gagar.vertigram.internal.server.IpNetworkAddress
-import ski.gagar.vertigram.internal.server.RealIpLoggerHandler
-import ski.gagar.vertigram.telegram.types.ReplyParameters
-import ski.gagar.vertigram.telegram.types.create
-import ski.gagar.vertigram.telegram.types.invoke
-import ski.gagar.vertigram.telegram.types.util.toChatId
 import java.time.Instant
 import java.util.*
 
@@ -127,17 +122,4 @@ class WebHook : UpdateReceiver<WebHook.Config>() {
     companion object {
         private const val X_TELEGRAM_BOT_API_SECRET_TOKEN = "X-Telegram-Bot-Api-Secret-Token"
     }
-}
-
-
-fun main() {
-    ReplyParameters.create(
-        messageId = 42,
-        chatId = 42.toChatId()
-    )
-    ReplyParameters(
-        messageId = 42,
-        chatId = 42.toChatId()
-    )
-
 }
