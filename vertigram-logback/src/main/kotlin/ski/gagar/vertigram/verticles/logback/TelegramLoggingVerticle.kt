@@ -16,6 +16,7 @@ import ski.gagar.vertigram.telegram.types.User
 import ski.gagar.vertigram.telegram.types.util.toChatId
 import ski.gagar.vertigram.util.jackson.typeReference
 import ski.gagar.vertigram.verticles.common.VertigramVerticle
+import ski.gagar.vertigram.verticles.telegram.address.TelegramAddress
 import java.time.Duration
 
 /**
@@ -267,7 +268,11 @@ class TelegramLoggingVerticle : VertigramVerticle<TelegramLoggingVerticle.Config
          * An address to listen to.
          * @see ski.gagar.vertigram.logback.EventBusAppender.address
          */
-        val listenAddress: String = DEFAULT_LISTEN_ADDRESS
+        val listenAddress: String = DEFAULT_LISTEN_ADDRESS,
+        /**
+         * An address to interact with Telegram Verticle
+         */
+        val telegramAddress: String = TelegramAddress.TELEGRAM_VERTICLE_BASE
     )
 
     companion object {
@@ -279,6 +284,3 @@ class TelegramLoggingVerticle : VertigramVerticle<TelegramLoggingVerticle.Config
         const val DEFAULT_LISTEN_ADDRESS = "ski.gagar.vertigram.logback"
     }
 }
-
-suspend fun Vertigram.enableTelegramLogging(config: TelegramLoggingVerticle.Config) =
-    deployVerticle(TelegramLoggingVerticle(), config)

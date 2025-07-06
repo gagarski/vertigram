@@ -92,8 +92,8 @@ dokka {
             externalDocumentationLinks.register("kotlinx-coroutines") {
                 url.set(URI("https://kotlinlang.org/api/kotlinx.coroutines/"))
             }
-            externalDocumentationLinks.register("vertx") {
-                url.set(URI("https://vertx.io/docs/${libs.findVersion("vertx").get()}/apidocs/"))
+            externalDocumentationLinks.register("vertx-core") {
+                url.set(URI("https://javadoc.io/doc/io.vertx/vertx-core/${libs.findVersion("vertx").get()}/"))
             }
             val jacksonVersion = libs.findVersion("jackson").get()
 
