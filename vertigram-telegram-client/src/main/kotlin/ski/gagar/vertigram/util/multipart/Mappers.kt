@@ -7,4 +7,4 @@ import io.vertx.core.Vertx
  * Mapper with to-plevel multipart support
  */
 internal fun telegramJsonMapperWithMultipart(underlying: ObjectMapper, vertx: Vertx) =
-    ObjectMapperWithMultipart(underlying, vertx)
+    MultipartMapper(underlying, vertx)

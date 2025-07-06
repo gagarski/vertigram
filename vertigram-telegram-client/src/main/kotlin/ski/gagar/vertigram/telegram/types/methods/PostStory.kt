@@ -2,7 +2,6 @@ package ski.gagar.vertigram.telegram.types.methods
 
 import com.fasterxml.jackson.annotation.JsonValue
 import ski.gagar.vertigram.annotations.TelegramCodegen
-import ski.gagar.vertigram.telegram.annotations.TelegramMedia
 import ski.gagar.vertigram.telegram.types.InputMedia
 import ski.gagar.vertigram.telegram.types.MessageEntity
 import ski.gagar.vertigram.telegram.types.Story
@@ -18,7 +17,6 @@ import java.time.Duration
 @TelegramCodegen.Method()
 data class PostStory internal constructor(
     val businessConnectionId: String,
-    @TelegramMedia
     val content: InputMedia.StoryContent,
     val activePeriod: ActivePeriod,
     val caption: String? = null,

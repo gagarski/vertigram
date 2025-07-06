@@ -18,9 +18,9 @@ internal class DurationInSecondsContextualDeserializer : JsonDeserializer<Durati
 
     override fun createContextual(
         ctxt: DeserializationContext,
-        property: BeanProperty
+        property: BeanProperty?
     ): JsonDeserializer<Duration>? {
-        val fractional = property.getAnnotation(Fractional::class.java) != null
+        val fractional = null != property && property.getAnnotation(Fractional::class.java) != null
         return if (fractional) {
             DurationInSecondsFractionalDeserializer()
         } else {

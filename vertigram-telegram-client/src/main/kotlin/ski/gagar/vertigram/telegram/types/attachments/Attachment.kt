@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo
 import com.fasterxml.jackson.annotation.JsonTypeInfo.As
 import com.fasterxml.jackson.annotation.JsonTypeInfo.Id
 import io.vertx.core.Vertx
-import ski.gagar.vertigram.web.multipart.FilePart
 import ski.gagar.vertigram.web.multipart.Part
 import java.io.File
 
@@ -15,15 +14,7 @@ import java.io.File
  *
  * Telegram uses `multipart/form-data` for sending attachments and Vertigram uses this content type for all methods
  * that can have files attached (even if they actually do not have).
- * There are three ways Telegram sends attachment:
- *  - (1) For URLs and file ids it just puts the string into the specified field, no parts with `filename` are added to multipart form
- *  - (2) Directly attached files: If the method has top-level [Attachment] field and the file is being sent,
- *    the file is attached to the form using the name of the field. This is done for most Telegram methods.
- *  - [ski.gagar.vertigram.telegram.methods.SendMediaGroup] has a way of attaching multiple files.
- *   `media` field there,  is a JSON descriptor, a list of [ski.gagar.vertigram.telegram.types.InputMedia].
- *   Each [ski.gagar.vertigram.telegram.types.InputMedia] has [ski.gagar.vertigram.telegram.types.InputMedia.media] field itself,
- *   it can contain either a URL or file id (like in (1)) ot a special url: `attach://xxx`, meaning that the file itself
- *   is attached to the form as field `xxx`.
+
  *
  * Vertigram uses all three methods to send the files, depending on the called Telegram method. It provides you two
  * implementations:
@@ -62,11 +53,6 @@ interface Attachment {
      */
     fun getReferredPart(field: String, vertx: Vertx): Part?
 
-    /**
-     * If the attachment is being sent using method (2), return the attached part: for URL/file id it's the string itself,
-     * for the file-like attachments it's [FilePart]
-     */
-    fun getPart(field: String, vertx: Vertx): Part
     companion object
 }
 
@@ -77,7 +63,6 @@ abstract class AbstractFileAttachment : Attachment {
     override fun getReference(referredField: String): StringAttachment = StringAttachment("attach://$referredField")
     override fun getReferredPart(field: String, vertx: Vertx) = doAttach(field, vertx)
 
-    override fun getPart(field: String, vertx: Vertx): Part = doAttach(field, vertx)
 
     /**
      * Implement this method to return the "meaningful" [Part] (i.e. file contents)

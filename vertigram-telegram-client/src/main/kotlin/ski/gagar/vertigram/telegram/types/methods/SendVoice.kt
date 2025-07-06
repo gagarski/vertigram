@@ -1,8 +1,6 @@
 package ski.gagar.vertigram.telegram.types.methods
 
-import com.fasterxml.jackson.annotation.JsonIgnore
 import ski.gagar.vertigram.annotations.TelegramCodegen
-import ski.gagar.vertigram.telegram.annotations.TelegramMedia
 import ski.gagar.vertigram.telegram.throttling.HasChatId
 import ski.gagar.vertigram.telegram.throttling.Throttled
 import ski.gagar.vertigram.telegram.types.Message
@@ -13,7 +11,6 @@ import ski.gagar.vertigram.telegram.types.attachments.Attachment
 import ski.gagar.vertigram.telegram.types.richtext.HasOptionalRichCaption
 import ski.gagar.vertigram.telegram.types.richtext.RichText
 import ski.gagar.vertigram.telegram.types.util.ChatId
-import ski.gagar.vertigram.util.NoPosArgs
 import java.time.Duration
 
 /**
@@ -27,7 +24,6 @@ data class SendVoice internal constructor(
     val businessConnectionId: String? = null,
     override val chatId: ChatId,
     val messageThreadId: Long? = null,
-    @TelegramMedia
     val voice: Attachment,
     override val caption: String? = null,
     override val parseMode: RichText.ParseMode? = null,

@@ -1,8 +1,6 @@
 package ski.gagar.vertigram.telegram.types.methods
 
-import com.fasterxml.jackson.annotation.JsonIgnore
 import ski.gagar.vertigram.annotations.TelegramCodegen
-import ski.gagar.vertigram.telegram.annotations.TelegramMedia
 import ski.gagar.vertigram.telegram.throttling.HasChatId
 import ski.gagar.vertigram.telegram.throttling.Throttled
 import ski.gagar.vertigram.telegram.types.Message
@@ -13,7 +11,6 @@ import ski.gagar.vertigram.telegram.types.attachments.Attachment
 import ski.gagar.vertigram.telegram.types.richtext.HasOptionalRichCaption
 import ski.gagar.vertigram.telegram.types.richtext.RichText
 import ski.gagar.vertigram.telegram.types.util.ChatId
-import ski.gagar.vertigram.util.NoPosArgs
 import java.time.Duration
 
 /**
@@ -27,14 +24,11 @@ data class SendVideo internal constructor(
     val businessConnectionId: String? = null,
     override val chatId: ChatId,
     val messageThreadId: Long? = null,
-    @TelegramMedia
     val video: Attachment,
     val duration: Duration? = null,
     val width: Int? = null,
     val height: Int? = null,
-    @TelegramMedia
     val thumbnail: Attachment? = null,
-    @TelegramMedia
     val cover: Attachment? = null,
     val startTimestamp: Duration? = null,
     override val caption: String? = null,

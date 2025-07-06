@@ -1,7 +1,6 @@
 package ski.gagar.vertigram.telegram.types.methods
 
 import ski.gagar.vertigram.annotations.TelegramCodegen
-import ski.gagar.vertigram.telegram.annotations.TelegramMedia
 import ski.gagar.vertigram.telegram.types.InputMedia
 
 /**
@@ -13,6 +12,5 @@ import ski.gagar.vertigram.telegram.types.InputMedia
 data class AddStickerToSet internal constructor(
     val userId: Long,
     val name: String,
-    @TelegramMedia
     val sticker: InputMedia.Sticker
 ) : MultipartTelegramCallable<Boolean>()

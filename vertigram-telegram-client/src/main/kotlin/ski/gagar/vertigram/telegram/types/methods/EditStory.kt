@@ -1,7 +1,6 @@
 package ski.gagar.vertigram.telegram.types.methods
 
 import ski.gagar.vertigram.annotations.TelegramCodegen
-import ski.gagar.vertigram.telegram.annotations.TelegramMedia
 import ski.gagar.vertigram.telegram.types.InputMedia
 import ski.gagar.vertigram.telegram.types.MessageEntity
 import ski.gagar.vertigram.telegram.types.Story
@@ -17,7 +16,6 @@ import ski.gagar.vertigram.telegram.types.richtext.RichText
 data class EditStory internal constructor(
     val businessConnectionId: String,
     val storyId: Long,
-    @TelegramMedia
     val content: InputMedia.StoryContent,
     val caption: String? = null,
     val parseMode: RichText.ParseMode? = null,

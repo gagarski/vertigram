@@ -11,9 +11,9 @@ import java.time.Duration
 class DurationInSecondsContextualSerializer : ContextualSerializer, JsonSerializer<Duration>() {
     override fun createContextual(
         prov: SerializerProvider,
-        property: BeanProperty
+        property: BeanProperty?
     ): JsonSerializer<Duration> {
-        val fractional = property.getAnnotation(Fractional::class.java) != null
+        val fractional = null != property && property.getAnnotation(Fractional::class.java) != null
         return if (fractional) {
             DurationInSecondsFractionalSerializer()
         } else {

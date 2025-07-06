@@ -3,7 +3,6 @@ package ski.gagar.vertigram.telegram.types.methods
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 import ski.gagar.vertigram.annotations.TelegramCodegen
-import ski.gagar.vertigram.telegram.annotations.TelegramMedia
 import ski.gagar.vertigram.telegram.annotations.TelegramMethod
 import ski.gagar.vertigram.telegram.throttling.HasChatId
 import ski.gagar.vertigram.telegram.throttling.Throttled
@@ -42,7 +41,6 @@ sealed interface EditMessageMedia {
     data class InlineMessage internal constructor(
         override val businessConnectionId: String? = null,
         val inlineMessageId: String,
-        @TelegramMedia
         override val media: InputMedia,
         override val replyMarkup: ReplyMarkup.InlineKeyboard? = null
     ) : EditMessageMedia, MultipartTelegramCallable<Boolean>()
@@ -61,7 +59,6 @@ sealed interface EditMessageMedia {
         override val businessConnectionId: String? = null,
         override val chatId: ChatId,
         val messageId: Long,
-        @TelegramMedia
         override val media: InputMedia,
         override val replyMarkup: ReplyMarkup.InlineKeyboard? = null
     ) : EditMessageMedia, HasChatId, MultipartTelegramCallable<Message>()

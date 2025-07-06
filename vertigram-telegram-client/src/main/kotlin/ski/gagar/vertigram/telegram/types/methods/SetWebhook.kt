@@ -1,7 +1,6 @@
 package ski.gagar.vertigram.telegram.types.methods
 
 import ski.gagar.vertigram.annotations.TelegramCodegen
-import ski.gagar.vertigram.telegram.annotations.TelegramMedia
 import ski.gagar.vertigram.telegram.types.Update
 import ski.gagar.vertigram.telegram.types.attachments.Attachment
 
@@ -13,7 +12,6 @@ import ski.gagar.vertigram.telegram.types.attachments.Attachment
 @TelegramCodegen.Method
 data class SetWebhook internal constructor(
     val url: String,
-    @TelegramMedia
     val certificate: Attachment? = null,
     val ipAddress: String? = null,
     val maxConnections: Int? = null,

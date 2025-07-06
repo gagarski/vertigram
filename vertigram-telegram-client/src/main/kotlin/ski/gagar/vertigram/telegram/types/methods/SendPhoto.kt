@@ -1,7 +1,6 @@
 package ski.gagar.vertigram.telegram.types.methods
 
 import ski.gagar.vertigram.annotations.TelegramCodegen
-import ski.gagar.vertigram.telegram.annotations.TelegramMedia
 import ski.gagar.vertigram.telegram.throttling.HasChatId
 import ski.gagar.vertigram.telegram.throttling.Throttled
 import ski.gagar.vertigram.telegram.types.Message
@@ -24,7 +23,6 @@ data class SendPhoto internal constructor(
     val businessConnectionId: String? = null,
     override val chatId: ChatId,
     val messageThreadId: Long? = null,
-    @TelegramMedia
     val photo: Attachment,
     override val caption: String? = null,
     override val parseMode: RichText.ParseMode? = null,

@@ -1,8 +1,6 @@
 package ski.gagar.vertigram.telegram.types.methods
 
-import com.fasterxml.jackson.annotation.JsonIgnore
 import ski.gagar.vertigram.annotations.TelegramCodegen
-import ski.gagar.vertigram.telegram.annotations.TelegramMedia
 import ski.gagar.vertigram.telegram.throttling.HasChatId
 import ski.gagar.vertigram.telegram.throttling.Throttled
 import ski.gagar.vertigram.telegram.types.Message
@@ -10,7 +8,6 @@ import ski.gagar.vertigram.telegram.types.ReplyMarkup
 import ski.gagar.vertigram.telegram.types.ReplyParameters
 import ski.gagar.vertigram.telegram.types.attachments.Attachment
 import ski.gagar.vertigram.telegram.types.util.ChatId
-import ski.gagar.vertigram.util.NoPosArgs
 
 /**
  * Telegram [sendSticker](https://core.telegram.org/bots/api#sendsticker) method.
@@ -23,7 +20,6 @@ data class SendSticker internal constructor(
     val businessConnectionId: String? = null,
     override val chatId: ChatId,
     val messageThreadId: Long? = null,
-    @TelegramMedia
     val sticker: Attachment,
     val emoji: String? = null,
     val disableNotification: Boolean = false,

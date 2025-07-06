@@ -16,8 +16,6 @@ interface BaseInputMedia<T> {
     val media: Attachment
     val thumbnail: Attachment?
     val cover: Attachment?
-
-    fun instantiate(media: Attachment, thumbnail: Attachment?, cover: Attachment?): BaseInputMedia<T>
 }
 
 /**
@@ -64,8 +62,6 @@ sealed interface InputMedia : BaseInputMedia<InputMedia.Type> {
     ) : InputMedia, HasOptionalRichCaption {
         override val type: Type = Type.ANIMATION
         override val cover: Attachment? = null
-        override fun instantiate(media: Attachment, thumbnail: Attachment?, cover: Attachment?) =
-            copy(media = media, thumbnail = thumbnail)
 
         companion object
     }
@@ -88,8 +84,6 @@ sealed interface InputMedia : BaseInputMedia<InputMedia.Type> {
     ) : InputMedia, HasOptionalRichCaption {
         override val type: Type = Type.AUDIO
         override val cover: Attachment? = null
-        override fun instantiate(media: Attachment, thumbnail: Attachment?, cover: Attachment?) =
-            copy(media = media, thumbnail = thumbnail)
 
         companion object
     }
@@ -110,8 +104,6 @@ sealed interface InputMedia : BaseInputMedia<InputMedia.Type> {
     ) : InputMedia, HasOptionalRichCaption {
         override val type: Type = Type.DOCUMENT
         override val cover: Attachment? = null
-        override fun instantiate(media: Attachment, thumbnail: Attachment?, cover: Attachment?) =
-            copy(media = media, thumbnail = thumbnail)
 
         companion object
     }
@@ -133,8 +125,6 @@ sealed interface InputMedia : BaseInputMedia<InputMedia.Type> {
         override val type: Type = Type.PHOTO
         override val thumbnail = null
         override val cover: Attachment? = null
-        override fun instantiate(media: Attachment, thumbnail: Attachment?, cover: Attachment?) =
-            copy(media = media)
 
         companion object
     }
@@ -161,8 +151,6 @@ sealed interface InputMedia : BaseInputMedia<InputMedia.Type> {
         val hasSpoiler: Boolean = false
     ) : InputMedia, HasOptionalRichCaption {
         override val type: Type = Type.VIDEO
-        override fun instantiate(media: Attachment, thumbnail: Attachment?, cover: Attachment?) =
-            copy(media = media, thumbnail = thumbnail, cover = cover)
 
         companion object
     }
@@ -180,7 +168,6 @@ sealed interface InputMedia : BaseInputMedia<InputMedia.Type> {
         val maskPosition: ski.gagar.vertigram.telegram.types.Sticker.MaskPosition? = null,
         val keywords: List<String>? = null
     ) {
-        fun instantiate(sticker: Attachment) = copy(sticker = sticker)
 
         companion object
     }
@@ -199,8 +186,6 @@ sealed interface InputMedia : BaseInputMedia<InputMedia.Type> {
         val type: Type
         val attachment: Attachment
 
-        fun instantiate(inst: Attachment): ProfilePhoto
-
         /**
          * Telegram [InputProfilePhotoStatic](https://core.telegram.org/bots/api#inputprofilephotostatic) type.
          *
@@ -213,8 +198,6 @@ sealed interface InputMedia : BaseInputMedia<InputMedia.Type> {
             override val type: Type = Type.STATIC
             @JsonIgnore
             override val attachment: Attachment = photo
-
-            override fun instantiate(inst: Attachment): Static = copy(photo = photo)
 
             companion object
         }
@@ -233,8 +216,6 @@ sealed interface InputMedia : BaseInputMedia<InputMedia.Type> {
             override val type: Type = Type.ANIMATED
             @JsonIgnore
             override val attachment: Attachment = animation
-
-            override fun instantiate(inst: Attachment): Animated = copy(animation = inst)
 
             companion object
         }
@@ -268,8 +249,6 @@ sealed interface InputMedia : BaseInputMedia<InputMedia.Type> {
         val type: Type
         val attachment: Attachment
 
-        fun instantiate(inst: Attachment): StoryContent
-
         /**
          * Telegram [InputStoryContentPhoto](https://core.telegram.org/bots/api#inputstorycontentphoto) type.
          *
@@ -282,9 +261,6 @@ sealed interface InputMedia : BaseInputMedia<InputMedia.Type> {
             override val type: Type = Type.PHOTO
             @JsonIgnore
             override val attachment: Attachment = photo
-
-            override fun instantiate(inst: Attachment): Photo =
-                copy(photo = inst)
 
             companion object
         }
@@ -305,9 +281,6 @@ sealed interface InputMedia : BaseInputMedia<InputMedia.Type> {
             override val type: Type = Type.VIDEO
             @JsonIgnore
             override val attachment: Attachment = video
-
-            override fun instantiate(inst: Attachment): Video =
-                copy(video = inst)
 
             companion object
         }
@@ -356,8 +329,6 @@ sealed interface InputMedia : BaseInputMedia<InputMedia.Type> {
             override val type: Type = Type.PHOTO
             override val thumbnail: Attachment? = null
             override val cover: Attachment? = null
-            override fun instantiate(media: Attachment, thumbnail: Attachment?, cover: Attachment?): Paid =
-                copy(media = media)
 
             companion object
         }
@@ -385,8 +356,6 @@ sealed interface InputMedia : BaseInputMedia<InputMedia.Type> {
 
         ) : Paid, HasOptionalRichCaption{
             override val type: Type = Type.VIDEO
-            override fun instantiate(media: Attachment, thumbnail: Attachment?, cover: Attachment?): Video =
-                copy(media = media, thumbnail = thumbnail, cover = cover)
             companion object
         }
 

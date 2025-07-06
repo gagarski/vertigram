@@ -20,7 +20,6 @@ internal object TelegramModule : Module() {
 
     override fun setupModule(context: SetupContext) {
         context.addSerializers(SimpleSerializers().apply {
-            addSerializer(AttachmentSerializer())
             addSerializer(UrlAttachmentSerializer())
             addSerializer(DurationInSecondsContextualSerializer())
             addSerializer(UnixTimestampSerializer())
@@ -39,6 +38,19 @@ internal object TelegramModule : Module() {
                 BusinessOpeningHours.OpeningTime::class.java,
                 OpeningTimeDeserializer()
             )
+        })
+    }
+
+}
+
+internal object MultipartModule : Module() {
+    override fun getModuleName(): String = "TelegramMultipartModule"
+
+    override fun version(): Version = Version.unknownVersion()
+
+    override fun setupModule(context: SetupContext) {
+        context.addSerializers(SimpleSerializers().apply {
+            addSerializer(AttachmentSerializer())
         })
     }
 
