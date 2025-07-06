@@ -137,7 +137,7 @@ class VertigramClientGenerator(
     private fun FunSpec.Builder.addParametersFromPrimaryConstructor(
         classDecl: KSClassDeclaration,
         className: ClassName,
-        actuallyWrapped: MutableSet<String>,
+        actuallyWrapped: MutableMap<String, WrapConfig>,
         wrapRichText: Boolean
     ) {
         val constructor = classDecl.primaryConstructor
@@ -154,18 +154,26 @@ class VertigramClientGenerator(
                         it.simpleName.getShortName() == "Defaults"
             } as? KSClassDeclaration
 
-        val seenParams = mutableSetOf<String>()
-
-        val alreadyWrapped = mutableSetOf<String>()
-
         this.addParameter(
             ParameterSpec.builder(NO_POS_ARGS, NO_POS_ARGS_TYPE)
                 .defaultValue("ski.gagar.vertigram.util.NoPosArgs.INSTANCE")
                 .build()
         )
 
+        val paramsSet = constructor.parameters.asSequence().map { it.name!!.getShortName() }.toSet()
+        val triggers = mutableMapOf<String, WrapConfig>()
+        for (wrapConfig in WRAP_CONFIGS) {
+            if (paramsSet.containsAll(wrapConfig.wrapperParamMapping.keys)) {
+                for (param in wrapConfig.wrapperParamMapping.keys) {
+                    triggers[param] = wrapConfig
+                }
+            }
+        }
+
+        val alreadyWrapped = mutableSetOf<String>()
+
         for (param in constructor.parameters) {
-            val wrapConfig = if (wrapRichText) WRAP_CONFIGS_BY_TRIGGER[param.name!!.getShortName()] else null
+            val wrapConfig = if (wrapRichText) triggers[param.name!!.getShortName()] else null
 
             if (param.name!!.getShortName() in alreadyWrapped) {
                 continue
@@ -184,30 +192,26 @@ class VertigramClientGenerator(
                     }.build()
                 )
 
-                if (wrapConfig.wrapperParamMapping.any { (k, _) -> k in seenParams }) {
-                    throw IllegalStateException("Some of the parameters in ${wrapConfig.wrapperParamMapping} are already processed")
-                }
                 alreadyWrapped.addAll(wrapConfig.wrapperParamMapping.keys)
-                actuallyWrapped.add(wrapConfig.wrapperParam)
+                actuallyWrapped[wrapConfig.wrapperParam] = wrapConfig
             } else {
                 this.addParameter(
                     constructorParamToMethodParam(param, defaults, className)
                 )
             }
-            seenParams.add(param.name!!.getShortName())
         }
     }
 
     private fun FunSpec.Builder.callPrimaryConstructor(
         className: ClassName,
-        actuallyWrapped: Set<String>
+        actuallyWrapped: Map<String, WrapConfig>
     ): FunctionCall {
         val format = sequence {
             for (param in parameters) {
                 if (param.name == NO_POS_ARGS) continue
                 val wrapperConfig =
                     if (param.name in actuallyWrapped)
-                        WRAP_CONFIGS_BY_WRAPPER[param.name] else null
+                        actuallyWrapped[param.name] else null
 
                 if (null == wrapperConfig)
                     yield("%N = %N")
@@ -228,7 +232,7 @@ class VertigramClientGenerator(
                 if (param.name == NO_POS_ARGS) continue
                 val wrapperConfig =
                     if (param.name in actuallyWrapped)
-                        WRAP_CONFIGS_BY_WRAPPER[param.name] else null
+                        actuallyWrapped[param.name] else null
 
                 if (null == wrapperConfig) {
                     yield(param)
@@ -290,7 +294,7 @@ class VertigramClientGenerator(
             .receiver(ClassName("ski.gagar.vertigram.telegram.client", "Telegram"))
             .returns(returnType)
             .apply {
-                val actuallyWrapped = mutableSetOf<String>()
+                val actuallyWrapped = mutableMapOf<String, WrapConfig>()
                 addParametersFromPrimaryConstructor(classDecl, className, actuallyWrapped, anno.wrapRichText)
                 val call = callPrimaryConstructor(className, actuallyWrapped)
                 addStatement("return call(${call.formatString})", *call.parameters.toTypedArray())
@@ -388,7 +392,7 @@ class VertigramClientGenerator(
                 if (isOperator) {
                     addModifiers(KModifier.OPERATOR)
                 }
-                val actuallyWrapped = mutableSetOf<String>()
+                val actuallyWrapped = mutableMapOf<String, WrapConfig>()
                 addParametersFromPrimaryConstructor(classDecl, className, actuallyWrapped, anno.wrapRichText)
                 val call = callPrimaryConstructor(className, actuallyWrapped)
                 addStatement("return ${call.formatString}", *call.parameters.toTypedArray())
@@ -433,7 +437,6 @@ class VertigramClientGenerator(
     )
 
     data class WrapConfig(
-        val triggerParam: String,
         val wrapper: ClassName,
         val wrapperParam: String,
         val wrapperParamMapping: Map<String, String>
@@ -454,18 +457,16 @@ class VertigramClientGenerator(
             ClassName("kotlin", "Any"),
         )
         private val WRAP_CONFIGS = listOf(
-//            WrapConfig(
-//                triggerParam = "title",
-//                wrapper = ClassName("ski.gagar.vertigram.telegram.types.richtext", "RichText"),
-//                wrapperParam = "richTitle",
-//                wrapperParamMapping = mapOf(
-//                    "title" to "text",
-//                    "parseMode" to "parseMode",
-//                    "titleEntities" to "entities"
-//                )
-//            ),
             WrapConfig(
-                triggerParam = "caption",
+                wrapper = ClassName("ski.gagar.vertigram.telegram.types.richtext", "RichText"),
+                wrapperParam = "richTitle",
+                wrapperParamMapping = mapOf(
+                    "title" to "text",
+                    "parseMode" to "parseMode",
+                    "titleEntities" to "entities"
+                )
+            ),
+            WrapConfig(
                 wrapper = ClassName("ski.gagar.vertigram.telegram.types.richtext", "RichText"),
                 wrapperParam = "richCaption",
                 wrapperParamMapping = mapOf(
@@ -475,7 +476,6 @@ class VertigramClientGenerator(
                 )
             ),
             WrapConfig(
-                triggerParam = "text",
                 wrapper = ClassName("ski.gagar.vertigram.telegram.types.richtext", "RichText"),
                 wrapperParam = "richText",
                 wrapperParamMapping = mapOf(
@@ -485,7 +485,15 @@ class VertigramClientGenerator(
                 )
             ),
             WrapConfig(
-                triggerParam = "messageText",
+                wrapper = ClassName("ski.gagar.vertigram.telegram.types.richtext", "RichText"),
+                wrapperParam = "richText",
+                wrapperParamMapping = mapOf(
+                    "text" to "text",
+                    "parseMode" to "parseMode",
+                    "textEntities" to "entities"
+                )
+            ),
+            WrapConfig(
                 wrapper = ClassName("ski.gagar.vertigram.telegram.types.richtext", "RichText"),
                 wrapperParam = "richMessageText",
                 wrapperParamMapping = mapOf(
@@ -495,7 +503,6 @@ class VertigramClientGenerator(
                 )
             ),
             WrapConfig(
-                triggerParam = "quote",
                 wrapper = ClassName("ski.gagar.vertigram.telegram.types.richtext", "RichText"),
                 wrapperParam = "richQuote",
                 wrapperParamMapping = mapOf(
@@ -505,7 +512,6 @@ class VertigramClientGenerator(
                 )
             ),
             WrapConfig(
-                triggerParam = "explanation",
                 wrapper = ClassName("ski.gagar.vertigram.telegram.types.richtext", "RichText"),
                 wrapperParam = "richExplanation",
                 wrapperParamMapping = mapOf(
@@ -516,8 +522,6 @@ class VertigramClientGenerator(
             ),
         )
 
-        private val WRAP_CONFIGS_BY_TRIGGER = WRAP_CONFIGS.associateBy { it.triggerParam }
-        private val WRAP_CONFIGS_BY_WRAPPER = WRAP_CONFIGS.associateBy { it.wrapperParam }
         private val NO_POS_ARGS_TYPE = ClassName("ski.gagar.vertigram.util", "NoPosArgs")
         private const val NO_POS_ARGS = "noPosArgs"
         private const val METHODS_PACKAGE = "ski.gagar.vertigram.telegram.methods"

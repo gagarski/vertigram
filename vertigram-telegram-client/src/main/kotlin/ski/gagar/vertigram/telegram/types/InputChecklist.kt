@@ -2,7 +2,6 @@ package ski.gagar.vertigram.telegram.types
 
 import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.telegram.types.richtext.RichText
-import ski.gagar.vertigram.util.NoPosArgs
 
 /**
  * Telegram [InputChecklist](https://core.telegram.org/bots/api#inputchecklist) type.
@@ -23,7 +22,7 @@ data class InputChecklist internal constructor(
      *
      * For up-to-date documentation, please consult the official Telegram docs.
      */
-//    @TelegramCodegen.Type
+    @TelegramCodegen.Type
     data class Task internal constructor(
         val id: Int,
         val text: String,
@@ -34,17 +33,3 @@ data class InputChecklist internal constructor(
     }
     companion object
 }
-
-fun InputChecklist.Task.Companion.create(
-    noPosArgs: NoPosArgs = ski.gagar.vertigram.util.NoPosArgs.INSTANCE,
-    id: Int,
-    richText: RichText,
-    textEntities: List<MessageEntity>? = null,
-): InputChecklist.Task = InputChecklist.Task(id = id, text = richText.text, parseMode = richText.parseMode, textEntities = textEntities)
-
-fun InputChecklist.Task.Companion.invoke(
-    noPosArgs: NoPosArgs = ski.gagar.vertigram.util.NoPosArgs.INSTANCE,
-    id: Int,
-    richText: RichText,
-    textEntities: List<MessageEntity>? = null,
-): InputChecklist.Task = InputChecklist.Task(id = id, text = richText.text, parseMode = richText.parseMode, textEntities = textEntities)

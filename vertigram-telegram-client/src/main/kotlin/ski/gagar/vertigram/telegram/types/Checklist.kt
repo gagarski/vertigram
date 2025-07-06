@@ -8,7 +8,7 @@ import java.time.Instant
  *
  * For up-to-date documentation, please consult the official Telegram docs.
  */
-@TelegramCodegen.Type(wrapRichText = false)
+@TelegramCodegen.Type
 data class Checklist internal constructor(
     val title: String,
     val titleEntities: List<MessageEntity>? = null,
@@ -21,7 +21,7 @@ data class Checklist internal constructor(
      *
      * For up-to-date documentation, please consult the official Telegram docs.
      */
-    @TelegramCodegen.Type(wrapRichText = false)
+    @TelegramCodegen.Type
     data class Task internal constructor(
         val id: Int,
         val text: String,

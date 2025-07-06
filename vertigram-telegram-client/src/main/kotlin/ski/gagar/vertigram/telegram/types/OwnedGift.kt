@@ -31,7 +31,7 @@ sealed interface OwnedGift {
      *
      * For up-to-date documentation, please consult the official Telegram docs.
      */
-    @TelegramCodegen.Type(wrapRichText = false)
+    @TelegramCodegen.Type
     data class Regular internal constructor(
         val gift: Gift,
         override val ownedGiftId: String? = null,

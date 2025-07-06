@@ -69,7 +69,7 @@ interface Poll : HasQuestionWithEntities {
     /**
      * Quiz case
      */
-    @TelegramCodegen.Type(wrapRichText = false)
+    @TelegramCodegen.Type
     data class Quiz internal constructor(
         override val id: String,
         override val question: String,
@@ -96,7 +96,7 @@ interface Poll : HasQuestionWithEntities {
      *
      * For up-to-date documentation, please consult the official Telegram docs.
      */
-    @TelegramCodegen.Type(wrapRichText = false)
+    @TelegramCodegen.Type
     data class Option internal constructor(
         override val text: String,
         override val entities: List<MessageEntity>? = null,

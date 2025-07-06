@@ -15,7 +15,7 @@ import java.time.Instant
  *
  * For up-to-date documentation, please consult the official Telegram docs.
  */
-@TelegramCodegen.Type(wrapRichText = false)
+@TelegramCodegen.Type
 data class Message internal constructor(
     val messageId: Long,
     val messageThreadId: Long? = null,
@@ -268,7 +268,7 @@ data class Message internal constructor(
      *
      * For up-to-date documentation, please consult the official Telegram docs.
      */
-    @TelegramCodegen.Type(wrapRichText = false)
+    @TelegramCodegen.Type
     data class TextQuote internal constructor(
         override val text: String,
         val position: Int,
@@ -390,7 +390,7 @@ data class Message internal constructor(
          *
          * For up-to-date documentation, please consult the official Telegram docs.
          */
-        @TelegramCodegen.Type(wrapRichText = false)
+        @TelegramCodegen.Type
         data class ChatShared internal constructor(
             val requestId: Long,
             val chatId: Long,
@@ -406,7 +406,7 @@ data class Message internal constructor(
          *
          * For up-to-date documentation, please consult the official Telegram docs.
          */
-        @TelegramCodegen.Type(wrapRichText = false)
+        @TelegramCodegen.Type
         data class GiftInfo internal constructor(
             val gift: Gift,
             val ownedGiftId: String? = null,
@@ -426,7 +426,7 @@ data class Message internal constructor(
          *
          * For up-to-date documentation, please consult the official Telegram docs.
          */
-        @TelegramCodegen.Type(wrapRichText = false)
+        @TelegramCodegen.Type
         data class UniqueGiftInfo internal constructor(
             val gift: UniqueGift,
             val origin: Origin,

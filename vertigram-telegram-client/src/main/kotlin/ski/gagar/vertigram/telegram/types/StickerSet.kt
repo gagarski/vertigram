@@ -7,7 +7,7 @@ import ski.gagar.vertigram.annotations.TelegramCodegen
  *
  * For up-to-date documentation, please consult the official Telegram docs.
  */
-@TelegramCodegen.Type(wrapRichText = false)
+@TelegramCodegen.Type
 data class StickerSet internal constructor(
     val name: String,
     val title: String,

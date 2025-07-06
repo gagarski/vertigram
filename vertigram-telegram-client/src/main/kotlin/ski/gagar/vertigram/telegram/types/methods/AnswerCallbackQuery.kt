@@ -8,7 +8,7 @@ import java.time.Duration
  *
  * For up-to-date documentation, please consult the official Telegram docs.
  */
-@TelegramCodegen.Method(wrapRichText = false)
+@TelegramCodegen.Method
 data class AnswerCallbackQuery internal constructor(
     val callbackQueryId: String,
     val text: String? = null,

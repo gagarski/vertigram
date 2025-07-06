@@ -1,15 +1,13 @@
 package ski.gagar.vertigram.telegram.types.methods
 
 import com.fasterxml.jackson.annotation.JsonValue
+import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.telegram.annotations.TelegramMedia
-import ski.gagar.vertigram.telegram.client.Telegram
 import ski.gagar.vertigram.telegram.types.InputMedia
 import ski.gagar.vertigram.telegram.types.MessageEntity
 import ski.gagar.vertigram.telegram.types.Story
 import ski.gagar.vertigram.telegram.types.StoryArea
 import ski.gagar.vertigram.telegram.types.richtext.RichText
-import ski.gagar.vertigram.telegram.types.util.ChatId
-import ski.gagar.vertigram.util.NoPosArgs
 import java.time.Duration
 
 /**
@@ -17,7 +15,7 @@ import java.time.Duration
  *
  * For up-to-date documentation, please consult the official Telegram docs.
  */
-//@TelegramCodegen.Method()
+@TelegramCodegen.Method()
 data class PostStory internal constructor(
     val businessConnectionId: String,
     @TelegramMedia
@@ -45,21 +43,3 @@ data class PostStory internal constructor(
     }
     companion object
 }
-
-@Suppress("DEPRECATION")
-public suspend fun Telegram.postStory(
-    noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
-    chatId: ChatId,
-    giftId: String,
-    payForUpgrade: Boolean = false,
-    richText: RichText? = null
-): Boolean = call(
-    SendGift.Chat(
-        chatId = chatId,
-        giftId = giftId,
-        payForUpgrade = payForUpgrade,
-        text = richText?.text,
-        textParseMode = richText?.parseMode,
-        textEntities = richText?.entities
-    )
-)

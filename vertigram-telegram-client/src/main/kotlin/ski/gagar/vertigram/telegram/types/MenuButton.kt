@@ -48,7 +48,7 @@ sealed interface MenuButton {
      *
      * For up-to-date documentation, please consult the official Telegram docs.
      */
-    @TelegramCodegen.Type(wrapRichText = false)
+    @TelegramCodegen.Type
     data class WebApp internal constructor(
         val text: String,
         val webApp: WebAppInfo

@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.telegram.types.richtext.HasOptionalTextWithEntities
 
-@TelegramCodegen.Type(wrapRichText = false)
+@TelegramCodegen.Type
 data class Game internal constructor(
     val title: String,
     val description: String,

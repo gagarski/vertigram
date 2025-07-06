@@ -3,7 +3,6 @@ package ski.gagar.vertigram.telegram.types
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
-import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.util.NoPosArgs
 
 /**
@@ -38,7 +37,6 @@ sealed interface ReplyMarkup {
      *
      * Consider using [ski.gagar.vertigram.telegram.markup.inlineKeyboard] for building the button layout.
      */
-    //@TelegramCodegen.Type
     data class InlineKeyboard internal constructor(
         val inlineKeyboard: List<List<Button>>
     ) : ReplyMarkup {
@@ -69,7 +67,6 @@ sealed interface ReplyMarkup {
             /**
              * Case when no optional fields are specified
              */
-            // @TelegramCodegen.Type
             data class Text internal constructor(
                 val text: String
             ) : Button {
@@ -79,7 +76,6 @@ sealed interface ReplyMarkup {
             /**
              * Case when [url] is specified
              */
-            // @TelegramCodegen.Type
             data class Url internal constructor(
                 val text: String,
                 val url: String
@@ -90,7 +86,6 @@ sealed interface ReplyMarkup {
             /**
              * Case when [callbackData] is specified
              */
-            // @TelegramCodegen.Type
             data class Callback internal constructor(
                 val text: String,
                 val callbackData: String
@@ -111,7 +106,6 @@ sealed interface ReplyMarkup {
             /**
              * Case when [loginUrl] is specified
              */
-            // @TelegramCodegen.Type
             data class Login internal constructor(
                 val text: String,
                 val loginUrl: Payload
@@ -135,7 +129,6 @@ sealed interface ReplyMarkup {
             /**
              * Case when [switchInlineQuery] is set
              */
-            // @TelegramCodegen.Type
             data class SwitchInline internal constructor(
                 val text: String,
                 val switchInlineQuery: String,
@@ -146,7 +139,6 @@ sealed interface ReplyMarkup {
             /**
              * Case when [switchInlineQueryCurrentChat] is set
              */
-            // @TelegramCodegen.Type
             data class SwitchInlineCurrentChat internal constructor(
                 val text: String,
                 val switchInlineQueryCurrentChat: String
@@ -157,7 +149,7 @@ sealed interface ReplyMarkup {
             /**
              * Case when [switchInlineQueryChosenChat] is set
              */
-            // @TelegramCodegen.Type
+
             data class SwitchInlineChosenChat internal constructor(
                 val text: String,
                 val switchInlineQueryChosenChat: Payload
@@ -167,7 +159,6 @@ sealed interface ReplyMarkup {
                  *
                  * For up-to-date documentation, please consult the official Telegram docs.
                  */
-                // @TelegramCodegen.Type
                 data class Payload internal constructor(
                     val query: String? = null,
                     val allowUserChats: Boolean = false,
@@ -184,7 +175,6 @@ sealed interface ReplyMarkup {
             /**
              * Case when [copyText] is set
              */
-            // @TelegramCodegen.Type
             data class CopyText internal constructor(
                 val text: String,
                 val copyText: Payload
@@ -194,7 +184,6 @@ sealed interface ReplyMarkup {
                  *
                  * For up-to-date documentation, please consult the official Telegram docs.
                  */
-                // @TelegramCodegen.Type
                 data class Payload internal constructor(
                     val text: String
                 ) {
@@ -208,7 +197,6 @@ sealed interface ReplyMarkup {
             /**
              * Case when [callbackGame] is set
              */
-            // @TelegramCodegen.Type
             data class Game internal constructor(
                 val text: String,
                 val callbackGame: Payload
@@ -226,7 +214,6 @@ sealed interface ReplyMarkup {
             /**
              * Case when [pay] is set to `true`
              */
-            // @TelegramCodegen.Type
             data class Pay internal constructor(
                 val text: String
             ) : Button {
@@ -251,7 +238,6 @@ sealed interface ReplyMarkup {
      * For up-to-date documentation, please consult the official Telegram docs.
      *
      */
-    // @TelegramCodegen.Type
     data class Keyboard internal constructor(
         val keyboard: List<List<Button>>,
         @get:JvmName("getIsPersistent")
@@ -280,7 +266,6 @@ sealed interface ReplyMarkup {
             /**
              * Case when no optional fields are set
              */
-            // @TelegramCodegen.Type
             data class Text internal constructor(
                 val text: String
             ) : Button {
@@ -290,7 +275,6 @@ sealed interface ReplyMarkup {
             /**
              * Case when [requestUsers] is specified
              */
-            // @TelegramCodegen.Type
             data class RequestUsers internal constructor(
                 val text: String,
                 val requestUsers: Payload
@@ -300,7 +284,6 @@ sealed interface ReplyMarkup {
                  *
                  * For up-to-date documentation, please consult the official Telegram docs.
                  */
-                // @TelegramCodegen.Type
                 data class Payload internal constructor(
                     @JsonIgnore
                     private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
@@ -320,7 +303,6 @@ sealed interface ReplyMarkup {
             /**
              * Case when [requestChat] is specified
              */
-            // @TelegramCodegen.Type
             data class RequestChat internal constructor(
                 val text: String,
                 val requestChat: Payload
@@ -330,7 +312,6 @@ sealed interface ReplyMarkup {
                  *
                  * For up-to-date documentation, please consult the official Telegram docs.
                  */
-                // @TelegramCodegen.Type
                 data class Payload internal constructor(
                     val requestId: Long,
                     val chatIsChannel: Boolean,
@@ -352,7 +333,6 @@ sealed interface ReplyMarkup {
             /**
              * Case when [requestContact] is specified
              */
-            // @TelegramCodegen.Type
             data class RequestContact internal constructor(
                 val text: String
             ) : Button {
@@ -364,7 +344,6 @@ sealed interface ReplyMarkup {
             /**
              * Case when [requestLocation] is specified
              */
-            // @TelegramCodegen.Type
             data class RequestLocation internal constructor(
                 val text: String
             ) : Button {
@@ -376,7 +355,6 @@ sealed interface ReplyMarkup {
             /**
              * Case when [requestPoll] is specified
              */
-            // @TelegramCodegen.Type
             data class RequestPoll internal constructor(
                 val text: String,
                 val requestPoll: Payload
@@ -386,7 +364,6 @@ sealed interface ReplyMarkup {
                  *
                  * For up-to-date documentation, please consult the official Telegram docs.
                  */
-                // @TelegramCodegen.Type
                 data class Payload internal constructor(
                     val type: Poll.Type? = null
                 ) {
@@ -399,7 +376,6 @@ sealed interface ReplyMarkup {
             /**
              * Case when [webApp] is specified
              */
-            // @TelegramCodegen.Type
             data class WebApp internal constructor(
                 val text: String,
                 val webApp: WebAppInfo
@@ -416,7 +392,6 @@ sealed interface ReplyMarkup {
      *
      * For up-to-date documentation, please consult the official Telegram docs.
      */
-    // @TelegramCodegen.Type
     data class KeyboardRemove internal constructor(
         val selective: Boolean = false
     ) : ReplyMarkup {
@@ -431,7 +406,6 @@ sealed interface ReplyMarkup {
      *
      * For up-to-date documentation, please consult the official Telegram docs.
      */
-    // @TelegramCodegen.Type
     data class ForceReply internal constructor(
         val inputFieldPlaceholder: String? = null,
         val selective: Boolean = false

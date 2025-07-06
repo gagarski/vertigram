@@ -14,7 +14,6 @@ import ski.gagar.vertigram.telegram.types.richtext.HasRichQuestion
 import ski.gagar.vertigram.telegram.types.richtext.HasRichText
 import ski.gagar.vertigram.telegram.types.richtext.RichText
 import ski.gagar.vertigram.telegram.types.util.ChatId
-import ski.gagar.vertigram.util.NoPosArgs
 import ski.gagar.vertigram.util.jackson.typing.TypeResolverWithDeductionBuilder
 import java.time.Duration
 import java.time.Instant
@@ -309,7 +308,7 @@ sealed class SendPoll : JsonTelegramCallable<Message>(), HasChatId, HasRichQuest
      *
      * For up-to-date documentation, please consult the official Telegram docs.
      */
-//    @TelegramCodegen.Type
+    @TelegramCodegen.Type
     data class InputOption internal constructor(
         override val text: String,
         val textParseMode: RichText.ParseMode? = null,
@@ -326,25 +325,3 @@ sealed class SendPoll : JsonTelegramCallable<Message>(), HasChatId, HasRichQuest
     }
 
 }
-
-/////
-// Generated manually, since codegen does not support text/textParseMode/textEntities
-/////
-
-fun SendPoll.InputOption.Companion.create(
-    noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
-    richText: RichText
-) = SendPoll.InputOption(
-    text = richText.text,
-    textParseMode = richText.parseMode,
-    textEntities = richText.entities
-)
-
-operator fun SendPoll.InputOption.Companion.invoke(
-    noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
-    richText: RichText
-) = SendPoll.InputOption(
-    text = richText.text,
-    textParseMode = richText.parseMode,
-    textEntities = richText.entities
-)

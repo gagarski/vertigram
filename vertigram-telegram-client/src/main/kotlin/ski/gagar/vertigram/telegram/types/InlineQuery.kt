@@ -196,7 +196,7 @@ data class InlineQuery internal constructor(
          *
          * For up-to-date documentation, please consult the official Telegram docs.
          */
-        @TelegramCodegen.Type(wrapRichText = false)
+        @TelegramCodegen.Type
         data class Button internal constructor(
             val text: String,
             val webApp: WebAppInfo? = null,
