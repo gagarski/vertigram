@@ -12,7 +12,7 @@ class OutputStreamWrapper(
     val delegate: OutputStream,
     val vertx: Vertx,
 ) : OutputStream() {
-    val deferredAttachments_: MutableMap<String, Part> = mutableMapOf()
+    private val deferredAttachments_: MutableMap<String, Part> = mutableMapOf()
 
     override fun write(b: Int) {
         delegate.write(b)
