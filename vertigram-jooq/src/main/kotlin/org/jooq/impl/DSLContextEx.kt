@@ -8,7 +8,7 @@ internal suspend fun <T> DSLContext.transactionResultInt(block: suspend (Configu
     transactionResult(block, configuration())
 
 private suspend fun <T> transactionResult(block: suspend (Configuration) -> T, config: Configuration): T {
-    val ctx = DefaultTransactionContext(config.derive())
+    val ctx = DefaultTransactionContext(config.derive(), emptySet())
     val provider = ctx.configuration().transactionProvider()
     val listeners = TransactionListeners(ctx.configuration())
     var committed = false

@@ -49,7 +49,7 @@ tasks {
 //            dependsOn("dokkaUpload")
 //        }
 
-        if (project.properties["vertigram.staging.close"] != "false") {
+        if (providers.gradleProperty("vertigram.staging.close").orNull != "false") {
             dependsOn("closeAndReleaseRepository")
         }
     }

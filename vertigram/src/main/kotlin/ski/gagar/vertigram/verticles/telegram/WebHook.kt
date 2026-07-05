@@ -64,13 +64,15 @@ class WebHook : UpdateReceiver<WebHook.Config>() {
                 context.response().end()
                 return@handler
             }
-            val json = context.body().asJsonObject()
             val req = try {
+                val json = context.body().asJsonObject()
+                    ?: throw IllegalArgumentException("Missing JSON body")
                 json.mapTo(
                     Update.Parsed::class.java,
                     TELEGRAM_JSON_MAPPER
                 )
             } catch (ex: Exception) {
+                val json = context.body().asJsonObject()
                 logger.lazy.error(throwable = ex) { "Malformed update from Telegram $json, skipping it" }
                 // It's ugly to send successful response back to Telegram.
                 // But otherwise (either when returning 40x or 50x codes) Telegram will retry these requests

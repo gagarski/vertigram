@@ -15,13 +15,13 @@ plugins {
 }
 
 
-val dokkaSourceSetClasspath: Configuration by configurations.creating {
+val dokkaSourceSetClasspath: Configuration = configurations.create("dokkaSourceSetClasspath") {
     description = "Declare additional DokkaSourceSet dependencies."
     isCanBeConsumed = false
     isCanBeResolved = false
 }
 
-val dokkaSourceSetClasspathResolver: Configuration by configurations.creating {
+val dokkaSourceSetClasspathResolver: Configuration = configurations.create("dokkaSourceSetClasspathResolver") {
     description = "Resolves the additional DokkaSourceSet dependencies."
     extendsFrom(dokkaSourceSetClasspath)
     isCanBeConsumed = false
@@ -94,6 +94,7 @@ dokka {
             }
             externalDocumentationLinks.register("vertx-core") {
                 url.set(URI("https://javadoc.io/doc/io.vertx/vertx-core/${libs.findVersion("vertx").get()}/"))
+                packageListUrl.set(URI("https://javadoc.io/doc/io.vertx/vertx-core/${libs.findVersion("vertx").get()}/element-list"))
             }
             val jacksonVersion = libs.findVersion("jackson").get()
 

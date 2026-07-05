@@ -2,7 +2,7 @@ package ski.gagar.vertigram.telegram.exceptions
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonTypeInfo
-import io.vertx.core.http.impl.headers.HeadersMultiMap
+import io.vertx.core.MultiMap
 import ski.gagar.vertigram.telegram.types.methods.TelegramCallable
 import ski.gagar.vertigram.util.exceptions.VertigramException
 import ski.gagar.vertigram.util.internal.toMultiMap
@@ -21,7 +21,7 @@ abstract class TelegramCallException(
 
     @get:JsonIgnore
     val responseHeadersMultiMap by lazy {
-        responseHeaders.toMultiMap { HeadersMultiMap.caseInsensitive() }
+        responseHeaders.toMultiMap { MultiMap.caseInsensitiveMultiMap() }
     }
 
     companion object {

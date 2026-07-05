@@ -27,7 +27,7 @@ dependencies {
         for (subproject in project.rootProject.subprojects) {
             if (subproject.name in subprojectsExcludedFromBom)
                 continue
-            api(subproject)
+            api(project.dependencies.project(mapOf("path" to subproject.path)))
         }
 
         val catalog = versionCatalogs.named("libs")

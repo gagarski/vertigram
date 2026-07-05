@@ -1,5 +1,3 @@
-import org.jetbrains.dokka.gradle.DokkaTaskPartial
-
 plugins {
     id("buildlogic.vertigram-module-convention")
     id("buildlogic.maven-publishing-convention")
@@ -34,6 +32,6 @@ tasks.named<Jar>("sourcesJar").configure {
     dependsOn("kspKotlin")
 }
 
-tasks.withType<DokkaTaskPartial>().configureEach {
+tasks.matching { it.name.startsWith("dokka") }.configureEach {
     dependsOn("kspKotlin")
 }
