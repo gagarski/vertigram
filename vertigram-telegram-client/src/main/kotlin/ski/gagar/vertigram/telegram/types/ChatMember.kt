@@ -59,6 +59,7 @@ sealed interface ChatMember {
         val canEditStories: Boolean = false,
         val canDeleteStories: Boolean = false,
         val canManageTopics: Boolean = false,
+        val canManageDirectMessages: Boolean = false,
         val customTitle: String? = null,
     ) : ChatMember {
         override val status: Status = Status.ADMINISTRATOR

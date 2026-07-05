@@ -18,6 +18,7 @@ import ski.gagar.vertigram.util.NoPosArgs
 data class ForwardMessages internal constructor(
     override val chatId: ChatId,
     val messageThreadId: Long? = null,
+    val directMessagesTopicId: Long? = null,
     val fromChatId: ChatId,
     val messageIds: List<Long>,
     val disableNotification: Boolean = false,

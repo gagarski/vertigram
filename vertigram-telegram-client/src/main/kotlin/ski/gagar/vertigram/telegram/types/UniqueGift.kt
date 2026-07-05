@@ -15,7 +15,8 @@ data class UniqueGift internal constructor(
     val number: Int,
     val model: Model,
     val symbol: Symbol,
-    val backdrop: Backdrop
+    val backdrop: Backdrop,
+    val publisherChat: Chat? = null
 ) {
     /**
      * Telegram [UniqueGiftModel](https://core.telegram.org/bots/api#uniquegiftmodel) type.

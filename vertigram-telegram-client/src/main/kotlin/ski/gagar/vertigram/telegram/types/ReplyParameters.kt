@@ -20,7 +20,8 @@ data class ReplyParameters internal constructor(
     override val quote: String? = null,
     override val quoteParseMode: RichText.ParseMode? = null,
     override val quoteEntities: List<MessageEntity>? = null,
-    val quotePosition: Int? = null
+    val quotePosition: Int? = null,
+    val checklistTaskId: Int? = null
 ) : HasOptionalRichQuote {
     companion object
 }

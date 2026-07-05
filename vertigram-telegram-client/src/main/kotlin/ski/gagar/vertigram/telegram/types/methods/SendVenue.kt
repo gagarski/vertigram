@@ -7,6 +7,7 @@ import ski.gagar.vertigram.telegram.throttling.Throttled
 import ski.gagar.vertigram.telegram.types.Message
 import ski.gagar.vertigram.telegram.types.ReplyMarkup
 import ski.gagar.vertigram.telegram.types.ReplyParameters
+import ski.gagar.vertigram.telegram.types.SuggestedPost
 import ski.gagar.vertigram.telegram.types.util.ChatId
 import ski.gagar.vertigram.util.NoPosArgs
 
@@ -21,6 +22,7 @@ data class SendVenue internal constructor(
     val businessConnectionId: String? = null,
     override val chatId: ChatId,
     val messageThreadId: Long? = null,
+    val directMessagesTopicId: Long? = null,
     val latitude: Double,
     val longitude: Double,
     val title: String,
@@ -33,6 +35,7 @@ data class SendVenue internal constructor(
     val protectContent: Boolean = false,
     val allowPaidBroadcast: Boolean = false,
     val messageEffectId: String? = null,
+    val suggestedPostParameters: SuggestedPost.Parameters? = null,
 
     val replyParameters: ReplyParameters? = null,
     val replyMarkup: ReplyMarkup? = null

@@ -6,6 +6,7 @@ import ski.gagar.vertigram.telegram.throttling.Throttled
 import ski.gagar.vertigram.telegram.types.Message
 import ski.gagar.vertigram.telegram.types.ReplyMarkup
 import ski.gagar.vertigram.telegram.types.ReplyParameters
+import ski.gagar.vertigram.telegram.types.SuggestedPost
 import ski.gagar.vertigram.telegram.types.attachments.Attachment
 import ski.gagar.vertigram.telegram.types.util.ChatId
 import java.time.Duration
@@ -21,6 +22,7 @@ data class SendVideoNote internal constructor(
     val businessConnectionId: String? = null,
     override val chatId: ChatId,
     val messageThreadId: Long? = null,
+    val directMessagesTopicId: Long? = null,
     val videoNote: Attachment,
     val duration: Duration? = null,
     val length: Int? = null,
@@ -29,6 +31,7 @@ data class SendVideoNote internal constructor(
     val protectContent: Boolean = false,
     val allowPaidBroadcast: Boolean = false,
     val messageEffectId: String? = null,
+    val suggestedPostParameters: SuggestedPost.Parameters? = null,
     val replyParameters: ReplyParameters? = null,
     val replyMarkup: ReplyMarkup? = null
 ) : MultipartTelegramCallable<Message>(), HasChatId

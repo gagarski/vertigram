@@ -43,6 +43,10 @@ data class Message internal constructor(
     val mediaGroupId: String? = null,
     val authorSignature: String? = null,
     val paidStarCount: Int? = null,
+    val replyToChecklistTaskId: Int? = null,
+    val directMessagesTopic: DirectMessagesTopic? = null,
+    @get:JvmName("getIsPaidPost")
+    val isPaidPost: Boolean = false,
     override val text: String? = null,
     override val entities: List<MessageEntity>? = null,
     val linkPreviewOptions: LinkPreviewOptions? = null,
@@ -96,6 +100,12 @@ data class Message internal constructor(
     val checklistTasksDone: Service.ChecklistTasks.Done? = null,
     val checklistTasksAdded: Service.ChecklistTasks.Added? = null,
     val directMessagePriceChanged: Service.DirectMessagePriceChanged? = null,
+    val suggestedPostInfo: SuggestedPost.Info? = null,
+    val suggestedPostApproved: Service.SuggestedPost.Approved? = null,
+    val suggestedPostApprovalFailed: Service.SuggestedPost.ApprovalFailed? = null,
+    val suggestedPostDeclined: Service.SuggestedPost.Declined? = null,
+    val suggestedPostPaid: Service.SuggestedPost.Paid? = null,
+    val suggestedPostRefunded: Service.SuggestedPost.Refunded? = null,
     val forumTopicCreated: Service.ForumTopic.Created? = null,
     val forumTopicEdited: Service.ForumTopic.Edited? = null,
     val forumTopicClosed: Service.ForumTopic.Closed? = null,
@@ -563,9 +573,94 @@ data class Message internal constructor(
         @TelegramCodegen.Type
         data class DirectMessagePriceChanged internal constructor(
             val areDirectMessagesEnabled: Boolean,
-            val directMessageStarCount: Int
+            val directMessageStarCount: Int? = null
         ) {
             companion object
+        }
+
+        /**
+         * Service messages related to suggested posts.
+         */
+        object SuggestedPost {
+            /**
+             * Telegram [SuggestedPostApproved](https://core.telegram.org/bots/api#suggestedpostapproved) type.
+             *
+             * For up-to-date documentation, please consult the official Telegram docs.
+             */
+            @TelegramCodegen.Type
+            data class Approved internal constructor(
+                val suggestedPostMessage: Message? = null,
+                val price: SuggestedPost.Price? = null,
+                val sendDate: Instant
+            ) {
+                companion object
+            }
+
+            /**
+             * Telegram [SuggestedPostApprovalFailed](https://core.telegram.org/bots/api#suggestedpostapprovalfailed) type.
+             *
+             * For up-to-date documentation, please consult the official Telegram docs.
+             */
+            @TelegramCodegen.Type
+            data class ApprovalFailed internal constructor(
+                val suggestedPostMessage: Message? = null,
+                val price: SuggestedPost.Price
+            ) {
+                companion object
+            }
+
+            /**
+             * Telegram [SuggestedPostDeclined](https://core.telegram.org/bots/api#suggestedpostdeclined) type.
+             *
+             * For up-to-date documentation, please consult the official Telegram docs.
+             */
+            @TelegramCodegen.Type
+            data class Declined internal constructor(
+                val suggestedPostMessage: Message? = null,
+                val comment: String? = null
+            ) {
+                companion object
+            }
+
+            /**
+             * Telegram [SuggestedPostPaid](https://core.telegram.org/bots/api#suggestedpostpaid) type.
+             *
+             * For up-to-date documentation, please consult the official Telegram docs.
+             */
+            @TelegramCodegen.Type
+            data class Paid internal constructor(
+                val suggestedPostMessage: Message? = null,
+                val currency: String,
+                val amount: Long? = null,
+                val starAmount: StarAmount? = null
+            ) {
+                companion object
+            }
+
+            /**
+             * Telegram [SuggestedPostRefunded](https://core.telegram.org/bots/api#suggestedpostrefunded) type.
+             *
+             * For up-to-date documentation, please consult the official Telegram docs.
+             */
+            @TelegramCodegen.Type
+            data class Refunded internal constructor(
+                val suggestedPostMessage: Message? = null,
+                val reason: Reason
+            ) {
+                enum class Reason {
+                    @JsonProperty(POST_DELETED_STR)
+                    POST_DELETED,
+                    @JsonProperty(PAYMENT_REFUNDED_STR)
+                    PAYMENT_REFUNDED;
+
+                    companion object {
+                        const val POST_DELETED_STR = "post_deleted"
+                        const val PAYMENT_REFUNDED_STR = "payment_refunded"
+                    }
+                }
+
+                companion object
+            }
         }
 
 

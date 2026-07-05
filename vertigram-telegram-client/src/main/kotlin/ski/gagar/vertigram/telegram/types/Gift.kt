@@ -14,7 +14,8 @@ data class Gift internal constructor(
     val starCount: Int,
     val upgradeStarCount: Int? = null,
     val totalCount: Int? = null,
-    val remainingCount: Int? = null
+    val remainingCount: Int? = null,
+    val publisherChat: Chat? = null
 ) {
     companion object
 }

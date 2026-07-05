@@ -18,6 +18,7 @@ import ski.gagar.vertigram.telegram.types.util.ChatId
 data class SendPaidMedia internal constructor(
     val businessConnectionId: String? = null,
     override val chatId: ChatId,
+    val directMessagesTopicId: Long? = null,
     val starCount: Int,
     val media: List<InputMedia.Paid>,
     val payload: String? = null,
@@ -28,6 +29,7 @@ data class SendPaidMedia internal constructor(
     val disableNotification: Boolean = false,
     val protectContent: Boolean = false,
     val allowPaidBroadcast: Boolean = false,
+    val suggestedPostParameters: SuggestedPost.Parameters? = null,
     val replyParameters: ReplyParameters? = null,
     val replyMarkup: ReplyMarkup? = null
 ) : MultipartTelegramCallable<Message>(), HasChatId, HasOptionalRichCaption

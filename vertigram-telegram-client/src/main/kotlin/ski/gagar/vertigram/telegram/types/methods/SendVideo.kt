@@ -7,6 +7,7 @@ import ski.gagar.vertigram.telegram.types.Message
 import ski.gagar.vertigram.telegram.types.MessageEntity
 import ski.gagar.vertigram.telegram.types.ReplyMarkup
 import ski.gagar.vertigram.telegram.types.ReplyParameters
+import ski.gagar.vertigram.telegram.types.SuggestedPost
 import ski.gagar.vertigram.telegram.types.attachments.Attachment
 import ski.gagar.vertigram.telegram.types.richtext.HasOptionalRichCaption
 import ski.gagar.vertigram.telegram.types.richtext.RichText
@@ -24,6 +25,7 @@ data class SendVideo internal constructor(
     val businessConnectionId: String? = null,
     override val chatId: ChatId,
     val messageThreadId: Long? = null,
+    val directMessagesTopicId: Long? = null,
     val video: Attachment,
     val duration: Duration? = null,
     val width: Int? = null,
@@ -41,6 +43,7 @@ data class SendVideo internal constructor(
     val protectContent: Boolean = false,
     val allowPaidBroadcast: Boolean = false,
     val messageEffectId: String? = null,
+    val suggestedPostParameters: SuggestedPost.Parameters? = null,
     val replyParameters: ReplyParameters? = null,
     val replyMarkup: ReplyMarkup? = null
 ) : MultipartTelegramCallable<Message>(), HasChatId, HasOptionalRichCaption

@@ -19,6 +19,7 @@ data class SendMediaGroup internal constructor(
     val businessConnectionId: String? = null,
     override val chatId: ChatId,
     val messageThreadId: Long? = null,
+    val directMessagesTopicId: Long? = null,
     val media: List<InputMedia>,
     val disableNotification: Boolean = false,
     val protectContent: Boolean = false,

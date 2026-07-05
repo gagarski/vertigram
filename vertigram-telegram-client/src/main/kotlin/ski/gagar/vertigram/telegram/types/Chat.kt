@@ -37,7 +37,9 @@ data class Chat internal constructor(
     override val firstName: String? = null,
     override val lastName: String? = null,
     @get:JvmName("getIsForum")
-    override val isForum: Boolean = false
+    override val isForum: Boolean = false,
+    @get:JvmName("getIsDirectMessages")
+    val isDirectMessages: Boolean = false
 ) : IChat {
     /**
      * Telegram [ChatFullInfo](https://core.telegram.org/bots/api#chatfullinfo) type, representing the data
@@ -55,6 +57,8 @@ data class Chat internal constructor(
         override val lastName: String? = null,
         @get:JvmName("getIsForum")
         override val isForum: Boolean = false,
+        @get:JvmName("getIsDirectMessages")
+        val isDirectMessages: Boolean = false,
         val photo: Photo? = null,
         val activeUsernames: List<String>? = null,
         val birthdate: Birthdate? = null,
@@ -92,6 +96,7 @@ data class Chat internal constructor(
         val canSetStickerSet: Boolean = false,
         val customEmojiStickerSetName: String? = null,
         val linkedChatId: Long? = null,
+        val parentChat: Chat? = null,
         val location: Location? = null,
     ) : IChat{
         /**

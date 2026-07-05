@@ -1,12 +1,11 @@
 package ski.gagar.vertigram.telegram.types.methods
 
-import com.fasterxml.jackson.annotation.JsonIgnore
 import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.telegram.throttling.HasChatId
 import ski.gagar.vertigram.telegram.throttling.Throttled
-import ski.gagar.vertigram.telegram.types.util.ChatId
 import ski.gagar.vertigram.telegram.types.Message
-import ski.gagar.vertigram.util.NoPosArgs
+import ski.gagar.vertigram.telegram.types.SuggestedPost
+import ski.gagar.vertigram.telegram.types.util.ChatId
 import java.time.Duration
 
 /**
@@ -19,9 +18,11 @@ import java.time.Duration
 data class ForwardMessage internal constructor(
     override val chatId: ChatId,
     val messageThreadId: Long? = null,
+    val directMessagesTopicId: Long? = null,
     val fromChatId: ChatId,
     val videoStartTimestamp: Duration? = null,
     val disableNotification: Boolean = false,
     val protectContent: Boolean = false,
+    val suggestedPostParameters: SuggestedPost.Parameters? = null,
     val messageId: Long
 ) : JsonTelegramCallable<Message>(), HasChatId
