@@ -4,15 +4,13 @@ import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.telegram.types.OwnedGifts
 
 /**
- * Telegram [getBusinessAccountGifts](https://core.telegram.org/bots/api#getbusinessaccountgifts) method.
+ * Telegram [getUserGifts](https://core.telegram.org/bots/api#getusergifts) method.
  *
  * For up-to-date documentation, please consult the official Telegram docs.
  */
-@TelegramCodegen.Method()
-data class GetBusinessAccountGifts internal constructor(
-    val businessConnectionId: String,
-    val excludeUnsaved: Boolean = false,
-    val excludeSaved: Boolean = false,
+@TelegramCodegen.Method
+data class GetUserGifts internal constructor(
+    val userId: Long,
     val excludeUnlimited: Boolean = false,
     val excludeLimitedUpgradable: Boolean = false,
     val excludeLimitedNonUpgradable: Boolean = false,

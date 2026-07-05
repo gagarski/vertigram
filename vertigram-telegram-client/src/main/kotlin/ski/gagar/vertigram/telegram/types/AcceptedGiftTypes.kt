@@ -12,7 +12,8 @@ data class AcceptedGiftTypes internal constructor(
     val unlimitedGifts: Boolean,
     val limitedGifts: Boolean,
     val uniqueGifts: Boolean,
-    val premiumSubscription: Boolean
+    val premiumSubscription: Boolean,
+    val giftsFromChannels: Boolean = false
 ) {
     companion object
 }

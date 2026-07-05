@@ -10,13 +10,19 @@ import ski.gagar.vertigram.telegram.types.colors.RgbColor
  */
 @TelegramCodegen.Type
 data class UniqueGift internal constructor(
+    val giftId: String? = null,
     val baseName: String,
     val name: String,
     val number: Int,
     val model: Model,
     val symbol: Symbol,
     val backdrop: Backdrop,
-    val publisherChat: Chat? = null
+    val publisherChat: Chat? = null,
+    @get:JvmName("getIsPremium")
+    val isPremium: Boolean = false,
+    @get:JvmName("getIsFromBlockchain")
+    val isFromBlockchain: Boolean = false,
+    val colors: Colors? = null
 ) {
     /**
      * Telegram [UniqueGiftModel](https://core.telegram.org/bots/api#uniquegiftmodel) type.
@@ -68,5 +74,23 @@ data class UniqueGift internal constructor(
         }
         companion object
     }
+
+    /**
+     * Telegram [UniqueGiftColors](https://core.telegram.org/bots/api#uniquegiftcolors) type.
+     *
+     * For up-to-date documentation, please consult the official Telegram docs.
+     */
+    @TelegramCodegen.Type
+    data class Colors internal constructor(
+        val modelCustomEmojiId: String,
+        val symbolCustomEmojiId: String,
+        val lightThemeMainColor: RgbColor,
+        val lightThemeOtherColors: List<RgbColor>,
+        val darkThemeMainColor: RgbColor,
+        val darkThemeOtherColors: List<RgbColor>
+    ) {
+        companion object
+    }
+
     companion object
 }

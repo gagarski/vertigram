@@ -18,6 +18,7 @@ import ski.gagar.vertigram.telegram.types.util.ChatId
 data class SendPaidMedia internal constructor(
     val businessConnectionId: String? = null,
     override val chatId: ChatId,
+    val messageThreadId: Long? = null,
     val directMessagesTopicId: Long? = null,
     val starCount: Int,
     val media: List<InputMedia.Paid>,

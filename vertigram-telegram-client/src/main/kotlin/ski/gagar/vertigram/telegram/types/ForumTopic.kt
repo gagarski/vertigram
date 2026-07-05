@@ -18,7 +18,9 @@ data class ForumTopic internal constructor(
     val messageThreadId: Long,
     val name: String,
     val iconColor: RgbColor,
-    val iconCustomEmojiId: String? = null
+    val iconCustomEmojiId: String? = null,
+    @get:JvmName("getIsNameImplicit")
+    val isNameImplicit: Boolean = false
 ) {
     /**
      * Value for [ski.gagar.vertigram.telegram.methods.CreateForumTopic.iconColor],

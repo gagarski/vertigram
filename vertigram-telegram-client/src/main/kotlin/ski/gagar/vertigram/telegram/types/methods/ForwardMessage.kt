@@ -23,6 +23,7 @@ data class ForwardMessage internal constructor(
     val videoStartTimestamp: Duration? = null,
     val disableNotification: Boolean = false,
     val protectContent: Boolean = false,
+    val messageEffectId: String? = null,
     val suggestedPostParameters: SuggestedPost.Parameters? = null,
     val messageId: Long
 ) : JsonTelegramCallable<Message>(), HasChatId

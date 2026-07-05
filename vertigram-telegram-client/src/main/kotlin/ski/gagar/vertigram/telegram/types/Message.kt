@@ -91,6 +91,7 @@ data class Message internal constructor(
     val chatShared: Service.ChatShared? = null,
     val gift: Service.GiftInfo? = null,
     val uniqueGift: Service.UniqueGiftInfo? = null,
+    val giftUpgradeSent: Service.GiftInfo? = null,
     val connectedWebsite: String? = null,
     val writeAccessAllowed: Service.WriteAccessAllowed? = null,
     val passportData: Passport.Data? = null,
@@ -423,6 +424,9 @@ data class Message internal constructor(
             val convertStarCount: Int? = null,
             val prepaidUpgradeStarCount: Int? = null,
             val canBeUpgraded: Boolean = false,
+            @get:JvmName("getIsUpgradeSeparate")
+            val isUpgradeSeparate: Boolean = false,
+            val uniqueGiftNumber: Int? = null,
             val text: String? = null,
             val entities: List<MessageEntity>? = null,
             @get:JvmName("getIsPrivate")
@@ -440,7 +444,8 @@ data class Message internal constructor(
         data class UniqueGiftInfo internal constructor(
             val gift: UniqueGift,
             val origin: Origin,
-            val lastResaleStarCount: Int? = null,
+            val lastResaleCurrency: String? = null,
+            val lastResaleAmount: Long? = null,
             val ownedGiftId: String? = null,
             val transferStarCount: Int? = null,
             val nextTransferDate: Instant? = null,
@@ -451,12 +456,18 @@ data class Message internal constructor(
                 @JsonProperty("transfer")
                 TRANSFER,
                 @JsonProperty("resale")
-                RESALE;
+                RESALE,
+                @JsonProperty("gifted_upgrade")
+                GIFTED_UPGRADE,
+                @JsonProperty("offer")
+                OFFER;
 
                 companion object {
                     const val UPGRADE_STR = "upgrade"
                     const val TRANSFER_STR = "transfer"
                     const val RESALE_STR = "resale"
+                    const val GIFTED_UPGRADE_STR = "gifted_upgrade"
+                    const val OFFER_STR = "offer"
                 }
             }
             companion object
@@ -684,7 +695,9 @@ data class Message internal constructor(
             data class Created internal constructor(
                 val name: String,
                 val iconColor: RgbColor,
-                val iconCustomEmojiId: String? = null
+                val iconCustomEmojiId: String? = null,
+                @get:JvmName("getIsNameImplicit")
+                val isNameImplicit: Boolean = false
             ) {
                 companion object
             }

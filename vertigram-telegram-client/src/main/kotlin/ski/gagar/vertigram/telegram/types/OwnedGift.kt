@@ -46,7 +46,10 @@ sealed interface OwnedGift {
         val canBeUpgraded: Boolean = false,
         val wasRefunded: Boolean = false,
         val convertStarCount: Int? = null,
-        val prepaidUpgradeStarCount: Int? = null
+        val prepaidUpgradeStarCount: Int? = null,
+        @get:JvmName("getIsUpgradeSeparate")
+        val isUpgradeSeparate: Boolean = false,
+        val uniqueGiftNumber: Int? = null
     ) : OwnedGift {
         override val type: Type = Type.REGULAR
         companion object
