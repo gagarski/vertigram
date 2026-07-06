@@ -17,6 +17,10 @@ import kotlinx.html.visit
 import ski.gagar.vertigram.telegram.types.MessageEntity
 import ski.gagar.vertigram.telegram.types.User
 import ski.gagar.vertigram.telegram.types.richtext.TextWithEntities
+import java.time.OffsetDateTime
+import java.time.Instant
+import java.time.ZonedDateTime
+import java.time.chrono.ChronoZonedDateTime
 
 /**
  * [DslMarker] for rich text markdown.
@@ -58,7 +62,7 @@ class Text internal constructor(val value: String): RichTextElement() {
     }
 
     override fun TextWithEntitiesBuilder.renderTextWithEntities() {
-        append(text)
+        append(value)
     }
 }
 
@@ -175,6 +179,30 @@ abstract class RichTextElementWithChildren internal constructor() : RichTextElem
             customId
         )
     )
+
+    /**
+     * Add date and time as a child.
+     */
+    protected open fun dateTime(text: String, unixTime: Instant, dateTimeFormat: DateTimeFormat? = null) =
+        initTag(DateTime(text, unixTime, dateTimeFormat))
+
+    /**
+     * Add date and time as a child.
+     */
+    protected open fun dateTime(text: String, dateTime: OffsetDateTime, dateTimeFormat: DateTimeFormat? = null) =
+        dateTime(text = text, unixTime = dateTime.toInstant(), dateTimeFormat = dateTimeFormat)
+
+    /**
+     * Add date and time as a child.
+     */
+    protected open fun dateTime(text: String, dateTime: ZonedDateTime, dateTimeFormat: DateTimeFormat? = null) =
+        dateTime(text = text, unixTime = dateTime.toInstant(), dateTimeFormat = dateTimeFormat)
+
+    /**
+     * Add date and time as a child.
+     */
+    protected open fun dateTime(text: String, dateTime: ChronoZonedDateTime<*>, dateTimeFormat: DateTimeFormat? = null) =
+        dateTime(text = text, unixTime = dateTime.toInstant(), dateTimeFormat = dateTimeFormat)
 
     /**
      * Add user mention (with children) as a child
@@ -483,6 +511,149 @@ class Emoji internal constructor(private val basic: String, private val customId
 }
 
 /**
+ * Telegram date-time entity format.
+ */
+@JvmInline
+value class DateTimeFormat internal constructor(val value: String) {
+    companion object {
+        val RELATIVE = DateTimeFormat(DateTimeFormatBuilder.RELATIVE)
+    }
+}
+
+/**
+ * Builder for [DateTimeFormat].
+ */
+class DateTimeFormatBuilder internal constructor() {
+    private var relative = false
+    private var weekday = false
+    private var date: Date? = null
+    private var time: Time? = null
+
+    /**
+     * Display the time relative to the current time.
+     */
+    fun relative() {
+        relative = true
+    }
+
+    /**
+     * Display the day of the week.
+     */
+    fun weekday() {
+        weekday = true
+    }
+
+    /**
+     * Display the date in short form.
+     */
+    fun shortDate() {
+        date = Date.SHORT
+    }
+
+    /**
+     * Display the date in long form.
+     */
+    fun longDate() {
+        date = Date.LONG
+    }
+
+    /**
+     * Display the time in short form.
+     */
+    fun shortTime() {
+        time = Time.SHORT
+    }
+
+    /**
+     * Display the time in long form.
+     */
+    fun longTime() {
+        time = Time.LONG
+    }
+
+    internal fun build(): DateTimeFormat {
+        require(!relative || (!weekday && date == null && time == null)) {
+            "Relative date-time format cannot be combined with weekday, date, or time components"
+        }
+
+        if (relative) {
+            return DateTimeFormat(RELATIVE)
+        }
+
+        return DateTimeFormat(
+            buildString {
+                if (weekday) append(WEEKDAY)
+                date?.let { append(it.value) }
+                time?.let { append(it.value) }
+            }
+        )
+    }
+
+    private enum class Date(val value: String) {
+        SHORT("d"),
+        LONG("D")
+    }
+
+    private enum class Time(val value: String) {
+        SHORT("t"),
+        LONG("T")
+    }
+
+    internal companion object {
+        const val RELATIVE = "r"
+        private const val WEEKDAY = "w"
+    }
+}
+
+/**
+ * Build Telegram date-time entity format.
+ */
+fun dateTimeFormat(init: DateTimeFormatBuilder.() -> Unit) =
+    DateTimeFormatBuilder().apply(init).build()
+
+/**
+ * Date and time.
+ */
+class DateTime internal constructor(
+    private val text: String,
+    private val unixTime: Instant,
+    private val dateTimeFormat: DateTimeFormat? = null
+) : RichTextElement() {
+    private val href = buildString {
+        append("tg://time?unix=${unixTime.epochSecond}")
+        dateTimeFormat?.let {
+            append("&format=${it.value}")
+        }
+    }
+
+    override fun StringBuilder.renderMarkdown() {
+        append("![")
+        append(MarkdownTools.escapeText(text))
+        append("]")
+        append("(${MarkdownTools.escapeUrl(href)})")
+    }
+
+    override fun FlowContent.renderHtml() {
+        with (TelegramHtmlEx) {
+            tgTime(unixTime = unixTime, dateTimeFormat = dateTimeFormat) {
+                +text
+            }
+        }
+    }
+
+    override fun TextWithEntitiesBuilder.renderTextWithEntities() {
+        append(this@DateTime.text) { offset, length ->
+            MessageEntity.DateTime(
+                offset = offset,
+                length = length,
+                unixTime = unixTime,
+                dateTimeFormat = dateTimeFormat?.value
+            )
+        }
+    }
+}
+
+/**
  * Code (inline)
  */
 class Code internal constructor(private val code: String) : RichTextElement() {
@@ -640,6 +811,14 @@ class RichTextRoot internal constructor() : RichTextElementWithChildren() {
     public override fun u(init: Underline.() -> Unit) = super.u(init)
     public override fun s(init: Strikethrough.() -> Unit) = super.s(init)
     public override fun emoji(basic: String, customId: Long) = super.emoji(basic, customId)
+    public override fun dateTime(text: String, unixTime: Instant, dateTimeFormat: DateTimeFormat?) =
+        super.dateTime(text, unixTime, dateTimeFormat)
+    public override fun dateTime(text: String, dateTime: OffsetDateTime, dateTimeFormat: DateTimeFormat?) =
+        super.dateTime(text, dateTime, dateTimeFormat)
+    public override fun dateTime(text: String, dateTime: ZonedDateTime, dateTimeFormat: DateTimeFormat?) =
+        super.dateTime(text, dateTime, dateTimeFormat)
+    public override fun dateTime(text: String, dateTime: ChronoZonedDateTime<*>, dateTimeFormat: DateTimeFormat?) =
+        super.dateTime(text, dateTime, dateTimeFormat)
     public override fun a(href: String, init: Link.() -> Unit) = super.a(href, init)
     public override fun user(user: User, init: UserMention.() -> Unit) = super.user(user, init)
     public override fun user(user: User, text: String) = super.user(user, text)
@@ -686,6 +865,21 @@ private object TelegramHtmlEx {
         HtmlBlockInlineTag
     inline fun FlowOrPhrasingContent.tgEmoji(emojiId: Long, crossinline block : TgEmoji.() -> Unit = {}) : Unit = TgEmoji(
         attributesMapOf("emoji-id", emojiId.toString()), consumer).visit(block)
+
+    class TgTime(initialAttributes : Map<String, String>, override val consumer : TagConsumer<*>) :
+        HTMLTag("tg-time", consumer, initialAttributes, null, true, false),
+        HtmlBlockInlineTag
+    inline fun FlowOrPhrasingContent.tgTime(
+        unixTime: Instant,
+        dateTimeFormat: DateTimeFormat? = null,
+        crossinline block : TgTime.() -> Unit = {}
+    ) : Unit {
+        val attrs = mutableMapOf("unix" to unixTime.epochSecond.toString())
+        dateTimeFormat?.let {
+            attrs["format"] = it.value
+        }
+        TgTime(attrs, consumer).visit(block)
+    }
 }
 
 private object MarkdownTools {

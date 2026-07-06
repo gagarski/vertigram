@@ -3,6 +3,7 @@ package ski.gagar.vertigram.telegram.types
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
+import java.time.Instant
 
 /**
  * Telegram [MessageEntity](https://core.telegram.org/bots/api#messageentity) type.
@@ -32,6 +33,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo
     JsonSubTypes.Type(value = MessageEntity.TextLink::class, name = MessageEntity.Type.TEXT_LINK_STR),
     JsonSubTypes.Type(value = MessageEntity.TextMention::class, name = MessageEntity.Type.TEXT_MENTION_STR),
     JsonSubTypes.Type(value = MessageEntity.CustomEmoji::class, name = MessageEntity.Type.CUSTOM_EMOJI_STR),
+    JsonSubTypes.Type(value = MessageEntity.DateTime::class, name = MessageEntity.Type.DATE_TIME_STR),
     JsonSubTypes.Type(value = MessageEntity.BlockQuote::class, name = MessageEntity.Type.BLOCKQUOTE_STR),
     JsonSubTypes.Type(value = MessageEntity.ExpandableBlockQuote::class, name = MessageEntity.Type.EXPANDABLE_BLOCKQUOTE_STR),
 )
@@ -182,6 +184,16 @@ sealed interface MessageEntity {
         override fun copyTo(offset: Int, length: Int) = copy(offset = offset, length = length)
     }
 
+    data class DateTime internal constructor(
+        override val offset: Int,
+        override val length: Int,
+        val unixTime: Instant? = null,
+        val dateTimeFormat: String? = null
+    ) : MessageEntity {
+        override val type: Type = Type.DATE_TIME
+        override fun copyTo(offset: Int, length: Int) = copy(offset = offset, length = length)
+    }
+
     data class BlockQuote internal constructor(
         override val offset: Int,
         override val length: Int
@@ -236,6 +248,8 @@ sealed interface MessageEntity {
         TEXT_MENTION,
         @JsonProperty(CUSTOM_EMOJI_STR)
         CUSTOM_EMOJI,
+        @JsonProperty(DATE_TIME_STR)
+        DATE_TIME,
         @JsonProperty(BLOCKQUOTE_STR)
         BLOCKQUOTE,
         @JsonProperty(EXPANDABLE_BLOCKQUOTE_STR)
@@ -259,6 +273,7 @@ sealed interface MessageEntity {
             const val TEXT_LINK_STR = "text_link"
             const val TEXT_MENTION_STR = "text_mention"
             const val CUSTOM_EMOJI_STR = "custom_emoji"
+            const val DATE_TIME_STR = "date_time"
             const val BLOCKQUOTE_STR = "blockquote"
             const val EXPANDABLE_BLOCKQUOTE_STR = "expandable_blockquote"
         }

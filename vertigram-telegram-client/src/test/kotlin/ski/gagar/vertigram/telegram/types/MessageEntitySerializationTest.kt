@@ -2,6 +2,7 @@ package ski.gagar.vertigram.telegram.types
 
 import org.junit.jupiter.api.Test
 import ski.gagar.vertigram.BaseSerializationTest
+import java.time.Instant
 
 object MessageEntitySerializationTest : BaseSerializationTest() {
     @Test
@@ -109,6 +110,14 @@ object MessageEntitySerializationTest : BaseSerializationTest() {
                 offset = 1,
                 length = 1,
                 customEmojiId = "1"
+            )
+        )
+        assertSerializable<MessageEntity>(
+            MessageEntity.DateTime(
+                offset = 1,
+                length = 1,
+                unixTime = Instant.ofEpochSecond(1647531900),
+                dateTimeFormat = "wDT"
             )
         )
         assertSerializable<MessageEntity>(

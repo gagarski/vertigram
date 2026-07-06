@@ -23,6 +23,7 @@ data class Message internal constructor(
     val senderChat: Chat? = null,
     val senderBoostCount: Int? = null,
     val senderBusinessBot: User? = null,
+    val senderTag: String? = null,
     val date: Instant,
     val businessConnectionId: String? = null,
     val chat: Chat,

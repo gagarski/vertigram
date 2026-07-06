@@ -28,6 +28,7 @@ data class ChatAdministratorRights internal constructor(
     val canDeleteStories: Boolean = false,
     val canManageTopics: Boolean = false,
     val canManageDirectMessages: Boolean = false,
+    val canManageTags: Boolean = false,
 ) {
     companion object
 }
