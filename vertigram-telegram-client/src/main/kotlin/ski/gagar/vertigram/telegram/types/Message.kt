@@ -74,6 +74,8 @@ data class Message internal constructor(
     val location: Location? = null,
     val newChatMembers: List<User>? = null,
     val leftChatMember: User? = null,
+    val chatOwnerLeft: Service.ChatOwner.Left? = null,
+    val chatOwnerChanged: Service.ChatOwner.Changed? = null,
     val newChatTitle: String? = null,
     val newChatPhoto: List<PhotoSize>? = null,
     val deleteChatPhoto: Boolean = false,
@@ -326,6 +328,35 @@ data class Message internal constructor(
             val messageAutoDeleteTime: Duration
         ) {
             companion object
+        }
+
+        /**
+         * Service messages related to chat owner changes.
+         */
+        object ChatOwner {
+            /**
+             * Telegram [ChatOwnerLeft](https://core.telegram.org/bots/api#chatownerleft) type.
+             *
+             * For up-to-date documentation, please consult the official Telegram docs.
+             */
+            @TelegramCodegen.Type
+            data class Left internal constructor(
+                val newOwner: User? = null
+            ) {
+                companion object
+            }
+
+            /**
+             * Telegram [ChatOwnerChanged](https://core.telegram.org/bots/api#chatownerchanged) type.
+             *
+             * For up-to-date documentation, please consult the official Telegram docs.
+             */
+            @TelegramCodegen.Type
+            data class Changed internal constructor(
+                val newOwner: User
+            ) {
+                companion object
+            }
         }
 
         /**

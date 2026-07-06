@@ -21,9 +21,27 @@ data class Video internal constructor(
     val thumbnail: PhotoSize? = null,
     val cover: List<PhotoSize>? = null,
     val startTimestamp: Duration? = null,
+    val qualities: List<Quality>? = null,
     val fileName: String? = null,
     val mimeType: String? = null,
     val fileSize: Long? = null
 ) {
+    /**
+     * Telegram [VideoQuality](https://core.telegram.org/bots/api#videoquality) type.
+     *
+     * For up-to-date documentation, please consult the official Telegram docs.
+     */
+    @TelegramCodegen.Type
+    data class Quality internal constructor(
+        val fileId: String,
+        val fileUniqueId: String,
+        val width: Int,
+        val height: Int,
+        val codec: String,
+        val fileSize: Long? = null
+    ) {
+        companion object
+    }
+
     companion object
 }

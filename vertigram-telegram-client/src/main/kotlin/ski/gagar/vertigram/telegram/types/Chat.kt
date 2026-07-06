@@ -86,6 +86,7 @@ data class Chat internal constructor(
         val acceptedGiftTypes: AcceptedGiftTypes,
         val canSendPaidMedia: Boolean = false,
         val rating: UserRating? = null,
+        val firstProfileAudio: Audio? = null,
         val uniqueGiftColors: UniqueGift.Colors? = null,
         val paidMessageStarCount: Int? = null,
         val slowModeDelay: Duration? = null,

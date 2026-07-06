@@ -25,10 +25,18 @@ class InlineKeyboardMarkupRowBuilder {
      * @see ReplyMarkup.InlineKeyboard.Button.Text
      */
     fun text(
-        text: String
+        @Suppress("UNUSED_PARAMETER")
+        noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+        text: String,
+        iconCustomEmojiId: String? = null,
+        style: ReplyMarkup.ButtonStyle? = null
     ) {
         buttons.add(
-            ReplyMarkup.InlineKeyboard.Button.Text(text = text)
+            ReplyMarkup.InlineKeyboard.Button.Text(
+                text = text,
+                iconCustomEmojiId = iconCustomEmojiId,
+                style = style
+            )
         )
     }
 
@@ -38,11 +46,20 @@ class InlineKeyboardMarkupRowBuilder {
      * @see ReplyMarkup.InlineKeyboard.Button.Url
      */
     fun url(
+        @Suppress("UNUSED_PARAMETER")
+        noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
         text: String,
         url: String,
+        iconCustomEmojiId: String? = null,
+        style: ReplyMarkup.ButtonStyle? = null,
     ) {
         buttons.add(
-            ReplyMarkup.InlineKeyboard.Button.Url(text = text, url = url)
+            ReplyMarkup.InlineKeyboard.Button.Url(
+                text = text,
+                url = url,
+                iconCustomEmojiId = iconCustomEmojiId,
+                style = style
+            )
         )
     }
 
@@ -52,11 +69,20 @@ class InlineKeyboardMarkupRowBuilder {
      * @see ReplyMarkup.InlineKeyboard.Button.Callback
      */
     fun callback(
+        @Suppress("UNUSED_PARAMETER")
+        noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
         text: String,
-        callbackData: String
+        callbackData: String,
+        iconCustomEmojiId: String? = null,
+        style: ReplyMarkup.ButtonStyle? = null
     ) {
         buttons.add(
-            ReplyMarkup.InlineKeyboard.Button.Callback(text = text, callbackData = callbackData)
+            ReplyMarkup.InlineKeyboard.Button.Callback(
+                text = text,
+                callbackData = callbackData,
+                iconCustomEmojiId = iconCustomEmojiId,
+                style = style
+            )
         )
     }
 
@@ -66,11 +92,20 @@ class InlineKeyboardMarkupRowBuilder {
      * @see ReplyMarkup.InlineKeyboard.Button.WebApp
      */
     fun webApp(
+        @Suppress("UNUSED_PARAMETER")
+        noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
         text: String,
-        webApp: WebAppInfo
+        webApp: WebAppInfo,
+        iconCustomEmojiId: String? = null,
+        style: ReplyMarkup.ButtonStyle? = null
     ) {
         buttons.add(
-            ReplyMarkup.InlineKeyboard.Button.WebApp(text = text, webApp = webApp)
+            ReplyMarkup.InlineKeyboard.Button.WebApp(
+                text = text,
+                webApp = webApp,
+                iconCustomEmojiId = iconCustomEmojiId,
+                style = style
+            )
         )
     }
 
@@ -86,11 +121,15 @@ class InlineKeyboardMarkupRowBuilder {
         url: String,
         forwardText: String? = null,
         botUsername: String? = null,
-        requestWriteAccess: Boolean = false
+        requestWriteAccess: Boolean = false,
+        iconCustomEmojiId: String? = null,
+        style: ReplyMarkup.ButtonStyle? = null
     ) {
         buttons.add(
             ReplyMarkup.InlineKeyboard.Button.Login(
                 text = text,
+                iconCustomEmojiId = iconCustomEmojiId,
+                style = style,
                 loginUrl = ReplyMarkup.InlineKeyboard.Button.Login.Payload(
                     url = url,
                     forwardText = forwardText,
@@ -107,13 +146,19 @@ class InlineKeyboardMarkupRowBuilder {
      * @see ReplyMarkup.InlineKeyboard.Button.SwitchInline
      */
     fun switchInline(
+        @Suppress("UNUSED_PARAMETER")
+        noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
         text: String,
-        switchInlineQuery: String
+        switchInlineQuery: String,
+        iconCustomEmojiId: String? = null,
+        style: ReplyMarkup.ButtonStyle? = null
     ) {
         buttons.add(
             ReplyMarkup.InlineKeyboard.Button.SwitchInline(
                 text = text,
-                switchInlineQuery = switchInlineQuery
+                switchInlineQuery = switchInlineQuery,
+                iconCustomEmojiId = iconCustomEmojiId,
+                style = style
             )
         )
     }
@@ -124,13 +169,19 @@ class InlineKeyboardMarkupRowBuilder {
      * @see ReplyMarkup.InlineKeyboard.Button.SwitchInlineCurrentChat
      */
     fun switchInlineCurrentChat(
+        @Suppress("UNUSED_PARAMETER")
+        noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
         text: String,
-        switchInlineQueryCurrentChat: String
+        switchInlineQueryCurrentChat: String,
+        iconCustomEmojiId: String? = null,
+        style: ReplyMarkup.ButtonStyle? = null
     ) {
         buttons.add(
             ReplyMarkup.InlineKeyboard.Button.SwitchInlineCurrentChat(
                 text = text,
-                switchInlineQueryCurrentChat = switchInlineQueryCurrentChat
+                switchInlineQueryCurrentChat = switchInlineQueryCurrentChat,
+                iconCustomEmojiId = iconCustomEmojiId,
+                style = style
             )
         )
     }
@@ -148,11 +199,15 @@ class InlineKeyboardMarkupRowBuilder {
         allowUserChats: Boolean = false,
         allowBotChats: Boolean = false,
         allowGroupChats: Boolean = false,
-        allowChannelChats: Boolean = false
+        allowChannelChats: Boolean = false,
+        iconCustomEmojiId: String? = null,
+        style: ReplyMarkup.ButtonStyle? = null
     ) {
         buttons.add(
             ReplyMarkup.InlineKeyboard.Button.SwitchInlineChosenChat(
                 text = text,
+                iconCustomEmojiId = iconCustomEmojiId,
+                style = style,
                 switchInlineQueryChosenChat = ReplyMarkup.InlineKeyboard.Button.SwitchInlineChosenChat.Payload(
                     query = query,
                     allowUserChats = allowUserChats,
@@ -173,11 +228,15 @@ class InlineKeyboardMarkupRowBuilder {
         @Suppress("UNUSED_PARAMETER")
         noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
         text: String,
-        copyText: String
+        copyText: String,
+        iconCustomEmojiId: String? = null,
+        style: ReplyMarkup.ButtonStyle? = null
     ) {
         buttons.add(
             ReplyMarkup.InlineKeyboard.Button.CopyText(
                 text = text,
+                iconCustomEmojiId = iconCustomEmojiId,
+                style = style,
                 copyText = ReplyMarkup.InlineKeyboard.Button.CopyText.Payload(
                     text = copyText
                 )
@@ -191,11 +250,17 @@ class InlineKeyboardMarkupRowBuilder {
      * @see ReplyMarkup.InlineKeyboard.Button.Game
      */
     fun game(
-        text: String
+        @Suppress("UNUSED_PARAMETER")
+        noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+        text: String,
+        iconCustomEmojiId: String? = null,
+        style: ReplyMarkup.ButtonStyle? = null
     ) {
         buttons.add(
             ReplyMarkup.InlineKeyboard.Button.Game(
                 text = text,
+                iconCustomEmojiId = iconCustomEmojiId,
+                style = style,
                 callbackGame = ReplyMarkup.InlineKeyboard.Button.Game.Payload
             )
         )
@@ -207,11 +272,17 @@ class InlineKeyboardMarkupRowBuilder {
      * @see ReplyMarkup.InlineKeyboard.Button.Game
      */
     fun pay(
-        text: String
+        @Suppress("UNUSED_PARAMETER")
+        noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+        text: String,
+        iconCustomEmojiId: String? = null,
+        style: ReplyMarkup.ButtonStyle? = null
     ) {
         buttons.add(
             ReplyMarkup.InlineKeyboard.Button.Pay(
-                text = text
+                text = text,
+                iconCustomEmojiId = iconCustomEmojiId,
+                style = style
             )
         )
     }
@@ -258,8 +329,20 @@ class ReplyKeyboardMarkupRowBuilder {
      *
      * @see [ReplyMarkup.Keyboard.Button.Text]
      */
-    fun text(text: String) {
-        buttons.add(ReplyMarkup.Keyboard.Button.Text(text = text))
+    fun text(
+        @Suppress("UNUSED_PARAMETER")
+        noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+        text: String,
+        iconCustomEmojiId: String? = null,
+        style: ReplyMarkup.ButtonStyle? = null
+    ) {
+        buttons.add(
+            ReplyMarkup.Keyboard.Button.Text(
+                text = text,
+                iconCustomEmojiId = iconCustomEmojiId,
+                style = style
+            )
+        )
     }
 
     /**
@@ -277,11 +360,15 @@ class ReplyKeyboardMarkupRowBuilder {
         maxQuantity: Long? = null,
         requestName: Boolean = false,
         requestUsername: Boolean = false,
-        requestPhoto: Boolean = false
+        requestPhoto: Boolean = false,
+        iconCustomEmojiId: String? = null,
+        style: ReplyMarkup.ButtonStyle? = null
     ) {
         buttons.add(
             ReplyMarkup.Keyboard.Button.RequestUsers(
                 text = text,
+                iconCustomEmojiId = iconCustomEmojiId,
+                style = style,
                 requestUsers = ReplyMarkup.Keyboard.Button.RequestUsers.Payload(
                     requestId = requestId,
                     userIsBot = userIsBot,
@@ -314,11 +401,15 @@ class ReplyKeyboardMarkupRowBuilder {
         botIsMember: Boolean = false,
         requestTitle: Boolean = false,
         requestUsername: Boolean = false,
-        requestPhoto: Boolean = false
+        requestPhoto: Boolean = false,
+        iconCustomEmojiId: String? = null,
+        style: ReplyMarkup.ButtonStyle? = null
     ) {
         buttons.add(
             ReplyMarkup.Keyboard.Button.RequestChat(
                 text = text,
+                iconCustomEmojiId = iconCustomEmojiId,
+                style = style,
                 requestChat = ReplyMarkup.Keyboard.Button.RequestChat.Payload(
                     requestId = requestId,
                     chatIsChannel = chatIsChannel,
@@ -341,8 +432,20 @@ class ReplyKeyboardMarkupRowBuilder {
      *
      * @see [ReplyMarkup.Keyboard.Button.RequestContact]
      */
-    fun requestContact(text: String) {
-        buttons.add(ReplyMarkup.Keyboard.Button.RequestContact(text = text))
+    fun requestContact(
+        @Suppress("UNUSED_PARAMETER")
+        noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+        text: String,
+        iconCustomEmojiId: String? = null,
+        style: ReplyMarkup.ButtonStyle? = null
+    ) {
+        buttons.add(
+            ReplyMarkup.Keyboard.Button.RequestContact(
+                text = text,
+                iconCustomEmojiId = iconCustomEmojiId,
+                style = style
+            )
+        )
     }
 
     /**
@@ -350,8 +453,20 @@ class ReplyKeyboardMarkupRowBuilder {
      *
      * @see [ReplyMarkup.Keyboard.Button.RequestLocation]
      */
-    fun requestLocation(text: String) {
-        buttons.add(ReplyMarkup.Keyboard.Button.RequestLocation(text = text))
+    fun requestLocation(
+        @Suppress("UNUSED_PARAMETER")
+        noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+        text: String,
+        iconCustomEmojiId: String? = null,
+        style: ReplyMarkup.ButtonStyle? = null
+    ) {
+        buttons.add(
+            ReplyMarkup.Keyboard.Button.RequestLocation(
+                text = text,
+                iconCustomEmojiId = iconCustomEmojiId,
+                style = style
+            )
+        )
     }
 
     /**
@@ -359,10 +474,19 @@ class ReplyKeyboardMarkupRowBuilder {
      *
      * @see [ReplyMarkup.Keyboard.Button.RequestPoll]
      */
-    fun requestPoll(text: String, pollType: Poll.Type) {
+    fun requestPoll(
+        @Suppress("UNUSED_PARAMETER")
+        noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+        text: String,
+        pollType: Poll.Type,
+        iconCustomEmojiId: String? = null,
+        style: ReplyMarkup.ButtonStyle? = null
+    ) {
         buttons.add(
             ReplyMarkup.Keyboard.Button.RequestPoll(
                 text = text,
+                iconCustomEmojiId = iconCustomEmojiId,
+                style = style,
                 requestPoll = ReplyMarkup.Keyboard.Button.RequestPoll.Payload(
                     type = pollType
                 )
@@ -375,8 +499,19 @@ class ReplyKeyboardMarkupRowBuilder {
      *
      * @see [ReplyMarkup.Keyboard.Button.RequestPoll]
      */
-    fun requestPoll(text: String) {
-        requestPoll(text, Poll.Type.REGULAR)
+    fun requestPoll(
+        @Suppress("UNUSED_PARAMETER")
+        noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+        text: String,
+        iconCustomEmojiId: String? = null,
+        style: ReplyMarkup.ButtonStyle? = null
+    ) {
+        requestPoll(
+            text = text,
+            pollType = Poll.Type.REGULAR,
+            iconCustomEmojiId = iconCustomEmojiId,
+            style = style
+        )
     }
 
     /**
@@ -384,8 +519,19 @@ class ReplyKeyboardMarkupRowBuilder {
      *
      * @see [ReplyMarkup.Keyboard.Button.RequestPoll]
      */
-    fun requestQuiz(text: String) {
-        requestPoll(text, Poll.Type.QUIZ)
+    fun requestQuiz(
+        @Suppress("UNUSED_PARAMETER")
+        noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+        text: String,
+        iconCustomEmojiId: String? = null,
+        style: ReplyMarkup.ButtonStyle? = null
+    ) {
+        requestPoll(
+            text = text,
+            pollType = Poll.Type.QUIZ,
+            iconCustomEmojiId = iconCustomEmojiId,
+            style = style
+        )
     }
 
     /**
@@ -393,11 +539,20 @@ class ReplyKeyboardMarkupRowBuilder {
      *
      * @see [ReplyMarkup.Keyboard.Button.WebApp]
      */
-    fun webApp(text: String, webApp: WebAppInfo) {
+    fun webApp(
+        @Suppress("UNUSED_PARAMETER")
+        noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+        text: String,
+        webApp: WebAppInfo,
+        iconCustomEmojiId: String? = null,
+        style: ReplyMarkup.ButtonStyle? = null
+    ) {
         buttons.add(
             ReplyMarkup.Keyboard.Button.WebApp(
                 text = text,
-                webApp = webApp
+                webApp = webApp,
+                iconCustomEmojiId = iconCustomEmojiId,
+                style = style
             )
         )
     }

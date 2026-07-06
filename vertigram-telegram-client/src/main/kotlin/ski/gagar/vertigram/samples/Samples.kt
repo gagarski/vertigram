@@ -30,7 +30,7 @@ private fun keyboardSample() {
         }
         row {
             requestUsers(text = "Request users", requestId = 1)
-            requestLocation("Request location")
+            requestLocation(text = "Request location")
         }
     }
 }

@@ -1,6 +1,7 @@
 package ski.gagar.vertigram.telegram.types
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 import ski.gagar.vertigram.util.NoPosArgs
@@ -68,7 +69,11 @@ sealed interface ReplyMarkup {
              * Case when no optional fields are specified
              */
             data class Text internal constructor(
-                val text: String
+                @JsonIgnore
+                private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+                val text: String,
+                val iconCustomEmojiId: String? = null,
+                val style: ButtonStyle? = null
             ) : Button {
                 companion object
             }
@@ -77,7 +82,11 @@ sealed interface ReplyMarkup {
              * Case when [url] is specified
              */
             data class Url internal constructor(
+                @JsonIgnore
+                private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
                 val text: String,
+                val iconCustomEmojiId: String? = null,
+                val style: ButtonStyle? = null,
                 val url: String
             ) : Button {
                 companion object
@@ -87,7 +96,11 @@ sealed interface ReplyMarkup {
              * Case when [callbackData] is specified
              */
             data class Callback internal constructor(
+                @JsonIgnore
+                private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
                 val text: String,
+                val iconCustomEmojiId: String? = null,
+                val style: ButtonStyle? = null,
                 val callbackData: String
             ) : Button {
                 companion object
@@ -97,7 +110,11 @@ sealed interface ReplyMarkup {
              * Case when [webApp] is specified
              */
             data class WebApp internal constructor(
+                @JsonIgnore
+                private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
                 val text: String,
+                val iconCustomEmojiId: String? = null,
+                val style: ButtonStyle? = null,
                 val webApp: WebAppInfo
             ) : Button {
                 companion object
@@ -107,7 +124,11 @@ sealed interface ReplyMarkup {
              * Case when [loginUrl] is specified
              */
             data class Login internal constructor(
+                @JsonIgnore
+                private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
                 val text: String,
+                val iconCustomEmojiId: String? = null,
+                val style: ButtonStyle? = null,
                 val loginUrl: Payload
             ) : Button {
                 /**
@@ -130,7 +151,11 @@ sealed interface ReplyMarkup {
              * Case when [switchInlineQuery] is set
              */
             data class SwitchInline internal constructor(
+                @JsonIgnore
+                private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
                 val text: String,
+                val iconCustomEmojiId: String? = null,
+                val style: ButtonStyle? = null,
                 val switchInlineQuery: String,
             ) : Button {
                 companion object
@@ -140,7 +165,11 @@ sealed interface ReplyMarkup {
              * Case when [switchInlineQueryCurrentChat] is set
              */
             data class SwitchInlineCurrentChat internal constructor(
+                @JsonIgnore
+                private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
                 val text: String,
+                val iconCustomEmojiId: String? = null,
+                val style: ButtonStyle? = null,
                 val switchInlineQueryCurrentChat: String
             ) : Button {
                 companion object
@@ -151,7 +180,11 @@ sealed interface ReplyMarkup {
              */
 
             data class SwitchInlineChosenChat internal constructor(
+                @JsonIgnore
+                private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
                 val text: String,
+                val iconCustomEmojiId: String? = null,
+                val style: ButtonStyle? = null,
                 val switchInlineQueryChosenChat: Payload
             ) : Button {
                 /**
@@ -160,6 +193,8 @@ sealed interface ReplyMarkup {
                  * For up-to-date documentation, please consult the official Telegram docs.
                  */
                 data class Payload internal constructor(
+                    @JsonIgnore
+                    private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
                     val query: String? = null,
                     val allowUserChats: Boolean = false,
                     val allowBotChats: Boolean = false,
@@ -176,7 +211,11 @@ sealed interface ReplyMarkup {
              * Case when [copyText] is set
              */
             data class CopyText internal constructor(
+                @JsonIgnore
+                private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
                 val text: String,
+                val iconCustomEmojiId: String? = null,
+                val style: ButtonStyle? = null,
                 val copyText: Payload
             ) : Button {
                 /**
@@ -198,7 +237,11 @@ sealed interface ReplyMarkup {
              * Case when [callbackGame] is set
              */
             data class Game internal constructor(
+                @JsonIgnore
+                private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
                 val text: String,
+                val iconCustomEmojiId: String? = null,
+                val style: ButtonStyle? = null,
                 val callbackGame: Payload
             ) : Button {
                 /**
@@ -215,7 +258,11 @@ sealed interface ReplyMarkup {
              * Case when [pay] is set to `true`
              */
             data class Pay internal constructor(
-                val text: String
+                @JsonIgnore
+                private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+                val text: String,
+                val iconCustomEmojiId: String? = null,
+                val style: ButtonStyle? = null
             ) : Button {
                 val pay: Boolean = true
 
@@ -267,7 +314,11 @@ sealed interface ReplyMarkup {
              * Case when no optional fields are set
              */
             data class Text internal constructor(
-                val text: String
+                @JsonIgnore
+                private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+                val text: String,
+                val iconCustomEmojiId: String? = null,
+                val style: ButtonStyle? = null
             ) : Button {
                 companion object
             }
@@ -276,7 +327,11 @@ sealed interface ReplyMarkup {
              * Case when [requestUsers] is specified
              */
             data class RequestUsers internal constructor(
+                @JsonIgnore
+                private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
                 val text: String,
+                val iconCustomEmojiId: String? = null,
+                val style: ButtonStyle? = null,
                 val requestUsers: Payload
             ) : Button {
                 /**
@@ -304,7 +359,11 @@ sealed interface ReplyMarkup {
              * Case when [requestChat] is specified
              */
             data class RequestChat internal constructor(
+                @JsonIgnore
+                private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
                 val text: String,
+                val iconCustomEmojiId: String? = null,
+                val style: ButtonStyle? = null,
                 val requestChat: Payload
             ) : Button {
                 /**
@@ -313,6 +372,8 @@ sealed interface ReplyMarkup {
                  * For up-to-date documentation, please consult the official Telegram docs.
                  */
                 data class Payload internal constructor(
+                    @JsonIgnore
+                    private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
                     val requestId: Long,
                     val chatIsChannel: Boolean,
                     val chatIsForum: Boolean? = null,
@@ -334,7 +395,11 @@ sealed interface ReplyMarkup {
              * Case when [requestContact] is specified
              */
             data class RequestContact internal constructor(
-                val text: String
+                @JsonIgnore
+                private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+                val text: String,
+                val iconCustomEmojiId: String? = null,
+                val style: ButtonStyle? = null
             ) : Button {
                 val requestContact: Boolean = true
 
@@ -345,7 +410,11 @@ sealed interface ReplyMarkup {
              * Case when [requestLocation] is specified
              */
             data class RequestLocation internal constructor(
-                val text: String
+                @JsonIgnore
+                private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+                val text: String,
+                val iconCustomEmojiId: String? = null,
+                val style: ButtonStyle? = null
             ) : Button {
                 val requestLocation: Boolean = true
 
@@ -356,7 +425,11 @@ sealed interface ReplyMarkup {
              * Case when [requestPoll] is specified
              */
             data class RequestPoll internal constructor(
+                @JsonIgnore
+                private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
                 val text: String,
+                val iconCustomEmojiId: String? = null,
+                val style: ButtonStyle? = null,
                 val requestPoll: Payload
             ) : Button {
                 /**
@@ -377,7 +450,11 @@ sealed interface ReplyMarkup {
              * Case when [webApp] is specified
              */
             data class WebApp internal constructor(
+                @JsonIgnore
+                private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
                 val text: String,
+                val iconCustomEmojiId: String? = null,
+                val style: ButtonStyle? = null,
                 val webApp: WebAppInfo
             ) : Button {
                 companion object
@@ -414,6 +491,15 @@ sealed interface ReplyMarkup {
         val forceReply: Boolean = true
 
         companion object
+    }
+
+    enum class ButtonStyle {
+        @JsonProperty("danger")
+        DANGER,
+        @JsonProperty("success")
+        SUCCESS,
+        @JsonProperty("primary")
+        PRIMARY
     }
 
     companion object
