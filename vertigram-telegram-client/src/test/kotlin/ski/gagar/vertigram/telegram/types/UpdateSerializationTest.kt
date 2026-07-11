@@ -22,6 +22,20 @@ object UpdateSerializationTest : BaseSerializationTest() {
             )
         )
         assertSerializable<Update<*>>(
+            Update.GuestMessage.create(
+                updateId = 1,
+                guestMessage = Message.create(
+                    messageId = 1,
+                    chat = Chat.create(
+                        id = 1,
+                        type = Chat.Type.PRIVATE
+                    ),
+                    guestQueryId = "guest-query",
+                    date = Instant.now().truncatedTo(ChronoUnit.SECONDS)
+                )
+            )
+        )
+        assertSerializable<Update<*>>(
             Update.EditedMessage.create(
                 updateId = 1,
                 editedMessage = Message.create(
@@ -178,6 +192,15 @@ object UpdateSerializationTest : BaseSerializationTest() {
                 pollAnswer = Poll.Answer.create(
                     pollId = "1",
                     optionIds = listOf()
+                )
+            )
+        )
+        assertSerializable<Update<*>>(
+            Update.ManagedBot.create(
+                updateId = 1,
+                managedBot = Update.ManagedBot.Payload.create(
+                    user = User.create(id = 1),
+                    bot = User.create(id = 2, isBot = true)
                 )
             )
         )

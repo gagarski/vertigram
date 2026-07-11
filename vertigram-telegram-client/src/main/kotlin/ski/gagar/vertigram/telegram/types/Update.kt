@@ -32,6 +32,7 @@ class ParsedUpdateList(val delegate: List<Update.Parsed<*>>)
     JsonSubTypes.Type(value = Update.BusinessMessage::class),
     JsonSubTypes.Type(value = Update.EditedBusinessMessage::class),
     JsonSubTypes.Type(value = Update.DeletedBusinessMessages::class),
+    JsonSubTypes.Type(value = Update.GuestMessage::class),
     JsonSubTypes.Type(value = Update.MessageReaction::class),
     JsonSubTypes.Type(value = Update.MessageReactionCount::class),
     JsonSubTypes.Type(value = Update.InlineQuery::class),
@@ -187,6 +188,20 @@ sealed interface Update<T> {
         ) {
             companion object
         }
+
+        companion object
+    }
+
+    /**
+     * Case when [guestMessage] is set
+     */
+    @TelegramCodegen.Type
+    data class GuestMessage internal constructor(
+        override val updateId: Long,
+        val guestMessage: ski.gagar.vertigram.telegram.types.Message
+    ) : Parsed<ski.gagar.vertigram.telegram.types.Message> {
+        override val payload: ski.gagar.vertigram.telegram.types.Message = guestMessage
+        override val date: Instant = payload.date
 
         companion object
     }
@@ -653,6 +668,8 @@ sealed interface Update<T> {
         EDITED_BUSINESS_MESSAGE,
         @JsonProperty("deleted_business_messages")
         DELETED_BUSINESS_MESSAGES,
+        @JsonProperty("guest_message")
+        GUEST_MESSAGE,
         @JsonProperty("message_reaction")
         MESSAGE_REACTION,
         @JsonProperty("message_reaction_COUNT")

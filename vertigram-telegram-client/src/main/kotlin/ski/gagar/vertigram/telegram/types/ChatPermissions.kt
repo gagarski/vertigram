@@ -21,6 +21,7 @@ data class ChatPermissions internal constructor(
     val canSendPolls: Boolean = false,
     val canSendOtherMessages: Boolean = false,
     val canAddWebPagePreviews: Boolean = false,
+    val canReactToMessages: Boolean = false,
     val canEditTag: Boolean = false,
     val canChangeInfo: Boolean = false,
     val canInviteUsers: Boolean = false,

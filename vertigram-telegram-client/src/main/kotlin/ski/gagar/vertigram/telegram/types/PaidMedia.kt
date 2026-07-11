@@ -13,6 +13,7 @@ import ski.gagar.vertigram.annotations.TelegramCodegen
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", include = JsonTypeInfo.As.EXISTING_PROPERTY)
 @JsonSubTypes(
     JsonSubTypes.Type(value = PaidMedia.Preview::class, name = PaidMedia.Type.PREVIEW_STR),
+    JsonSubTypes.Type(value = PaidMedia.LivePhoto::class, name = PaidMedia.Type.LIVE_PHOTO_STR),
     JsonSubTypes.Type(value = PaidMedia.Photo::class, name = PaidMedia.Type.PHOTO_STR),
     JsonSubTypes.Type(value = PaidMedia.Video::class, name = PaidMedia.Type.VIDEO_STR),
 )
@@ -31,6 +32,20 @@ sealed interface PaidMedia {
         val duration: Int? = null,
     ) : PaidMedia {
         override val type: Type = Type.PREVIEW
+
+        companion object
+    }
+
+    /**
+     * Telegram [PaidMediaLivePhoto](https://core.telegram.org/bots/api#paidmedialivephoto) type.
+     *
+     * For up-to-date documentation, please consult the official Telegram docs.
+     */
+    @TelegramCodegen.Type
+    data class LivePhoto internal constructor(
+        val livePhoto: ski.gagar.vertigram.telegram.types.LivePhoto
+    ) : PaidMedia {
+        override val type: Type = Type.LIVE_PHOTO
 
         companion object
     }
@@ -69,12 +84,15 @@ sealed interface PaidMedia {
     enum class Type {
         @JsonProperty(PREVIEW_STR)
         PREVIEW,
+        @JsonProperty(LIVE_PHOTO_STR)
+        LIVE_PHOTO,
         @JsonProperty(PHOTO_STR)
         PHOTO,
         @JsonProperty(VIDEO_STR)
         VIDEO;
         companion object {
             const val PREVIEW_STR = "preview"
+            const val LIVE_PHOTO_STR = "live_photo"
             const val PHOTO_STR = "photo"
             const val VIDEO_STR = "video"
         }

@@ -205,8 +205,20 @@ object MethodsTest : BaseSerializationTest() {
             SendPoll.Regular.Indefinite(
                 chatId = 1.toChatId(),
                 question = "aaa",
-                options = listOf()
-            )
+                options = listOf(
+                    SendPoll.InputOption.create(
+                        text = "aaa",
+                        media = InputMedia.PollSticker(
+                            media = Attachment.fileId("1"),
+                            emoji = ":)"
+                        )
+                    )
+                ),
+                media = InputMedia.Photo(
+                    media = Attachment.fileId("2")
+                )
+            ),
+            skip = setOf(Companion.Mappers.TELEGRAM) // deserialization of attachment is not supported here
         )
         assertSerializable<SendPoll>(
             SendPoll.Quiz.OpenPeriod(
@@ -231,8 +243,13 @@ object MethodsTest : BaseSerializationTest() {
                 chatId = 1.toChatId(),
                 question = "aaa",
                 options = listOf(),
-                correctOptionIds = listOf(1)
-            )
+                correctOptionIds = listOf(1),
+                explanationMedia = InputMedia.LivePhoto(
+                    media = Attachment.fileId("1"),
+                    photo = Attachment.fileId("2")
+                )
+            ),
+            skip = setOf(Companion.Mappers.TELEGRAM) // deserialization of attachment is not supported here
         )
     }
 

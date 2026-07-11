@@ -61,6 +61,7 @@ data class User internal constructor(
         val supportsInlineQueries: Boolean = false,
         val canConnectToBusiness: Boolean = false,
         val canManageBots: Boolean = false,
+        val supportsGuestQueries: Boolean = false,
         val hasTopicsEnabled: Boolean = false,
         val allowsUsersToCreateTopics: Boolean = false,
         val hasMainWebApp: Boolean = false

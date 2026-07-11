@@ -33,6 +33,7 @@ interface BaseInputMedia<T> {
     JsonSubTypes.Type(value = InputMedia.Animation::class, name = InputMedia.Type.ANIMATION_STR),
     JsonSubTypes.Type(value = InputMedia.Audio::class, name = InputMedia.Type.AUDIO_STR),
     JsonSubTypes.Type(value = InputMedia.Document::class, name = InputMedia.Type.DOCUMENT_STR),
+    JsonSubTypes.Type(value = InputMedia.LivePhoto::class, name = InputMedia.Type.LIVE_PHOTO_STR),
     JsonSubTypes.Type(value = InputMedia.Photo::class, name = InputMedia.Type.PHOTO_STR),
     JsonSubTypes.Type(value = InputMedia.Video::class, name = InputMedia.Type.VIDEO_STR),
 )
@@ -59,7 +60,7 @@ sealed interface InputMedia : BaseInputMedia<InputMedia.Type> {
         val height: Int? = null,
         val duration: Duration? = null,
         val hasSpoiler: Boolean = false
-    ) : InputMedia, HasOptionalRichCaption {
+    ) : InputMedia, Poll, PollOption, HasOptionalRichCaption {
         override val type: Type = Type.ANIMATION
         override val cover: Attachment? = null
 
@@ -81,7 +82,7 @@ sealed interface InputMedia : BaseInputMedia<InputMedia.Type> {
         val duration: Duration? = null,
         val performer: String? = null,
         val title: String? = null
-    ) : InputMedia, HasOptionalRichCaption {
+    ) : InputMedia, Poll, HasOptionalRichCaption {
         override val type: Type = Type.AUDIO
         override val cover: Attachment? = null
 
@@ -101,7 +102,7 @@ sealed interface InputMedia : BaseInputMedia<InputMedia.Type> {
         override val parseMode: RichText.ParseMode? = null,
         override val captionEntities: List<MessageEntity>? = null,
         val disableContentTypeDetection: Boolean = false
-    ) : InputMedia, HasOptionalRichCaption {
+    ) : InputMedia, Poll, HasOptionalRichCaption {
         override val type: Type = Type.DOCUMENT
         override val cover: Attachment? = null
 
@@ -121,7 +122,7 @@ sealed interface InputMedia : BaseInputMedia<InputMedia.Type> {
         override val captionEntities: List<MessageEntity>? = null,
         val showCaptionAboveMedia: Boolean = false,
         val hasSpoiler: Boolean = false
-    ) : InputMedia, HasOptionalRichCaption {
+    ) : InputMedia, Poll, PollOption, HasOptionalRichCaption {
         override val type: Type = Type.PHOTO
         override val thumbnail = null
         override val cover: Attachment? = null
@@ -149,8 +150,30 @@ sealed interface InputMedia : BaseInputMedia<InputMedia.Type> {
         val duration: Duration? = null,
         val supportsStreaming: Boolean = false,
         val hasSpoiler: Boolean = false
-    ) : InputMedia, HasOptionalRichCaption {
+    ) : InputMedia, Poll, PollOption, HasOptionalRichCaption {
         override val type: Type = Type.VIDEO
+
+        companion object
+    }
+
+    /**
+     * Telegram [InputMediaLivePhoto](https://core.telegram.org/bots/api#inputmedialivephoto) type.
+     *
+     * For up-to-date documentation, please consult the official Telegram docs.
+     */
+    @TelegramCodegen.Type
+    data class LivePhoto internal constructor(
+        override val media: Attachment,
+        val photo: Attachment,
+        override val caption: String? = null,
+        override val parseMode: RichText.ParseMode? = null,
+        override val captionEntities: List<MessageEntity>? = null,
+        val showCaptionAboveMedia: Boolean = false,
+        val hasSpoiler: Boolean = false
+    ) : InputMedia, Poll, PollOption, HasOptionalRichCaption {
+        override val type: Type = Type.LIVE_PHOTO
+        override val thumbnail: Attachment? = null
+        override val cover: Attachment? = null
 
         companion object
     }
@@ -168,6 +191,58 @@ sealed interface InputMedia : BaseInputMedia<InputMedia.Type> {
         val maskPosition: ski.gagar.vertigram.telegram.types.Sticker.MaskPosition? = null,
         val keywords: List<String>? = null
     ) {
+
+        companion object
+    }
+
+    /**
+     * Telegram [InputMediaSticker](https://core.telegram.org/bots/api#inputmediasticker) type.
+     *
+     * For up-to-date documentation, please consult the official Telegram docs.
+     */
+    @TelegramCodegen.Type
+    data class PollSticker internal constructor(
+        val media: Attachment,
+        val emoji: String? = null
+    ) : PollOption {
+        override val type: Type = Type.STICKER
+
+        companion object
+    }
+
+    /**
+     * Telegram [InputMediaLocation](https://core.telegram.org/bots/api#inputmedialocation) type.
+     *
+     * For up-to-date documentation, please consult the official Telegram docs.
+     */
+    @TelegramCodegen.Type
+    data class Location internal constructor(
+        val latitude: Double,
+        val longitude: Double,
+        val horizontalAccuracy: Double? = null
+    ) : Poll, PollOption {
+        override val type: Type = Type.LOCATION
+
+        companion object
+    }
+
+    /**
+     * Telegram [InputMediaVenue](https://core.telegram.org/bots/api#inputmediavenue) type.
+     *
+     * For up-to-date documentation, please consult the official Telegram docs.
+     */
+    @TelegramCodegen.Type
+    data class Venue internal constructor(
+        val latitude: Double,
+        val longitude: Double,
+        val title: String,
+        val address: String,
+        val foursquareId: String? = null,
+        val foursquareType: String? = null,
+        val googlePlaceId: String? = null,
+        val googlePlaceType: String? = null
+    ) : Poll, PollOption {
+        override val type: Type = Type.VENUE
 
         companion object
     }
@@ -306,11 +381,34 @@ sealed interface InputMedia : BaseInputMedia<InputMedia.Type> {
      *
      * For up-to-date documentation, please consult the official Telegram docs.
      */
+    @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", include = JsonTypeInfo.As.EXISTING_PROPERTY)
+    @JsonSubTypes(
+        JsonSubTypes.Type(value = Paid.LivePhoto::class, name = Paid.Type.LIVE_PHOTO_STR),
+        JsonSubTypes.Type(value = Paid.Photo::class, name = Paid.Type.PHOTO_STR),
+        JsonSubTypes.Type(value = Paid.Video::class, name = Paid.Type.VIDEO_STR)
+    )
     sealed interface Paid : BaseInputMedia<Paid.Type> {
         override val type: Type
         override val media: Attachment
         override val thumbnail: Attachment?
         override val cover: Attachment?
+
+        /**
+         * Telegram [InputPaidMediaLivePhoto](https://core.telegram.org/bots/api#inputpaidmedialivephoto) type.
+         *
+         * For up-to-date documentation, please consult the official Telegram docs.
+         */
+        @TelegramCodegen.Type
+        data class LivePhoto internal constructor(
+            override val media: Attachment,
+            val photo: Attachment
+        ) : Paid {
+            override val type: Type = Type.LIVE_PHOTO
+            override val thumbnail: Attachment? = null
+            override val cover: Attachment? = null
+
+            companion object
+        }
 
         /**
          * Telegram [InputPaidMediaPhoto](https://core.telegram.org/bots/api#inputpaidmediaphoto) type.
@@ -364,16 +462,54 @@ sealed interface InputMedia : BaseInputMedia<InputMedia.Type> {
          * Value for [type]
          */
         enum class Type {
+            @JsonProperty(LIVE_PHOTO_STR)
+            LIVE_PHOTO,
             @JsonProperty(PHOTO_STR)
             PHOTO,
             @JsonProperty(VIDEO_STR)
             VIDEO;
 
             companion object {
+                const val LIVE_PHOTO_STR = "live_photo"
                 const val PHOTO_STR = "photo"
                 const val VIDEO_STR = "video"
             }
         }
+    }
+
+    /**
+     * Telegram [InputPollMedia](https://core.telegram.org/bots/api#inputpollmedia) type.
+     */
+    @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", include = JsonTypeInfo.As.EXISTING_PROPERTY)
+    @JsonSubTypes(
+        JsonSubTypes.Type(value = Animation::class, name = Type.ANIMATION_STR),
+        JsonSubTypes.Type(value = Audio::class, name = Type.AUDIO_STR),
+        JsonSubTypes.Type(value = Document::class, name = Type.DOCUMENT_STR),
+        JsonSubTypes.Type(value = LivePhoto::class, name = Type.LIVE_PHOTO_STR),
+        JsonSubTypes.Type(value = Location::class, name = Type.LOCATION_STR),
+        JsonSubTypes.Type(value = Photo::class, name = Type.PHOTO_STR),
+        JsonSubTypes.Type(value = Venue::class, name = Type.VENUE_STR),
+        JsonSubTypes.Type(value = Video::class, name = Type.VIDEO_STR)
+    )
+    sealed interface Poll {
+        val type: Type
+    }
+
+    /**
+     * Telegram [InputPollOptionMedia](https://core.telegram.org/bots/api#inputpolloptionmedia) type.
+     */
+    @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", include = JsonTypeInfo.As.EXISTING_PROPERTY)
+    @JsonSubTypes(
+        JsonSubTypes.Type(value = Animation::class, name = Type.ANIMATION_STR),
+        JsonSubTypes.Type(value = LivePhoto::class, name = Type.LIVE_PHOTO_STR),
+        JsonSubTypes.Type(value = Location::class, name = Type.LOCATION_STR),
+        JsonSubTypes.Type(value = Photo::class, name = Type.PHOTO_STR),
+        JsonSubTypes.Type(value = PollSticker::class, name = Type.STICKER_STR),
+        JsonSubTypes.Type(value = Venue::class, name = Type.VENUE_STR),
+        JsonSubTypes.Type(value = Video::class, name = Type.VIDEO_STR)
+    )
+    sealed interface PollOption {
+        val type: Type
     }
 
     /**
@@ -389,7 +525,15 @@ sealed interface InputMedia : BaseInputMedia<InputMedia.Type> {
         @JsonProperty(AUDIO_STR)
         AUDIO,
         @JsonProperty(DOCUMENT_STR)
-        DOCUMENT;
+        DOCUMENT,
+        @JsonProperty(LIVE_PHOTO_STR)
+        LIVE_PHOTO,
+        @JsonProperty(LOCATION_STR)
+        LOCATION,
+        @JsonProperty(STICKER_STR)
+        STICKER,
+        @JsonProperty(VENUE_STR)
+        VENUE;
 
         companion object {
             const val PHOTO_STR = "photo"
@@ -397,7 +541,10 @@ sealed interface InputMedia : BaseInputMedia<InputMedia.Type> {
             const val ANIMATION_STR = "animation"
             const val AUDIO_STR = "audio"
             const val DOCUMENT_STR = "document"
+            const val LIVE_PHOTO_STR = "live_photo"
+            const val LOCATION_STR = "location"
+            const val STICKER_STR = "sticker"
+            const val VENUE_STR = "venue"
         }
     }
 }
-
