@@ -3,7 +3,7 @@ package ski.gagar.vertigram.telegram.types.methods
 import ski.gagar.vertigram.annotations.TelegramCodegen
 
 /**
- * Telegram [upgradeGift](https://core.telegram.org/bots/api#upgradeGift) method.
+ * Telegram [upgradeGift](https://core.telegram.org/bots/api#upgradegift) method.
  *
  * For up-to-date documentation, please consult the official Telegram docs.
  */

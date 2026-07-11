@@ -20,7 +20,7 @@ data class StarTransaction internal constructor(
     val nanostarAmount: Int,
     val date: Instant,
     val source: TransactionPartner? = null,
-    val target: TransactionPartner? = null
+    val receiver: TransactionPartner? = null
 ) {
     @get:JsonIgnore
     val starAmount
@@ -75,7 +75,7 @@ data class StarTransaction internal constructor(
             data class AffiliateInfo internal constructor(
                 val affiliateUser: ski.gagar.vertigram.telegram.types.User? = null,
                 val affiliateChat: ski.gagar.vertigram.telegram.types.Chat? = null,
-                val commissionPerMile: Int,
+                val commissionPerMille: Int,
                 val amount: Int,
                 val nanostarAmount: Int
             ) {
@@ -126,7 +126,7 @@ data class StarTransaction internal constructor(
         @TelegramCodegen.Type
         data class AffiliateProgram internal constructor(
             val sponsorUser: ski.gagar.vertigram.telegram.types.User? = null,
-            val commissionPerMile: Int,
+            val commissionPerMille: Int,
         ) : TransactionPartner {
             override val type: Type = Type.AFFILIATE_PROGRAM
 
@@ -141,7 +141,7 @@ data class StarTransaction internal constructor(
         @TelegramCodegen.Type
         data class Fragment internal constructor(
             val sponsorUser: ski.gagar.vertigram.telegram.types.User? = null,
-            val commissionPerMile: Int,
+            val commissionPerMille: Int,
             val withdrawalState: RevenueWithdrawalState? = null
         ) : TransactionPartner {
             override val type: Type = Type.FRAGMENT
@@ -170,7 +170,7 @@ data class StarTransaction internal constructor(
                 }
 
                 /**
-                 * Telegram [RevenueWithdrawalStateSucceeded](https://core.telegram.org/bots/api#revenuewithdrawalstatesucceded) type.
+                 * Telegram [RevenueWithdrawalStateSucceeded](https://core.telegram.org/bots/api#revenuewithdrawalstatesucceeded) type.
                  *
                  * For up-to-date documentation, please consult the official Telegram docs.
                  */

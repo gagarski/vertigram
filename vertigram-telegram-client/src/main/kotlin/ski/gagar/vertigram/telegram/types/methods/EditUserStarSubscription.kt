@@ -13,6 +13,6 @@ import ski.gagar.vertigram.telegram.types.Sticker
 data class EditUserStarSubscription internal constructor(
     val userId: Long,
     val telegramPaymentChargeId: String,
-    @get:JvmName("getIsCancelled")
-    val isCancelled: Boolean = false,
+    @get:JvmName("getIsCanceled")
+    val isCanceled: Boolean = false,
 ) : JsonTelegramCallable<Boolean>()

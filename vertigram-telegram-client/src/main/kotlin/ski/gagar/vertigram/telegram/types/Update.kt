@@ -165,14 +165,14 @@ sealed interface Update<T> {
     }
 
     /**
-     * Case when [deletedBusinessMesages] is set
+     * Case when [deletedBusinessMessages] is set
      */
     @TelegramCodegen.Type
     data class DeletedBusinessMessages internal constructor(
         override val updateId: Long,
-        val deletedBusinessMessaged: Payload
+        val deletedBusinessMessages: Payload
     ) : Parsed<DeletedBusinessMessages.Payload> {
-        override val payload: Payload = deletedBusinessMessaged
+        override val payload: Payload = deletedBusinessMessages
         override val date: Instant? = null
 
         /**
@@ -184,7 +184,7 @@ sealed interface Update<T> {
         data class Payload internal constructor(
             val businessConnectionId: String,
             val chat: Chat,
-            val messageId: List<Long>
+            val messageIds: List<Long>
         ) {
             companion object
         }
@@ -395,7 +395,7 @@ sealed interface Update<T> {
         override val date: Instant? = null
 
         /**
-         * Telegram [PreCheckoutQuery](https://core.telegram.org/bots/api#precheckoutquery) type.
+         * Telegram [PaidMediaPurchased](https://core.telegram.org/bots/api#paidmediapurchased) type.
          *
          * For up-to-date documentation, please consult the official Telegram docs.
          */
@@ -569,6 +569,7 @@ sealed interface Update<T> {
             val from: User,
             val userChatId: Long,
             val date: Instant,
+            val queryId: String? = null,
             val bio: String? = null,
             val inviteLink: ChatInviteLink? = null
         ) {
@@ -672,7 +673,7 @@ sealed interface Update<T> {
         GUEST_MESSAGE,
         @JsonProperty("message_reaction")
         MESSAGE_REACTION,
-        @JsonProperty("message_reaction_COUNT")
+        @JsonProperty("message_reaction_count")
         MESSAGE_REACTION_COUNT,
         @JsonProperty("inline_query")
         INLINE_QUERY,

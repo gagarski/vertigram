@@ -210,6 +210,48 @@ object MethodsTest : BaseSerializationTest() {
     }
 
     @Test
+    fun `business methods should survive serialization`() {
+        assertSerializable<GetBusinessConnection>(
+            GetBusinessConnection(
+                businessConnectionId = "1"
+            )
+        )
+        assertSerializable<DeleteBusinessMessages>(
+            DeleteBusinessMessages(
+                businessConnectionId = "1",
+                messageIds = listOf(1)
+            )
+        )
+    }
+
+    @Test
+    fun `premium gift method should survive serialization`() {
+        assertSerializable<GiftPremiumSubscription>(
+            GiftPremiumSubscription(
+                userId = 1,
+                monthCount = GiftPremiumSubscription.MonthCount.THREE,
+                text = "gift"
+            )
+        )
+        assertSerializable<UpgradeGift>(
+            UpgradeGift(
+                businessConnectionId = "1",
+                ownedGiftId = "gift",
+                keepOriginalDetails = true,
+                starCount = 1
+            )
+        )
+        assertSerializable<TransferGift>(
+            TransferGift(
+                businessConnectionId = "1",
+                ownedGiftId = "gift",
+                newOwnerChatId = 1,
+                starCount = 1
+            )
+        )
+    }
+
+    @Test
     fun `getGameHighScores should survive serialization`() {
         assertSerializable<GetGameHighScores>(
             GetGameHighScores.InlineMessage(
@@ -223,6 +265,36 @@ object MethodsTest : BaseSerializationTest() {
                 messageId = 1,
                 userId = 1
             )
+        )
+    }
+
+    @Test
+    fun `send methods with message effect should survive serialization`() {
+        assertSerializable<SendGame>(
+            SendGame(
+                chatId = 1.toChatId(),
+                gameShortName = "game",
+                messageEffectId = "effect"
+            )
+        )
+        assertSerializable<SendInvoice>(
+            SendInvoice(
+                chatId = 1.toChatId(),
+                title = "title",
+                description = "description",
+                payload = "payload",
+                currency = "XTR",
+                prices = listOf(),
+                messageEffectId = "effect"
+            )
+        )
+        assertSerializable<SendMediaGroup>(
+            SendMediaGroup(
+                chatId = 1.toChatId(),
+                media = listOf(InputMedia.Photo(media = Attachment.fileId("1"))),
+                messageEffectId = "effect"
+            ),
+            skip = setOf(Companion.Mappers.TELEGRAM) // deserialization of attachment is not supported here
         )
     }
 

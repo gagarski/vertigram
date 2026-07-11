@@ -48,6 +48,7 @@ data class SendInvoice internal constructor(
     val disableNotification: Boolean = false,
     val protectContent: Boolean = false,
     val allowPaidBroadcast: Boolean = false,
+    val messageEffectId: String? = null,
     val suggestedPostParameters: SuggestedPost.Parameters? = null,
     val replyParameters: ReplyParameters? = null,
     val replyMarkup: ReplyMarkup? = null

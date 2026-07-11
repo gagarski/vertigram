@@ -7,7 +7,7 @@ import ski.gagar.vertigram.telegram.types.PreparedInlineMessage
 import ski.gagar.vertigram.util.NoPosArgs
 
 /**
- * Telegram [setStickerEmojiList](https://core.telegram.org/bots/api#setstickeremojilist) method.
+ * Telegram [savePreparedInlineMessage](https://core.telegram.org/bots/api#savepreparedinlinemessage) method.
  *
  * For up-to-date documentation, please consult the official Telegram docs.
  */

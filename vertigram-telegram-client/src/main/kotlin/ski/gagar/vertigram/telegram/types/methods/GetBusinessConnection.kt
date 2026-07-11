@@ -1,8 +1,7 @@
 package ski.gagar.vertigram.telegram.types.methods
 
-import com.fasterxml.jackson.annotation.JsonIgnore
 import ski.gagar.vertigram.annotations.TelegramCodegen
-import ski.gagar.vertigram.util.NoPosArgs
+import ski.gagar.vertigram.telegram.types.BusinessConnection
 
 /**
  * Telegram [getBusinessConnection](https://core.telegram.org/bots/api#getbusinessconnection) method.
@@ -12,4 +11,4 @@ import ski.gagar.vertigram.util.NoPosArgs
 @TelegramCodegen.Method
 data class GetBusinessConnection internal constructor(
     val businessConnectionId: String
-) : JsonTelegramCallable<Boolean>()
+) : JsonTelegramCallable<BusinessConnection>()

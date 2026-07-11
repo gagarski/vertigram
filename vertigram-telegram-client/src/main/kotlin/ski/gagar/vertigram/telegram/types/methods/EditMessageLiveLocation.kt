@@ -14,7 +14,7 @@ import java.time.Duration
 import java.time.temporal.ChronoUnit
 
 /**
- * Telegram [editMessageLiveLocation](https://core.telegram.org/bots/api#editmessagelivelication) method.
+ * Telegram [editMessageLiveLocation](https://core.telegram.org/bots/api#editmessagelivelocation) method.
  *
  * Subtypes (which are nested) are two mutually exclusive cases: for inline message and for chat message.
  * Note the different return types in these cases.

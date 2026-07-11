@@ -26,6 +26,7 @@ data class SendGame internal constructor(
     val disableNotification: Boolean = false,
     val protectContent: Boolean = false,
     val allowPaidBroadcast: Boolean = false,
+    val messageEffectId: String? = null,
     val replyMarkup: ReplyMarkup? = null,
     val replyParameters: ReplyParameters? = null
 ) : JsonTelegramCallable<Message>(), HasChatId

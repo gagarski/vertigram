@@ -29,7 +29,7 @@ data class InlineQuery internal constructor(
 ) {
 
     /**
-     * Telegram [InputMessageContent](https://core.telegram.org/bots/api#inputtextmessagecontent) type.
+     * Telegram [InputMessageContent](https://core.telegram.org/bots/api#inputmessagecontent) type.
      * Subtypes (which are nested) represent the subtypes, described by Telegram docs with more
      * names given they are nested into [InlineQuery.InputMessageContent] class. The rule here is the following:
      * `InputXxxMessageContent` Telegram type becomes `InlineQuery.InputMessageContent.Xxx`.

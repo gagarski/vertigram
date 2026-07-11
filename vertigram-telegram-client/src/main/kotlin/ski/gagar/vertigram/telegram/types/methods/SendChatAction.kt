@@ -22,7 +22,7 @@ data class SendChatAction internal constructor(
     val action: Action
 ) : JsonTelegramCallable<Boolean>(), HasChatId {
     /**
-     * Telegram [ChatAction](https://core.telegram.org/bots/api#chataction) type.
+     * Telegram chat action values used by [sendChatAction](https://core.telegram.org/bots/api#sendchataction).
      *
      * For up-to-date documentation, please consult the official Telegram docs.
      */

@@ -13,7 +13,7 @@ import ski.gagar.vertigram.telegram.types.util.ChatId
 import ski.gagar.vertigram.util.NoPosArgs
 
 /**
- * Telegram [sendContact](https://core.telegram.org/bots/api#sendcontact) method.
+ * Telegram [sendDice](https://core.telegram.org/bots/api#senddice) method.
  *
  * For up-to-date documentation, please consult the official Telegram docs.
  */
