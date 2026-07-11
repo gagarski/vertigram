@@ -214,7 +214,7 @@ object MethodsTest : BaseSerializationTest() {
                 question = "aaa",
                 options = listOf(),
                 openPeriod = Duration.ofHours(1),
-                correctOptionId = 1
+                correctOptionIds = listOf(1)
             )
         )
         assertSerializable<SendPoll>(
@@ -223,7 +223,7 @@ object MethodsTest : BaseSerializationTest() {
                 question = "aaa",
                 options = listOf(),
                 closeDate = Instant.now().truncatedTo(ChronoUnit.SECONDS),
-                correctOptionId = 1
+                correctOptionIds = listOf(1)
             )
         )
         assertSerializable<SendPoll>(
@@ -231,7 +231,7 @@ object MethodsTest : BaseSerializationTest() {
                 chatId = 1.toChatId(),
                 question = "aaa",
                 options = listOf(),
-                correctOptionId = 1
+                correctOptionIds = listOf(1)
             )
         )
     }

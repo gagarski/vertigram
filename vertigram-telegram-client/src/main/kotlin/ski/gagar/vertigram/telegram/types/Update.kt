@@ -42,6 +42,7 @@ class ParsedUpdateList(val delegate: List<Update.Parsed<*>>)
     JsonSubTypes.Type(value = Update.PurchasedPaidMedia::class),
     JsonSubTypes.Type(value = Update.Poll::class),
     JsonSubTypes.Type(value = Update.PollAnswer::class),
+    JsonSubTypes.Type(value = Update.ManagedBot::class),
     JsonSubTypes.Type(value = Update.MyChatMember::class),
     JsonSubTypes.Type(value = Update.ChatMember::class),
     JsonSubTypes.Type(value = Update.ChatJoinRequest::class),
@@ -456,6 +457,33 @@ sealed interface Update<T> {
     }
 
     /**
+     * Case when [managedBot] is set
+     */
+    @TelegramCodegen.Type
+    data class ManagedBot internal constructor(
+        override val updateId: Long,
+        val managedBot: Payload
+    ) : Parsed<ManagedBot.Payload> {
+        override val payload: Payload = managedBot
+        override val date: Instant? = null
+
+        /**
+         * Telegram [ManagedBotUpdated](https://core.telegram.org/bots/api#managedbotupdated) type.
+         *
+         * For up-to-date documentation, please consult the official Telegram docs.
+         */
+        @TelegramCodegen.Type
+        data class Payload internal constructor(
+            val user: User,
+            val bot: User
+        ) {
+            companion object
+        }
+
+        companion object
+    }
+
+    /**
      * Case when [myChatMember] is set
      *
      * Intentionally reuses [ChatMember.Payload]
@@ -645,6 +673,8 @@ sealed interface Update<T> {
         POLL,
         @JsonProperty("poll_answer")
         POLL_ANSWER,
+        @JsonProperty("managed_bot")
+        MANAGED_BOT,
         @JsonProperty("my_chat_member")
         MY_CHAT_MEMBER,
         @JsonProperty("chat_member")

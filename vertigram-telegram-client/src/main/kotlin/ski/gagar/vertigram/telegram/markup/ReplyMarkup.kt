@@ -428,6 +428,35 @@ class ReplyKeyboardMarkupRowBuilder {
     }
 
     /**
+     * Add a button that requests a managed bot.
+     *
+     * @see [ReplyMarkup.Keyboard.Button.RequestManagedBot]
+     */
+    fun requestManagedBot(
+        @Suppress("UNUSED_PARAMETER")
+        noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+        text: String,
+        requestId: Long,
+        suggestedName: String? = null,
+        suggestedUsername: String? = null,
+        iconCustomEmojiId: String? = null,
+        style: ReplyMarkup.ButtonStyle? = null
+    ) {
+        buttons.add(
+            ReplyMarkup.Keyboard.Button.RequestManagedBot(
+                text = text,
+                iconCustomEmojiId = iconCustomEmojiId,
+                style = style,
+                requestManagedBot = ReplyMarkup.Keyboard.Button.RequestManagedBot.Payload(
+                    requestId = requestId,
+                    suggestedName = suggestedName,
+                    suggestedUsername = suggestedUsername
+                )
+            )
+        )
+    }
+
+    /**
      * Add a button that requests contact.
      *
      * @see [ReplyMarkup.Keyboard.Button.RequestContact]

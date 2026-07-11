@@ -41,6 +41,9 @@ interface Poll : HasQuestionWithEntities {
     val type: Type
     val openPeriod: Duration?
     val closeDate: Instant?
+    val allowsRevoting: Boolean
+    val description: String?
+    val descriptionEntities: List<MessageEntity>?
 
     /**
      * Regular case
@@ -59,7 +62,10 @@ interface Poll : HasQuestionWithEntities {
         override val isAnonymous: Boolean = false,
         val allowsMultipleAnswers: Boolean = false,
         override val openPeriod: Duration? = null,
-        override val closeDate: Instant? = null
+        override val closeDate: Instant? = null,
+        override val allowsRevoting: Boolean = false,
+        override val description: String? = null,
+        override val descriptionEntities: List<MessageEntity>? = null
     ) : Poll {
         override val type: Type = Type.REGULAR
 
@@ -80,11 +86,14 @@ interface Poll : HasQuestionWithEntities {
         override val isClosed: Boolean = false,
         @get:JvmName("getIsAnonymous")
         override val isAnonymous: Boolean = false,
-        val correctOptionId: Int? = null,
+        val correctOptionIds: List<Int>? = null,
         override val explanation: String? = null,
         override val explanationEntities: List<MessageEntity>? = null,
         override val openPeriod: Duration? = null,
-        override val closeDate: Instant? = null
+        override val closeDate: Instant? = null,
+        override val allowsRevoting: Boolean = false,
+        override val description: String? = null,
+        override val descriptionEntities: List<MessageEntity>? = null
     ) : Poll, HasOptionalExplanationWithEntities {
         override val type: Type = Type.QUIZ
 
@@ -98,9 +107,13 @@ interface Poll : HasQuestionWithEntities {
      */
     @TelegramCodegen.Type
     data class Option internal constructor(
+        val persistentId: String,
         override val text: String,
         override val entities: List<MessageEntity>? = null,
-        val voterCount: Int
+        val voterCount: Int,
+        val addedByUser: User? = null,
+        val addedByChat: Chat? = null,
+        val additionDate: Instant? = null
     ) : HasTextWithEntities {
         companion object
     }
@@ -115,6 +128,7 @@ interface Poll : HasQuestionWithEntities {
         val pollId: String,
         val voterChat: Chat? = null,
         val optionIds: List<Int>,
+        val optionPersistentIds: List<String>? = null,
         val user: User? = null
     ) {
         companion object

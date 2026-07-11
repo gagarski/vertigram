@@ -304,6 +304,7 @@ sealed interface ReplyMarkup {
             JsonSubTypes.Type(value = Button.Text::class),
             JsonSubTypes.Type(value = Button.RequestUsers::class),
             JsonSubTypes.Type(value = Button.RequestChat::class),
+            JsonSubTypes.Type(value = Button.RequestManagedBot::class),
             JsonSubTypes.Type(value = Button.RequestContact::class),
             JsonSubTypes.Type(value = Button.RequestLocation::class),
             JsonSubTypes.Type(value = Button.RequestPoll::class),
@@ -385,6 +386,34 @@ sealed interface ReplyMarkup {
                     val requestTitle: Boolean = false,
                     val requestUsername: Boolean = false,
                     val requestPhoto: Boolean = false
+                ) {
+                    companion object
+                }
+                companion object
+            }
+
+            /**
+             * Case when [requestManagedBot] is specified
+             */
+            data class RequestManagedBot internal constructor(
+                @JsonIgnore
+                private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+                val text: String,
+                val iconCustomEmojiId: String? = null,
+                val style: ButtonStyle? = null,
+                val requestManagedBot: Payload
+            ) : Button {
+                /**
+                 * Telegram [KeyboardButtonRequestManagedBot](https://core.telegram.org/bots/api#keyboardbuttonrequestmanagedbot) type.
+                 *
+                 * For up-to-date documentation, please consult the official Telegram docs.
+                 */
+                data class Payload internal constructor(
+                    @JsonIgnore
+                    private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+                    val requestId: Long,
+                    val suggestedName: String? = null,
+                    val suggestedUsername: String? = null
                 ) {
                     companion object
                 }
