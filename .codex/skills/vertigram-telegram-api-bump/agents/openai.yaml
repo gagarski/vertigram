@@ -1,0 +1,4 @@
+interface:
+  display_name: "Vertigram Telegram API Bump"
+  short_description: "Update Vertigram Telegram Bot API support"
+  default_prompt: "Use $vertigram-telegram-api-bump to update Vertigram Telegram Bot API support to the requested version."
