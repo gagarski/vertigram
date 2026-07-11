@@ -8,6 +8,7 @@ repositories {
 plugins {
     `version-catalog`
     `maven-publish`
+    signing
 }
 
 val excludedSubprojects = setOf(
@@ -39,6 +40,22 @@ publishing {
     publications {
         create<MavenPublication>("maven") {
             from(components["versionCatalog"])
+
+            pom {
+                vertigramPom(project, "Gradle version catalog for Vertigram")
+            }
         }
     }
+}
+
+signing {
+    val signingKeyId = findProperty("signingKeyId") as String?
+    val signingKey = findProperty("signingKey") as String?
+    val signingPassword = findProperty("signingPassword") as String?
+
+    if (signingKey != null) {
+        useInMemoryPgpKeys(signingKeyId, signingKey, signingPassword)
+    }
+
+    sign(publishing.publications["maven"])
 }

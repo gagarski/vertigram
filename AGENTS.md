@@ -20,8 +20,8 @@ Key modules:
 ## Environment
 
 - Use the Gradle wrapper: `.\gradlew.bat` on Windows or `./gradlew` on Unix-like shells.
-- Java target/source compatibility is 22.
-- Kotlin language version is 2.2 and JVM target is 22.
+- Java target/source compatibility is 25.
+- Kotlin language version is 2.4 and JVM target is 25.
 - Tests use JUnit Platform / JUnit Jupiter.
 - Dependency versions live in `gradle/libs.versions.toml` and `gradle/libs.internal.versions.toml`.
 - Build conventions are in `buildSrc/src/main/kotlin`.

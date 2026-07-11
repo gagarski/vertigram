@@ -28,7 +28,10 @@ buildscript {
 
 nexusPublishing {
     repositories {
-        sonatype()
+        sonatype {
+            nexusUrl.set(uri("https://ossrh-staging-api.central.sonatype.com/service/local/"))
+            snapshotRepositoryUrl.set(uri("https://central.sonatype.com/repository/maven-snapshots/"))
+        }
     }
 }
 
@@ -38,19 +41,32 @@ release {
     }
 }
 
-tasks {
-    named("afterReleaseBuild") {
-        dependsOn(project.getSubprojects().map {
-            "${it.name}:publish"
-        })
-        dependsOn("vertigram-jooq-plugin:publishPlugins")
+gradle.projectsEvaluated {
+    val publishToSonatypeTasks = subprojects.mapNotNull {
+        it.tasks.findByName("publishToSonatype")
+    }
 
-//        if (project.properties["vertigram.dokka.skip"] != "true") {
-//            dependsOn("dokkaUpload")
-//        }
+    tasks {
+        named("closeAndReleaseSonatypeStagingRepository") {
+            mustRunAfter(publishToSonatypeTasks)
+        }
 
-        if (providers.gradleProperty("vertigram.staging.close").orNull != "false") {
-            dependsOn("closeAndReleaseRepository")
+        named("afterReleaseBuild") {
+            dependsOn(publishToSonatypeTasks)
+
+            if (providers.gradleProperty("vertigram.dokka.publish").orNull != "false") {
+                dependsOn(":vertigram-docs:dokkaPush")
+            }
+
+            if (providers.gradleProperty("vertigram.staging.close").orNull == "true") {
+                dependsOn("closeAndReleaseSonatypeStagingRepository")
+            }
+        }
+    }
+
+    project(":vertigram-docs").tasks {
+        named("dokkaPush") {
+            mustRunAfter(publishToSonatypeTasks)
         }
     }
 }
