@@ -36,7 +36,7 @@ val DOUBLE_CPU_WORKER_EXECUTOR_FACTORY: WorkerExecutorFactory =
 
 
 /**
- * A wrapper for [Database] connection allowing to execute jOOQ queries inside Vertx Verticles.
+ * A database connection wrapper for executing jOOQ queries inside Vert.x verticles.
  *
  * @param vertx [Vertx] instance
  * @param executorName A name for the [WorkerExecutor] on which the queries will be executed

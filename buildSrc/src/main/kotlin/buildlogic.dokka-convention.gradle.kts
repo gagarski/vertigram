@@ -59,7 +59,7 @@ dokka {
         includes.from("README.md")
         suppressGeneratedFiles = false
 
-        jdkVersion = 22
+        jdkVersion = 25
 
         documentedVisibilities.set(setOf(
             VisibilityModifier.Public,

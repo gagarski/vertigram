@@ -39,7 +39,7 @@ runBlocking(vertx.dispatcher()) {
 
 Note that the code is being run inside `runBlocking` coroutine builder. This happens because all Telegram methods are
 implemented as `suspend`ing functions, which means that they can be run only inside coroutines. `runBlocking` is not the 
-only place where you can run `Telegram` methods. You can user `Vertx.dispatcher()` method to get a dispatcher explicitly,
+only place where you can run `Telegram` methods. You can use the `Vertx.dispatcher()` method to get a dispatcher explicitly,
 or you can use Vert.x `CoroutineVerticle` which implements `CoroutineScope`. `vertigram-core` also provides some
 first-class support for coroutines.
 
@@ -80,7 +80,7 @@ other functions (most of which are related to Telegram entities). In case you se
 ## Telegram types
 
 Besides methods Telegram API introduces types: instances of some of them you receive as a response from the API, so you 
-don't have to worry about creating them. For nested parameters you have to create an instances of them and the constructors
+don't have to worry about creating them. For nested parameters you have to create instances of them, and the constructors
 for the types are unavailable. The reason for that is that input parameters for the types in Vertigram API do not 
 necessarily mirror the fields actually sent to Telegram API. For consistency all types can be created the following ways:
 ```kotlin

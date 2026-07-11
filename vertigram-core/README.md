@@ -10,8 +10,8 @@ Core features:
 
 ## `Vertigram` object.
 
-When you're starting your project with Vert.x, first thing you're likely to do is creating [Vertx](io.vertx.core.Vertx) 
-instance, with Vertigram, you're likely to create [Vertigram](ski.gagar.vertigram.Vertigram) instance on top of 
+When starting a project with Vert.x, the first thing you're likely to do is create a [Vertx](io.vertx.core.Vertx)
+instance. With Vertigram, you're likely to create a [Vertigram](ski.gagar.vertigram.Vertigram) instance on top of the
 [Vertx](io.vertx.core.Vertx), by calling [attachVertigram](ski.gagar.vertigram.attachVertigram) extension function on 
 [Vertx](io.vertx.core.Vertx) instance.
 
@@ -27,7 +27,7 @@ instance, with Vertigram, you're likely to create [Vertigram](ski.gagar.vertigra
  - options, fine-tuning the exception handling or other aspects of [Vertigram.EventBus](ski.gagar.vertigram.Vertigram.EventBus)
    protocol
  - `initializers` that will be executed after creating [Vertigram](ski.gagar.vertigram.Vertigram) instance (if not specified,
-   then initalizers will be discovered using [ServiceLoader](java.util.ServiceLoader))
+   then initializers will be discovered using [ServiceLoader](java.util.ServiceLoader))
 
 ## Vertigram Event Bus
 
@@ -38,7 +38,7 @@ with some familiar event bus operations on top of Vertx event bus operations:
  - [Vertigram.EventBus.request](ski.gagar.vertigram.Vertigram.EventBus.request)
  - [Vertigram.EventBus.consumer](ski.gagar.vertigram.Vertigram.EventBus.consumer)
 
-The semantic of these operations is pretty much the same as for the corresponding operations on Vertx event bus. 
+The semantics of these operations are the same as those of the corresponding operations on the Vert.x event bus.
 The key features are:
  - coroutine-first API, unlike standard ones which provide you either a callback-based API or deal with futures
  - typing and serialization/deserialization using Jackson: all things that can be typed are typed
@@ -53,8 +53,8 @@ The key features are:
 Like in core Vert.x, the basic worker of your app will be a Verticle. Basic verticle in `vertigram-core` is 
 [VertigramVerticle](ski.gagar.vertigram.verticles.common.VertigramVerticle). Key features are:
  - [VertigramVerticle](ski.gagar.vertigram.verticles.common.VertigramVerticle) is a 
-   [CoroutineVerticle](io.vertx.kotlin.coroutines.CoroutineVerticle), which gives you all the support for courutines in
-   verticles that Vert.x give you
+   [CoroutineVerticle](io.vertx.kotlin.coroutines.CoroutineVerticle), which gives you full coroutine support in
+   verticles
  - Access to associated [Vertigram](ski.gagar.vertigram.Vertigram) instance and therefore to 
    [Vertigram.EventBus](ski.gagar.vertigram.Vertigram.EventBus) and its operations
  - Type-safe configuration in conjunction with [deployVerticle](ski.gagar.vertigram.Vertigram.deployVerticle) function
@@ -63,7 +63,7 @@ Like in core Vert.x, the basic worker of your app will be a Verticle. Basic vert
 ## Clustering and interoperation
 
 As you may have noticed, Vertigram uses the same basic concepts as Vert.x, providing them with some convenient 
-improvements. If fact, [VertigramVerticle](ski.gagar.vertigram.verticles.common.VertigramVerticle) is a usual Vert.x 
+improvements. In fact, [VertigramVerticle](ski.gagar.vertigram.verticles.common.VertigramVerticle) is a regular Vert.x
 verticle and [Vertigram.EventBus](ski.gagar.vertigram.Vertigram.EventBus) operates on top of regular Vert.x event bus.
 
 [Vertigram](ski.gagar.vertigram.Vertigram) is a **purely local** object (in fact, stored in Vert.x shared local map), 
@@ -82,11 +82,11 @@ parts of this protocol in your code.
 
 As mentioned above, consumers on Vertigram event bus can throw exceptions. There are some conventions that exist for these
 exceptions:
- - Exceptions inherited from [VertigramException](ski.gagar.vertigram.util.exceptions.VertigramException) thromn in consumer
+ - Exceptions derived from [VertigramException](ski.gagar.vertigram.util.exceptions.VertigramException) and thrown by a consumer
    will be rethrown in the code that calls [Vertigram.EventBus.request](ski.gagar.vertigram.Vertigram.EventBus.request)
  - ... except for exceptions which are sub-classes of 
    [VertigramInternalException](ski.gagar.vertigram.util.exceptions.VertigramInternalException), which are being rethrown
-   by `request`inf code as bare [VertigramInternalException](ski.gagar.vertigram.util.exceptions.VertigramInternalException),
+   by the code calling `request` as a bare [VertigramInternalException](ski.gagar.vertigram.util.exceptions.VertigramInternalException),
    optionally keeping the original message (based on Vertigram configuration)
  - Other exceptions behave as [VertigramInternalException](ski.gagar.vertigram.util.exceptions.VertigramInternalException)
 
@@ -124,7 +124,7 @@ class GreeterVerticle : VertigramVerticle<GreeterVerticle.Config>() {
 fun main() {
     Vertx.vertx().runBlocking {
         attachVertigram().apply {
-            // (5) Deploy the verticle, deployVErticle won't let you mistype the config, also notice absence of the `await` call
+            // (5) Deploy the verticle; deployVerticle won't let you mistype the config. Also notice the absence of an `await` call.
             deployVerticle(GreeterVerticle(), GreeterVerticle.Config("Bonjour"))
 
             // (6) Interact with the verticle, some type hints are needed for the response type
@@ -137,12 +137,12 @@ fun main() {
 
 ## What's next
 
-So far you know `vertigram-core` basics. Besides the concepts described above, provides you some generic verticles for common usage
+So far you know the `vertigram-core` basics. Besides the concepts described above, it provides generic verticles for common use
 in [ski.gagar.vertigram.verticles.common] package. Currently the following verticles are provided:
  - [HierarchyVerticle](ski.gagar.vertigram.verticles.common.AbstractHierarchyVerticle), providing you with
    a concept of hierarchy in verticles (i.e. spawning child verticles and notifying parents and child about termination of each other)
  - [PostOfficeVerticle](ski.gagar.vertigram.verticles.common.AbstractPostOfficeVerticle) which provides you 
-   a concept of mailboxes for replaying messages to a consumer which have subscribed to them later than messages were
+   a concept of mailboxes for replaying messages to consumers that subscribed after the messages were
    published
 
 If all you were looking for was some kind of Vert.x booster, then you're good to go. If you're still up for building some

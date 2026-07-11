@@ -38,13 +38,13 @@ data class WebHookConfig(
      */
     data class Proxy(
         /**
-         * Should trust ip-address headers (X-Real-Ip or X-Forwarder-For) for domain sockets in logging
+         * Whether to trust IP address headers (`X-Real-IP` or `X-Forwarded-For`) for domain sockets when logging
          *
          * @see [ski.gagar.vertigram.web.server.RealIpLoggerHandler]
          */
         val trustDomainSockets: Boolean = false,
         /**
-         * A set of network addresses to trust to for ip-address headers (X-Real-Ip or X-Forwarder-For) for domain sockets in logging
+         * Network addresses whose IP address headers (`X-Real-IP` or `X-Forwarded-For`) are trusted for domain sockets when logging
          *
          * @see [ski.gagar.vertigram.web.server.RealIpLoggerHandler]
          */

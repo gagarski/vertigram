@@ -8,7 +8,7 @@ import ski.gagar.vertigram.telegram.types.Update
 /**
  * Telegram client interface.
  *
- * Allows to [call] methods and defines higher-level abstractions for some method calls
+ * Supports [call] and defines higher-level abstractions for some method calls.
  */
 interface Telegram {
     /**

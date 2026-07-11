@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo
 import ski.gagar.vertigram.telegram.types.MessageEntity
 
 /**
- * A convenience type which replaces triples like `caption`/`captionEntities`/`parseMode` whith a type-safe wrapper.
+ * A convenience type that replaces triples like `caption`/`captionEntities`/`parseMode` with a type-safe wrapper.
  *
  * Consider using builders from [ski.gagar.vertigram.telegram.markup] package to create the instances:
  *  - [ski.gagar.vertigram.telegram.markup.textMarkdown] for [MarkdownV2Text]
