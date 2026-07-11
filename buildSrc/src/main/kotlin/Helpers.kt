@@ -1,4 +1,5 @@
 import org.gradle.api.Project
+import org.gradle.api.provider.Provider
 import org.gradle.api.publish.maven.MavenPom
 import java.time.LocalDate
 
@@ -11,7 +12,7 @@ fun Project.years(): String {
             "$startYear–$currentYear"
 }
 
-fun MavenPom.vertigramPom(project: Project, description: String? = project.description) {
+fun MavenPom.vertigramPom(project: Project, description: Provider<String>) {
     name.set(project.name)
     this.description.set(description)
     url.set("https://vertigram.gagar.ski/")
@@ -35,4 +36,8 @@ fun MavenPom.vertigramPom(project: Project, description: String? = project.descr
     issueManagement {
         url.set("https://github.com/gagarski/vertigram/issues")
     }
+}
+
+fun MavenPom.vertigramPom(project: Project, description: String) {
+    vertigramPom(project, project.provider { description })
 }

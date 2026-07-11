@@ -17,4 +17,4 @@ dependencies {
     implementation(libs.jackson.dataformat.xml)
 }
 
-description = "Vertigram jOOQ app"
+description = "Application support for Vertigram jOOQ integrations."

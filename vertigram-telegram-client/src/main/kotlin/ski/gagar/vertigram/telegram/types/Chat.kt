@@ -43,7 +43,7 @@ data class Chat internal constructor(
 ) : IChat {
     /**
      * Telegram [ChatFullInfo](https://core.telegram.org/bots/api#chatfullinfo) type, representing the data
-     * returned from [ski.gagar.vertigram.telegram.methods.GetChat]
+     * returned from [ski.gagar.vertigram.telegram.types.methods.GetChat]
      *
      * For up-to-date documentation, please consult the official Telegram docs.
      */

@@ -23,7 +23,7 @@ data class ForumTopic internal constructor(
     val isNameImplicit: Boolean = false
 ) {
     /**
-     * Value for [ski.gagar.vertigram.telegram.methods.CreateForumTopic.iconColor],
+     * Value for [ski.gagar.vertigram.telegram.types.methods.CreateForumTopic.iconColor],
      * limited according to the Telegram docs.
      */
     enum class Color(val color: RgbColor) {

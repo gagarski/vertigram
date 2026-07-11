@@ -8,4 +8,4 @@ dependencies {
     api(libs.bundles.kotlin.std)
 }
 
-description = "Vertigram Annotations"
+description = "Annotations used by Vertigram code generation."

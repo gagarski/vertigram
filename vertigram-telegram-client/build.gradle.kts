@@ -20,7 +20,7 @@ dependencies {
     ksp(project(":vertigram-codegen"))
 }
 
-description = "Vertigram Client"
+description = "Telegram Bot API client types and methods for Vertigram."
 
 tasks.named<Jar>("sourcesJar").configure {
     dependsOn("kspKotlin")

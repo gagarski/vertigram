@@ -47,6 +47,10 @@ gradle.projectsEvaluated {
     }
 
     tasks {
+        named("closeSonatypeStagingRepository") {
+            mustRunAfter(publishToSonatypeTasks)
+        }
+
         named("closeAndReleaseSonatypeStagingRepository") {
             mustRunAfter(publishToSonatypeTasks)
         }
@@ -58,8 +62,14 @@ gradle.projectsEvaluated {
                 dependsOn(":vertigram-docs:dokkaPush")
             }
 
-            if (providers.gradleProperty("vertigram.staging.close").orNull == "true") {
-                dependsOn("closeAndReleaseSonatypeStagingRepository")
+            when (val stagingAction = providers.gradleProperty("vertigram.staging.action").orNull ?: "none") {
+                "none" -> {}
+                "close" -> dependsOn("closeSonatypeStagingRepository")
+                "close-and-release" -> dependsOn("closeAndReleaseSonatypeStagingRepository")
+                else -> throw GradleException(
+                    "Unsupported vertigram.staging.action=$stagingAction. " +
+                        "Expected one of: none, close, close-and-release."
+                )
             }
         }
     }

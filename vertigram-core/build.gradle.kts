@@ -13,4 +13,4 @@ dependencies {
     api(project(":vertigram-util"))
 }
 
-description = "Vertigram Core"
+description = "Core Vert.x, Kotlin coroutine, and JSON utilities for Vertigram."

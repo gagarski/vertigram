@@ -12,7 +12,7 @@ import com.fasterxml.jackson.module.kotlin.KotlinModule
 internal fun telegramJsonMapper(): ObjectMapper = ObjectMapper()
     .setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE)
     .enable(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES)
-    .setSerializationInclusion(JsonInclude.Include.NON_NULL)
+    .setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL)
     .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
     .registerModule(KotlinModule.Builder().build())
     .registerModule(TelegramModule)

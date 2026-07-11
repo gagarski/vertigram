@@ -8,7 +8,7 @@ dependencies {
     implementation(libs.jackson.annotations)
 }
 
-description = "API for interacting between vertigram-jooq-gradle-plugin and vertigram-jooq-app"
+description = "Public API for Vertigram jOOQ application support."
 
 tasks.matching { it.name.startsWith("dokka") }.configureEach {
     onlyIf { false }

@@ -12,7 +12,10 @@ publishing {
         from(components["java"])
 
         pom {
-            vertigramPom(project)
+            vertigramPom(project, providers.provider {
+                project.description?.takeIf { it.isNotBlank() }
+                    ?: throw GradleException("Project ${project.path} must define a non-empty description for publishing.")
+            })
         }
     }
 }
