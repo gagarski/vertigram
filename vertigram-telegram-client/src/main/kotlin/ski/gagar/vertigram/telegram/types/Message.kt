@@ -7,6 +7,7 @@ import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.telegram.types.colors.RgbColor
 import ski.gagar.vertigram.telegram.types.richtext.HasOptionalCaptionWithEntities
 import ski.gagar.vertigram.telegram.types.richtext.HasOptionalTextWithEntities
+import ski.gagar.vertigram.telegram.types.richmessage.RichMessage
 import java.time.Duration
 import java.time.Instant
 
@@ -56,6 +57,7 @@ data class Message internal constructor(
     override val entities: List<MessageEntity>? = null,
     val linkPreviewOptions: LinkPreviewOptions? = null,
     val effectId: String? = null,
+    val richMessage: RichMessage? = null,
     val animation: Animation? = null,
     val audio: Audio? = null,
     val document: Document? = null,

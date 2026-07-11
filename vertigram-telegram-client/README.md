@@ -17,7 +17,7 @@ features:
   In most cases you will be able to figure out the types while writing the code with your IDE, however, the type 
   "renaming" policy is described in KDoc for each class.
  - Type-safe parameters for methods and types containing rich text-like data (`text` + `parse_mode` + `text_entities`).
- - Type-safe builders for message text markup and reply markup.
+ - Type-safe builders for message text markup, rich messages, and reply markup.
 
 ## Basic Usage
 
@@ -168,6 +168,30 @@ features and the only difference is the format of text passed to Telegram. You c
 For example, Markdown is more readable without rendering, so if you want to log sent messages somehow, you may prefer it
 and text with entities might allow you to extend your message length limit and consistent with the text you get **from**
 Telegram.
+
+Telegram also supports **rich messages**, which are structured messages made of blocks such as headings, paragraphs,
+lists, media, tables, details and similar elements. Vertigram exposes them through
+[richMessageHtml](ski.gagar.vertigram.telegram.markup.richMessageHtml) and
+[richMessageMarkdown](ski.gagar.vertigram.telegram.markup.richMessageMarkdown). Both builders use the same DSL and differ
+only in the final payload format:
+
+```kotlin
+tg.sendRichMessage(
+    chatId = msg.chat.id.toChatId(),
+    richMessage = richMessageHtml {
+        h1 { +"Weekly report" }
+        paragraph {
+            +"Build status: "
+            b { +"green" }
+        }
+        unorderedList {
+            item(checked = true) {
+                paragraph { +"Bot API 10.1 types added" }
+            }
+        }
+    }
+)
+```
 
 Telegram bots also often use **reply markup** to the messages. The following code will send a message with **inline keyboard**
 reply markup:

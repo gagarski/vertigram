@@ -139,6 +139,7 @@ interface Poll : HasQuestionWithEntities {
         val animation: Animation? = null,
         val audio: Audio? = null,
         val document: Document? = null,
+        val link: Link? = null,
         val livePhoto: LivePhoto? = null,
         val location: Location? = null,
         val photo: List<PhotoSize>? = null,

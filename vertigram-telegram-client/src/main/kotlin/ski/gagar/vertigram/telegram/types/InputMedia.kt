@@ -211,6 +211,20 @@ sealed interface InputMedia : BaseInputMedia<InputMedia.Type> {
     }
 
     /**
+     * Telegram [InputMediaLink](https://core.telegram.org/bots/api#inputmedialink) type.
+     *
+     * For up-to-date documentation, please consult the official Telegram docs.
+     */
+    @TelegramCodegen.Type
+    data class Link internal constructor(
+        val url: String
+    ) : PollOption {
+        override val type: Type = Type.LINK
+
+        companion object
+    }
+
+    /**
      * Telegram [InputMediaLocation](https://core.telegram.org/bots/api#inputmedialocation) type.
      *
      * For up-to-date documentation, please consult the official Telegram docs.
@@ -501,6 +515,7 @@ sealed interface InputMedia : BaseInputMedia<InputMedia.Type> {
     @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", include = JsonTypeInfo.As.EXISTING_PROPERTY)
     @JsonSubTypes(
         JsonSubTypes.Type(value = Animation::class, name = Type.ANIMATION_STR),
+        JsonSubTypes.Type(value = Link::class, name = Type.LINK_STR),
         JsonSubTypes.Type(value = LivePhoto::class, name = Type.LIVE_PHOTO_STR),
         JsonSubTypes.Type(value = Location::class, name = Type.LOCATION_STR),
         JsonSubTypes.Type(value = Photo::class, name = Type.PHOTO_STR),
@@ -532,6 +547,8 @@ sealed interface InputMedia : BaseInputMedia<InputMedia.Type> {
         LOCATION,
         @JsonProperty(STICKER_STR)
         STICKER,
+        @JsonProperty(LINK_STR)
+        LINK,
         @JsonProperty(VENUE_STR)
         VENUE;
 
@@ -544,6 +561,7 @@ sealed interface InputMedia : BaseInputMedia<InputMedia.Type> {
             const val LIVE_PHOTO_STR = "live_photo"
             const val LOCATION_STR = "location"
             const val STICKER_STR = "sticker"
+            const val LINK_STR = "link"
             const val VENUE_STR = "venue"
         }
     }

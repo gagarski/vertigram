@@ -882,7 +882,7 @@ private object TelegramHtmlEx {
     }
 }
 
-private object MarkdownTools {
+internal object MarkdownTools {
     fun escapeText(string: String) =
         string.replace("""([_*\[\]()~`>#+\-=|{}.!\\])""".toRegex(), """\\$1""")
 

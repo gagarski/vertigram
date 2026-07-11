@@ -22,12 +22,6 @@ dependencies {
 
 description = "Vertigram Client"
 
-sourceSets {
-    main {
-        kotlin.srcDir("${layout.buildDirectory.get()}/generated/ksp/main/kotlin")
-    }
-}
-
 tasks.named<Jar>("sourcesJar").configure {
     dependsOn("kspKotlin")
 }

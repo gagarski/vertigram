@@ -16,6 +16,7 @@ data class ChatJoinRequest internal constructor(
     val from: User,
     val userChatId: Long,
     val date: Instant,
+    val queryId: String? = null,
     val bio: String? = null,
     val inviteLink: ChatInviteLink? = null
 ) {

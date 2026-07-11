@@ -161,6 +161,13 @@ object InputMediaSerializationTest : BaseSerializationTest() {
         )
 
         assertSerializable<InputMedia.PollOption>(
+            InputMedia.Link.create(
+                url = "https://example.com"
+            ),
+            skip = MAPPERS_TO_SKIP
+        )
+
+        assertSerializable<InputMedia.PollOption>(
             InputMedia.Location.create(
                 latitude = 1.0,
                 longitude = 2.0

@@ -2,6 +2,7 @@ package ski.gagar.vertigram.telegram.methods
 
 import org.junit.jupiter.api.Test
 import ski.gagar.vertigram.BaseSerializationTest
+import ski.gagar.vertigram.telegram.types.InputRichMessage
 import ski.gagar.vertigram.telegram.types.InputMedia
 import ski.gagar.vertigram.telegram.types.attachments.Attachment
 import ski.gagar.vertigram.telegram.types.attachments.fileId
@@ -154,14 +155,56 @@ object MethodsTest : BaseSerializationTest() {
         assertSerializable<EditMessageText>(
             EditMessageText.InlineMessage(
                 inlineMessageId = "1",
-                text = "aaa"
+                text = "aaa",
+                richMessage = InputRichMessage.Html(html = "<p>aaa</p>")
             )
         )
         assertSerializable<EditMessageText>(
             EditMessageText.ChatMessage(
                 chatId = 1.toChatId(),
                 messageId = 1,
-                text = "aaa"
+                text = "aaa",
+                richMessage = InputRichMessage.Html(html = "<p>aaa</p>")
+            )
+        )
+    }
+
+    @Test
+    fun `rich message methods should survive serialization`() {
+        val richMessages = listOf(
+            InputRichMessage.Html(html = "<p>aaa</p>"),
+            InputRichMessage.Markdown(markdown = "aaa")
+        )
+
+        for (richMessage in richMessages) {
+            assertSerializable<SendRichMessage>(
+                SendRichMessage(
+                    chatId = 1.toChatId(),
+                    richMessage = richMessage
+                )
+            )
+            assertSerializable<SendRichMessageDraft>(
+                SendRichMessageDraft(
+                    chatId = 1,
+                    draftId = 2,
+                    richMessage = richMessage
+                )
+            )
+        }
+    }
+
+    @Test
+    fun `chat join request query methods should survive serialization`() {
+        assertSerializable<AnswerChatJoinRequestQuery>(
+            AnswerChatJoinRequestQuery(
+                chatJoinRequestQueryId = "1",
+                result = AnswerChatJoinRequestQuery.Result.APPROVE
+            )
+        )
+        assertSerializable<SendChatJoinRequestWebApp>(
+            SendChatJoinRequestWebApp(
+                chatJoinRequestQueryId = "1",
+                webAppUrl = "https://example.com"
             )
         )
     }
