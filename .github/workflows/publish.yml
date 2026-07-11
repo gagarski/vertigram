@@ -78,9 +78,9 @@ jobs:
           git config user.email "kirill.gagarski@gmail.com"
 
       - name: Validate release branch
-        if: ${{ github.ref_name != 'revive-2026-07' }}
+        if: ${{ github.ref_name != 'master' }}
         run: |
-          echo "Releases must be run from revive-2026-07; current ref is ${{ github.ref_name }}."
+          echo "Releases must be run from master; current ref is ${{ github.ref_name }}."
           exit 1
 
       - name: Set up SSH for docs

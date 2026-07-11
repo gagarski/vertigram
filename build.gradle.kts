@@ -37,7 +37,7 @@ nexusPublishing {
 
 release {
     with(git) {
-        requireBranch.set("revive-2026-07")
+        requireBranch.set("master")
     }
 }
 
