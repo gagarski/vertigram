@@ -20,7 +20,7 @@ dependencies {
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
     compilerOptions {
-        jvmTarget.set(JvmTarget.JVM_22)
+        jvmTarget.set(JvmTarget.JVM_25)
     }
 }
 
@@ -28,8 +28,8 @@ tasks.withType<Test> {
     useJUnitPlatform()
 }
 
-java.sourceCompatibility = JavaVersion.VERSION_22
-java.targetCompatibility = JavaVersion.VERSION_22
+java.sourceCompatibility = JavaVersion.VERSION_25
+java.targetCompatibility = JavaVersion.VERSION_25
 
 springBoot {
     mainClass = "ski.gagar.vertigram.dokka.tool.DokkaToolKt"

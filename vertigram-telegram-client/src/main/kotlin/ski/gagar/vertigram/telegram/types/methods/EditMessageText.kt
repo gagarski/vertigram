@@ -8,6 +8,7 @@ import ski.gagar.vertigram.telegram.throttling.HasChatId
 import ski.gagar.vertigram.telegram.throttling.Throttled
 import ski.gagar.vertigram.telegram.types.Message
 import ski.gagar.vertigram.telegram.types.MessageEntity
+import ski.gagar.vertigram.telegram.types.InputRichMessage
 import ski.gagar.vertigram.telegram.types.ReplyMarkup
 import ski.gagar.vertigram.telegram.types.richtext.HasRichText
 import ski.gagar.vertigram.telegram.types.richtext.RichText
@@ -29,6 +30,7 @@ import ski.gagar.vertigram.telegram.types.util.ChatId
 sealed interface EditMessageText : HasRichText {
     val businessConnectionId: String?
     val linkPreviewOptions: Message.LinkPreviewOptions?
+    val richMessage: InputRichMessage?
     val replyMarkup: ReplyMarkup?
     /**
      * Inline message case
@@ -47,6 +49,7 @@ sealed interface EditMessageText : HasRichText {
         override val parseMode: RichText.ParseMode? = null,
         override val entities: List<MessageEntity>? = null,
         override val linkPreviewOptions: Message.LinkPreviewOptions? = null,
+        override val richMessage: InputRichMessage? = null,
         override val replyMarkup: ReplyMarkup? = null
     ) : EditMessageText, JsonTelegramCallable<Message>()
 
@@ -68,6 +71,7 @@ sealed interface EditMessageText : HasRichText {
         override val parseMode: RichText.ParseMode? = null,
         override val entities: List<MessageEntity>? = null,
         override val linkPreviewOptions: Message.LinkPreviewOptions? = null,
+        override val richMessage: InputRichMessage? = null,
         override val replyMarkup: ReplyMarkup? = null
     ) : EditMessageText, HasChatId, JsonTelegramCallable<Message>()
 }

@@ -20,4 +20,4 @@ dependencies {
     dokkaPlugin(libsInternal.dokka.versioning.plugin)
 }
 
-description = "Vertigram jOOQ"
+description = "jOOQ integration support for Vertigram applications."

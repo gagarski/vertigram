@@ -2,6 +2,7 @@ package ski.gagar.vertigram.telegram.methods
 
 import org.junit.jupiter.api.Test
 import ski.gagar.vertigram.BaseSerializationTest
+import ski.gagar.vertigram.telegram.types.InputRichMessage
 import ski.gagar.vertigram.telegram.types.InputMedia
 import ski.gagar.vertigram.telegram.types.attachments.Attachment
 import ski.gagar.vertigram.telegram.types.attachments.fileId
@@ -154,14 +155,98 @@ object MethodsTest : BaseSerializationTest() {
         assertSerializable<EditMessageText>(
             EditMessageText.InlineMessage(
                 inlineMessageId = "1",
-                text = "aaa"
+                text = "aaa",
+                richMessage = InputRichMessage.Html(html = "<p>aaa</p>")
             )
         )
         assertSerializable<EditMessageText>(
             EditMessageText.ChatMessage(
                 chatId = 1.toChatId(),
                 messageId = 1,
-                text = "aaa"
+                text = "aaa",
+                richMessage = InputRichMessage.Html(html = "<p>aaa</p>")
+            )
+        )
+    }
+
+    @Test
+    fun `rich message methods should survive serialization`() {
+        val richMessages = listOf(
+            InputRichMessage.Html(html = "<p>aaa</p>"),
+            InputRichMessage.Markdown(markdown = "aaa")
+        )
+
+        for (richMessage in richMessages) {
+            assertSerializable<SendRichMessage>(
+                SendRichMessage(
+                    chatId = 1.toChatId(),
+                    richMessage = richMessage
+                )
+            )
+            assertSerializable<SendRichMessageDraft>(
+                SendRichMessageDraft(
+                    chatId = 1,
+                    draftId = 2,
+                    richMessage = richMessage
+                )
+            )
+        }
+    }
+
+    @Test
+    fun `chat join request query methods should survive serialization`() {
+        assertSerializable<AnswerChatJoinRequestQuery>(
+            AnswerChatJoinRequestQuery(
+                chatJoinRequestQueryId = "1",
+                result = AnswerChatJoinRequestQuery.Result.APPROVE
+            )
+        )
+        assertSerializable<SendChatJoinRequestWebApp>(
+            SendChatJoinRequestWebApp(
+                chatJoinRequestQueryId = "1",
+                webAppUrl = "https://example.com"
+            )
+        )
+    }
+
+    @Test
+    fun `business methods should survive serialization`() {
+        assertSerializable<GetBusinessConnection>(
+            GetBusinessConnection(
+                businessConnectionId = "1"
+            )
+        )
+        assertSerializable<DeleteBusinessMessages>(
+            DeleteBusinessMessages(
+                businessConnectionId = "1",
+                messageIds = listOf(1)
+            )
+        )
+    }
+
+    @Test
+    fun `premium gift method should survive serialization`() {
+        assertSerializable<GiftPremiumSubscription>(
+            GiftPremiumSubscription(
+                userId = 1,
+                monthCount = GiftPremiumSubscription.MonthCount.THREE,
+                text = "gift"
+            )
+        )
+        assertSerializable<UpgradeGift>(
+            UpgradeGift(
+                businessConnectionId = "1",
+                ownedGiftId = "gift",
+                keepOriginalDetails = true,
+                starCount = 1
+            )
+        )
+        assertSerializable<TransferGift>(
+            TransferGift(
+                businessConnectionId = "1",
+                ownedGiftId = "gift",
+                newOwnerChatId = 1,
+                starCount = 1
             )
         )
     }
@@ -184,8 +269,46 @@ object MethodsTest : BaseSerializationTest() {
     }
 
     @Test
+    fun `send methods with message effect should survive serialization`() {
+        assertSerializable<SendGame>(
+            SendGame(
+                chatId = 1.toChatId(),
+                gameShortName = "game",
+                messageEffectId = "effect"
+            )
+        )
+        assertSerializable<SendInvoice>(
+            SendInvoice(
+                chatId = 1.toChatId(),
+                title = "title",
+                description = "description",
+                payload = "payload",
+                currency = "XTR",
+                prices = listOf(),
+                messageEffectId = "effect"
+            )
+        )
+        assertSerializable<SendMediaGroup>(
+            SendMediaGroup(
+                chatId = 1.toChatId(),
+                media = listOf(InputMedia.Photo(media = Attachment.fileId("1"))),
+                messageEffectId = "effect"
+            ),
+            skip = setOf(Companion.Mappers.TELEGRAM) // deserialization of attachment is not supported here
+        )
+    }
+
+    @Test
     fun `sendPoll and sendQuiz should survive serialization`() {
         assertSerializable<SendPoll>(
+            SendPoll.Regular.OpenPeriod(
+                chatId = 1.toChatId(),
+                question = "aaa",
+                options = listOf(),
+                openPeriod = Duration.ofHours(1)
+            )
+        )
+        assertSerializable<SendPoll.Regular.OpenPeriod>(
             SendPoll.Regular.OpenPeriod(
                 chatId = 1.toChatId(),
                 question = "aaa",
@@ -201,7 +324,34 @@ object MethodsTest : BaseSerializationTest() {
                 closeDate = Instant.now().truncatedTo(ChronoUnit.SECONDS)
             )
         )
+        assertSerializable<SendPoll.Regular.CloseDate>(
+            SendPoll.Regular.CloseDate(
+                chatId = 1.toChatId(),
+                question = "aaa",
+                options = listOf(),
+                closeDate = Instant.now().truncatedTo(ChronoUnit.SECONDS)
+            )
+        )
         assertSerializable<SendPoll>(
+            SendPoll.Regular.Indefinite(
+                chatId = 1.toChatId(),
+                question = "aaa",
+                options = listOf(
+                    SendPoll.InputOption.create(
+                        text = "aaa",
+                        media = InputMedia.PollSticker(
+                            media = Attachment.fileId("1"),
+                            emoji = ":)"
+                        )
+                    )
+                ),
+                media = InputMedia.Photo(
+                    media = Attachment.fileId("2")
+                )
+            ),
+            skip = setOf(Companion.Mappers.TELEGRAM) // deserialization of attachment is not supported here
+        )
+        assertSerializable<SendPoll.Regular.Indefinite>(
             SendPoll.Regular.Indefinite(
                 chatId = 1.toChatId(),
                 question = "aaa",
@@ -214,7 +364,16 @@ object MethodsTest : BaseSerializationTest() {
                 question = "aaa",
                 options = listOf(),
                 openPeriod = Duration.ofHours(1),
-                correctOptionId = 1
+                correctOptionIds = listOf(1)
+            )
+        )
+        assertSerializable<SendPoll.Quiz.OpenPeriod>(
+            SendPoll.Quiz.OpenPeriod(
+                chatId = 1.toChatId(),
+                question = "aaa",
+                options = listOf(),
+                openPeriod = Duration.ofHours(1),
+                correctOptionIds = listOf(1)
             )
         )
         assertSerializable<SendPoll>(
@@ -223,7 +382,16 @@ object MethodsTest : BaseSerializationTest() {
                 question = "aaa",
                 options = listOf(),
                 closeDate = Instant.now().truncatedTo(ChronoUnit.SECONDS),
-                correctOptionId = 1
+                correctOptionIds = listOf(1)
+            )
+        )
+        assertSerializable<SendPoll.Quiz.CloseDate>(
+            SendPoll.Quiz.CloseDate(
+                chatId = 1.toChatId(),
+                question = "aaa",
+                options = listOf(),
+                closeDate = Instant.now().truncatedTo(ChronoUnit.SECONDS),
+                correctOptionIds = listOf(1)
             )
         )
         assertSerializable<SendPoll>(
@@ -231,7 +399,20 @@ object MethodsTest : BaseSerializationTest() {
                 chatId = 1.toChatId(),
                 question = "aaa",
                 options = listOf(),
-                correctOptionId = 1
+                correctOptionIds = listOf(1),
+                explanationMedia = InputMedia.LivePhoto(
+                    media = Attachment.fileId("1"),
+                    photo = Attachment.fileId("2")
+                )
+            ),
+            skip = setOf(Companion.Mappers.TELEGRAM) // deserialization of attachment is not supported here
+        )
+        assertSerializable<SendPoll.Quiz.Indefinite>(
+            SendPoll.Quiz.Indefinite(
+                chatId = 1.toChatId(),
+                question = "aaa",
+                options = listOf(),
+                correctOptionIds = listOf(1)
             )
         )
     }

@@ -1,0 +1,42 @@
+package ski.gagar.vertigram.telegram.types.methods
+
+import ski.gagar.vertigram.annotations.TelegramCodegen
+import ski.gagar.vertigram.telegram.throttling.HasChatId
+import ski.gagar.vertigram.telegram.throttling.Throttled
+import ski.gagar.vertigram.telegram.types.Message
+import ski.gagar.vertigram.telegram.types.MessageEntity
+import ski.gagar.vertigram.telegram.types.ReplyMarkup
+import ski.gagar.vertigram.telegram.types.ReplyParameters
+import ski.gagar.vertigram.telegram.types.SuggestedPost
+import ski.gagar.vertigram.telegram.types.attachments.Attachment
+import ski.gagar.vertigram.telegram.types.richtext.HasOptionalRichCaption
+import ski.gagar.vertigram.telegram.types.richtext.RichText
+import ski.gagar.vertigram.telegram.types.util.ChatId
+
+/**
+ * Telegram [sendLivePhoto](https://core.telegram.org/bots/api#sendlivephoto) method.
+ *
+ * For up-to-date documentation, please consult the official Telegram docs.
+ */
+@Throttled
+@TelegramCodegen.Method
+data class SendLivePhoto internal constructor(
+    val businessConnectionId: String? = null,
+    override val chatId: ChatId,
+    val messageThreadId: Long? = null,
+    val directMessagesTopicId: Long? = null,
+    val livePhoto: Attachment,
+    val photo: Attachment,
+    override val caption: String? = null,
+    override val parseMode: RichText.ParseMode? = null,
+    override val captionEntities: List<MessageEntity>? = null,
+    val showCaptionAboveMedia: Boolean = false,
+    val hasSpoiler: Boolean = false,
+    val disableNotification: Boolean = false,
+    val protectContent: Boolean = false,
+    val allowPaidBroadcast: Boolean = false,
+    val messageEffectId: String? = null,
+    val suggestedPostParameters: SuggestedPost.Parameters? = null,
+    val replyParameters: ReplyParameters? = null,
+    val replyMarkup: ReplyMarkup? = null
+) : MultipartTelegramCallable<Message>(), HasChatId, HasOptionalRichCaption

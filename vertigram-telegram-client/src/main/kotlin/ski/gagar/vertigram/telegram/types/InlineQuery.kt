@@ -29,7 +29,7 @@ data class InlineQuery internal constructor(
 ) {
 
     /**
-     * Telegram [InputMessageContent](https://core.telegram.org/bots/api#inputtextmessagecontent) type.
+     * Telegram [InputMessageContent](https://core.telegram.org/bots/api#inputmessagecontent) type.
      * Subtypes (which are nested) represent the subtypes, described by Telegram docs with more
      * names given they are nested into [InlineQuery.InputMessageContent] class. The rule here is the following:
      * `InputXxxMessageContent` Telegram type becomes `InlineQuery.InputMessageContent.Xxx`.
@@ -44,6 +44,7 @@ data class InlineQuery internal constructor(
         JsonSubTypes.Type(value = InputMessageContent.Venue::class),
         JsonSubTypes.Type(value = InputMessageContent.Contact::class),
         JsonSubTypes.Type(value = InputMessageContent.Invoice::class),
+        JsonSubTypes.Type(value = InputMessageContent.Rich::class),
     )
     sealed interface InputMessageContent {
         /**
@@ -61,6 +62,18 @@ data class InlineQuery internal constructor(
             @JsonIgnore
             override val text = messageText
 
+            companion object
+        }
+
+        /**
+         * Telegram [InputRichMessageContent](https://core.telegram.org/bots/api#inputrichmessagecontent) type.
+         *
+         * For up-to-date documentation, please consult the official Telegram docs.
+         */
+        @TelegramCodegen.Type
+        data class Rich internal constructor(
+            val richMessage: InputRichMessage
+        ) : InputMessageContent {
             companion object
         }
 

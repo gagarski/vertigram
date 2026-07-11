@@ -60,6 +60,11 @@ data class User internal constructor(
         val canReadAllGroupMessages: Boolean = false,
         val supportsInlineQueries: Boolean = false,
         val canConnectToBusiness: Boolean = false,
+        val canManageBots: Boolean = false,
+        val supportsGuestQueries: Boolean = false,
+        val supportsJoinRequestQueries: Boolean = false,
+        val hasTopicsEnabled: Boolean = false,
+        val allowsUsersToCreateTopics: Boolean = false,
         val hasMainWebApp: Boolean = false
     ) : IUser {
         @get:JvmName("getIsBot")

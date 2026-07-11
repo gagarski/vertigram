@@ -32,6 +32,7 @@ class ParsedUpdateList(val delegate: List<Update.Parsed<*>>)
     JsonSubTypes.Type(value = Update.BusinessMessage::class),
     JsonSubTypes.Type(value = Update.EditedBusinessMessage::class),
     JsonSubTypes.Type(value = Update.DeletedBusinessMessages::class),
+    JsonSubTypes.Type(value = Update.GuestMessage::class),
     JsonSubTypes.Type(value = Update.MessageReaction::class),
     JsonSubTypes.Type(value = Update.MessageReactionCount::class),
     JsonSubTypes.Type(value = Update.InlineQuery::class),
@@ -42,6 +43,7 @@ class ParsedUpdateList(val delegate: List<Update.Parsed<*>>)
     JsonSubTypes.Type(value = Update.PurchasedPaidMedia::class),
     JsonSubTypes.Type(value = Update.Poll::class),
     JsonSubTypes.Type(value = Update.PollAnswer::class),
+    JsonSubTypes.Type(value = Update.ManagedBot::class),
     JsonSubTypes.Type(value = Update.MyChatMember::class),
     JsonSubTypes.Type(value = Update.ChatMember::class),
     JsonSubTypes.Type(value = Update.ChatJoinRequest::class),
@@ -163,14 +165,14 @@ sealed interface Update<T> {
     }
 
     /**
-     * Case when [deletedBusinessMesages] is set
+     * Case when [deletedBusinessMessages] is set
      */
     @TelegramCodegen.Type
     data class DeletedBusinessMessages internal constructor(
         override val updateId: Long,
-        val deletedBusinessMessaged: Payload
+        val deletedBusinessMessages: Payload
     ) : Parsed<DeletedBusinessMessages.Payload> {
-        override val payload: Payload = deletedBusinessMessaged
+        override val payload: Payload = deletedBusinessMessages
         override val date: Instant? = null
 
         /**
@@ -182,10 +184,24 @@ sealed interface Update<T> {
         data class Payload internal constructor(
             val businessConnectionId: String,
             val chat: Chat,
-            val messageId: List<Long>
+            val messageIds: List<Long>
         ) {
             companion object
         }
+
+        companion object
+    }
+
+    /**
+     * Case when [guestMessage] is set
+     */
+    @TelegramCodegen.Type
+    data class GuestMessage internal constructor(
+        override val updateId: Long,
+        val guestMessage: ski.gagar.vertigram.telegram.types.Message
+    ) : Parsed<ski.gagar.vertigram.telegram.types.Message> {
+        override val payload: ski.gagar.vertigram.telegram.types.Message = guestMessage
+        override val date: Instant = payload.date
 
         companion object
     }
@@ -379,7 +395,7 @@ sealed interface Update<T> {
         override val date: Instant? = null
 
         /**
-         * Telegram [PreCheckoutQuery](https://core.telegram.org/bots/api#precheckoutquery) type.
+         * Telegram [PaidMediaPurchased](https://core.telegram.org/bots/api#paidmediapurchased) type.
          *
          * For up-to-date documentation, please consult the official Telegram docs.
          */
@@ -456,6 +472,33 @@ sealed interface Update<T> {
     }
 
     /**
+     * Case when [managedBot] is set
+     */
+    @TelegramCodegen.Type
+    data class ManagedBot internal constructor(
+        override val updateId: Long,
+        val managedBot: Payload
+    ) : Parsed<ManagedBot.Payload> {
+        override val payload: Payload = managedBot
+        override val date: Instant? = null
+
+        /**
+         * Telegram [ManagedBotUpdated](https://core.telegram.org/bots/api#managedbotupdated) type.
+         *
+         * For up-to-date documentation, please consult the official Telegram docs.
+         */
+        @TelegramCodegen.Type
+        data class Payload internal constructor(
+            val user: User,
+            val bot: User
+        ) {
+            companion object
+        }
+
+        companion object
+    }
+
+    /**
      * Case when [myChatMember] is set
      *
      * Intentionally reuses [ChatMember.Payload]
@@ -526,6 +569,7 @@ sealed interface Update<T> {
             val from: User,
             val userChatId: Long,
             val date: Instant,
+            val queryId: String? = null,
             val bio: String? = null,
             val inviteLink: ChatInviteLink? = null
         ) {
@@ -625,9 +669,11 @@ sealed interface Update<T> {
         EDITED_BUSINESS_MESSAGE,
         @JsonProperty("deleted_business_messages")
         DELETED_BUSINESS_MESSAGES,
+        @JsonProperty("guest_message")
+        GUEST_MESSAGE,
         @JsonProperty("message_reaction")
         MESSAGE_REACTION,
-        @JsonProperty("message_reaction_COUNT")
+        @JsonProperty("message_reaction_count")
         MESSAGE_REACTION_COUNT,
         @JsonProperty("inline_query")
         INLINE_QUERY,
@@ -645,6 +691,8 @@ sealed interface Update<T> {
         POLL,
         @JsonProperty("poll_answer")
         POLL_ANSWER,
+        @JsonProperty("managed_bot")
+        MANAGED_BOT,
         @JsonProperty("my_chat_member")
         MY_CHAT_MEMBER,
         @JsonProperty("chat_member")

@@ -20,4 +20,4 @@ dependencies {
 
 }
 
-description = "Vertigram"
+description = "Kotlin framework for building Telegram bots on Vert.x."

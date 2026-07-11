@@ -7,6 +7,7 @@ import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.telegram.types.colors.RgbColor
 import ski.gagar.vertigram.telegram.types.richtext.HasOptionalCaptionWithEntities
 import ski.gagar.vertigram.telegram.types.richtext.HasOptionalTextWithEntities
+import ski.gagar.vertigram.telegram.types.richmessage.RichMessage
 import java.time.Duration
 import java.time.Instant
 
@@ -23,7 +24,9 @@ data class Message internal constructor(
     val senderChat: Chat? = null,
     val senderBoostCount: Int? = null,
     val senderBusinessBot: User? = null,
+    val senderTag: String? = null,
     val date: Instant,
+    val guestQueryId: String? = null,
     val businessConnectionId: String? = null,
     val chat: Chat,
     val forwardOrigin: Origin? = null,
@@ -36,6 +39,8 @@ data class Message internal constructor(
     val quote: TextQuote? = null,
     val replyToStory: Story? = null,
     val viaBot: User? = null,
+    val guestBotCallerUser: User? = null,
+    val guestBotCallerChat: Chat? = null,
     val editDate: Instant? = null,
     val hasProtectedContent: Boolean = false,
     @get:JvmName("getIsFromOffline")
@@ -43,13 +48,20 @@ data class Message internal constructor(
     val mediaGroupId: String? = null,
     val authorSignature: String? = null,
     val paidStarCount: Int? = null,
+    val replyToChecklistTaskId: Int? = null,
+    val replyToPollOptionId: String? = null,
+    val directMessagesTopic: DirectMessagesTopic? = null,
+    @get:JvmName("getIsPaidPost")
+    val isPaidPost: Boolean = false,
     override val text: String? = null,
     override val entities: List<MessageEntity>? = null,
     val linkPreviewOptions: LinkPreviewOptions? = null,
     val effectId: String? = null,
+    val richMessage: RichMessage? = null,
     val animation: Animation? = null,
     val audio: Audio? = null,
     val document: Document? = null,
+    val livePhoto: LivePhoto? = null,
     val paidMedia: PaidMediaInfo? = null,
     val photo: List<PhotoSize>? = null,
     val sticker: Sticker? = null,
@@ -70,6 +82,8 @@ data class Message internal constructor(
     val location: Location? = null,
     val newChatMembers: List<User>? = null,
     val leftChatMember: User? = null,
+    val chatOwnerLeft: Service.ChatOwner.Left? = null,
+    val chatOwnerChanged: Service.ChatOwner.Changed? = null,
     val newChatTitle: String? = null,
     val newChatPhoto: List<PhotoSize>? = null,
     val deleteChatPhoto: Boolean = false,
@@ -85,8 +99,10 @@ data class Message internal constructor(
     val refundedPayment: Service.RefundedPayment? = null,
     val usersShared: Service.UsersShared? = null,
     val chatShared: Service.ChatShared? = null,
+    val managedBotCreated: Service.ManagedBotCreated? = null,
     val gift: Service.GiftInfo? = null,
     val uniqueGift: Service.UniqueGiftInfo? = null,
+    val giftUpgradeSent: Service.GiftInfo? = null,
     val connectedWebsite: String? = null,
     val writeAccessAllowed: Service.WriteAccessAllowed? = null,
     val passportData: Passport.Data? = null,
@@ -96,6 +112,14 @@ data class Message internal constructor(
     val checklistTasksDone: Service.ChecklistTasks.Done? = null,
     val checklistTasksAdded: Service.ChecklistTasks.Added? = null,
     val directMessagePriceChanged: Service.DirectMessagePriceChanged? = null,
+    val suggestedPostInfo: SuggestedPost.Info? = null,
+    val suggestedPostApproved: Service.SuggestedPost.Approved? = null,
+    val suggestedPostApprovalFailed: Service.SuggestedPost.ApprovalFailed? = null,
+    val suggestedPostDeclined: Service.SuggestedPost.Declined? = null,
+    val suggestedPostPaid: Service.SuggestedPost.Paid? = null,
+    val suggestedPostRefunded: Service.SuggestedPost.Refunded? = null,
+    val pollOptionAdded: Service.PollOption.Added? = null,
+    val pollOptionDeleted: Service.PollOption.Deleted? = null,
     val forumTopicCreated: Service.ForumTopic.Created? = null,
     val forumTopicEdited: Service.ForumTopic.Edited? = null,
     val forumTopicClosed: Service.ForumTopic.Closed? = null,
@@ -128,6 +152,7 @@ data class Message internal constructor(
         val animation: Animation? = null,
         val audio: Audio? = null,
         val document: Document? = null,
+        val livePhoto: LivePhoto? = null,
         val paidMedia: PaidMediaInfo? = null,
         val photo: List<PhotoSize>? = null,
         val sticker: Sticker? = null,
@@ -318,6 +343,35 @@ data class Message internal constructor(
         }
 
         /**
+         * Service messages related to chat owner changes.
+         */
+        object ChatOwner {
+            /**
+             * Telegram [ChatOwnerLeft](https://core.telegram.org/bots/api#chatownerleft) type.
+             *
+             * For up-to-date documentation, please consult the official Telegram docs.
+             */
+            @TelegramCodegen.Type
+            data class Left internal constructor(
+                val newOwner: User? = null
+            ) {
+                companion object
+            }
+
+            /**
+             * Telegram [ChatOwnerChanged](https://core.telegram.org/bots/api#chatownerchanged) type.
+             *
+             * For up-to-date documentation, please consult the official Telegram docs.
+             */
+            @TelegramCodegen.Type
+            data class Changed internal constructor(
+                val newOwner: User
+            ) {
+                companion object
+            }
+        }
+
+        /**
          * Telegram [SuccessfulPayment](https://core.telegram.org/bots/api#successfulpayment) type.
          *
          * For up-to-date documentation, please consult the official Telegram docs.
@@ -402,6 +456,18 @@ data class Message internal constructor(
         }
 
         /**
+         * Telegram [ManagedBotCreated](https://core.telegram.org/bots/api#managedbotcreated) type.
+         *
+         * For up-to-date documentation, please consult the official Telegram docs.
+         */
+        @TelegramCodegen.Type
+        data class ManagedBotCreated internal constructor(
+            val bot: User
+        ) {
+            companion object
+        }
+
+        /**
          * Telegram [GiftInfo](https://core.telegram.org/bots/api#giftinfo) type.
          *
          * For up-to-date documentation, please consult the official Telegram docs.
@@ -413,6 +479,9 @@ data class Message internal constructor(
             val convertStarCount: Int? = null,
             val prepaidUpgradeStarCount: Int? = null,
             val canBeUpgraded: Boolean = false,
+            @get:JvmName("getIsUpgradeSeparate")
+            val isUpgradeSeparate: Boolean = false,
+            val uniqueGiftNumber: Int? = null,
             val text: String? = null,
             val entities: List<MessageEntity>? = null,
             @get:JvmName("getIsPrivate")
@@ -430,7 +499,8 @@ data class Message internal constructor(
         data class UniqueGiftInfo internal constructor(
             val gift: UniqueGift,
             val origin: Origin,
-            val lastResaleStarCount: Int? = null,
+            val lastResaleCurrency: String? = null,
+            val lastResaleAmount: Long? = null,
             val ownedGiftId: String? = null,
             val transferStarCount: Int? = null,
             val nextTransferDate: Instant? = null,
@@ -441,12 +511,18 @@ data class Message internal constructor(
                 @JsonProperty("transfer")
                 TRANSFER,
                 @JsonProperty("resale")
-                RESALE;
+                RESALE,
+                @JsonProperty("gifted_upgrade")
+                GIFTED_UPGRADE,
+                @JsonProperty("offer")
+                OFFER;
 
                 companion object {
                     const val UPGRADE_STR = "upgrade"
                     const val TRANSFER_STR = "transfer"
                     const val RESALE_STR = "resale"
+                    const val GIFTED_UPGRADE_STR = "gifted_upgrade"
+                    const val OFFER_STR = "offer"
                 }
             }
             companion object
@@ -563,9 +639,129 @@ data class Message internal constructor(
         @TelegramCodegen.Type
         data class DirectMessagePriceChanged internal constructor(
             val areDirectMessagesEnabled: Boolean,
-            val directMessageStarCount: Int
+            val directMessageStarCount: Int? = null
         ) {
             companion object
+        }
+
+        /**
+         * Service messages related to suggested posts.
+         */
+        object SuggestedPost {
+            /**
+             * Telegram [SuggestedPostApproved](https://core.telegram.org/bots/api#suggestedpostapproved) type.
+             *
+             * For up-to-date documentation, please consult the official Telegram docs.
+             */
+            @TelegramCodegen.Type
+            data class Approved internal constructor(
+                val suggestedPostMessage: Message? = null,
+                val price: SuggestedPost.Price? = null,
+                val sendDate: Instant
+            ) {
+                companion object
+            }
+
+            /**
+             * Telegram [SuggestedPostApprovalFailed](https://core.telegram.org/bots/api#suggestedpostapprovalfailed) type.
+             *
+             * For up-to-date documentation, please consult the official Telegram docs.
+             */
+            @TelegramCodegen.Type
+            data class ApprovalFailed internal constructor(
+                val suggestedPostMessage: Message? = null,
+                val price: SuggestedPost.Price
+            ) {
+                companion object
+            }
+
+            /**
+             * Telegram [SuggestedPostDeclined](https://core.telegram.org/bots/api#suggestedpostdeclined) type.
+             *
+             * For up-to-date documentation, please consult the official Telegram docs.
+             */
+            @TelegramCodegen.Type
+            data class Declined internal constructor(
+                val suggestedPostMessage: Message? = null,
+                val comment: String? = null
+            ) {
+                companion object
+            }
+
+            /**
+             * Telegram [SuggestedPostPaid](https://core.telegram.org/bots/api#suggestedpostpaid) type.
+             *
+             * For up-to-date documentation, please consult the official Telegram docs.
+             */
+            @TelegramCodegen.Type
+            data class Paid internal constructor(
+                val suggestedPostMessage: Message? = null,
+                val currency: String,
+                val amount: Long? = null,
+                val starAmount: StarAmount? = null
+            ) {
+                companion object
+            }
+
+            /**
+             * Telegram [SuggestedPostRefunded](https://core.telegram.org/bots/api#suggestedpostrefunded) type.
+             *
+             * For up-to-date documentation, please consult the official Telegram docs.
+             */
+            @TelegramCodegen.Type
+            data class Refunded internal constructor(
+                val suggestedPostMessage: Message? = null,
+                val reason: Reason
+            ) {
+                enum class Reason {
+                    @JsonProperty(POST_DELETED_STR)
+                    POST_DELETED,
+                    @JsonProperty(PAYMENT_REFUNDED_STR)
+                    PAYMENT_REFUNDED;
+
+                    companion object {
+                        const val POST_DELETED_STR = "post_deleted"
+                        const val PAYMENT_REFUNDED_STR = "payment_refunded"
+                    }
+                }
+
+                companion object
+            }
+        }
+
+        /**
+         * Service messages related to poll options.
+         */
+        object PollOption {
+            /**
+             * Telegram [PollOptionAdded](https://core.telegram.org/bots/api#polloptionadded) type.
+             *
+             * For up-to-date documentation, please consult the official Telegram docs.
+             */
+            @TelegramCodegen.Type
+            data class Added internal constructor(
+                val pollMessage: Message? = null,
+                val optionPersistentId: String,
+                val optionText: String,
+                val optionTextEntities: List<MessageEntity>? = null
+            ) {
+                companion object
+            }
+
+            /**
+             * Telegram [PollOptionDeleted](https://core.telegram.org/bots/api#polloptiondeleted) type.
+             *
+             * For up-to-date documentation, please consult the official Telegram docs.
+             */
+            @TelegramCodegen.Type
+            data class Deleted internal constructor(
+                val pollMessage: Message? = null,
+                val optionPersistentId: String,
+                val optionText: String,
+                val optionTextEntities: List<MessageEntity>? = null
+            ) {
+                companion object
+            }
         }
 
 
@@ -589,7 +785,9 @@ data class Message internal constructor(
             data class Created internal constructor(
                 val name: String,
                 val iconColor: RgbColor,
-                val iconCustomEmojiId: String? = null
+                val iconCustomEmojiId: String? = null,
+                @get:JvmName("getIsNameImplicit")
+                val isNameImplicit: Boolean = false
             ) {
                 companion object
             }

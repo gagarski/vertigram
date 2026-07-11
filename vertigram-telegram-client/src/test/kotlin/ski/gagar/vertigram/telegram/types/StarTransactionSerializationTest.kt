@@ -23,13 +23,13 @@ object StarTransactionSerializationTest : BaseSerializationTest() {
 
         assertSerializable<StarTransaction.TransactionPartner>(
             StarTransaction.TransactionPartner.AffiliateProgram.create(
-                commissionPerMile = 100,
+                commissionPerMille = 100,
             )
         )
 
         assertSerializable<StarTransaction.TransactionPartner>(
             StarTransaction.TransactionPartner.Fragment.create(
-                commissionPerMile = 100,
+                commissionPerMille = 100,
             )
         )
 

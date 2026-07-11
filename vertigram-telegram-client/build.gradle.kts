@@ -1,5 +1,3 @@
-import org.jetbrains.dokka.gradle.DokkaTaskPartial
-
 plugins {
     id("buildlogic.vertigram-module-convention")
     id("buildlogic.maven-publishing-convention")
@@ -22,18 +20,12 @@ dependencies {
     ksp(project(":vertigram-codegen"))
 }
 
-description = "Vertigram Client"
-
-sourceSets {
-    main {
-        kotlin.srcDir("${layout.buildDirectory.get()}/generated/ksp/main/kotlin")
-    }
-}
+description = "Telegram Bot API client types and methods for Vertigram."
 
 tasks.named<Jar>("sourcesJar").configure {
     dependsOn("kspKotlin")
 }
 
-tasks.withType<DokkaTaskPartial>().configureEach {
+tasks.matching { it.name.startsWith("dokka") }.configureEach {
     dependsOn("kspKotlin")
 }

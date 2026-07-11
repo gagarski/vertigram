@@ -17,7 +17,7 @@ import java.util.*
 /**
  * A Verticle that introduce a bit of very dumb persistence to [ski.gagar.vertigram.Vertigram.EventBus].
  *
- * It allows to store messages coming to [incomingAddress] for subscribers which are selected by [Discriminator] before
+ * It stores messages arriving at [incomingAddress] for subscribers selected by [Discriminator] before
  * the subscribers have subscribed for these messages.
  *
  * When message arrives at [incomingAddress]:

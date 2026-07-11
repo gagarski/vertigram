@@ -22,6 +22,20 @@ object UpdateSerializationTest : BaseSerializationTest() {
             )
         )
         assertSerializable<Update<*>>(
+            Update.GuestMessage.create(
+                updateId = 1,
+                guestMessage = Message.create(
+                    messageId = 1,
+                    chat = Chat.create(
+                        id = 1,
+                        type = Chat.Type.PRIVATE
+                    ),
+                    guestQueryId = "guest-query",
+                    date = Instant.now().truncatedTo(ChronoUnit.SECONDS)
+                )
+            )
+        )
+        assertSerializable<Update<*>>(
             Update.EditedMessage.create(
                 updateId = 1,
                 editedMessage = Message.create(
@@ -57,6 +71,58 @@ object UpdateSerializationTest : BaseSerializationTest() {
                         type = Chat.Type.CHANNEL
                     ),
                     date = Instant.now().truncatedTo(ChronoUnit.SECONDS)
+                )
+            )
+        )
+        assertSerializable<Update<*>>(
+            Update.BusinessConnection.create(
+                updateId = 1,
+                businessConnection = BusinessConnection.create(
+                    id = "1",
+                    user = User.create(id = 1),
+                    userChatId = 1,
+                    date = Instant.now().truncatedTo(ChronoUnit.SECONDS),
+                    rights = BusinessConnection.BotRights.create(),
+                    isEnabled = true
+                )
+            )
+        )
+        assertSerializable<Update<*>>(
+            Update.BusinessMessage.create(
+                updateId = 1,
+                businessMessage = Message.create(
+                    messageId = 1,
+                    chat = Chat.create(
+                        id = 1,
+                        type = Chat.Type.PRIVATE
+                    ),
+                    date = Instant.now().truncatedTo(ChronoUnit.SECONDS)
+                )
+            )
+        )
+        assertSerializable<Update<*>>(
+            Update.EditedBusinessMessage.create(
+                updateId = 1,
+                editedBusinessMessage = Message.create(
+                    messageId = 1,
+                    chat = Chat.create(
+                        id = 1,
+                        type = Chat.Type.PRIVATE
+                    ),
+                    date = Instant.now().truncatedTo(ChronoUnit.SECONDS)
+                )
+            )
+        )
+        assertSerializable<Update<*>>(
+            Update.DeletedBusinessMessages.create(
+                updateId = 1,
+                deletedBusinessMessages = Update.DeletedBusinessMessages.Payload.create(
+                    businessConnectionId = "1",
+                    chat = Chat.create(
+                        id = 1,
+                        type = Chat.Type.PRIVATE
+                    ),
+                    messageIds = listOf(1)
                 )
             )
         )
@@ -182,6 +248,15 @@ object UpdateSerializationTest : BaseSerializationTest() {
             )
         )
         assertSerializable<Update<*>>(
+            Update.ManagedBot.create(
+                updateId = 1,
+                managedBot = Update.ManagedBot.Payload.create(
+                    user = User.create(id = 1),
+                    bot = User.create(id = 2, isBot = true)
+                )
+            )
+        )
+        assertSerializable<Update<*>>(
             Update.MyChatMember.create(
                 updateId = 1,
                 myChatMember = Update.ChatMember.Payload.create(
@@ -212,7 +287,8 @@ object UpdateSerializationTest : BaseSerializationTest() {
                     chat = Chat.create(id = 1, type = Chat.Type.SUPERGROUP),
                     from = User.create(id = 1),
                     date = Instant.now().truncatedTo(ChronoUnit.SECONDS),
-                    userChatId = 1
+                    userChatId = 1,
+                    queryId = "1"
                 )
             )
         )

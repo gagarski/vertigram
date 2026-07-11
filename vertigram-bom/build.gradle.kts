@@ -27,7 +27,7 @@ dependencies {
         for (subproject in project.rootProject.subprojects) {
             if (subproject.name in subprojectsExcludedFromBom)
                 continue
-            api(subproject)
+            api(project.dependencies.project(mapOf("path" to subproject.path)))
         }
 
         val catalog = versionCatalogs.named("libs")
@@ -41,7 +41,23 @@ dependencies {
 publishing {
     publications {
         create<MavenPublication>("maven") {
-            afterEvaluate { from(components["javaPlatform"]) }
+            from(components["javaPlatform"])
+
+            pom {
+                vertigramPom(project, "Dependency management BOM for Vertigram")
+            }
         }
     }
+}
+
+signing {
+    val signingKeyId = findProperty("signingKeyId") as String?
+    val signingKey = findProperty("signingKey") as String?
+    val signingPassword = findProperty("signingPassword") as String?
+
+    if (signingKey != null) {
+        useInMemoryPgpKeys(signingKeyId, signingKey, signingPassword)
+    }
+
+    sign(publishing.publications["maven"])
 }

@@ -39,15 +39,15 @@ class RealIpFormatter(
             }
         }
 
-    private val HttpServerRequest.xRealIp
+    private val HttpServerRequest.xRealIp: String?
         get() = getHeader(X_REAL_IP)
 
-    private val HttpServerRequest.xForwardedFor0
+    private val HttpServerRequest.xForwardedFor0: String?
         get() = getHeader(X_FORWARDED_FOR)?.split(", ")?.firstOrNull()
 
 
-    private val HttpServerRequest.clientSuppliedAddress
-        get() = xRealIp ?: xForwardedFor0 ?: authority().host()
+    private val HttpServerRequest.clientSuppliedAddress: String?
+        get() = xRealIp ?: xForwardedFor0 ?: authority()?.host()
 
     private val HttpServerRequest.clientAddress: String?
         get() {
@@ -55,7 +55,7 @@ class RealIpFormatter(
             return if (host.shouldBeTrusted)
                 clientSuppliedAddress
             else
-                authority().host()
+                authority()?.host()
         }
 
     override fun format(context: RoutingContext, ms: Long): String {

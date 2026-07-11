@@ -31,4 +31,6 @@ data class PromoteChatMember internal constructor(
     val canEditStories: Boolean = false,
     val canDeleteStories: Boolean = false,
     val canManageTopics: Boolean = false,
+    val canManageDirectMessages: Boolean = false,
+    val canManageTags: Boolean = false,
 ) : JsonTelegramCallable<Boolean>(), HasChatId

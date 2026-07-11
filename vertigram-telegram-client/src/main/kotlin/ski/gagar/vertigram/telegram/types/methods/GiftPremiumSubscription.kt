@@ -1,6 +1,7 @@
 package ski.gagar.vertigram.telegram.types.methods
 
 import com.fasterxml.jackson.annotation.JsonValue
+import com.fasterxml.jackson.annotation.JsonProperty
 import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.telegram.types.MessageEntity
 import ski.gagar.vertigram.telegram.types.richtext.RichText
@@ -18,6 +19,7 @@ data class GiftPremiumSubscription internal constructor(
     val textParseMode: RichText.ParseMode? = null,
     val textEntities: List<MessageEntity>? = null
 ) : JsonTelegramCallable<Boolean>() {
+    @get:JsonProperty(value = "star_count", access = JsonProperty.Access.READ_ONLY)
     val starCount: Int get() = monthCount.starCount
 
     enum class MonthCount(@JsonValue val count: Int, val starCount: Int) {

@@ -10,7 +10,7 @@ import ski.gagar.vertigram.telegram.types.GameHighScore
 import ski.gagar.vertigram.util.NoPosArgs
 
 /**
- * Telegram [getGameHighScores](https://core.telegram.org/bots/api#getgamehighscopes) method.
+ * Telegram [getGameHighScores](https://core.telegram.org/bots/api#getgamehighscores) method.
  *
  * Subtypes (which are nested) are two mutually-exclusive cases: for inline message and for chat message.
  * Note the different return types in these cases.

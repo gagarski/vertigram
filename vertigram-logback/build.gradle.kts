@@ -13,4 +13,4 @@ dependencies {
     api(project(":vertigram-telegram-client"))
 }
 
-description = "Vertigram Logback"
+description = "Logback integration for Vertigram applications."

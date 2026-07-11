@@ -7,6 +7,7 @@ import ski.gagar.vertigram.telegram.types.Message
 import ski.gagar.vertigram.telegram.types.MessageEntity
 import ski.gagar.vertigram.telegram.types.ReplyMarkup
 import ski.gagar.vertigram.telegram.types.ReplyParameters
+import ski.gagar.vertigram.telegram.types.SuggestedPost
 import ski.gagar.vertigram.telegram.types.richtext.HasOptionalRichCaption
 import ski.gagar.vertigram.telegram.types.richtext.RichText
 import ski.gagar.vertigram.telegram.types.util.ChatId
@@ -22,6 +23,7 @@ import java.time.Duration
 data class CopyMessage internal constructor(
     override val chatId: ChatId,
     val messageThreadId: Long? = null,
+    val directMessagesTopicId: Long? = null,
     val fromChatId: ChatId,
     val messageId: Long,
     val videoStartTimestamp: Duration? = null,
@@ -32,6 +34,8 @@ data class CopyMessage internal constructor(
     val disableNotification: Boolean = false,
     val protectContent: Boolean = false,
     val allowPaidBroadcast: Boolean = false,
+    val messageEffectId: String? = null,
+    val suggestedPostParameters: SuggestedPost.Parameters? = null,
     val replyParameters: ReplyParameters? = null,
     val replyMarkup: ReplyMarkup? = null
 ) : JsonTelegramCallable<Message.Id>(), HasChatId, HasOptionalRichCaption

@@ -2,25 +2,44 @@
 plugins {
     id("buildlogic.vertigram-module-convention")
     id("buildlogic.dokka-convention")
-    `maven-publish`
     `kotlin-dsl`
-    alias(libsInternal.plugins.gradle.publish)
+    `maven-publish`
+    signing
 }
 
+description = "Vertigram plugin that allows to execute jOOQ code generation together with Flyway migrations"
+
 gradlePlugin {
-    website = "https://vertigram.gagar.ski"
-    vcsUrl = "https://github.com/gagarski/vertigram"
-    // Define the plugin
     plugins.create("vertigramJooq") {
         id = "ski.gagar.vertigram.jooq"
-        displayName = "Vertigram jOOQ plugin"
-        description = "Vertigram plugin that allows to execute jOOQ code generation together with Flyway " +
-                "migrations and optionally involving testcontainers"
-        tags = listOf("vertigram", "jooq", "flyway", "testcontainers", "vertx")
         implementationClass = "ski.gagar.vertigram.jooq.gradle.VertigramJooqPlugin"
     }
 }
 
+publishing {
+    publications.withType<MavenPublication>().configureEach {
+        pom {
+            vertigramPom(project, providers.provider {
+                project.description?.takeIf { it.isNotBlank() }
+                    ?: throw GradleException("Project ${project.path} must define a non-empty description for publishing.")
+            })
+        }
+    }
+}
+
+signing {
+    val signingKeyId = findProperty("signingKeyId") as String?
+    val signingKey = findProperty("signingKey") as String?
+    val signingPassword = findProperty("signingPassword") as String?
+
+    if (signingKey != null) {
+        useInMemoryPgpKeys(signingKeyId, signingKey, signingPassword)
+    }
+
+    publishing.publications.withType<MavenPublication>().configureEach {
+        sign(this)
+    }
+}
 
 dependencies {
     implementation(libs.bundles.kotlin.std)

@@ -118,7 +118,9 @@ abstract class DispatchVerticle<C : DispatchVerticle.Config, VC> : HierarchyVert
             startAndInitialize(dialogKey, message)
         }
 
-        passMessageToOngoing(message, dialogs[dialogKey]!!)
+        dialogs[dialogKey]?.let {
+            passMessageToOngoing(message, it)
+        }
     }
 
     private suspend fun startAndInitialize(dialogKey: DialogKey, msg: Message) {

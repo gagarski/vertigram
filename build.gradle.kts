@@ -28,7 +28,10 @@ buildscript {
 
 nexusPublishing {
     repositories {
-        sonatype()
+        sonatype {
+            nexusUrl.set(uri("https://ossrh-staging-api.central.sonatype.com/service/local/"))
+            snapshotRepositoryUrl.set(uri("https://central.sonatype.com/repository/maven-snapshots/"))
+        }
     }
 }
 
@@ -38,19 +41,42 @@ release {
     }
 }
 
-tasks {
-    named("afterReleaseBuild") {
-        dependsOn(project.getSubprojects().map {
-            "${it.name}:publish"
-        })
-        dependsOn("vertigram-jooq-plugin:publishPlugins")
+gradle.projectsEvaluated {
+    val publishToSonatypeTasks = subprojects.mapNotNull {
+        it.tasks.findByName("publishToSonatype")
+    }
 
-//        if (project.properties["vertigram.dokka.skip"] != "true") {
-//            dependsOn("dokkaUpload")
-//        }
+    tasks {
+        named("closeSonatypeStagingRepository") {
+            mustRunAfter(publishToSonatypeTasks)
+        }
 
-        if (project.properties["vertigram.staging.close"] != "false") {
-            dependsOn("closeAndReleaseRepository")
+        named("closeAndReleaseSonatypeStagingRepository") {
+            mustRunAfter(publishToSonatypeTasks)
+        }
+
+        named("afterReleaseBuild") {
+            dependsOn(publishToSonatypeTasks)
+
+            if (providers.gradleProperty("vertigram.dokka.publish").orNull != "false") {
+                dependsOn(":vertigram-docs:dokkaPush")
+            }
+
+            when (val stagingAction = providers.gradleProperty("vertigram.staging.action").orNull ?: "none") {
+                "none" -> {}
+                "close" -> dependsOn("closeSonatypeStagingRepository")
+                "close-and-release" -> dependsOn("closeAndReleaseSonatypeStagingRepository")
+                else -> throw GradleException(
+                    "Unsupported vertigram.staging.action=$stagingAction. " +
+                        "Expected one of: none, close, close-and-release."
+                )
+            }
+        }
+    }
+
+    project(":vertigram-docs").tasks {
+        named("dokkaPush") {
+            mustRunAfter(publishToSonatypeTasks)
         }
     }
 }

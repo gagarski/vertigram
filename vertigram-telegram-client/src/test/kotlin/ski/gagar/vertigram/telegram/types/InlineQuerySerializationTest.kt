@@ -157,6 +157,11 @@ object InlineQuerySerializationTest : BaseSerializationTest() {
             )
         )
         assertSerializable<InlineQuery.InputMessageContent>(
+            InlineQuery.InputMessageContent.Rich(
+                richMessage = InputRichMessage.Html(html = "<p>xxx</p>")
+            )
+        )
+        assertSerializable<InlineQuery.InputMessageContent>(
             InlineQuery.InputMessageContent.Location.create(
                 latitude = 1.0,
                 longitude = 1.0

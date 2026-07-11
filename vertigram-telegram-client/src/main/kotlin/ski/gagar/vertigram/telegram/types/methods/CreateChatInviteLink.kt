@@ -45,7 +45,7 @@ sealed class CreateChatInviteLink : JsonTelegramCallable<ChatInviteLink>(), HasC
     }
 
     /**
-     * Case when [memberLimit] is missing, [createsJoinRequest] is specified explicitly
+     * Case when member limit is missing, [createsJoinRequest] is specified explicitly
      */
     @TelegramMethod(
         methodName = "createChatInviteLink"

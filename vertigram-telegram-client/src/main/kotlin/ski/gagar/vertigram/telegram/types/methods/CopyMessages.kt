@@ -16,6 +16,7 @@ import ski.gagar.vertigram.telegram.types.util.ChatId
 data class CopyMessages internal constructor(
     override val chatId: ChatId,
     val messageThreadId: Long? = null,
+    val directMessagesTopicId: Long? = null,
     val fromChatId: ChatId,
     val messageIds: List<Long>,
     val disableNotification: Boolean = false,

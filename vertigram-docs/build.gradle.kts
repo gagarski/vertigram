@@ -5,6 +5,8 @@ plugins {
 
 group = "ski.gagar.vertigram"
 
+val dokkaRepo = providers.gradleProperty("vertigram.dokka.repo")
+
 dependencies {
     dokka(project(":vertigram-util"))
     dokka(project(":vertigram-telegram-client"))
@@ -43,7 +45,7 @@ tasks.register("dokkaInitArchive") {
 }
 
 tasks.register("dokkaPull") {
-    onlyIf { project.properties["vertigram.dokka.repo"] != null }
+    onlyIf { dokkaRepo.isPresent }
     dependsOn(":vertigram-dokka-tool:bootJar")
     dependsOn("dokkaInitArchive")
     doLast {
@@ -55,7 +57,7 @@ tasks.register("dokkaPull") {
                 "-local",
                 layout.buildDirectory.dir("dokkaRepo").get().asFile.absoluteFile,
                 "-remote",
-                project.properties["vertigram.dokka.repo"]
+                dokkaRepo.get()
             )
         }
     }
@@ -64,7 +66,7 @@ tasks.register("dokkaPull") {
 
 
 tasks.register("dokkaHousekeep") {
-    onlyIf { project.properties["vertigram.dokka.repo"] != null }
+    onlyIf { dokkaRepo.isPresent }
     dependsOn(":vertigram-dokka-tool:bootJar")
     dependsOn("dokkaPull")
 
@@ -94,7 +96,7 @@ tasks {
 }
 
 tasks.register("dokkaInject") {
-    onlyIf { project.properties["vertigram.dokka.repo"] != null }
+    onlyIf { dokkaRepo.isPresent }
     dependsOn(":vertigram-dokka-tool:bootJar")
     dependsOn("dokkaGenerate")
     doLast {
@@ -116,7 +118,7 @@ tasks.register("dokkaInject") {
 }
 
 tasks.register("dokkaPush") {
-    onlyIf { project.properties["vertigram.dokka.repo"] != null }
+    onlyIf { dokkaRepo.isPresent }
     dependsOn(":vertigram-dokka-tool:bootJar")
     dependsOn("dokkaGenerate")
     dependsOn("dokkaInject")
@@ -130,7 +132,7 @@ tasks.register("dokkaPush") {
                 "-local",
                 layout.buildDirectory.dir("dokkaRepo").get().asFile.absoluteFile,
                 "-remote",
-                project.properties["vertigram.dokka.repo"]
+                dokkaRepo.get()
             )
         }
     }

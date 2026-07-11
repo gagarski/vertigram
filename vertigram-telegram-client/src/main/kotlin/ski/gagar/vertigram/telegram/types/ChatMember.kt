@@ -59,6 +59,8 @@ sealed interface ChatMember {
         val canEditStories: Boolean = false,
         val canDeleteStories: Boolean = false,
         val canManageTopics: Boolean = false,
+        val canManageDirectMessages: Boolean = false,
+        val canManageTags: Boolean = false,
         val customTitle: String? = null,
     ) : ChatMember {
         override val status: Status = Status.ADMINISTRATOR
@@ -118,6 +120,7 @@ sealed interface ChatMember {
     @TelegramCodegen.Type
     data class Member internal constructor(
         override val user: User,
+        val tag: String? = null,
         val untilDate: Instant? = null
     ) : ChatMember {
         override val status: Status = ChatMember.Status.MEMBER
@@ -166,6 +169,8 @@ sealed interface ChatMember {
         val canSendPolls: Boolean = false,
         val canSendOtherMessages: Boolean = false,
         val canAddWebPagePreviews: Boolean = false,
+        val canReactToMessages: Boolean = false,
+        val canEditTag: Boolean = false,
         val canChangeInfo: Boolean = false,
         val canInviteUsers: Boolean = false,
         val canPinMessages: Boolean = false,
@@ -176,7 +181,8 @@ sealed interface ChatMember {
          * Use [ski.gagar.vertigram.telegram.types.util.orEpoch] if you want to initialize it from nullable [Instant]
          */
         @PublishedApi internal val untilDate: Instant,
-        val canManageTopics: Boolean = false
+        val canManageTopics: Boolean = false,
+        val tag: String? = null
     ) : ChatMember {
         override val status: Status = Status.RESTRICTED
         @get:JsonIgnore

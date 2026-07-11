@@ -46,7 +46,7 @@ data class Sticker internal constructor(
     }
 
     /**
-     * Sticker format as used in [ski.gagar.vertigram.telegram.methods.CreateNewStickerSet] and [ski.gagar.vertigram.telegram.methods.UploadStickerFile]
+     * Sticker format as used in [ski.gagar.vertigram.telegram.types.methods.CreateNewStickerSet] and [ski.gagar.vertigram.telegram.types.methods.UploadStickerFile]
      * methods.
      */
     enum class Format {

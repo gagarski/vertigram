@@ -15,10 +15,9 @@ plugins {
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
     compilerOptions {
-        jvmTarget.set(JvmTarget.JVM_22)
-        languageVersion.set(KotlinVersion.KOTLIN_2_2)
+        jvmTarget.set(JvmTarget.JVM_25)
+        languageVersion.set(KotlinVersion.KOTLIN_2_4)
         freeCompilerArgs.add("-Xconsistent-data-class-copy-visibility")
-        freeCompilerArgs.add("-Xannotation-default-target=param-property")
         freeCompilerArgs.add("-Xwarning-level=IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE:disabled") // TODO remove me
     }
 }
@@ -37,6 +36,6 @@ tasks.withType<Test> {
     useJUnitPlatform()
 }
 
-java.sourceCompatibility = JavaVersion.VERSION_22
-java.targetCompatibility = JavaVersion.VERSION_22
+java.sourceCompatibility = JavaVersion.VERSION_25
+java.targetCompatibility = JavaVersion.VERSION_25
 

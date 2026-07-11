@@ -37,11 +37,13 @@ data class Chat internal constructor(
     override val firstName: String? = null,
     override val lastName: String? = null,
     @get:JvmName("getIsForum")
-    override val isForum: Boolean = false
+    override val isForum: Boolean = false,
+    @get:JvmName("getIsDirectMessages")
+    val isDirectMessages: Boolean = false
 ) : IChat {
     /**
      * Telegram [ChatFullInfo](https://core.telegram.org/bots/api#chatfullinfo) type, representing the data
-     * returned from [ski.gagar.vertigram.telegram.methods.GetChat]
+     * returned from [ski.gagar.vertigram.telegram.types.methods.GetChat]
      *
      * For up-to-date documentation, please consult the official Telegram docs.
      */
@@ -55,6 +57,8 @@ data class Chat internal constructor(
         override val lastName: String? = null,
         @get:JvmName("getIsForum")
         override val isForum: Boolean = false,
+        @get:JvmName("getIsDirectMessages")
+        val isDirectMessages: Boolean = false,
         val photo: Photo? = null,
         val activeUsernames: List<String>? = null,
         val birthdate: Birthdate? = null,
@@ -62,6 +66,7 @@ data class Chat internal constructor(
         val businessLocation: BusinessLocation? = null,
         val businessOpeningHours: BusinessOpeningHours? = null,
         val personalChat: Chat? = null,
+        val guardBot: User? = null,
         val availableReactions: List<Reaction>? = null,
         val accentColorId: Int,
         val maxReactionCount: Int,
@@ -81,6 +86,10 @@ data class Chat internal constructor(
         val permissions: ChatPermissions? = null,
         val acceptedGiftTypes: AcceptedGiftTypes,
         val canSendPaidMedia: Boolean = false,
+        val rating: UserRating? = null,
+        val firstProfileAudio: Audio? = null,
+        val uniqueGiftColors: UniqueGift.Colors? = null,
+        val paidMessageStarCount: Int? = null,
         val slowModeDelay: Duration? = null,
         val unrestrictBoostCount: Int? = null,
         val messageAutoDeleteTime: Duration? = null,
@@ -92,6 +101,7 @@ data class Chat internal constructor(
         val canSetStickerSet: Boolean = false,
         val customEmojiStickerSetName: String? = null,
         val linkedChatId: Long? = null,
+        val parentChat: Chat? = null,
         val location: Location? = null,
     ) : IChat{
         /**

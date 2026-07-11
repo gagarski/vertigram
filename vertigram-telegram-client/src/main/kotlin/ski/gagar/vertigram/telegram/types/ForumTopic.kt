@@ -18,10 +18,12 @@ data class ForumTopic internal constructor(
     val messageThreadId: Long,
     val name: String,
     val iconColor: RgbColor,
-    val iconCustomEmojiId: String? = null
+    val iconCustomEmojiId: String? = null,
+    @get:JvmName("getIsNameImplicit")
+    val isNameImplicit: Boolean = false
 ) {
     /**
-     * Value for [ski.gagar.vertigram.telegram.methods.CreateForumTopic.iconColor],
+     * Value for [ski.gagar.vertigram.telegram.types.methods.CreateForumTopic.iconColor],
      * limited according to the Telegram docs.
      */
     enum class Color(val color: RgbColor) {

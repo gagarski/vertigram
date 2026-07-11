@@ -11,4 +11,4 @@ dependencies {
     api(libs.bundles.slf4j.api)
 }
 
-description = "Vertigram Util"
+description = "Shared utility APIs for Vertigram modules."

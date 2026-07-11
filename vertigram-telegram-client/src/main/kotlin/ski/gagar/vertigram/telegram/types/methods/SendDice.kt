@@ -8,11 +8,12 @@ import ski.gagar.vertigram.telegram.types.Dice
 import ski.gagar.vertigram.telegram.types.Message
 import ski.gagar.vertigram.telegram.types.ReplyMarkup
 import ski.gagar.vertigram.telegram.types.ReplyParameters
+import ski.gagar.vertigram.telegram.types.SuggestedPost
 import ski.gagar.vertigram.telegram.types.util.ChatId
 import ski.gagar.vertigram.util.NoPosArgs
 
 /**
- * Telegram [sendContact](https://core.telegram.org/bots/api#sendcontact) method.
+ * Telegram [sendDice](https://core.telegram.org/bots/api#senddice) method.
  *
  * For up-to-date documentation, please consult the official Telegram docs.
  */
@@ -22,10 +23,12 @@ data class SendDice internal constructor(
     val businessConnectionId: String? = null,
     override val chatId: ChatId,
     val messageThreadId: Long? = null,
+    val directMessagesTopicId: Long? = null,
     val emoji: Dice.Emoji? = null,
     val disableNotification: Boolean = false,
     val protectContent: Boolean = false,
     val allowPaidBroadcast: Boolean = false,
+    val suggestedPostParameters: SuggestedPost.Parameters? = null,
     val replyParameters: ReplyParameters? = null,
     val replyMarkup: ReplyMarkup? = null
 ) : JsonTelegramCallable<Message>(), HasChatId

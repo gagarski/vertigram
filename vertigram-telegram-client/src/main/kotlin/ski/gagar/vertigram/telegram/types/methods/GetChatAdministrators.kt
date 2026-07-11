@@ -14,5 +14,6 @@ import ski.gagar.vertigram.util.NoPosArgs
  */
 @TelegramCodegen.Method
 data class GetChatAdministrators internal constructor(
-    override val chatId: ChatId
+    override val chatId: ChatId,
+    val returnBots: Boolean = false
 ) : JsonTelegramCallable<List<ChatMember>>(), HasChatId

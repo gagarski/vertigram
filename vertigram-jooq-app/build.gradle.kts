@@ -1,5 +1,3 @@
-import org.jetbrains.dokka.gradle.DokkaTaskPartial
-
 plugins {
     id("buildlogic.vertigram-module-convention")
     id("buildlogic.maven-publishing-convention")
@@ -19,4 +17,4 @@ dependencies {
     implementation(libs.jackson.dataformat.xml)
 }
 
-description = "Vertigram jOOQ app"
+description = "Application support for Vertigram jOOQ integrations."

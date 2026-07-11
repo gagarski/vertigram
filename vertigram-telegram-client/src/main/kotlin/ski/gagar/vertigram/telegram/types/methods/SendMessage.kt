@@ -7,6 +7,7 @@ import ski.gagar.vertigram.telegram.types.Message
 import ski.gagar.vertigram.telegram.types.MessageEntity
 import ski.gagar.vertigram.telegram.types.ReplyMarkup
 import ski.gagar.vertigram.telegram.types.ReplyParameters
+import ski.gagar.vertigram.telegram.types.SuggestedPost
 import ski.gagar.vertigram.telegram.types.richtext.HasRichText
 import ski.gagar.vertigram.telegram.types.richtext.RichText
 import ski.gagar.vertigram.telegram.types.util.ChatId
@@ -22,6 +23,7 @@ data class SendMessage internal constructor(
     val businessConnectionId: String? = null,
     override val chatId: ChatId,
     val messageThreadId: Long? = null,
+    val directMessagesTopicId: Long? = null,
     override val text: String,
     override val parseMode: RichText.ParseMode? = null,
     override val entities: List<MessageEntity>? = null,
@@ -30,6 +32,7 @@ data class SendMessage internal constructor(
     val protectContent: Boolean = false,
     val allowPaidBroadcast: Boolean = false,
     val messageEffectId: String? = null,
+    val suggestedPostParameters: SuggestedPost.Parameters? = null,
     val replyParameters: ReplyParameters? = null,
     val replyMarkup: ReplyMarkup? = null
 ) : JsonTelegramCallable<Message>(), HasChatId, HasRichText

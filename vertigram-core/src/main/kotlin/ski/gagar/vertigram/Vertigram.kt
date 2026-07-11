@@ -49,13 +49,13 @@ fun defaultVertigramMapper(): ObjectMapper =
  * Vertigram is a thin wrapper around [Vertx] node,
  * introducing object mapping protocol and namespaces on top of [io.vertx.core.eventbus.EventBus].
  *
- * Vertigram can be atached to [Vertx] instance by calling [attachVertigram] method,
+ * Vertigram can be attached to a [Vertx] instance by calling [attachVertigram],
  * returning [Vertigram] instance. [Vertx] can have multiple [Vertigram]s attached, each of them
  * should have unique name, defined in [config].
  *
  * On top of [Vertx] [Vertigram] introduces:
  *  - Jackson-based protocol on [Vertx.eventBus]
- *  - [VertigramVerticle] which can typed configuration (see [deployVerticle])
+ *  - [VertigramVerticle] with typed configuration (see [deployVerticle])
  *  - namespaces for event bus addresses
  *
  *  The most convenient way to interact with [VertigramVerticle]s and [Vertigram.EventBus] is by using
@@ -140,7 +140,7 @@ class Vertigram(
      * It relies on original Vertx [io.vertx.core.eventbus.EventBus] to be able to serialize
      * [JsonObject] using default codecs (default behavior).
      *
-     * Addresses for each operation are converted from Vertigram address to plain Vertx address using following notation:
+     * Addresses for each operation are converted from a Vertigram address to a plain Vert.x address using the following notation:
      * `com.example.address` Vertigram address becomes `vertigram:default://com.example.address` for `default` Vertigram instance.
      *
      * For some operations transferred objects are wrapped into [Request] or [Reply] types, see documentation for methods

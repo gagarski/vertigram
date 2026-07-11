@@ -140,6 +140,17 @@ object ReplyMarkupSerializationTest : BaseSerializationTest() {
         )
 
         assertSerializable<ReplyMarkup.Keyboard.Button>(
+            ReplyMarkup.Keyboard.Button.RequestManagedBot(
+                text = "Text",
+                requestManagedBot = ReplyMarkup.Keyboard.Button.RequestManagedBot.Payload(
+                    requestId = 1,
+                    suggestedName = "Name",
+                    suggestedUsername = "username"
+                )
+            )
+        )
+
+        assertSerializable<ReplyMarkup.Keyboard.Button>(
             ReplyMarkup.Keyboard.Button.RequestContact(
                 text = "Text"
             )

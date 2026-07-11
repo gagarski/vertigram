@@ -27,6 +27,7 @@ data class Checklist internal constructor(
         val text: String,
         val textEntities: List<MessageEntity>? = null,
         val completedByUser: User? = null,
+        val completedByChat: Chat? = null,
         val completionDate: Instant? = null
     ) {
         companion object

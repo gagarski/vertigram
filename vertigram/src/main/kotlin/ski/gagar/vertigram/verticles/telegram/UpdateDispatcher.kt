@@ -28,7 +28,7 @@ class UpdateDispatcher : VertigramVerticle<UpdateDispatcher.Config>() {
 
     data class Config(
         /**
-         * Address to listen (should be the same as[UpdateReceiver.Config.updatePublishingAddress])
+         * Address to listen on (should be the same as [UpdateReceiver.Config.updatePublishingAddress])
          */
         val listen: String = TelegramAddress.UPDATES,
         /**

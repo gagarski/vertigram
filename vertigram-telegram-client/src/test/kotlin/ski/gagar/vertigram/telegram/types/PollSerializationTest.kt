@@ -2,6 +2,7 @@ package ski.gagar.vertigram.telegram.types
 
 import org.junit.jupiter.api.Test
 import ski.gagar.vertigram.BaseSerializationTest
+import java.time.Duration
 
 object PollSerializationTest : BaseSerializationTest() {
     @Test
@@ -11,7 +12,17 @@ object PollSerializationTest : BaseSerializationTest() {
                 id = "1",
                 question = "a",
                 options = listOf(),
-                totalVoterCount = 1
+                totalVoterCount = 1,
+                media = Poll.Media.create(
+                    link = Link.create(url = "https://example.com"),
+                    livePhoto = LivePhoto.create(
+                        fileId = "1",
+                        fileUniqueId = "1",
+                        width = 100,
+                        height = 100,
+                        duration = Duration.ofSeconds(10)
+                    )
+                )
             )
         )
         assertSerializable<Poll>(
@@ -19,7 +30,16 @@ object PollSerializationTest : BaseSerializationTest() {
                 id = "1",
                 question = "a",
                 options = listOf(),
-                totalVoterCount = 1
+                totalVoterCount = 1,
+                explanationMedia = Poll.Media.create(
+                    video = Video.create(
+                        fileId = "1",
+                        fileUniqueId = "1",
+                        width = 100,
+                        height = 100,
+                        duration = Duration.ofSeconds(10)
+                    )
+                )
             )
         )
     }

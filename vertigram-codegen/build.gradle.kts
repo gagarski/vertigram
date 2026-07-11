@@ -10,4 +10,4 @@ dependencies {
     api(libsInternal.ksp.api)
 }
 
-description = "Vertigram Code Generators"
+description = "KSP code generators for Vertigram modules."
