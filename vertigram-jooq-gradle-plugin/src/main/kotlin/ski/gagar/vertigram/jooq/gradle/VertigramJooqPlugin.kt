@@ -30,12 +30,12 @@ class VertigramJooqPlugin : Plugin<Project> {
         extDepConfig.setDescription("The classpath used to invoke the Vertigram jOOQ code generator. Add your JDBC driver, generator extensions, and additional dependencies here.")
 
         val task = project.tasks.register<JavaExec>("vertigramJooqCodegen") {
-            val om = ObjectMapper().findAndRegisterModules()
+            val om = ObjectMapper()
             classpath(appConfig, extDepConfig)
             lateinit var f: File
 
             mainClass.set("ski.gagar.vertigram.jooq.app.AppKt")
-            outputs.dir(project.file(extension.jooq.get().directory.get()))
+            outputs.dir(project.provider { project.file(extension.jooq.get().directory.get()) })
             doFirst {
                 f = File.createTempFile("vertigram-jooq-", ".json")
                 om.writeValue(f, extension.pojo())
@@ -50,8 +50,14 @@ class VertigramJooqPlugin : Plugin<Project> {
 
         project.extensions.getByType(SourceSetContainer::class.java).configureEach {
             if (name == "main") {
-                java.srcDir(task.map { it.outputs });
+                java.srcDir(project.provider { project.file(extension.jooq.get().directory.get()) })
             }
+        }
+
+        project.tasks.matching {
+            it.name in setOf("compileJava", "compileKotlin")
+        }.configureEach {
+            dependsOn(task)
         }
     }
 }

@@ -308,7 +308,23 @@ object MethodsTest : BaseSerializationTest() {
                 openPeriod = Duration.ofHours(1)
             )
         )
+        assertSerializable<SendPoll.Regular.OpenPeriod>(
+            SendPoll.Regular.OpenPeriod(
+                chatId = 1.toChatId(),
+                question = "aaa",
+                options = listOf(),
+                openPeriod = Duration.ofHours(1)
+            )
+        )
         assertSerializable<SendPoll>(
+            SendPoll.Regular.CloseDate(
+                chatId = 1.toChatId(),
+                question = "aaa",
+                options = listOf(),
+                closeDate = Instant.now().truncatedTo(ChronoUnit.SECONDS)
+            )
+        )
+        assertSerializable<SendPoll.Regular.CloseDate>(
             SendPoll.Regular.CloseDate(
                 chatId = 1.toChatId(),
                 question = "aaa",
@@ -335,6 +351,13 @@ object MethodsTest : BaseSerializationTest() {
             ),
             skip = setOf(Companion.Mappers.TELEGRAM) // deserialization of attachment is not supported here
         )
+        assertSerializable<SendPoll.Regular.Indefinite>(
+            SendPoll.Regular.Indefinite(
+                chatId = 1.toChatId(),
+                question = "aaa",
+                options = listOf()
+            )
+        )
         assertSerializable<SendPoll>(
             SendPoll.Quiz.OpenPeriod(
                 chatId = 1.toChatId(),
@@ -344,7 +367,25 @@ object MethodsTest : BaseSerializationTest() {
                 correctOptionIds = listOf(1)
             )
         )
+        assertSerializable<SendPoll.Quiz.OpenPeriod>(
+            SendPoll.Quiz.OpenPeriod(
+                chatId = 1.toChatId(),
+                question = "aaa",
+                options = listOf(),
+                openPeriod = Duration.ofHours(1),
+                correctOptionIds = listOf(1)
+            )
+        )
         assertSerializable<SendPoll>(
+            SendPoll.Quiz.CloseDate(
+                chatId = 1.toChatId(),
+                question = "aaa",
+                options = listOf(),
+                closeDate = Instant.now().truncatedTo(ChronoUnit.SECONDS),
+                correctOptionIds = listOf(1)
+            )
+        )
+        assertSerializable<SendPoll.Quiz.CloseDate>(
             SendPoll.Quiz.CloseDate(
                 chatId = 1.toChatId(),
                 question = "aaa",
@@ -365,6 +406,14 @@ object MethodsTest : BaseSerializationTest() {
                 )
             ),
             skip = setOf(Companion.Mappers.TELEGRAM) // deserialization of attachment is not supported here
+        )
+        assertSerializable<SendPoll.Quiz.Indefinite>(
+            SendPoll.Quiz.Indefinite(
+                chatId = 1.toChatId(),
+                question = "aaa",
+                options = listOf(),
+                correctOptionIds = listOf(1)
+            )
         )
     }
 

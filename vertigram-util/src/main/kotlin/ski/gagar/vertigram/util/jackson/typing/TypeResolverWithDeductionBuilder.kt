@@ -51,6 +51,7 @@ class TypeResolverWithDeductionBuilder : StdTypeResolverBuilder {
         @Suppress("NAME_SHADOWING")
         val subtypes = StdSubtypeResolverWithDuplicates(config.subtypeResolver as StdSubtypeResolver)
             .collectAndResolveSubtypesByTypeId(config, ac)
+            .filter { baseType.rawClass.isAssignableFrom(it.type) }
 
         val subTypeValidator = verifyBaseTypeValidity(config, baseType)
         val idRes = idResolver(config, baseType, subTypeValidator, subtypes, false, true)
