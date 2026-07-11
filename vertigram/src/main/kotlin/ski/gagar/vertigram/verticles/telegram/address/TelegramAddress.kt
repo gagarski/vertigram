@@ -48,6 +48,7 @@ object TelegramAddress {
                 Update.Type.BUSINESS_MESSAGE -> Update.BusinessMessage::class.simpleName
                 Update.Type.EDITED_BUSINESS_MESSAGE -> Update.EditedBusinessMessage::class.simpleName
                 Update.Type.DELETED_BUSINESS_MESSAGES -> Update.DeletedBusinessMessages::class.simpleName
+                Update.Type.GUEST_MESSAGE -> Update.GuestMessage::class.simpleName
                 Update.Type.MESSAGE_REACTION -> Update.MessageReaction::class.simpleName
                 Update.Type.MESSAGE_REACTION_COUNT -> Update.MessageReactionCount::class.simpleName
                 Update.Type.INLINE_QUERY -> Update.InlineQuery::class.simpleName
@@ -58,6 +59,7 @@ object TelegramAddress {
                 Update.Type.PURCHASED_PAID_MEDIA -> Update.PurchasedPaidMedia::class.simpleName
                 Update.Type.POLL -> Update.Poll::class.simpleName
                 Update.Type.POLL_ANSWER -> Update.PollAnswer::class.simpleName
+                Update.Type.MANAGED_BOT -> Update.ManagedBot::class.simpleName
                 Update.Type.MY_CHAT_MEMBER -> Update.MyChatMember::class.simpleName
                 Update.Type.CHAT_MEMBER -> Update.ChatMember::class.simpleName
                 Update.Type.CHAT_JOIN_REQUEST -> Update.ChatJoinRequest::class.simpleName
