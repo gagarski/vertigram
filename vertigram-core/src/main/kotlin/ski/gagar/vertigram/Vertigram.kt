@@ -218,14 +218,17 @@ class Vertigram(
             return raw.consumer(vertigramAddress(address).address) { msg: Message<JsonObject> ->
                 coroScope.launch(MDCContext(coroScope.coroMdcWith(CONSUMER_ADDRESS_MDC to vertigramAddress(address).address))) {
                     val reqW: Request<RequestPayload> = msg.body()!!.mapTo(reqWrapperType, objectMapper)
-
                     try {
                         msg.replyWithSuccess(function(reqW.payload), this@Vertigram, replyOptions)
                     } catch (t: Throwable) {
                         msg.replyWithThrowable<RequestPayload>(t, this@Vertigram, replyOptions)
                         when (t) {
                             is VertigramInternalException -> throw t
-                            is VertigramException -> {}
+                            is VertigramException -> {
+                                if (null == msg.replyAddress()) {
+                                    throw t
+                                }
+                            }
                             else -> throw t
                         }
                     }
@@ -257,14 +260,17 @@ class Vertigram(
             return raw.localConsumer(vertigramAddress(address).address) { msg: Message<JsonObject> ->
                 coroScope.launch(MDCContext(coroScope.coroMdcWith(CONSUMER_ADDRESS_MDC to vertigramAddress(address).address))) {
                     val reqW: Request<RequestPayload> = msg.body()!!.mapTo(reqWrapperType, objectMapper)
-
                     try {
                         msg.replyWithSuccess(function(reqW.payload), this@Vertigram, replyOptions)
                     } catch (t: Throwable) {
                         msg.replyWithThrowable<RequestPayload>(t, this@Vertigram, replyOptions)
                         when (t) {
                             is VertigramInternalException -> throw t
-                            is VertigramException -> {}
+                            is VertigramException -> {
+                                if (null == msg.replyAddress()) {
+                                    throw t
+                                }
+                            }
                             else -> throw t
                         }
                     }

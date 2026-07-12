@@ -71,7 +71,7 @@ object RichMessageSerializationTest : BaseSerializationTest() {
         val photo = PhotoSize(fileId = "photo", fileUniqueId = "unique-photo", width = 1, height = 1)
 
         assertSerializable<Block>(paragraph)
-        assertSerializable<Block>(Block.SectionHeading(text = RichTextValue.plain("heading"), level = 2))
+        assertSerializable<Block>(Block.SectionHeading(text = RichTextValue.plain("heading"), size = 2))
         assertSerializable<Block>(Block.Preformatted(text = text, language = "kotlin"))
         assertSerializable<Block>(Block.Footer(text = text))
         assertSerializable<Block>(Block.Divider)

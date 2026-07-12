@@ -313,7 +313,7 @@ data class ListItem internal constructor(
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", include = JsonTypeInfo.As.EXISTING_PROPERTY)
 @JsonSubTypes(
     JsonSubTypes.Type(value = Block.Paragraph::class, name = Block.Type.PARAGRAPH_STR),
-    JsonSubTypes.Type(value = Block.SectionHeading::class, name = Block.Type.SECTION_HEADING_STR),
+    JsonSubTypes.Type(value = Block.SectionHeading::class, name = Block.Type.HEADING_STR),
     JsonSubTypes.Type(value = Block.Preformatted::class, name = Block.Type.PRE_STR),
     JsonSubTypes.Type(value = Block.Footer::class, name = Block.Type.FOOTER_STR),
     JsonSubTypes.Type(value = Block.Divider::class, name = Block.Type.DIVIDER_STR),
@@ -340,8 +340,8 @@ sealed interface Block {
     @TelegramCodegen.Type
     data class Paragraph internal constructor(val text: RichTextValue) : Block { override val type = Type.PARAGRAPH; companion object }
     @TelegramCodegen.Type
-    data class SectionHeading internal constructor(val text: RichTextValue, val level: Int) : Block {
-        override val type = Type.SECTION_HEADING
+    data class SectionHeading internal constructor(val text: RichTextValue, val size: Int) : Block {
+        override val type = Type.HEADING
         companion object
     }
     @TelegramCodegen.Type
@@ -444,7 +444,7 @@ sealed interface Block {
 
     enum class Type {
         @JsonProperty(PARAGRAPH_STR) PARAGRAPH,
-        @JsonProperty(SECTION_HEADING_STR) SECTION_HEADING,
+        @JsonProperty(HEADING_STR) HEADING,
         @JsonProperty(PRE_STR) PRE,
         @JsonProperty(FOOTER_STR) FOOTER,
         @JsonProperty(DIVIDER_STR) DIVIDER,
@@ -467,7 +467,7 @@ sealed interface Block {
 
         companion object {
             const val PARAGRAPH_STR = "paragraph"
-            const val SECTION_HEADING_STR = "section_heading"
+            const val HEADING_STR = "heading"
             const val PRE_STR = "pre"
             const val FOOTER_STR = "footer"
             const val DIVIDER_STR = "divider"
