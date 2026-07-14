@@ -968,6 +968,28 @@ you'd have to deal with history behavior, so your state history does not become 
     }
 ```
 
+`sendOrEdit` can also maintain an ephemeral message visible only to a selected user. Delivery is selected per call, so
+the same dialog can maintain its regular message and separate ephemeral messages for multiple users in parallel:
+
+```kotlin
+sendOrEdit(
+    richText = "Only you can see this dialog step".toRichText(),
+    replyMarkup = inlineKeyboard {
+        row { callback("Continue", "continue") }
+    },
+    delivery = StatefulTelegramDialogVerticle.Delivery.Ephemeral(
+        receiverUserId = userId,
+        callbackQueryId = callbackQueryId
+    )
+)
+```
+
+When no reply markup is provided for an ephemeral message, `ForceReply` is added automatically.
+Pass `callbackQueryId` when the message is sent in response to a
+callback query; it is not needed when subsequently editing the same ephemeral message. In private chats, channels, or
+while the chat type is still unknown, ephemeral delivery falls back to the regular `sendOrEdit` behavior. Override the
+verticle's `chatType` property when the initial state needs ephemeral delivery before the first incoming update.
+
 ### Default States
 
 We've added some override to the initial implementation which we have not properly discussed:
