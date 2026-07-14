@@ -2,6 +2,11 @@ package ski.gagar.vertigram.telegram.markup
 
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import ski.gagar.vertigram.telegram.types.InputMedia
+import ski.gagar.vertigram.telegram.types.InputRichBlock
+import ski.gagar.vertigram.telegram.types.attachments.Attachment
+import ski.gagar.vertigram.telegram.types.attachments.fileId
+import ski.gagar.vertigram.telegram.types.richmessage.RichTextValue
 import java.time.Instant
 
 object RichMessageBuilderTest {
@@ -68,5 +73,49 @@ object RichMessageBuilderTest {
             "# Report\n\nHello **world**",
             message.markdown
         )
+    }
+
+    @Test
+    fun `rich message builder should produce structured blocks`() {
+        val photo = Attachment.fileId("photo-file")
+        val message = richMessageBlocks(isRtl = true) {
+            h2 { +"Report" }
+            paragraph {
+                +"Hello "
+                b { +"world" }
+            }
+            photo(photo) { +"Caption" }
+        }
+
+        assertEquals(true, message.isRtl)
+        assertEquals(3, message.blocks.size)
+        assertEquals(
+            InputRichBlock.SectionHeading(
+                text = RichTextValue.plain("Report"),
+                size = 2
+            ),
+            message.blocks[0]
+        )
+        val photoBlock = message.blocks[2] as InputRichBlock.Photo
+        assertEquals(photo, photoBlock.photo.media)
+        assertEquals(RichTextValue.plain("Caption"), photoBlock.caption?.text)
+    }
+
+    @Test
+    fun `html and markdown builders should embed attachments`() {
+        val photo = Attachment.fileId("photo-file")
+        val html = richMessageHtml {
+            photo(photo)
+        }
+        val markdown = richMessageMarkdown {
+            photo(photo)
+        }
+
+        listOf(html.html to html.media, markdown.markdown to markdown.media).forEach { (body, media) ->
+            val id = requireNotNull(Regex("tg://photo\\?id=([A-Za-z0-9_-]+)").find(body)).groupValues[1]
+            assertEquals(id, media?.single()?.id)
+        }
+        assertEquals(photo, (html.media?.single()?.media as InputMedia.Photo).media)
+        assertEquals(photo, (markdown.media?.single()?.media as InputMedia.Photo).media)
     }
 }

@@ -30,4 +30,4 @@ data class SendRichMessage internal constructor(
     val suggestedPostParameters: SuggestedPost.Parameters? = null,
     val replyParameters: ReplyParameters? = null,
     val replyMarkup: ReplyMarkup? = null
-) : JsonTelegramCallable<Message>(), HasChatId
+) : MultipartTelegramCallable<Message>(), HasChatId

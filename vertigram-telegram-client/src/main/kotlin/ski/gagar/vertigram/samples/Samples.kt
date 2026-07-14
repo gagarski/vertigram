@@ -49,7 +49,7 @@ private fun richMessageSample() {
         }
         unorderedList {
             item(checked = true) {
-                paragraph { +"Bot API 10.1 types added" }
+                paragraph { +"Bot API 10.2 types added" }
             }
             item {
                 paragraph { +"Rich message builders available" }

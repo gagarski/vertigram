@@ -256,6 +256,18 @@ object UpdateSerializationTest : BaseSerializationTest() {
                 )
             )
         )
+        Update.Subscription.Payload.State.entries.forEach { state ->
+            assertSerializable<Update<*>>(
+                Update.Subscription.create(
+                    updateId = 1,
+                    subscription = Update.Subscription.Payload.create(
+                        user = User.create(id = 1),
+                        invoicePayload = "subscription",
+                        state = state
+                    )
+                )
+            )
+        }
         assertSerializable<Update<*>>(
             Update.MyChatMember.create(
                 updateId = 1,

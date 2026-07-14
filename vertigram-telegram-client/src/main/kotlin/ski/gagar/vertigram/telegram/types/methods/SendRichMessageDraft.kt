@@ -14,4 +14,4 @@ data class SendRichMessageDraft internal constructor(
     val messageThreadId: Long? = null,
     val draftId: Long,
     val richMessage: InputRichMessage
-) : JsonTelegramCallable<Boolean>()
+) : MultipartTelegramCallable<Boolean>()

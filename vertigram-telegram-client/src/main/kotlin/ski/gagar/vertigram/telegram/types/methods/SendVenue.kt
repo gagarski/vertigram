@@ -37,6 +37,8 @@ data class SendVenue internal constructor(
     val messageEffectId: String? = null,
     val suggestedPostParameters: SuggestedPost.Parameters? = null,
 
+    val receiverUserId: Long? = null,
+    val callbackQueryId: String? = null,
     val replyParameters: ReplyParameters? = null,
     val replyMarkup: ReplyMarkup? = null
 ) : JsonTelegramCallable<Message>(), HasChatId

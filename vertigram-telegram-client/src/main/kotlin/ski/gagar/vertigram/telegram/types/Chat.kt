@@ -67,6 +67,7 @@ data class Chat internal constructor(
         val businessOpeningHours: BusinessOpeningHours? = null,
         val personalChat: Chat? = null,
         val guardBot: User? = null,
+        val community: Community? = null,
         val availableReactions: List<Reaction>? = null,
         val accentColorId: Int,
         val maxReactionCount: Int,

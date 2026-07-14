@@ -7,6 +7,26 @@ import java.time.temporal.ChronoUnit
 
 object MessageSerializationTest : BaseSerializationTest() {
     @Test
+    fun `community service message types should survive serialization`() {
+        val community = Community(id = 1, name = "community")
+
+        assertSerializable<Community>(community)
+        assertSerializable<Message.Service.CommunityChatAdded>(
+            Message.Service.CommunityChatAdded(community = community)
+        )
+        assertSerializable<Message.Service.CommunityChatRemoved>(
+            Message.Service.CommunityChatRemoved
+        )
+    }
+
+    @Test
+    fun `ephemeral reply parameters should survive serialization`() {
+        assertSerializable<ReplyParameters>(
+            ReplyParameters(ephemeralMessageId = 1)
+        )
+    }
+
+    @Test
     fun `message origin should survive serialization`() {
         assertSerializable<Message.Origin>(
             Message.Origin.Chat.create(

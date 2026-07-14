@@ -20,7 +20,9 @@ import ski.gagar.vertigram.util.NoPosArgs
 @TelegramCodegen.Type
 data class BotCommand internal constructor(
     val command: String,
-    val description: String
+    val description: String,
+    @get:JvmName("getIsEphemeral")
+    val isEphemeral: Boolean = false
 ) {
     /**
      * Telegram [BotCommandScope](https://core.telegram.org/bots/api#botcommandscope) type.

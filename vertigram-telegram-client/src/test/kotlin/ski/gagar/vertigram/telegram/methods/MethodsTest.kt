@@ -2,11 +2,13 @@ package ski.gagar.vertigram.telegram.methods
 
 import org.junit.jupiter.api.Test
 import ski.gagar.vertigram.BaseSerializationTest
+import ski.gagar.vertigram.telegram.types.InputRichBlock
 import ski.gagar.vertigram.telegram.types.InputRichMessage
 import ski.gagar.vertigram.telegram.types.InputMedia
 import ski.gagar.vertigram.telegram.types.attachments.Attachment
 import ski.gagar.vertigram.telegram.types.attachments.fileId
 import ski.gagar.vertigram.telegram.types.methods.*
+import ski.gagar.vertigram.telegram.types.richmessage.RichTextValue
 import ski.gagar.vertigram.telegram.types.util.toChatId
 import java.time.Duration
 import java.time.Instant
@@ -173,7 +175,14 @@ object MethodsTest : BaseSerializationTest() {
     fun `rich message methods should survive serialization`() {
         val richMessages = listOf(
             InputRichMessage.Html(html = "<p>aaa</p>"),
-            InputRichMessage.Markdown(markdown = "aaa")
+            InputRichMessage.Markdown(markdown = "aaa"),
+            InputRichMessage.Blocks(
+                blocks = listOf(
+                    InputRichBlock.Paragraph(
+                        text = RichTextValue.plain("aaa")
+                    )
+                )
+            )
         )
 
         for (richMessage in richMessages) {
@@ -191,6 +200,51 @@ object MethodsTest : BaseSerializationTest() {
                 )
             )
         }
+    }
+
+    @Test
+    fun `ephemeral message methods should survive serialization`() {
+        assertSerializable<EditEphemeralMessageText>(
+            EditEphemeralMessageText(
+                chatId = 1.toChatId(),
+                receiverUserId = 2,
+                ephemeralMessageId = 3,
+                text = "edited"
+            )
+        )
+        assertSerializable<EditEphemeralMessageMedia>(
+            EditEphemeralMessageMedia(
+                chatId = 1.toChatId(),
+                receiverUserId = 2,
+                ephemeralMessageId = 3,
+                media = InputMedia.Photo(
+                    media = Attachment.fileId("photo")
+                )
+            ),
+            skip = setOf(Companion.Mappers.TELEGRAM)
+        )
+        assertSerializable<EditEphemeralMessageCaption>(
+            EditEphemeralMessageCaption(
+                chatId = 1.toChatId(),
+                receiverUserId = 2,
+                ephemeralMessageId = 3,
+                caption = "edited"
+            )
+        )
+        assertSerializable<EditEphemeralMessageReplyMarkup>(
+            EditEphemeralMessageReplyMarkup(
+                chatId = 1.toChatId(),
+                receiverUserId = 2,
+                ephemeralMessageId = 3
+            )
+        )
+        assertSerializable<DeleteEphemeralMessage>(
+            DeleteEphemeralMessage(
+                chatId = 1.toChatId(),
+                receiverUserId = 2,
+                ephemeralMessageId = 3
+            )
+        )
     }
 
     @Test

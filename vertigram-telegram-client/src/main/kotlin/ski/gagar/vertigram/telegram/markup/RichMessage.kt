@@ -25,13 +25,25 @@ import kotlinx.html.stream.appendHTML
 import kotlinx.html.u
 import kotlinx.html.ul
 import kotlinx.html.visit
+import ski.gagar.vertigram.telegram.types.InputRichBlock
+import ski.gagar.vertigram.telegram.types.InputRichBlockListItem
+import ski.gagar.vertigram.telegram.types.InputMedia
 import ski.gagar.vertigram.telegram.types.InputRichMessage
+import ski.gagar.vertigram.telegram.types.InputRichMessageMedia
+import ski.gagar.vertigram.telegram.types.Location
 import ski.gagar.vertigram.telegram.types.User
+import ski.gagar.vertigram.telegram.types.attachments.Attachment
+import ski.gagar.vertigram.telegram.types.attachments.StringAttachment
+import ski.gagar.vertigram.telegram.types.richmessage.Caption
+import ski.gagar.vertigram.telegram.types.richmessage.RichText as RichTextEntity
+import ski.gagar.vertigram.telegram.types.richmessage.RichTextValue
+import ski.gagar.vertigram.telegram.types.richmessage.TableCell
 import ski.gagar.vertigram.util.NoPosArgs
 import java.time.Instant
 import java.time.OffsetDateTime
 import java.time.ZonedDateTime
 import java.time.chrono.ChronoZonedDateTime
+import java.util.UUID
 
 /**
  * Build [InputRichMessage.Html] using rich-message HTML formatting.
@@ -44,11 +56,7 @@ fun richMessageHtml(
     isRtl: Boolean = false,
     skipEntityDetection: Boolean = false,
     init: RichMessageBuilder.() -> Unit
-) = InputRichMessage.Html(
-    html = RichMessageBuilder().apply(init).toHtmlString(),
-    isRtl = isRtl,
-    skipEntityDetection = skipEntityDetection
-)
+): InputRichMessage.Html = RichMessageBuilder().apply(init).toHtmlMessage(isRtl, skipEntityDetection)
 
 /**
  * Build [InputRichMessage.Markdown] using rich-message Markdown formatting.
@@ -61,8 +69,19 @@ fun richMessageMarkdown(
     isRtl: Boolean = false,
     skipEntityDetection: Boolean = false,
     init: RichMessageBuilder.() -> Unit
-) = InputRichMessage.Markdown(
-    markdown = RichMessageBuilder().apply(init).toMarkdownString(),
+): InputRichMessage.Markdown = RichMessageBuilder().apply(init).toMarkdownMessage(isRtl, skipEntityDetection)
+
+/**
+ * Build [InputRichMessage.Blocks] using structured rich-message blocks.
+ */
+fun richMessageBlocks(
+    @Suppress("UNUSED_PARAMETER")
+    noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+    isRtl: Boolean = false,
+    skipEntityDetection: Boolean = false,
+    init: RichMessageBuilder.() -> Unit
+) = InputRichMessage.Blocks(
+    blocks = RichMessageBuilder().apply(init).toInputBlocks(),
     isRtl = isRtl,
     skipEntityDetection = skipEntityDetection
 )
@@ -285,12 +304,74 @@ open class RichBlockContainerBuilder internal constructor() {
         blocks.add(RichBlockElement.Photo(url, spoiler, caption?.let { RichCaptionBuilder().apply(it).caption() }))
     }
 
+    fun photo(media: Attachment, spoiler: Boolean = false, caption: (RichCaptionBuilder.() -> Unit)? = null) {
+        val id = richMediaId()
+        blocks.add(
+            RichBlockElement.Photo(
+                url = "tg://photo?id=$id",
+                spoiler = spoiler,
+                caption = caption?.let { RichCaptionBuilder().apply(it).caption() },
+                mediaId = id,
+                attachment = media
+            )
+        )
+    }
+
     fun video(url: String, spoiler: Boolean = false, caption: (RichCaptionBuilder.() -> Unit)? = null) {
         blocks.add(RichBlockElement.Video(url, spoiler, caption?.let { RichCaptionBuilder().apply(it).caption() }))
     }
 
+    fun video(media: Attachment, spoiler: Boolean = false, caption: (RichCaptionBuilder.() -> Unit)? = null) {
+        val id = richMediaId()
+        blocks.add(
+            RichBlockElement.Video(
+                url = "tg://video?id=$id",
+                spoiler = spoiler,
+                caption = caption?.let { RichCaptionBuilder().apply(it).caption() },
+                mediaId = id,
+                attachment = media
+            )
+        )
+    }
+
     fun audio(url: String, caption: (RichCaptionBuilder.() -> Unit)? = null) {
         blocks.add(RichBlockElement.Audio(url, caption?.let { RichCaptionBuilder().apply(it).caption() }))
+    }
+
+    fun audio(media: Attachment, caption: (RichCaptionBuilder.() -> Unit)? = null) {
+        val id = richMediaId()
+        blocks.add(
+            RichBlockElement.Audio(
+                url = "tg://audio?id=$id",
+                caption = caption?.let { RichCaptionBuilder().apply(it).caption() },
+                mediaId = id,
+                attachment = media
+            )
+        )
+    }
+
+    fun animation(media: Attachment, caption: (RichCaptionBuilder.() -> Unit)? = null) {
+        val id = richMediaId()
+        blocks.add(
+            RichBlockElement.Animation(
+                url = "tg://video?id=$id",
+                caption = caption?.let { RichCaptionBuilder().apply(it).caption() },
+                mediaId = id,
+                attachment = media
+            )
+        )
+    }
+
+    fun voiceNote(media: Attachment, caption: (RichCaptionBuilder.() -> Unit)? = null) {
+        val id = richMediaId()
+        blocks.add(
+            RichBlockElement.VoiceNote(
+                url = "tg://audio?id=$id",
+                caption = caption?.let { RichCaptionBuilder().apply(it).caption() },
+                mediaId = id,
+                attachment = media
+            )
+        )
     }
 
     fun map(
@@ -298,12 +379,23 @@ open class RichBlockContainerBuilder internal constructor() {
         longitude: Double,
         zoom: Int,
         caption: (RichCaptionBuilder.() -> Unit)? = null
+    ) = map(latitude, longitude, zoom, 320, 240, caption)
+
+    fun map(
+        latitude: Double,
+        longitude: Double,
+        zoom: Int,
+        width: Int,
+        height: Int,
+        caption: (RichCaptionBuilder.() -> Unit)? = null
     ) {
         blocks.add(
             RichBlockElement.Map(
                 latitude = latitude,
                 longitude = longitude,
                 zoom = zoom,
+                width = width,
+                height = height,
                 caption = caption?.let { RichCaptionBuilder().apply(it).caption() }
             )
         )
@@ -347,6 +439,26 @@ open class RichBlockContainerBuilder internal constructor() {
     internal fun toMarkdownString() = StringBuilder().apply {
         renderMarkdownBlocks(blocks)
     }.toString().trimEnd()
+
+    internal fun toHtmlMessage(isRtl: Boolean, skipEntityDetection: Boolean) = InputRichMessage.Html(
+        html = toHtmlString(),
+        isRtl = isRtl,
+        skipEntityDetection = skipEntityDetection,
+        media = collectInputMedia().ifEmpty { null }
+    )
+
+    internal fun toMarkdownMessage(isRtl: Boolean, skipEntityDetection: Boolean) = InputRichMessage.Markdown(
+        markdown = toMarkdownString(),
+        isRtl = isRtl,
+        skipEntityDetection = skipEntityDetection,
+        media = collectInputMedia().ifEmpty { null }
+    )
+
+    internal fun toInputBlocks() = blocks.map { it.toInputBlock() }
+
+    private fun collectInputMedia() = buildList {
+        blocks.forEach { it.collectInputMedia(this) }
+    }
 
     private fun mediaGroup(tag: String, caption: (RichCaptionBuilder.() -> Unit)?, init: RichMediaGroupBuilder.() -> Unit) {
         blocks.add(
@@ -394,8 +506,18 @@ class RichMediaGroupBuilder internal constructor() {
         media.add(RichGroupMedia.Photo(url, spoiler))
     }
 
+    fun photo(attachment: Attachment, spoiler: Boolean = false) {
+        val id = richMediaId()
+        media.add(RichGroupMedia.Photo("tg://photo?id=$id", spoiler, id, attachment))
+    }
+
     fun video(url: String, spoiler: Boolean = false) {
         media.add(RichGroupMedia.Video(url, spoiler))
+    }
+
+    fun video(attachment: Attachment, spoiler: Boolean = false) {
+        val id = richMediaId()
+        media.add(RichGroupMedia.Video("tg://video?id=$id", spoiler, id, attachment))
     }
 }
 
@@ -458,7 +580,7 @@ internal sealed class RichInlineElement {
     abstract class Wrapped(
         private val markdownPrefix: String,
         private val markdownPostfix: String,
-        private val wrappedChildren: kotlin.collections.List<RichInlineElement>
+        internal val wrappedChildren: kotlin.collections.List<RichInlineElement>
     ) : RichInlineElement() {
         override fun StringBuilder.renderMarkdown() {
             append(markdownPrefix)
@@ -599,8 +721,12 @@ internal sealed class RichInlineElement {
 internal sealed class RichBlockElement {
     internal abstract fun StringBuilder.renderMarkdown()
     internal abstract fun FlowContent.renderHtml()
+    internal abstract fun toInputBlock(): InputRichBlock
+    internal open fun collectInputMedia(target: MutableList<InputRichMessageMedia>) = Unit
 
-    data class Paragraph(private val children: kotlin.collections.List<RichInlineElement>) : RichBlockElement() {
+    data class Paragraph(val children: kotlin.collections.List<RichInlineElement>) : RichBlockElement() {
+        override fun toInputBlock() = InputRichBlock.Paragraph(children.toRichTextValue())
+
         override fun StringBuilder.renderMarkdown() {
             renderMarkdownChildren(children)
             append("\n\n")
@@ -611,7 +737,9 @@ internal sealed class RichBlockElement {
         }
     }
 
-    data class Footer(private val children: kotlin.collections.List<RichInlineElement>) : RichBlockElement() {
+    data class Footer(val children: kotlin.collections.List<RichInlineElement>) : RichBlockElement() {
+        override fun toInputBlock() = InputRichBlock.Footer(children.toRichTextValue())
+
         override fun StringBuilder.renderMarkdown() {
             htmlBlock { renderHtml() }
         }
@@ -621,7 +749,9 @@ internal sealed class RichBlockElement {
         }
     }
 
-    data class Thinking(private val children: kotlin.collections.List<RichInlineElement>) : RichBlockElement() {
+    data class Thinking(val children: kotlin.collections.List<RichInlineElement>) : RichBlockElement() {
+        override fun toInputBlock() = InputRichBlock.Thinking(children.toRichTextValue())
+
         override fun StringBuilder.renderMarkdown() {
             htmlBlock { renderHtml() }
         }
@@ -631,7 +761,9 @@ internal sealed class RichBlockElement {
         }
     }
 
-    data class Heading(val level: Int, private val children: kotlin.collections.List<RichInlineElement>) : RichBlockElement() {
+    data class Heading(val level: Int, val children: kotlin.collections.List<RichInlineElement>) : RichBlockElement() {
+        override fun toInputBlock() = InputRichBlock.SectionHeading(children.toRichTextValue(), level)
+
         override fun StringBuilder.renderMarkdown() {
             append("#".repeat(level))
             append(" ")
@@ -647,6 +779,8 @@ internal sealed class RichBlockElement {
     }
 
     data class Pre(val code: String, val language: String?) : RichBlockElement() {
+        override fun toInputBlock() = InputRichBlock.Preformatted(RichTextValue.plain(code), language)
+
         override fun StringBuilder.renderMarkdown() {
             append("```")
             language?.let { append(MarkdownTools.escapeCode(it)) }
@@ -670,6 +804,8 @@ internal sealed class RichBlockElement {
     }
 
     data object Divider : RichBlockElement() {
+        override fun toInputBlock() = InputRichBlock.Divider
+
         override fun StringBuilder.renderMarkdown() {
             append("---\n\n")
         }
@@ -680,6 +816,8 @@ internal sealed class RichBlockElement {
     }
 
     data class Math(val expression: String) : RichBlockElement() {
+        override fun toInputBlock() = InputRichBlock.MathematicalExpression(expression)
+
         override fun StringBuilder.renderMarkdown() {
             append("<tg-math-block>${escapeHtml(expression)}</tg-math-block>\n\n")
         }
@@ -690,6 +828,8 @@ internal sealed class RichBlockElement {
     }
 
     data class Anchor(val name: String) : RichBlockElement() {
+        override fun toInputBlock() = InputRichBlock.Anchor(name)
+
         override fun StringBuilder.renderMarkdown() {
             append("""<a name="${escapeHtmlAttribute(name)}"></a>""").append("\n\n")
         }
@@ -706,6 +846,22 @@ internal sealed class RichBlockElement {
         val reversed: Boolean,
         val items: kotlin.collections.List<RichListItem>
     ) : RichBlockElement() {
+        override fun toInputBlock() = InputRichBlock.List(
+            items.mapIndexed { index, item ->
+                InputRichBlockListItem(
+                    blocks = item.blocks.map { it.toInputBlock() },
+                    hasCheckbox = item.checked != null,
+                    isChecked = item.checked == true,
+                    value = if (ordered) item.value?.toIntOrNull() ?: start?.plus(index) else null,
+                    type = if (ordered) type else null
+                )
+            }
+        )
+
+        override fun collectInputMedia(target: MutableList<InputRichMessageMedia>) {
+            items.flatMap { it.blocks }.forEach { it.collectInputMedia(target) }
+        }
+
         override fun StringBuilder.renderMarkdown() {
             items.forEachIndexed { ix, item ->
                 val marker = if (ordered) "${start?.plus(ix) ?: ix + 1}. " else "- "
@@ -742,7 +898,19 @@ internal sealed class RichBlockElement {
         }
     }
 
-    data class BlockQuote(val blocks: kotlin.collections.List<RichBlockElement>, val credit: kotlin.collections.List<RichInlineElement>?) : RichBlockElement() {
+    data class BlockQuote(
+        val blocks: kotlin.collections.List<RichBlockElement>,
+        val credit: kotlin.collections.List<RichInlineElement>?
+    ) : RichBlockElement() {
+        override fun toInputBlock() = InputRichBlock.BlockQuotation(
+            blocks.map { it.toInputBlock() },
+            credit?.toRichTextValue()
+        )
+
+        override fun collectInputMedia(target: MutableList<InputRichMessageMedia>) {
+            blocks.forEach { it.collectInputMedia(target) }
+        }
+
         override fun StringBuilder.renderMarkdown() {
             val quote = StringBuilder().apply { renderMarkdownBlocks(blocks) }.toString().trimEnd()
             append(quote.lineSequence().joinToString("\n") { "> $it" })
@@ -763,7 +931,15 @@ internal sealed class RichBlockElement {
         }
     }
 
-    data class PullQuote(val text: kotlin.collections.List<RichInlineElement>, val credit: kotlin.collections.List<RichInlineElement>?) : RichBlockElement() {
+    data class PullQuote(
+        val text: kotlin.collections.List<RichInlineElement>,
+        val credit: kotlin.collections.List<RichInlineElement>?
+    ) : RichBlockElement() {
+        override fun toInputBlock() = InputRichBlock.PullQuotation(
+            text.toRichTextValue(),
+            credit?.toRichTextValue()
+        )
+
         override fun StringBuilder.renderMarkdown() {
             htmlBlock { renderHtml() }
         }
@@ -778,7 +954,21 @@ internal sealed class RichBlockElement {
         }
     }
 
-    data class Details(val open: Boolean, val summary: kotlin.collections.List<RichInlineElement>, val blocks: kotlin.collections.List<RichBlockElement>) : RichBlockElement() {
+    data class Details(
+        val open: Boolean,
+        val summary: kotlin.collections.List<RichInlineElement>,
+        val blocks: kotlin.collections.List<RichBlockElement>
+    ) : RichBlockElement() {
+        override fun toInputBlock() = InputRichBlock.Details(
+            summary.toRichTextValue(),
+            blocks.map { it.toInputBlock() },
+            open
+        )
+
+        override fun collectInputMedia(target: MutableList<InputRichMessageMedia>) {
+            blocks.forEach { it.collectInputMedia(target) }
+        }
+
         override fun StringBuilder.renderMarkdown() {
             htmlBlock { renderHtml() }
         }
@@ -812,7 +1002,22 @@ internal sealed class RichBlockElement {
         }
     }
 
-    data class Photo(val url: String, val spoiler: Boolean, val caption: RichCaption?) : Media(caption) {
+    data class Photo(
+        val url: String,
+        val spoiler: Boolean,
+        val caption: RichCaption?,
+        val mediaId: String? = null,
+        val attachment: Attachment? = null
+    ) : Media(caption) {
+        override fun toInputBlock() = InputRichBlock.Photo(
+            InputMedia.Photo(attachment ?: StringAttachment(url), hasSpoiler = spoiler),
+            caption?.toInputCaption()
+        )
+
+        override fun collectInputMedia(target: MutableList<InputRichMessageMedia>) {
+            addInputMedia(target, mediaId, attachment) { InputMedia.Photo(it) }
+        }
+
         override fun FlowContent.renderMedia() {
             img(src = url) {
                 if (spoiler) attributes["tg-spoiler"] = ""
@@ -820,19 +1025,103 @@ internal sealed class RichBlockElement {
         }
     }
 
-    data class Video(val url: String, val spoiler: Boolean, val caption: RichCaption?) : Media(caption) {
+    data class Video(
+        val url: String,
+        val spoiler: Boolean,
+        val caption: RichCaption?,
+        val mediaId: String? = null,
+        val attachment: Attachment? = null
+    ) : Media(caption) {
+        override fun toInputBlock() = InputRichBlock.Video(
+            InputMedia.Video(attachment ?: StringAttachment(url), hasSpoiler = spoiler),
+            caption?.toInputCaption()
+        )
+
+        override fun collectInputMedia(target: MutableList<InputRichMessageMedia>) {
+            addInputMedia(target, mediaId, attachment) { InputMedia.Video(it) }
+        }
+
         override fun FlowContent.renderMedia() {
             with(RichMessageHtmlEx) { video(url, spoiler) }
         }
     }
 
-    data class Audio(val url: String, val caption: RichCaption?) : Media(caption) {
+    data class Audio(
+        val url: String,
+        val caption: RichCaption?,
+        val mediaId: String? = null,
+        val attachment: Attachment? = null
+    ) : Media(caption) {
+        override fun toInputBlock() = InputRichBlock.Audio(
+            InputMedia.Audio(attachment ?: StringAttachment(url)),
+            caption?.toInputCaption()
+        )
+
+        override fun collectInputMedia(target: MutableList<InputRichMessageMedia>) {
+            addInputMedia(target, mediaId, attachment) { InputMedia.Audio(it) }
+        }
+
         override fun FlowContent.renderMedia() {
             with(RichMessageHtmlEx) { audio(url) }
         }
     }
 
-    data class Map(val latitude: Double, val longitude: Double, val zoom: Int, val caption: RichCaption?) : RichBlockElement() {
+    data class Animation(
+        val url: String,
+        val caption: RichCaption?,
+        val mediaId: String,
+        val attachment: Attachment
+    ) : Media(caption) {
+        override fun toInputBlock() = InputRichBlock.Animation(
+            InputMedia.Animation(attachment),
+            caption?.toInputCaption()
+        )
+
+        override fun collectInputMedia(target: MutableList<InputRichMessageMedia>) {
+            addInputMedia(target, mediaId, attachment) { InputMedia.Animation(it) }
+        }
+
+        override fun FlowContent.renderMedia() {
+            with(RichMessageHtmlEx) { video(url, false) }
+        }
+    }
+
+    data class VoiceNote(
+        val url: String,
+        val caption: RichCaption?,
+        val mediaId: String,
+        val attachment: Attachment
+    ) : Media(caption) {
+        override fun toInputBlock() = InputRichBlock.VoiceNote(
+            InputMedia.VoiceNote(attachment),
+            caption?.toInputCaption()
+        )
+
+        override fun collectInputMedia(target: MutableList<InputRichMessageMedia>) {
+            addInputMedia(target, mediaId, attachment) { InputMedia.VoiceNote(it) }
+        }
+
+        override fun FlowContent.renderMedia() {
+            with(RichMessageHtmlEx) { audio(url) }
+        }
+    }
+
+    data class Map(
+        val latitude: Double,
+        val longitude: Double,
+        val zoom: Int,
+        val width: Int,
+        val height: Int,
+        val caption: RichCaption?
+    ) : RichBlockElement() {
+        override fun toInputBlock() = InputRichBlock.Map(
+            Location(latitude, longitude),
+            zoom,
+            width,
+            height,
+            caption?.toInputCaption()
+        )
+
         override fun StringBuilder.renderMarkdown() {
             htmlBlock { renderHtml() }
         }
@@ -853,7 +1142,21 @@ internal sealed class RichBlockElement {
         }
     }
 
-    data class MediaGroup(val tag: String, val media: kotlin.collections.List<RichGroupMedia>, val caption: RichCaption?) : RichBlockElement() {
+    data class MediaGroup(
+        val tag: String,
+        val media: kotlin.collections.List<RichGroupMedia>,
+        val caption: RichCaption?
+    ) : RichBlockElement() {
+        override fun toInputBlock() = when (tag) {
+            "tg-collage" -> InputRichBlock.Collage(media.map { it.toInputBlock() }, caption?.toInputCaption())
+            "tg-slideshow" -> InputRichBlock.Slideshow(media.map { it.toInputBlock() }, caption?.toInputCaption())
+            else -> error("Unknown rich-message media group: $tag")
+        }
+
+        override fun collectInputMedia(target: MutableList<InputRichMessageMedia>) {
+            media.forEach { it.collectInputMedia(target) }
+        }
+
         override fun StringBuilder.renderMarkdown() {
             htmlBlock { renderHtml() }
         }
@@ -876,6 +1179,13 @@ internal sealed class RichBlockElement {
         val caption: kotlin.collections.List<RichInlineElement>?,
         val rows: kotlin.collections.List<kotlin.collections.List<RichTableCell>>
     ) : RichBlockElement() {
+        override fun toInputBlock() = InputRichBlock.Table(
+            cells = rows.map { row -> row.map { it.toInputTableCell() } },
+            isBordered = bordered,
+            isStriped = striped,
+            caption = caption?.toRichTextValue()
+        )
+
         override fun StringBuilder.renderMarkdown() {
             htmlBlock { renderHtml() }
         }
@@ -931,8 +1241,23 @@ internal data class RichCaption(
 
 internal sealed class RichGroupMedia {
     internal abstract fun FlowContent.renderHtml()
+    internal abstract fun toInputBlock(): InputRichBlock
+    internal abstract fun collectInputMedia(target: MutableList<InputRichMessageMedia>)
 
-    data class Photo(val url: String, val spoiler: Boolean) : RichGroupMedia() {
+    data class Photo(
+        val url: String,
+        val spoiler: Boolean,
+        val mediaId: String? = null,
+        val attachment: Attachment? = null
+    ) : RichGroupMedia() {
+        override fun toInputBlock() = InputRichBlock.Photo(
+            InputMedia.Photo(attachment ?: StringAttachment(url), hasSpoiler = spoiler)
+        )
+
+        override fun collectInputMedia(target: MutableList<InputRichMessageMedia>) {
+            addInputMedia(target, mediaId, attachment) { InputMedia.Photo(it) }
+        }
+
         override fun FlowContent.renderHtml() {
             img(src = url) {
                 if (spoiler) attributes["tg-spoiler"] = ""
@@ -940,7 +1265,20 @@ internal sealed class RichGroupMedia {
         }
     }
 
-    data class Video(val url: String, val spoiler: Boolean) : RichGroupMedia() {
+    data class Video(
+        val url: String,
+        val spoiler: Boolean,
+        val mediaId: String? = null,
+        val attachment: Attachment? = null
+    ) : RichGroupMedia() {
+        override fun toInputBlock() = InputRichBlock.Video(
+            InputMedia.Video(attachment ?: StringAttachment(url), hasSpoiler = spoiler)
+        )
+
+        override fun collectInputMedia(target: MutableList<InputRichMessageMedia>) {
+            addInputMedia(target, mediaId, attachment) { InputMedia.Video(it) }
+        }
+
         override fun FlowContent.renderHtml() {
             with(RichMessageHtmlEx) { video(url, spoiler) }
         }
@@ -1002,6 +1340,82 @@ private fun FlowContent.renderHtmlChildren(children: kotlin.collections.List<Ric
 private fun FlowContent.renderHtmlBlocks(blocks: kotlin.collections.List<RichBlockElement>) {
     for (block in blocks) {
         with(block) { renderHtml() }
+    }
+}
+
+private fun richMediaId() = "media_${UUID.randomUUID()}"
+
+private fun kotlin.collections.List<RichInlineElement>.toRichTextValue(): RichTextValue =
+    map { it.toRichTextValue() }.let { parts ->
+        when (parts.size) {
+            0 -> RichTextValue.plain("")
+            1 -> parts.single()
+            else -> RichTextValue.parts(parts)
+        }
+    }
+
+private fun RichInlineElement.toRichTextValue(): RichTextValue = when (this) {
+    is RichInlineElement.Text -> RichTextValue.plain(value)
+    RichInlineElement.Br -> RichTextValue.plain("\n")
+    is RichInlineElement.Bold -> formatted(RichTextEntity.Bold(wrappedChildren.toRichTextValue()))
+    is RichInlineElement.Italic -> formatted(RichTextEntity.Italic(wrappedChildren.toRichTextValue()))
+    is RichInlineElement.Underline -> formatted(RichTextEntity.Underline(wrappedChildren.toRichTextValue()))
+    is RichInlineElement.Strikethrough -> formatted(RichTextEntity.Strikethrough(wrappedChildren.toRichTextValue()))
+    is RichInlineElement.Mark -> formatted(RichTextEntity.Marked(wrappedChildren.toRichTextValue()))
+    is RichInlineElement.Subscript -> formatted(RichTextEntity.Subscript(wrappedChildren.toRichTextValue()))
+    is RichInlineElement.Superscript -> formatted(RichTextEntity.Superscript(wrappedChildren.toRichTextValue()))
+    is RichInlineElement.Spoiler -> formatted(RichTextEntity.Spoiler(wrappedChildren.toRichTextValue()))
+    is RichInlineElement.Code -> formatted(RichTextEntity.Code(RichTextValue.plain(value)))
+    is RichInlineElement.Math -> formatted(RichTextEntity.MathematicalExpression(expression))
+    is RichInlineElement.Link -> when {
+        href.startsWith("mailto:") -> formatted(
+            RichTextEntity.EmailAddress(children.toRichTextValue(), href.removePrefix("mailto:"))
+        )
+        href.startsWith("tel:") -> formatted(
+            RichTextEntity.PhoneNumber(children.toRichTextValue(), href.removePrefix("tel:"))
+        )
+        href.startsWith("#") -> formatted(
+            RichTextEntity.AnchorLink(children.toRichTextValue(), href.removePrefix("#"))
+        )
+        else -> formatted(RichTextEntity.Url(children.toRichTextValue(), href))
+    }
+    is RichInlineElement.Anchor -> formatted(RichTextEntity.Anchor(name))
+    is RichInlineElement.Reference -> formatted(RichTextEntity.Reference(name, children.toRichTextValue()))
+    is RichInlineElement.Emoji -> formatted(RichTextEntity.CustomEmoji(customId.toString(), alternativeText))
+    is RichInlineElement.DateTime -> formatted(
+        RichTextEntity.DateTime(
+            text = RichTextValue.plain(text),
+            unixTime = unixTime,
+            dateTimeFormat = dateTimeFormat?.value ?: DateTimeFormat.RELATIVE.value
+        )
+    )
+    is RichInlineElement.Wrapped -> error("Unknown wrapped rich-text element: ${this::class.qualifiedName}")
+}
+
+private fun formatted(value: RichTextEntity) = RichTextValue.formatted(value)
+
+private fun RichCaption.toInputCaption() = Caption(
+    text = text.toRichTextValue(),
+    credit = credit?.toRichTextValue()
+)
+
+private fun RichTableCell.toInputTableCell() = TableCell(
+    text = text.toRichTextValue(),
+    isHeader = header,
+    colspan = colspan,
+    rowspan = rowspan,
+    align = align?.let { TableCell.Align.valueOf(it.uppercase()) },
+    verticalAlign = verticalAlign?.let { TableCell.VerticalAlign.valueOf(it.uppercase()) }
+)
+
+private inline fun addInputMedia(
+    target: MutableList<InputRichMessageMedia>,
+    id: String?,
+    attachment: Attachment?,
+    media: (Attachment) -> InputMedia.RichMessage
+) {
+    if (id != null && attachment != null) {
+        target += InputRichMessageMedia(id, media(attachment))
     }
 }
 

@@ -14,7 +14,8 @@ import ski.gagar.vertigram.util.NoPosArgs
  */
 @TelegramCodegen.Type
 data class ReplyParameters internal constructor(
-    val messageId: Long,
+    val messageId: Long? = null,
+    val ephemeralMessageId: Long? = null,
     val chatId: ChatId? = null,
     val allowSendingWithoutReply: Boolean = false,
     override val quote: String? = null,

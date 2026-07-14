@@ -52,6 +52,26 @@ object InputMediaSerializationTest : BaseSerializationTest() {
             ),
             skip = MAPPERS_TO_SKIP
         )
+
+        assertSerializable<InputMedia>(
+            InputMedia.VoiceNote.create(
+                media = StringAttachment("https://www")
+            ),
+            skip = MAPPERS_TO_SKIP
+        )
+    }
+
+    @Test
+    fun `input rich message media should survive polymorphic serialization`() {
+        listOf<InputMedia.RichMessage>(
+            InputMedia.Animation.create(media = StringAttachment("https://www")),
+            InputMedia.Audio.create(media = StringAttachment("https://www")),
+            InputMedia.Photo.create(media = StringAttachment("https://www")),
+            InputMedia.Video.create(media = StringAttachment("https://www")),
+            InputMedia.VoiceNote.create(media = StringAttachment("https://www"))
+        ).forEach {
+            assertSerializable<InputMedia.RichMessage>(it, skip = MAPPERS_TO_SKIP)
+        }
     }
 
     @Test

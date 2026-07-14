@@ -27,6 +27,8 @@ data class Message internal constructor(
     val senderTag: String? = null,
     val date: Instant,
     val guestQueryId: String? = null,
+    val receiverUser: User? = null,
+    val ephemeralMessageId: Long? = null,
     val businessConnectionId: String? = null,
     val chat: Chat,
     val forwardOrigin: Origin? = null,
@@ -111,6 +113,8 @@ data class Message internal constructor(
     val chatBackgroundSet: ChatBackground? = null,
     val checklistTasksDone: Service.ChecklistTasks.Done? = null,
     val checklistTasksAdded: Service.ChecklistTasks.Added? = null,
+    val communityChatAdded: Service.CommunityChatAdded? = null,
+    val communityChatRemoved: Service.CommunityChatRemoved? = null,
     val directMessagePriceChanged: Service.DirectMessagePriceChanged? = null,
     val suggestedPostInfo: SuggestedPost.Info? = null,
     val suggestedPostApproved: Service.SuggestedPost.Approved? = null,
@@ -630,6 +634,23 @@ data class Message internal constructor(
             }
 
         }
+
+        /**
+         * Telegram [CommunityChatAdded](https://core.telegram.org/bots/api#communitychatadded) type.
+         *
+         * For up-to-date documentation, please consult the official Telegram docs.
+         */
+        @TelegramCodegen.Type
+        data class CommunityChatAdded internal constructor(
+            val community: Community
+        ) { companion object }
+
+        /**
+         * Telegram [CommunityChatRemoved](https://core.telegram.org/bots/api#communitychatremoved) type.
+         *
+         * For up-to-date documentation, please consult the official Telegram docs.
+         */
+        data object CommunityChatRemoved
 
         /**
          * Telegram [DirectMessagePriceChanged](https://core.telegram.org/bots/api#directmessagepricechanged) type.

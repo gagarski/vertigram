@@ -60,6 +60,7 @@ object TelegramAddress {
                 Update.Type.POLL -> Update.Poll::class.simpleName
                 Update.Type.POLL_ANSWER -> Update.PollAnswer::class.simpleName
                 Update.Type.MANAGED_BOT -> Update.ManagedBot::class.simpleName
+                Update.Type.SUBSCRIPTION -> Update.Subscription::class.simpleName
                 Update.Type.MY_CHAT_MEMBER -> Update.MyChatMember::class.simpleName
                 Update.Type.CHAT_MEMBER -> Update.ChatMember::class.simpleName
                 Update.Type.CHAT_JOIN_REQUEST -> Update.ChatJoinRequest::class.simpleName

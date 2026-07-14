@@ -51,7 +51,7 @@ sealed interface EditMessageText : HasRichText {
         override val linkPreviewOptions: Message.LinkPreviewOptions? = null,
         override val richMessage: InputRichMessage? = null,
         override val replyMarkup: ReplyMarkup? = null
-    ) : EditMessageText, JsonTelegramCallable<Message>()
+    ) : EditMessageText, MultipartTelegramCallable<Message>()
 
     /**
      * Chat message case
@@ -73,5 +73,5 @@ sealed interface EditMessageText : HasRichText {
         override val linkPreviewOptions: Message.LinkPreviewOptions? = null,
         override val richMessage: InputRichMessage? = null,
         override val replyMarkup: ReplyMarkup? = null
-    ) : EditMessageText, HasChatId, JsonTelegramCallable<Message>()
+    ) : EditMessageText, HasChatId, MultipartTelegramCallable<Message>()
 }

@@ -39,6 +39,8 @@ data class SendAudio internal constructor(
     val allowPaidBroadcast: Boolean = false,
     val messageEffectId: String? = null,
     val suggestedPostParameters: SuggestedPost.Parameters? = null,
+    val receiverUserId: Long? = null,
+    val callbackQueryId: String? = null,
     val replyParameters: ReplyParameters? = null,
     val replyMarkup: ReplyMarkup? = null
 ) : MultipartTelegramCallable<Message>(), HasChatId, HasOptionalRichCaption

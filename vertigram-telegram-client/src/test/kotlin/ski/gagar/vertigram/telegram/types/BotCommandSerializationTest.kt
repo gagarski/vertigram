@@ -6,6 +6,17 @@ import ski.gagar.vertigram.telegram.types.util.toChatId
 
 object BotCommandSerializationTest : BaseSerializationTest() {
     @Test
+    fun `bot command should survive serialization`() {
+        assertSerializable<BotCommand>(
+            BotCommand(
+                command = "private",
+                description = "Private command",
+                isEphemeral = true
+            )
+        )
+    }
+
+    @Test
     fun `bot command scope should survive serialization`() {
         assertSerializable<BotCommand.Scope>(
             BotCommand.Scope.Default

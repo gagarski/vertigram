@@ -36,6 +36,7 @@ interface BaseInputMedia<T> {
     JsonSubTypes.Type(value = InputMedia.LivePhoto::class, name = InputMedia.Type.LIVE_PHOTO_STR),
     JsonSubTypes.Type(value = InputMedia.Photo::class, name = InputMedia.Type.PHOTO_STR),
     JsonSubTypes.Type(value = InputMedia.Video::class, name = InputMedia.Type.VIDEO_STR),
+    JsonSubTypes.Type(value = InputMedia.VoiceNote::class, name = InputMedia.Type.VOICE_NOTE_STR),
 )
 sealed interface InputMedia : BaseInputMedia<InputMedia.Type> {
     override val type: Type
@@ -60,7 +61,7 @@ sealed interface InputMedia : BaseInputMedia<InputMedia.Type> {
         val height: Int? = null,
         val duration: Duration? = null,
         val hasSpoiler: Boolean = false
-    ) : InputMedia, Poll, PollOption, HasOptionalRichCaption {
+    ) : InputMedia, Poll, PollOption, RichMessage, HasOptionalRichCaption {
         override val type: Type = Type.ANIMATION
         override val cover: Attachment? = null
 
@@ -82,7 +83,7 @@ sealed interface InputMedia : BaseInputMedia<InputMedia.Type> {
         val duration: Duration? = null,
         val performer: String? = null,
         val title: String? = null
-    ) : InputMedia, Poll, HasOptionalRichCaption {
+    ) : InputMedia, Poll, RichMessage, HasOptionalRichCaption {
         override val type: Type = Type.AUDIO
         override val cover: Attachment? = null
 
@@ -122,7 +123,7 @@ sealed interface InputMedia : BaseInputMedia<InputMedia.Type> {
         override val captionEntities: List<MessageEntity>? = null,
         val showCaptionAboveMedia: Boolean = false,
         val hasSpoiler: Boolean = false
-    ) : InputMedia, Poll, PollOption, HasOptionalRichCaption {
+    ) : InputMedia, Poll, PollOption, RichMessage, HasOptionalRichCaption {
         override val type: Type = Type.PHOTO
         override val thumbnail = null
         override val cover: Attachment? = null
@@ -150,7 +151,7 @@ sealed interface InputMedia : BaseInputMedia<InputMedia.Type> {
         val duration: Duration? = null,
         val supportsStreaming: Boolean = false,
         val hasSpoiler: Boolean = false
-    ) : InputMedia, Poll, PollOption, HasOptionalRichCaption {
+    ) : InputMedia, Poll, PollOption, RichMessage, HasOptionalRichCaption {
         override val type: Type = Type.VIDEO
 
         companion object
@@ -172,6 +173,21 @@ sealed interface InputMedia : BaseInputMedia<InputMedia.Type> {
         val hasSpoiler: Boolean = false
     ) : InputMedia, Poll, PollOption, HasOptionalRichCaption {
         override val type: Type = Type.LIVE_PHOTO
+        override val thumbnail: Attachment? = null
+        override val cover: Attachment? = null
+
+        companion object
+    }
+
+    @TelegramCodegen.Type
+    data class VoiceNote internal constructor(
+        override val media: Attachment,
+        override val caption: String? = null,
+        override val parseMode: RichText.ParseMode? = null,
+        override val captionEntities: List<MessageEntity>? = null,
+        val duration: Duration? = null
+    ) : InputMedia, RichMessage, HasOptionalRichCaption {
+        override val type: Type = Type.VOICE_NOTE
         override val thumbnail: Attachment? = null
         override val cover: Attachment? = null
 
@@ -528,6 +544,23 @@ sealed interface InputMedia : BaseInputMedia<InputMedia.Type> {
     }
 
     /**
+     * Telegram media types accepted by [InputRichMessageMedia].
+     *
+     * For up-to-date documentation, please consult the official Telegram docs.
+     */
+    @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", include = JsonTypeInfo.As.EXISTING_PROPERTY)
+    @JsonSubTypes(
+        JsonSubTypes.Type(value = Animation::class, name = Type.ANIMATION_STR),
+        JsonSubTypes.Type(value = Audio::class, name = Type.AUDIO_STR),
+        JsonSubTypes.Type(value = Photo::class, name = Type.PHOTO_STR),
+        JsonSubTypes.Type(value = Video::class, name = Type.VIDEO_STR),
+        JsonSubTypes.Type(value = VoiceNote::class, name = Type.VOICE_NOTE_STR)
+    )
+    sealed interface RichMessage {
+        val type: Type
+    }
+
+    /**
      * Value for [type]
      */
     enum class Type {
@@ -550,7 +583,9 @@ sealed interface InputMedia : BaseInputMedia<InputMedia.Type> {
         @JsonProperty(LINK_STR)
         LINK,
         @JsonProperty(VENUE_STR)
-        VENUE;
+        VENUE,
+        @JsonProperty(VOICE_NOTE_STR)
+        VOICE_NOTE;
 
         companion object {
             const val PHOTO_STR = "photo"
@@ -563,6 +598,7 @@ sealed interface InputMedia : BaseInputMedia<InputMedia.Type> {
             const val STICKER_STR = "sticker"
             const val LINK_STR = "link"
             const val VENUE_STR = "venue"
+            const val VOICE_NOTE_STR = "voice_note"
         }
     }
 }
