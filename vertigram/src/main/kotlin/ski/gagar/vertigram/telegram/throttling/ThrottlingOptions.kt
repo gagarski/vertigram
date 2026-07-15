@@ -16,7 +16,7 @@ data class ThrottlingOptions(
      */
     val globalPerSecond: Int? = 30,
     /**
-     * Per-minute limit for chat
+     * Per-minute limit for regular messages in groups and supergroups
      */
     val chatPerMinute: Int? = 20,
     /**

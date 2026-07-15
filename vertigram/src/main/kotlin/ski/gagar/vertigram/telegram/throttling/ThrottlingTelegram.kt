@@ -8,6 +8,7 @@ import org.reflections.Reflections
 import ski.gagar.vertigram.telegram.client.DirectTelegram
 import ski.gagar.vertigram.telegram.client.Telegram
 import ski.gagar.vertigram.telegram.exceptions.TelegramCallException
+import ski.gagar.vertigram.telegram.types.Message
 import ski.gagar.vertigram.telegram.types.methods.TelegramCallable
 import ski.gagar.vertigram.telegram.types.util.ChatId
 import ski.gagar.vertigram.telegram.types.util.toChatId
@@ -39,7 +40,8 @@ class ThrottlingTelegram(
     private val cleanUpTask = vertx.setPeriodic(CLEANUP_PERIOD.toMillis()) {
         cleanUp()
     }
-    private val perChat: MutableMap<ChatId, NavigableSet<Instant>> = mutableMapOf()
+    private val perChatSecond: MutableMap<ChatId, NavigableSet<Instant>> = mutableMapOf()
+    private val perGroupMinute: MutableMap<ChatId, NavigableSet<Instant>> = mutableMapOf()
     private val global: NavigableSet<Instant> = TreeSet()
 
     @Deprecated("Call Telegram.methodName() instead")
@@ -77,7 +79,7 @@ class ThrottlingTelegram(
                     @Suppress("DEPRECATION")
                     delegate.call(callable)
                 }
-                registerCall(callable)
+                registerCall(callable, res)
                 return res
             } catch (ex: RateLimitExceededException) {
                 fromException = ex.retryIn
@@ -85,22 +87,40 @@ class ThrottlingTelegram(
         }
     }
 
-    private fun registerCall(callable: TelegramCallable<*>) {
-        val chatId = when (callable) {
+    private fun chatId(callable: TelegramCallable<*>): ChatId? =
+        when (callable) {
             is HasChatId -> callable.chatId
             is HasChatIdLong -> callable.chatId?.toChatId()
             else -> null
         }
 
+    private fun registerCall(callable: TelegramCallable<*>, response: Any?) {
+        val chatId = chatId(callable)
         val now = Instant.now()
 
         global.add(now)
 
         chatId?.let {
-            perChat[chatId] = (perChat[chatId] ?: TreeSet()).apply {
+            perChatSecond[chatId] = (perChatSecond[chatId] ?: TreeSet()).apply {
                 add(now)
             }
         }
+
+        response.messages()
+            .firstOrNull { it.chat.type.group && it.ephemeralMessageId == null && it.receiverUser == null }
+            ?.let { message ->
+                setOfNotNull(chatId, message.chat.id.toChatId()).forEach { minuteChatId ->
+                    perGroupMinute[minuteChatId] = (perGroupMinute[minuteChatId] ?: TreeSet()).apply {
+                        add(now)
+                    }
+                }
+            }
+    }
+
+    private fun Any?.messages(): Sequence<Message> = when (this) {
+        is Message -> sequenceOf(this)
+        is Iterable<*> -> asSequence().filterIsInstance<Message>()
+        else -> emptySequence()
     }
 
     private fun getThrottlingDuration(
@@ -130,31 +150,33 @@ class ThrottlingTelegram(
         } ?: Duration.ZERO!!
 
 
-        val chatId = when (callable) {
-            is HasChatId -> callable.chatId
-            is HasChatIdLong -> callable.chatId?.toChatId()
-            else -> null
-        }
+        val chatId = chatId(callable)
 
-        val chatEvents = chatId?.let { perChat[it] }
+        val chatSecondEvents = chatId?.let { perChatSecond[it] }
 
-        if (!chatEvents.isNullOrEmpty()) {
-            val perChatMinute =
-                throttling.chatPerMinute?.let {
-                    getThrottlingDuration(chatEvents, now, MINUTE, it)
-                }
-
-            if (null != perChatMinute && perChatMinute > toSleep) {
-                toSleep = perChatMinute
-            }
-
+        if (!chatSecondEvents.isNullOrEmpty()) {
             val perChatSecond =
                 throttling.chatBurstPerSecond?.let {
-                    getThrottlingDuration(chatEvents, now, SECOND, it, true)
+                    getThrottlingDuration(chatSecondEvents, now, SECOND, it, true)
                 }
 
             if (null != perChatSecond && perChatSecond > toSleep) {
                 toSleep = perChatSecond
+            }
+        }
+
+        if (callable !is HasReceiverUserId || callable.receiverUserId == null) {
+            val groupMinuteEvents = chatId?.let { perGroupMinute[it] }
+
+            if (!groupMinuteEvents.isNullOrEmpty()) {
+                val perChatMinute =
+                    throttling.chatPerMinute?.let {
+                        getThrottlingDuration(groupMinuteEvents, now, MINUTE, it)
+                    }
+
+                if (null != perChatMinute && perChatMinute > toSleep) {
+                    toSleep = perChatMinute
+                }
             }
         }
 
@@ -184,14 +206,16 @@ class ThrottlingTelegram(
         val now = Instant.now()
         global.headSet(now - CLEANUP_RETENTION).clear()
 
-        val iter = perChat.iterator()
+        cleanUp(perChatSecond, now)
+        cleanUp(perGroupMinute, now)
+    }
 
+    private fun cleanUp(eventsByChat: MutableMap<ChatId, NavigableSet<Instant>>, now: Instant) {
+        val iter = eventsByChat.iterator()
         while (iter.hasNext()) {
-            val (_, c) = iter.next()
-            c.headSet(now).clear()
-            if (c.isEmpty()) {
-                iter.remove()
-            }
+            val (_, events) = iter.next()
+            events.headSet(now - CLEANUP_RETENTION).clear()
+            if (events.isEmpty()) iter.remove()
         }
     }
 
@@ -201,6 +225,6 @@ class ThrottlingTelegram(
 
     companion object {
         private val TO_THROTTLE =
-            Reflections("ski.gagar.vertigram.types.methods").getTypesAnnotatedWith(Throttled::class.java)
+            Reflections("ski.gagar.vertigram.telegram.types.methods").getTypesAnnotatedWith(Throttled::class.java)
     }
 }

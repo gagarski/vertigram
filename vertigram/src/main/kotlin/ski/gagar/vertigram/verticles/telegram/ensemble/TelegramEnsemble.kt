@@ -57,7 +57,7 @@ suspend fun Vertigram.deployTelegramEnsemble(
     allowedUpdates: List<Update.Type>,
     telegramAddress: String = TelegramAddress.TELEGRAM_VERTICLE_BASE,
     telegramOptions: DirectTelegram.Options = DirectTelegram.Options(),
-    throttling: ThrottlingOptions = ThrottlingOptions(),
+    throttling: ThrottlingOptions? = ThrottlingOptions(),
     updatePublishingAddress: String? = null,
     skipMissed: Boolean = true,
     updateReceiverConfig: UpdateReceiverConfig = LongPollerConfig,

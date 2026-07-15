@@ -3,6 +3,7 @@ package ski.gagar.vertigram.telegram.types.methods
 import com.fasterxml.jackson.annotation.JsonIgnore
 import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.telegram.throttling.HasChatId
+import ski.gagar.vertigram.telegram.throttling.HasReceiverUserId
 import ski.gagar.vertigram.telegram.throttling.Throttled
 import ski.gagar.vertigram.telegram.types.Message
 import ski.gagar.vertigram.telegram.types.ReplyMarkup
@@ -37,8 +38,8 @@ data class SendVenue internal constructor(
     val messageEffectId: String? = null,
     val suggestedPostParameters: SuggestedPost.Parameters? = null,
 
-    val receiverUserId: Long? = null,
+    override val receiverUserId: Long? = null,
     val callbackQueryId: String? = null,
     val replyParameters: ReplyParameters? = null,
     val replyMarkup: ReplyMarkup? = null
-) : JsonTelegramCallable<Message>(), HasChatId
+) : JsonTelegramCallable<Message>(), HasChatId, HasReceiverUserId
