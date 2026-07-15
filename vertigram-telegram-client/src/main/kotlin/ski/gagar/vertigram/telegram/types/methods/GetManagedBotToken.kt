@@ -1,6 +1,8 @@
 package ski.gagar.vertigram.telegram.types.methods
 
 import ski.gagar.vertigram.annotations.TelegramCodegen
+import ski.gagar.vertigram.telegram.types.REDACTED_SENSITIVE_DATA
+import ski.gagar.vertigram.telegram.types.SensitiveResult
 
 /**
  * Telegram [getManagedBotToken](https://core.telegram.org/bots/api#getmanagedbottoken) method.
@@ -10,4 +12,6 @@ import ski.gagar.vertigram.annotations.TelegramCodegen
 @TelegramCodegen.Method
 data class GetManagedBotToken internal constructor(
     val userId: Long
-) : JsonTelegramCallable<String>()
+) : JsonTelegramCallable<String>(), SensitiveResult {
+    override fun withoutSensitiveData(result: Any?) = REDACTED_SENSITIVE_DATA
+}

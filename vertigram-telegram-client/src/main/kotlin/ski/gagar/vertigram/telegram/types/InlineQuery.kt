@@ -156,7 +156,10 @@ data class InlineQuery internal constructor(
             val sendEmailToProvider: Boolean = false,
             @get:JvmName("getIsFlexible")
             val isFlexible: Boolean = false
-        ) : InputMessageContent {
+        ) : InputMessageContent, SensitiveData<Invoice> {
+            override fun copyWithoutSensitiveData() =
+                copy(providerToken = providerToken?.let { REDACTED_SENSITIVE_DATA })
+
             companion object
         }
     }

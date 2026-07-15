@@ -103,11 +103,14 @@ jobs:
           fi
 
       - name: Release, publish artifacts, and optionally publish docs
+        env:
+          RELEASE_VERSION: ${{ inputs.release_version }}
+          NEXT_VERSION: ${{ inputs.next_version }}
         run: >-
           ./gradlew --build-cache release
           -Prelease.useAutomaticVersion=true
-          -Prelease.releaseVersion="${{ inputs.release_version }}"
-          -Prelease.newVersion="${{ inputs.next_version }}"
+          "-Prelease.releaseVersion=$RELEASE_VERSION"
+          "-Prelease.newVersion=$NEXT_VERSION"
           -Pvertigram.staging.action="${{ inputs.staging_repository_action }}"
           -Pvertigram.dokka.publish="${{ inputs.publish_docs }}"
           -Pvertigram.dokka.repo="$DOKKA_REPO"

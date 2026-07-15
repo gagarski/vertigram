@@ -31,7 +31,14 @@ import java.util.*
  */
 class WebHook : UpdateReceiver<WebHook.Config>() {
     override val configTypeReference: TypeReference<Config> = typeReference()
-    private val secret = UUID.randomUUID()
+    private val secret: String by lazy {
+        typedConfig.webHook.secretToken ?: UUID.randomUUID().toString().also {
+            logger.lazy.warn {
+                "Webhook secret token is not configured; generated a random token that will change on restart. " +
+                    "Configure WebHookConfig.secretToken for rolling or multi-instance deployments."
+            }
+        }
+    }
     private val tg: Telegram by lazy {
         ThinTelegram(vertigram, typedConfig.telegramAddress)
     }
@@ -59,7 +66,7 @@ class WebHook : UpdateReceiver<WebHook.Config>() {
             if (typedConfig.webHook.base.startsWith("/")) typedConfig.webHook.base else "/${typedConfig.webHook.base}"
 
         router.post(addr).handler { context ->
-            if (context.request().getHeader(X_TELEGRAM_BOT_API_SECRET_TOKEN) != secret.toString()) {
+            if (context.request().getHeader(X_TELEGRAM_BOT_API_SECRET_TOKEN) != secret) {
                 context.response().statusCode = HttpResponseStatus.FORBIDDEN.code()
                 context.response().end()
                 return@handler
@@ -99,7 +106,7 @@ class WebHook : UpdateReceiver<WebHook.Config>() {
             tg.setWebhook(
                 url = typedConfig.webHook.publicUrl,
                 allowedUpdates = typedConfig.allowedUpdates,
-                secretToken = secret.toString()
+                secretToken = secret
             )
         }
 

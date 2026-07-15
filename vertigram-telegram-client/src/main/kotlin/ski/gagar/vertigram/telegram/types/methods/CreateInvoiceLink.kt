@@ -2,6 +2,8 @@ package ski.gagar.vertigram.telegram.types.methods
 
 import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.telegram.types.LabeledPrice
+import ski.gagar.vertigram.telegram.types.REDACTED_SENSITIVE_DATA
+import ski.gagar.vertigram.telegram.types.SensitiveData
 import java.time.Duration
 
 /**
@@ -34,4 +36,7 @@ data class CreateInvoiceLink internal constructor(
     val sendEmailToProvider: Boolean = false,
     @get:JvmName("getIsFlexible")
     val isFlexible: Boolean
-): JsonTelegramCallable<String>()
+) : JsonTelegramCallable<String>(), SensitiveData<CreateInvoiceLink> {
+    override fun copyWithoutSensitiveData() =
+        copy(providerToken = providerToken?.let { REDACTED_SENSITIVE_DATA })
+}

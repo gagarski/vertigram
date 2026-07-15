@@ -141,14 +141,24 @@ deployTelegramEnsemble(
     allowedUpdates = listOf(Update.Type.MESSAGE),
     updateReceiverConfig = WebHookConfig(
         host = "localhost",
-        port = 8080
+        port = 8080,
+        secretToken = "replace-with-a-stable-random-secret"
     )
 )
 ```
 Now we have a web-server listening for updates on port 8080. It's not enough for your webhook to work, you need TLS-enabled
 reverse proxy (Vertigram currently does not support TLS termination). If you're up for testing it from your browser,
-please note that for security reasons it expects `X-Telegram-Bot-Api-Secret-Token` to be set to your bot token 
-(Telegram sets this header). The rest of the ensemble works as before.
+please note that for security reasons it expects `X-Telegram-Bot-Api-Secret-Token` to match `secretToken` from
+`WebHookConfig` (Telegram sets this header). Telegram accepts 1 to 256 characters from `A-Z`, `a-z`, `0-9`, `_`, and `-`.
+
+Explicitly provide an independently generated, stable `secretToken` in production. A random value of at least 32
+characters is recommended. Store it alongside your other application secrets, and use the same value for every instance
+serving the webhook. Do not use the Telegram bot token, and do not transform the bot token by replacing its `:` character:
+that would turn a webhook-secret leak into a bot-token leak.
+
+If `secretToken` is omitted, Vertigram generates a random UUID and logs a warning. That value is not exposed or persisted,
+so it changes on every restart. The fallback is convenient for local development, but it causes webhook authentication
+failures during restarts and is not suitable for rolling or multi-instance deployments.
 
 Besides the way of receiving updates you can customize the following things (by passing them as parameters:
  - `telegramAddress` — base address used by `TelegramVerticle` to receive telegram calls. If you're unhappy with the

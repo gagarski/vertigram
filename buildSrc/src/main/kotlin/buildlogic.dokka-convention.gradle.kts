@@ -97,9 +97,10 @@ dokka {
                 packageListUrl.set(URI("https://javadoc.io/doc/io.vertx/vertx-core/${libs.findVersion("vertx").get()}/element-list"))
             }
             val jacksonVersion = libs.findVersion("jackson").get()
+            val jacksonAnnotationsVersion = libs.findVersion("jackson-annotations").get()
 
             externalDocumentationLinks.register("jackson-annotations") {
-              url.set(URI("https://javadoc.io/doc/com.fasterxml.jackson.core/jackson-annotations/${jacksonVersion}/"))
+              url.set(URI("https://javadoc.io/doc/com.fasterxml.jackson.core/jackson-annotations/${jacksonAnnotationsVersion}/"))
             }
             externalDocumentationLinks.register("jackson-core") {
                 url.set(URI("https://javadoc.io/doc/com.fasterxml.jackson.core/jackson-core/${jacksonVersion}/"))

@@ -2,6 +2,8 @@ package ski.gagar.vertigram.telegram.types.methods
 
 import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.telegram.types.Update
+import ski.gagar.vertigram.telegram.types.REDACTED_SENSITIVE_DATA
+import ski.gagar.vertigram.telegram.types.SensitiveData
 import ski.gagar.vertigram.telegram.types.attachments.Attachment
 
 /**
@@ -18,4 +20,7 @@ data class SetWebhook internal constructor(
     val allowedUpdates: List<Update.Type>? = null,
     val dropPendingUpdates: Boolean = false,
     val secretToken: String? = null
-) : MultipartTelegramCallable<Boolean>()
+) : MultipartTelegramCallable<Boolean>(), SensitiveData<SetWebhook> {
+    override fun copyWithoutSensitiveData() =
+        copy(secretToken = secretToken?.let { REDACTED_SENSITIVE_DATA })
+}

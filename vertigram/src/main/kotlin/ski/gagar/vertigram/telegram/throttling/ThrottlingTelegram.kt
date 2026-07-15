@@ -4,7 +4,6 @@ import io.netty.handler.codec.http.HttpHeaderNames
 import io.netty.handler.codec.http.HttpResponseStatus
 import io.vertx.core.Vertx
 import kotlinx.coroutines.delay
-import org.reflections.Reflections
 import ski.gagar.vertigram.telegram.client.DirectTelegram
 import ski.gagar.vertigram.telegram.client.Telegram
 import ski.gagar.vertigram.telegram.exceptions.TelegramCallException
@@ -46,7 +45,7 @@ class ThrottlingTelegram(
 
     @Deprecated("Call Telegram.methodName() instead")
     override suspend fun <T> call(callable: TelegramCallable<T>): T {
-        if (callable.javaClass !in TO_THROTTLE) {
+        if (!callable.javaClass.isAnnotationPresent(Throttled::class.java)) {
             // Won't do any logic if it's a non-throttled-method
             translateRateLimit {
                 @Suppress("DEPRECATION")
@@ -221,10 +220,5 @@ class ThrottlingTelegram(
 
     override fun close() {
         vertx.cancelTimer(cleanUpTask)
-    }
-
-    companion object {
-        private val TO_THROTTLE =
-            Reflections("ski.gagar.vertigram.telegram.types.methods").getTypesAnnotatedWith(Throttled::class.java)
     }
 }

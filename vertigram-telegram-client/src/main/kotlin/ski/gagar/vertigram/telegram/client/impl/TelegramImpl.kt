@@ -8,6 +8,7 @@ import io.vertx.core.Vertx
 import io.vertx.core.buffer.Buffer
 import io.vertx.core.file.OpenOptions
 import io.vertx.core.http.PoolOptions
+import io.vertx.core.impl.NoStackTraceTimeoutException
 import io.vertx.core.json.DecodeException
 import io.vertx.core.json.JsonObject
 import io.vertx.core.json.jackson.DatabindCodec
@@ -21,9 +22,11 @@ import io.vertx.kotlin.coroutines.coAwait
 import ski.gagar.vertigram.telegram.exceptions.TelegramCallException
 import ski.gagar.vertigram.telegram.exceptions.TelegramDownloadException
 import ski.gagar.vertigram.telegram.types.Wrapper
+import ski.gagar.vertigram.telegram.types.copyWithoutSensitiveData
 import ski.gagar.vertigram.telegram.types.methods.JsonTelegramCallable
 import ski.gagar.vertigram.telegram.types.methods.MultipartTelegramCallable
 import ski.gagar.vertigram.telegram.types.methods.TelegramCallable
+import ski.gagar.vertigram.telegram.types.withoutSensitiveResult
 import ski.gagar.vertigram.util.VertigramTypeHints
 import ski.gagar.vertigram.util.getOrAssert
 import ski.gagar.vertigram.util.internal.toMap
@@ -36,6 +39,11 @@ import ski.gagar.vertigram.web.multipart.FieldPart
 import ski.gagar.vertigram.web.multipart.MultipartForm
 import ski.gagar.vertigram.web.multipart.sendMultipartForm
 import java.time.Duration
+
+private const val REDACTED_BOT_TOKEN = "<redacted-bot-token>"
+
+internal fun NoStackTraceTimeoutException.redactTelegramBotToken(token: String) =
+    NoStackTraceTimeoutException(message?.replace(token, REDACTED_BOT_TOKEN))
 
 /**
  * Options for [TelegramImpl]
@@ -118,6 +126,13 @@ internal class TelegramImpl(
     internal val mapper = TELEGRAM_JSON_MAPPER
     private val mapperMp = telegramJsonMapperWithMultipart(mapper, vertx)
 
+    private suspend inline fun <T> withRedactedTimeout(block: () -> T): T =
+        try {
+            block()
+        } catch (ex: NoStackTraceTimeoutException) {
+            throw ex.redactTelegramBotToken(token)
+        }
+
     private fun <T> decodeValue(str: String, type: JavaType, mapper: ObjectMapper = DatabindCodec.mapper()): T {
         try {
             return mapper.readValue(str, type)
@@ -173,23 +188,28 @@ internal class TelegramImpl(
         obj: Req? = null,
         longPoll: Boolean = false
     ): Pair<HttpResponse<*>, Any?> {
-        logger.lazy.trace { "Calling $method with $obj" }
-        val resp = client(method, longPoll, false).sendJsonGeneric(obj).coAwait()
+        logger.lazy.trace { "Calling $method with ${obj.copyWithoutSensitiveData()}" }
+        val resp = withRedactedTimeout {
+            client(method, longPoll, false).sendJsonGeneric(obj).coAwait()
+        }
         return resp to resp.jsonBody<Any>(type).also {
-            logger.lazy.trace { "Received response $it" }
+            logger.lazy.trace { "Received response ${it.withoutSensitiveResult(obj)}" }
         }
     }
 
     private suspend fun callForObjectMultipart(
         method: String,
         type: JavaType,
+        obj: Any,
         form: MultipartForm,
         longPoll: Boolean = false
     ): Pair<HttpResponse<*>, Any?> {
-        logger.lazy.trace { "Calling $method with $form (form/multipart)" }
-        val resp = client(method, longPoll, !form.parts.all { it is FieldPart }).sendMultipartForm(form)
+        logger.lazy.trace { "Calling $method with ${obj.copyWithoutSensitiveData()} (form/multipart)" }
+        val resp = withRedactedTimeout {
+            client(method, longPoll, !form.parts.all { it is FieldPart }).sendMultipartForm(form)
+        }
         return resp to resp.jsonBody<Any>(type).also {
-            logger.lazy.trace { "Received response $it" }
+            logger.lazy.trace { "Received response ${it.withoutSensitiveResult(obj)}" }
         }
     }
 
@@ -213,12 +233,14 @@ internal class TelegramImpl(
     private suspend fun <Resp> callForWrapperMultipart(
         respType: JavaType,
         method: String,
+        obj: Any,
         form: MultipartForm,
         longPoll: Boolean = false
     ): Pair<HttpResponse<*>, Wrapper<Resp>> =
         callForObjectMultipart(
             method,
             mapper.typeFactory.constructParametricType(Wrapper::class.java, respType),
+            obj,
             form,
             longPoll
         ).uncheckedCast()
@@ -247,6 +269,7 @@ internal class TelegramImpl(
         val (response, wrapper) = callForWrapperMultipart<Resp>(
             respType,
             method,
+            mpc,
             mapperMp.toMultipart(mpc),
             longPoll)
 
@@ -283,8 +306,9 @@ internal class TelegramImpl(
         val f = fs.open(outputPath, OpenOptions().apply {
             isTruncateExisting = true
         }).coAwait()
-        val resp =
+        val resp = withRedactedTimeout {
             downloadClient.getAbs("${options.tgBase}/file/bot$token/${path}").`as`(BodyCodec.pipe(f)).send().coAwait()
+        }
         if (resp.statusCode() != 200) {
             fs.delete(outputPath).coAwait()
             // TODO try to get a response from file and parse it

@@ -8,6 +8,8 @@ import ski.gagar.vertigram.telegram.types.LabeledPrice
 import ski.gagar.vertigram.telegram.types.Message
 import ski.gagar.vertigram.telegram.types.ReplyMarkup
 import ski.gagar.vertigram.telegram.types.ReplyParameters
+import ski.gagar.vertigram.telegram.types.REDACTED_SENSITIVE_DATA
+import ski.gagar.vertigram.telegram.types.SensitiveData
 import ski.gagar.vertigram.telegram.types.SuggestedPost
 import ski.gagar.vertigram.telegram.types.util.ChatId
 import ski.gagar.vertigram.util.NoPosArgs
@@ -52,4 +54,7 @@ data class SendInvoice internal constructor(
     val suggestedPostParameters: SuggestedPost.Parameters? = null,
     val replyParameters: ReplyParameters? = null,
     val replyMarkup: ReplyMarkup? = null
-) : JsonTelegramCallable<Message>(), HasChatId
+) : JsonTelegramCallable<Message>(), HasChatId, SensitiveData<SendInvoice> {
+    override fun copyWithoutSensitiveData() =
+        copy(providerToken = providerToken?.let { REDACTED_SENSITIVE_DATA })
+}

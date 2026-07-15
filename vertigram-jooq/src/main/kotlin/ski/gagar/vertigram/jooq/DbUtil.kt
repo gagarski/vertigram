@@ -5,8 +5,6 @@ import io.vertx.core.Vertx
 import io.vertx.core.json.JsonObject
 import io.vertx.core.shareddata.Shareable
 import io.vertx.kotlin.coroutines.CoroutineVerticle
-import io.vertx.kotlin.coroutines.dispatcher
-import kotlinx.coroutines.runBlocking
 import org.jooq.Record
 import org.jooq.impl.DSL
 import javax.sql.DataSource
@@ -51,19 +49,6 @@ internal fun Vertx.deleteSharedDataSource(name: String) {
 
             null
         }
-}
-
-fun main() {
-    val vertx = Vertx.vertx()
-
-    runBlocking(vertx.dispatcher()) {
-        vertx.createSharedDataSource(
-            name = "myapp",
-            jdbcUrl = "jdbc:postgresql://localhost/myapp",
-            username = "myapp",
-            password = "topsecret"
-        )
-    }
 }
 
 class DbVerticle : CoroutineVerticle() {
