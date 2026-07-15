@@ -7,16 +7,16 @@
 
 ## Executive Summary
 
-No live production secrets (API keys, private keys, tokens) were found committed to the repository. GitHub Actions correctly reference repository secrets via `${{ secrets.* }}` rather than inline values.
+No live production secrets (API keys, private keys, tokens) were found committed to the repository. GitHub Actions reference repository secrets via `${{ secrets.* }}` rather than inline values, but the publish workflow has additional input-validation and supply-chain risks documented below.
 
-However, the audit identified several **security-relevant patterns in application code and documentation**, plus **dependency versions with known published CVEs**. None of these appear to be immediate credential leaks, but they affect secret handling, webhook security, deserialization hardening, and supply-chain posture.
+However, the audit identified several **security-relevant patterns in application code and documentation**, plus **dependency versions with known published CVEs**. None of these appear to be immediate credential leaks, but they affect secret handling, logging hygiene, webhook security, CI hardening, deserialization, and supply-chain posture.
 
 | Severity | Count | Category |
 |----------|-------|----------|
 | High     | 2     | Dependency CVEs (Jackson) |
-| Medium   | 5     | Secret handling, documentation, throttling |
-| Low      | 4     | Sample credentials, unmaintained dependency, config persistence |
-| Info     | 3     | CI secret usage (correct), placeholder docs |
+| Medium   | 7     | Secret handling, logging, documentation, throttling, CI injection |
+| Low      | 5     | Sample credentials, unmaintained dependency, config persistence, CI supply chain |
+| Info     | 2     | Secrets externalized in CI env, placeholder docs |
 
 ---
 
@@ -73,7 +73,38 @@ This follows Telegram's API design, but applications should ensure logging and p
 
 ---
 
-### 1.3 [Medium] Webhook secret token is non-deterministic across restarts
+### 1.3 [Medium] Trace logging writes secret request/response bodies to application logs
+
+At `TRACE` level, `TelegramImpl` logs full Telegram method payloads and responses without redaction:
+
+```176:179:vertigram-telegram-client/src/main/kotlin/ski/gagar/vertigram/telegram/client/impl/TelegramImpl.kt
+        logger.lazy.trace { "Calling $method with $obj" }
+        val resp = client(method, longPoll, false).sendJsonGeneric(obj).coAwait()
+        return resp to resp.jsonBody<Any>(type).also {
+            logger.lazy.trace { "Received response $it" }
+```
+
+The same pattern exists for multipart calls (`Calling $method with $form` / `Received response $it`).
+
+**Sensitive fields that can appear in these log lines include:**
+
+| Direction | Type / method | Secret field |
+|-----------|---------------|--------------|
+| Request | `SetWebhook` | `secretToken` |
+| Request | `SendInvoice`, `CreateInvoiceLink`, inline invoice results | `providerToken` |
+| Response | `GetManagedBotToken` | returned bot token |
+| Response | `ReplaceManagedBotToken` | new bot token |
+
+**Risk:** Enabling trace logging for troubleshooting (or misconfigured production log levels) writes credentials directly into application logs, log aggregators, and `TelegramLoggingVerticle` output. This is a more direct leakage path than URL-path exposure (§1.2) and is easy to miss because it depends on log level rather than proxy configuration.
+
+**Recommendation:**
+- Redact known secret fields before logging (e.g. `secretToken`, `providerToken`, token-bearing responses).
+- Default to logging method name only at `TRACE`, or use structured logging with an explicit allowlist of safe fields.
+- Document that `TRACE` must not be enabled in production for `ski.gagar.vertigram.telegram.client.impl`.
+
+---
+
+### 1.4 [Medium] Webhook secret token is non-deterministic across restarts
 
 `WebHook` generates a random UUID secret at verticle construction time:
 
@@ -87,7 +118,7 @@ This follows Telegram's API design, but applications should ensure logging and p
 
 ---
 
-### 1.4 [Medium] README misdocuments webhook secret header
+### 1.5 [Medium] README misdocuments webhook secret header
 
 The module README states that `X-Telegram-Bot-Api-Secret-Token` should be set to the **bot token**:
 
@@ -106,7 +137,7 @@ please note that for security reasons it expects `X-Telegram-Bot-Api-Secret-Toke
 
 ---
 
-### 1.5 [Medium] Throttling annotation scan uses wrong package
+### 1.6 [Medium] Throttling annotation scan uses wrong package
 
 `ThrottlingTelegram` scans a non-existent/wrong package for `@Throttled` methods:
 
@@ -131,7 +162,7 @@ private fun getTgCallables() =
 
 ---
 
-### 1.6 [Low] Hardcoded database passwords in sample/test code
+### 1.7 [Low] Hardcoded database passwords in sample/test code
 
 | Location | Value | Context |
 |----------|-------|---------|
@@ -146,7 +177,7 @@ private fun getTgCallables() =
 
 ---
 
-### 1.7 [Low] Database credentials held in shared Vert.x data structures
+### 1.8 [Low] Database credentials held in shared Vert.x data structures
 
 `createSharedDataSource` stores `HikariDataSource` (including password) in Vert.x local shared data:
 
@@ -164,7 +195,7 @@ internal fun Vertx.createSharedDataSource(name: String, jdbcUrl: String, usernam
 
 ---
 
-### 1.8 [Info] Placeholder tokens in documentation only
+### 1.9 [Info] Placeholder tokens in documentation only
 
 Examples use obvious placeholders (`"xxx:yyy"`, `"111222333:secrettoken"`, `"xxx"`) in README and serialization tests. No real Telegram token patterns (`<digits>:<35-char-alphanumeric>`) were detected in the repository.
 
@@ -172,9 +203,9 @@ Examples use obvious placeholders (`"xxx:yyy"`, `"111222333:secrettoken"`, `"xxx
 
 ## 2. CI / Repository Secret Handling
 
-### 2.1 [Info] GitHub Actions secrets — correctly externalized
+### 2.1 [Info] GitHub Actions secrets — externalized via env (with caveats)
 
-`.github/workflows/publish.yml` references secrets without embedding values:
+`.github/workflows/publish.yml` references secrets without embedding values in the workflow file:
 
 | Secret | Purpose |
 |--------|---------|
@@ -183,9 +214,56 @@ Examples use obvious placeholders (`"xxx:yyy"`, `"111222333:secrettoken"`, `"xxx
 | `DOKKA_REPO` | Documentation deployment target |
 | `DOKKA_SSH_PRIVATE_KEY` / `DOKKA_KNOWN_HOSTS` | SSH docs publishing |
 
-Gradle signing in build scripts reads from project properties (`signingKey`, `signingPassword`), which CI injects via `ORG_GRADLE_PROJECT_*` — correct pattern.
+Gradle signing in build scripts reads from project properties (`signingKey`, `signingPassword`), which CI injects via `ORG_GRADLE_PROJECT_*` — correct pattern for secret storage.
 
 **No committed `.env` files or credential artifacts** (`.pem`, `.key`) were found.
+
+However, secret externalization alone is not sufficient: §2.2 and §2.3 describe risks in how those secrets are consumed at runtime.
+
+---
+
+### 2.2 [Medium] Publish workflow — shell injection via `workflow_dispatch` inputs
+
+The release step interpolates `release_version` and `next_version` directly into a bash command:
+
+```105:113:.github/workflows/publish.yml
+      - name: Release, publish artifacts, and optionally publish docs
+        run: >-
+          ./gradlew --build-cache release
+          -Prelease.useAutomaticVersion=true
+          -Prelease.releaseVersion="${{ inputs.release_version }}"
+          -Prelease.newVersion="${{ inputs.next_version }}"
+          -Pvertigram.staging.action="${{ inputs.staging_repository_action }}"
+          -Pvertigram.dokka.publish="${{ inputs.publish_docs }}"
+          -Pvertigram.dokka.repo="$DOKKA_REPO"
+```
+
+**Risk:** `workflow_dispatch` inputs are attacker-controlled for any GitHub user with permission to run the workflow. A value containing shell metacharacters (e.g. `"`; curl … #`) can break out of the quoted Gradle argument and execute arbitrary commands in a job that has:
+- `contents: write`
+- Sonatype, GPG signing, and Dokka SSH secrets in `env`
+
+**Recommendation:**
+- Pass versions through step `env` and reference `"$RELEASE_VERSION"` / `"$NEXT_VERSION"` in the shell command, or invoke Gradle via a dedicated action that does not use a shell.
+- Validate inputs against a strict semver regex before the release step (e.g. `^[0-9]+\.[0-9]+\.[0-9]+(-SNAPSHOT)?$`).
+- Restrict `workflow_dispatch` to trusted maintainers (`permissions` + branch protection + environment approvals).
+
+---
+
+### 2.3 [Low] Publish workflow — third-party actions pinned to mutable refs
+
+The publish workflow uses floating version tags rather than commit SHAs:
+
+| Step | Action | Risk |
+|------|--------|------|
+| Checkout | `actions/checkout@v4` | Tag can be retargeted |
+| JDK setup | `actions/setup-java@v4` | Tag can be retargeted |
+| Gradle | `gradle/actions/setup-gradle@v4` | Tag can be retargeted |
+| Cache | `actions/cache@v4` | Tag can be retargeted |
+| SSH agent | `webfactory/ssh-agent@v0.9.0` | Third-party; holds `DOKKA_SSH_PRIVATE_KEY` |
+
+**Risk:** In a release job with signing and publishing secrets, a compromised or retagged action could exfiltrate credentials. Third-party actions (`webfactory/ssh-agent`) carry higher supply-chain risk than first-party `actions/*` steps.
+
+**Recommendation:** Pin all actions to full commit SHAs (Dependabot can manage SHA updates). For `webfactory/ssh-agent`, consider replacing with `ssh-agent` setup via a maintained first-party or org-owned action, or use OIDC/deploy keys where possible.
 
 ---
 
@@ -258,12 +336,15 @@ The framework uses Jackson type deduction (`AsPropertyTypeWithDeductionDeseriali
 ## 5. Recommended Actions (Priority Order)
 
 1. **Upgrade Jackson to >= 2.21.5** and re-run `vertigram-telegram-client` serialization tests.
-2. **Fix `ThrottlingTelegram` Reflections package** so `@Throttled` methods are actually throttled.
-3. **Correct webhook secret documentation** in `vertigram/README.md`.
-4. **Harden token handling:** externalize bot tokens; avoid cleartext in deployment config where possible.
-5. **Make webhook `secretToken` configurable/persistent** across restarts.
-6. **Plan migration off `org.reflections`** to compile-time discovery.
-7. **Add automated dependency scanning** (Dependabot, OWASP Dependency-Check, or Gradle `dependencyUpdates` + advisory DB) to CI.
+2. **Redact secret fields in `TelegramImpl` trace logging** (`secretToken`, `providerToken`, managed-bot-token responses).
+3. **Harden publish workflow inputs** — validate semver strings; pass via `env` to avoid shell injection.
+4. **Fix `ThrottlingTelegram` Reflections package** so `@Throttled` methods are actually throttled.
+5. **Correct webhook secret documentation** in `vertigram/README.md`.
+6. **Harden token handling:** externalize bot tokens; avoid cleartext in deployment config where possible.
+7. **Make webhook `secretToken` configurable/persistent** across restarts.
+8. **Pin GitHub Actions to commit SHAs** in `.github/workflows/publish.yml`.
+9. **Plan migration off `org.reflections`** to compile-time discovery.
+10. **Add automated dependency scanning** (Dependabot, OWASP Dependency-Check, or Gradle `dependencyUpdates` + advisory DB) to CI.
 
 ---
 
