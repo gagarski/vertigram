@@ -968,27 +968,28 @@ you'd have to deal with history behavior, so your state history does not become 
     }
 ```
 
-`sendOrEdit` can also maintain an ephemeral message visible only to a selected user. Delivery is selected per call, so
-the same dialog can maintain its regular message and separate ephemeral messages for multiple users in parallel:
+`sendOrEdit` can also maintain an ephemeral message visible only to a selected user. Delivery mode is independent of
+dialog state. Enter ephemeral mode after receiving an eligible message or callback query, then transition normally:
 
 ```kotlin
-sendOrEdit(
-    richText = "Only you can see this dialog step".toRichText(),
-    replyMarkup = inlineKeyboard {
-        row { callback("Continue", "continue") }
-    },
-    delivery = StatefulTelegramDialogVerticle.Delivery.Ephemeral(
-        receiverUserId = userId,
-        callbackQueryId = callbackQueryId
-    )
-)
+becomeEphemeral(callbackQuery.from)
+become(ConfigureDialog(verticle))
 ```
 
-When no reply markup is provided for an ephemeral message, `ForceReply` is added automatically.
-Pass `callbackQueryId` when the message is sent in response to a
-callback query; it is not needed when subsequently editing the same ephemeral message. In private chats, channels, or
-while the chat type is still unknown, ephemeral delivery falls back to the regular `sendOrEdit` behavior. Override the
-verticle's `chatType` property when the initial state needs ephemeral delivery before the first incoming update.
+`becomeEphemeral` latches the user; messages and callback queries from other users are ignored until regular mode is
+restored. Plain `become` changes only dialog state and preserves delivery mode. Leave ephemeral mode independently:
+
+```kotlin
+becomeNormal()
+become(StartPublicFlow(verticle))
+```
+
+Vertigram captures the message or callback-query context received immediately before `becomeEphemeral` and refreshes it
+on subsequent accepted updates. In groups and supergroups, every `sendOrEdit` in ephemeral mode uses that context and
+non-ephemeral messages are ignored. An incoming message must expose its own ephemeral message identifier. In other chat
+types, the mode and latched user are still maintained, but `sendOrEdit` uses regular delivery and does not require an
+ephemeral context. When no reply markup is provided for an ephemeral delivery, `ForceReply` is added automatically.
+Explicit reply markup is preserved.
 
 ### Default States
 

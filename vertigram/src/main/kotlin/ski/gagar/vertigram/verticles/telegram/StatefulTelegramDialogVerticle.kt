@@ -17,8 +17,10 @@ import ski.gagar.vertigram.telegram.methods.sendMessage
 import ski.gagar.vertigram.telegram.types.Chat
 import ski.gagar.vertigram.telegram.types.Message
 import ski.gagar.vertigram.telegram.types.ReplyMarkup
+import ski.gagar.vertigram.telegram.types.ReplyParameters
 import ski.gagar.vertigram.telegram.types.Update
 import ski.gagar.vertigram.telegram.types.User
+import ski.gagar.vertigram.telegram.types.create
 import ski.gagar.vertigram.telegram.types.richtext.RichText
 import ski.gagar.vertigram.telegram.types.util.isCommandForBot
 import ski.gagar.vertigram.telegram.types.util.toChatId
@@ -64,15 +66,6 @@ abstract class StatefulTelegramDialogVerticle<Config> : TelegramDialogVerticle<C
      * Should be overridden by subclasses
      */
     abstract val chatId: Long
-
-    /**
-     * Type of the dialog chat, when it is known before the first incoming update.
-     *
-     * Override this to allow the [initialState] to send an ephemeral message in a group or supergroup. Otherwise,
-     * the chat type is learned from incoming messages and callback queries. Unknown and non-group chats use regular
-     * message delivery even when [Delivery.Ephemeral] is requested.
-     */
-    protected open val chatType: Chat.Type? = null
 
     /**
      * Initial state (when the verticle is deployed)
@@ -138,9 +131,10 @@ abstract class StatefulTelegramDialogVerticle<Config> : TelegramDialogVerticle<C
      * State
      */
     protected var state: State? = null
-    private var prevMsgInfo: MsgInfo? = null
     private var msgInfo: MsgInfo? = null
-    private val ephemeralMsgInfo = mutableMapOf<Long, MsgInfo>()
+    private var ephemeralUser: User? = null
+    private var lastEphemeralContext: EphemeralContext? = null
+    private var currentEphemeralContext: EphemeralContext? = null
     private var observedChatType: Chat.Type? = null
     private var timeoutTimerHandle: Job? = null
 
@@ -176,7 +170,11 @@ abstract class StatefulTelegramDialogVerticle<Config> : TelegramDialogVerticle<C
 
     private suspend fun handleCallbackQuery(callbackQuery: Update.CallbackQuery.Payload) = messageHandler {
         withLock {
-            observedChatType = callbackQuery.message?.chat?.type ?: observedChatType
+            callbackQuery.message?.chat?.type?.let { observedChatType = it }
+            if (ephemeralUser?.id?.let { it != callbackQuery.from.id } == true) return@messageHandler
+            val context = EphemeralContext.CallbackQuery(callbackQuery.from.id, callbackQuery.id)
+            lastEphemeralContext = context
+            if (ephemeralUser != null) currentEphemeralContext = context
 
             if (handleCancel && callbackQuery.data == CANCEL) {
                 tg.answerCallbackQuery(
@@ -201,13 +199,22 @@ abstract class StatefulTelegramDialogVerticle<Config> : TelegramDialogVerticle<C
 
     private suspend fun handleMessage(message: Message) = messageHandler {
         withLock {
+            val from = message.from
             observedChatType = message.chat.type
+            if (ephemeralUser?.id?.let { it != from?.id } == true) return@messageHandler
 
-            val repliedEphemeralMessageId = message.replyToMessage?.ephemeralMessageId ?: message.ephemeralMessageId
-            if (repliedEphemeralMessageId == null) {
-                resetKnownMessage()
+            val contextEphemeralMessageId = message.ephemeralMessageId
+            if (usesEphemeralDelivery() && contextEphemeralMessageId == null) return@messageHandler
+            lastEphemeralContext = if (contextEphemeralMessageId != null && from != null) {
+                EphemeralContext.Message(from.id, contextEphemeralMessageId)
             } else {
-                message.from?.id?.let { resetKnownEphemeralMessage(it) }
+                null
+            }
+            if (ephemeralUser != null) currentEphemeralContext = lastEphemeralContext
+            if (contextEphemeralMessageId == null) {
+                if (!usesEphemeralDelivery()) resetKnownMessage(Delivery.Regular)
+            } else if (ephemeralUser != null) {
+                resetKnownMessage(currentDelivery())
             }
 
             if (handleCancel && message.isCommandForBot(CANCEL, me)) {
@@ -265,6 +272,11 @@ abstract class StatefulTelegramDialogVerticle<Config> : TelegramDialogVerticle<C
             handleHistory(state!!, historyBehavior)
         }
 
+        if (usesEphemeralDelivery()) {
+            currentEphemeralContext = requireNotNull(lastEphemeralContext) {
+                "Ephemeral mode requires a message or callback-query context before becoming another state"
+            }
+        }
         state = toState
 
         while (true) {
@@ -284,6 +296,37 @@ abstract class StatefulTelegramDialogVerticle<Config> : TelegramDialogVerticle<C
         withLock {
             become(toState, historyBehavior)
         }
+    }
+
+    private suspend fun becomeEphemeral(user: User) {
+        check(mutex.isLocked) { "calling becomeEphemeral without obtaining lock is not supported" }
+        val context = lastEphemeralContext
+        if (chatSupportsEphemeralDelivery()) {
+            requireNotNull(context) {
+                "Ephemeral mode requires a message or callback-query context"
+            }
+            require(context.receiverUserId == user.id) {
+                "Ephemeral context belongs to a different user"
+            }
+        }
+
+        if (ephemeralUser == null) {
+            if (chatSupportsEphemeralDelivery()) resetKnownMessage(Delivery.Regular)
+        } else if (ephemeralUser?.id != user.id) {
+            resetKnownMessage(currentDelivery())
+        }
+        ephemeralUser = user
+        currentEphemeralContext = context
+    }
+
+    private suspend fun becomeNormal() {
+        check(mutex.isLocked) { "calling becomeNormal without obtaining lock is not supported" }
+        if (usesEphemeralDelivery()) {
+            resetKnownMessage(currentDelivery())
+        }
+        ephemeralUser = null
+        lastEphemeralContext = null
+        currentEphemeralContext = null
     }
 
     private fun setTimerWithLock(duration: Duration, handler: suspend () -> Unit): Job =
@@ -309,140 +352,104 @@ abstract class StatefulTelegramDialogVerticle<Config> : TelegramDialogVerticle<C
      * @param richText Text of the message
      * @param buttons Reply markup of the message
      * @param forceSend Ignore the fact that the message is the last in the chat and do sending instead of editing
-     * @param delivery Whether to maintain a regular dialog message or an ephemeral message for a specific user
      */
     protected suspend fun sendOrEdit(
         richText: RichText,
         buttons: ReplyMarkup? = null,
-        forceSend: Boolean = false,
-        delivery: Delivery = Delivery.Regular
+        forceSend: Boolean = false
     ) {
-        val effectiveDelivery = delivery.takeIf { supportsEphemeralMessages() } ?: Delivery.Regular
-        when (effectiveDelivery) {
-            Delivery.Regular -> sendOrEditRegular(richText, buttons, forceSend)
-            is Delivery.Ephemeral -> sendOrEditEphemeral(richText, buttons, forceSend, effectiveDelivery)
+        val delivery = currentDelivery()
+        val replyMarkup = buttons ?: if (delivery is Delivery.Ephemeral) forceReply(selective = false) else null
+
+        if (forceSend) resetKnownMessage(delivery)
+        if (msgInfo?.let { it.markup != replyMarkup && replyMarkup !is ReplyMarkup.InlineKeyboard } == true) {
+            resetKnownMessage(delivery)
+        }
+
+        val knownMessage = msgInfo
+        if (knownMessage == null) {
+            val messageId = sendMessage(delivery, richText, replyMarkup)
+            msgInfo = MsgInfo(messageId, replyMarkup != null, richText.toString(), replyMarkup)
+        } else if (richText.toString() != knownMessage.text || replyMarkup != knownMessage.markup) {
+            val messageId = editMessageText(delivery, knownMessage.id, richText, replyMarkup)
+            msgInfo = MsgInfo(messageId, replyMarkup != null, richText.toString(), replyMarkup)
         }
     }
 
-    private fun supportsEphemeralMessages(): Boolean = when (chatType ?: observedChatType) {
-        Chat.Type.GROUP, Chat.Type.SUPERGROUP -> true
-        else -> false
-    }
+    private fun chatSupportsEphemeralDelivery() = observedChatType?.group != false
 
-    private suspend fun sendOrEditRegular(
-        richText: RichText,
-        buttons: ReplyMarkup?,
-        forceSend: Boolean
-    ) {
-        if (forceSend) {
-            resetKnownMessage()
-        }
-        val prevMsgInfo = this.prevMsgInfo
+    private fun usesEphemeralDelivery() = ephemeralUser != null && chatSupportsEphemeralDelivery()
 
-        if (null != prevMsgInfo && prevMsgInfo.hasButtons) {
-            tg.editMessageReplyMarkup(
-                chatId = chatId.toChatId(),
-                messageId = prevMsgInfo.id,
-                replyMarkup = null
-            )
-            this.prevMsgInfo = null
-        }
+    private fun currentDelivery(): Delivery = ephemeralUser?.takeIf { chatSupportsEphemeralDelivery() }?.let { user ->
+        Delivery.Ephemeral(
+            user.id,
+            requireNotNull(currentEphemeralContext) { "Ephemeral mode has no delivery context" }
+        )
+    } ?: Delivery.Regular
 
-        val msgInfo = this.msgInfo
-
-        if (null == msgInfo) {
-            val msgId = tg.sendMessage(
+    private suspend fun sendMessage(delivery: Delivery, richText: RichText, replyMarkup: ReplyMarkup?): Long =
+        when (delivery) {
+            Delivery.Regular -> tg.sendMessage(
                 chatId = chatId.toChatId(),
                 richText = richText,
-                replyMarkup = buttons
-            ).messageId
-            this.msgInfo = MsgInfo(msgId, buttons != null, richText.toString(), buttons)
-        } else if (richText.toString() != msgInfo.text || buttons != msgInfo.markup) {
-            val msgId = tg.editMessageText(
-                chatId = chatId.toChatId(),
-                messageId = msgInfo.id,
-                richText = richText,
-                replyMarkup = buttons
-            ).messageId
-            this.msgInfo = MsgInfo(msgId, buttons != null, richText.toString(), buttons)
-        }
-    }
-
-    private suspend fun sendOrEditEphemeral(
-        richText: RichText,
-        buttons: ReplyMarkup?,
-        forceSend: Boolean,
-        delivery: Delivery.Ephemeral
-    ) {
-        val replyMarkup = buttons ?: forceReply(selective = false)
-        var msgInfo = ephemeralMsgInfo[delivery.receiverUserId]
-
-        if (forceSend && msgInfo != null) {
-            if (msgInfo.hasButtons) {
-                tg.editEphemeralMessageReplyMarkup(
-                    chatId = chatId.toChatId(),
-                    receiverUserId = delivery.receiverUserId,
-                    ephemeralMessageId = msgInfo.id,
-                    replyMarkup = null
-                )
-            }
-            ephemeralMsgInfo.remove(delivery.receiverUserId)
-            msgInfo = null
-        }
-
-        if (msgInfo != null && replyMarkup !is ReplyMarkup.InlineKeyboard && msgInfo.markup != replyMarkup) {
-            if (msgInfo.hasButtons) {
-                tg.editEphemeralMessageReplyMarkup(
-                    chatId = chatId.toChatId(),
-                    receiverUserId = delivery.receiverUserId,
-                    ephemeralMessageId = msgInfo.id,
-                    replyMarkup = null
-                )
-            }
-            ephemeralMsgInfo.remove(delivery.receiverUserId)
-            msgInfo = null
-        }
-
-        if (msgInfo == null) {
-            val message = tg.sendMessage(
-                chatId = chatId.toChatId(),
-                richText = richText,
-                receiverUserId = delivery.receiverUserId,
-                callbackQueryId = delivery.callbackQueryId,
                 replyMarkup = replyMarkup
-            )
-            val ephemeralMessageId = requireNotNull(message.ephemeralMessageId) {
-                "Telegram didn't return an ephemeral message identifier"
+            ).messageId
+            is Delivery.Ephemeral -> {
+                val message = tg.sendMessage(
+                    chatId = chatId.toChatId(),
+                    richText = richText,
+                    receiverUserId = delivery.receiverUserId,
+                    callbackQueryId = (delivery.context as? EphemeralContext.CallbackQuery)?.callbackQueryId,
+                    replyParameters = (delivery.context as? EphemeralContext.Message)?.let {
+                        ReplyParameters.create(ephemeralMessageId = it.ephemeralMessageId)
+                    },
+                    replyMarkup = replyMarkup
+                )
+                requireNotNull(message.ephemeralMessageId) {
+                    "Telegram didn't return an ephemeral message identifier"
+                }
             }
-            ephemeralMsgInfo[delivery.receiverUserId] =
-                MsgInfo(ephemeralMessageId, true, richText.toString(), replyMarkup)
-        } else if (richText.toString() != msgInfo.text || replyMarkup != msgInfo.markup) {
+        }
+
+    private suspend fun editMessageText(
+        delivery: Delivery,
+        messageId: Long,
+        richText: RichText,
+        replyMarkup: ReplyMarkup?
+    ): Long = when (delivery) {
+        Delivery.Regular -> tg.editMessageText(
+            chatId = chatId.toChatId(),
+            messageId = messageId,
+            richText = richText,
+            replyMarkup = replyMarkup as? ReplyMarkup.InlineKeyboard
+        ).messageId
+        is Delivery.Ephemeral -> {
             tg.editEphemeralMessageText(
                 chatId = chatId.toChatId(),
                 receiverUserId = delivery.receiverUserId,
-                ephemeralMessageId = msgInfo.id,
+                ephemeralMessageId = messageId,
                 richText = richText,
                 replyMarkup = replyMarkup as? ReplyMarkup.InlineKeyboard
             )
-            ephemeralMsgInfo[delivery.receiverUserId] =
-                MsgInfo(msgInfo.id, true, richText.toString(), replyMarkup)
+            messageId
         }
     }
 
-    private fun resetKnownMessage() {
-        if (null != msgInfo) {
-            prevMsgInfo = msgInfo
-        }
+    private suspend fun resetKnownMessage(delivery: Delivery) {
+        val knownMessage = msgInfo ?: return
         msgInfo = null
-    }
+        if (!knownMessage.hasButtons) return
 
-    private suspend fun resetKnownEphemeralMessage(receiverUserId: Long) {
-        val msgInfo = ephemeralMsgInfo.remove(receiverUserId) ?: return
-        if (msgInfo.hasButtons) {
-            tg.editEphemeralMessageReplyMarkup(
+        when (delivery) {
+            Delivery.Regular -> tg.editMessageReplyMarkup(
                 chatId = chatId.toChatId(),
-                receiverUserId = receiverUserId,
-                ephemeralMessageId = msgInfo.id,
+                messageId = knownMessage.id,
+                replyMarkup = null
+            )
+            is Delivery.Ephemeral -> tg.editEphemeralMessageReplyMarkup(
+                chatId = chatId.toChatId(),
+                receiverUserId = delivery.receiverUserId,
+                ephemeralMessageId = knownMessage.id,
                 replyMarkup = null
             )
         }
@@ -551,6 +558,16 @@ abstract class StatefulTelegramDialogVerticle<Config> : TelegramDialogVerticle<C
             v.become(newState, historyBehavior)
         }
 
+        /** Enter ephemeral delivery mode, latching [user] until [becomeNormal] is called. */
+        protected suspend fun becomeEphemeral(user: User) {
+            v.becomeEphemeral(user)
+        }
+
+        /** Leave ephemeral delivery mode. */
+        protected suspend fun becomeNormal() {
+            v.becomeNormal()
+        }
+
         /**
          * Execute [become] [withLock].
          */
@@ -620,10 +637,9 @@ abstract class StatefulTelegramDialogVerticle<Config> : TelegramDialogVerticle<C
         protected open suspend fun sendOrEdit(
             richText: RichText,
             replyMarkup: ReplyMarkup? = null,
-            forceSend: Boolean = false,
-            delivery: Delivery = Delivery.Regular
+            forceSend: Boolean = false
         ) {
-            v.sendOrEdit(richText, replyMarkup, forceSend, delivery)
+            v.sendOrEdit(richText, replyMarkup, forceSend)
         }
 
         /**
@@ -635,50 +651,48 @@ abstract class StatefulTelegramDialogVerticle<Config> : TelegramDialogVerticle<C
         /**
          * Get [YawnTimeout] state (use together with [become] or [becomeWithLock]): [sendOrEdit] a yawning emoji and [die] as timed out.
          */
-        protected fun yawnTimeout(delivery: Delivery = Delivery.Regular): State = YawnTimeout(v, delivery)
+        protected fun yawnTimeout(): State = YawnTimeout(v)
         /**
          * Get [SilentTimeout] state (use together with [become] or [becomeWithLock]): do not send anything and [die] with timeout.
          */
-        protected fun silentTimeout(delivery: Delivery = Delivery.Regular): State = SilentTimeout(v, delivery)
+        protected fun silentTimeout(): State = SilentTimeout(v)
         /**
          * Get [CrossCancelled] state (use together with [become] or [becomeWithLock]): [sendOrEdit] a redd cross sign emoji and [die] as cancelled.
          */
-        protected fun crossCancelled(delivery: Delivery = Delivery.Regular): State = CrossCancelled(v, delivery)
+        protected fun crossCancelled(): State = CrossCancelled(v)
         /**
          * Get [SilentCancelled] state (use together with [become] or [becomeWithLock]): do not send anything and [die] as cancelled.
          */
-        protected fun silentCancelled(delivery: Delivery = Delivery.Regular): State = SilentCancelled(v, delivery)
+        protected fun silentCancelled(): State = SilentCancelled(v)
         /**
          * Get [CheckmarkDone] state (use together with [become] or [becomeWithLock]): [sendOrEdit] green checkmark emoji and [die] as completed.
          */
-        protected fun checkmarkDone(delivery: Delivery = Delivery.Regular): State = CheckmarkDone(v, delivery)
+        protected fun checkmarkDone(): State = CheckmarkDone(v)
         /**
          * Get [SilentDone] state (use together with [become] or [becomeWithLock]): do not send anything and [die] as completed.
          */
-        protected fun silentDone(delivery: Delivery = Delivery.Regular): State = SilentDone(v, delivery)
+        protected fun silentDone(): State = SilentDone(v)
 
     }
 
-    protected fun yawnTimeout(delivery: Delivery = Delivery.Regular): State = YawnTimeout(this, delivery)
-    protected fun silentTimeout(delivery: Delivery = Delivery.Regular): State = SilentTimeout(this, delivery)
-    protected fun crossCancelled(delivery: Delivery = Delivery.Regular): State = CrossCancelled(this, delivery)
-    protected fun silentCancelled(delivery: Delivery = Delivery.Regular): State = SilentCancelled(this, delivery)
-    protected fun checkmarkDone(delivery: Delivery = Delivery.Regular): State = CheckmarkDone(this, delivery)
-    protected fun silentDone(delivery: Delivery = Delivery.Regular): State = SilentDone(this, delivery)
+    protected fun yawnTimeout(): State = YawnTimeout(this)
+    protected fun silentTimeout(): State = SilentTimeout(this)
+    protected fun crossCancelled(): State = CrossCancelled(this)
+    protected fun silentCancelled(): State = SilentCancelled(this)
+    protected fun checkmarkDone(): State = CheckmarkDone(this)
+    protected fun silentDone(): State = SilentDone(this)
 
     private class YawnTimeout(
-        private val verticle: StatefulTelegramDialogVerticle<*>,
-        private val terminalDelivery: Delivery
+        private val verticle: StatefulTelegramDialogVerticle<*>
     ) : State(verticle) {
         override suspend fun sideEffect() {
-            sendOrEdit("\uD83E\uDD71".toRichText(), delivery = terminalDelivery)
+            sendOrEdit("\uD83E\uDD71".toRichText())
             verticle.timeout()
         }
     }
 
     private class SilentTimeout(
-        private val verticle: StatefulTelegramDialogVerticle<*>,
-        @Suppress("unused") private val terminalDelivery: Delivery
+        private val verticle: StatefulTelegramDialogVerticle<*>
     ) : State(verticle) {
         override suspend fun sideEffect() {
             verticle.timeout()
@@ -686,18 +700,16 @@ abstract class StatefulTelegramDialogVerticle<Config> : TelegramDialogVerticle<C
     }
 
     private class CrossCancelled(
-        private val verticle: StatefulTelegramDialogVerticle<*>,
-        private val terminalDelivery: Delivery
+        private val verticle: StatefulTelegramDialogVerticle<*>
     ) : State(verticle) {
         override suspend fun sideEffect() {
-            sendOrEdit("❌".toRichText(), delivery = terminalDelivery)
+            sendOrEdit("❌".toRichText())
             cancel()
         }
     }
 
     private class SilentCancelled(
-        private val verticle: StatefulTelegramDialogVerticle<*>,
-        @Suppress("unused") private val terminalDelivery: Delivery
+        private val verticle: StatefulTelegramDialogVerticle<*>
     ) : State(verticle) {
         override suspend fun sideEffect() {
             cancel()
@@ -705,18 +717,16 @@ abstract class StatefulTelegramDialogVerticle<Config> : TelegramDialogVerticle<C
     }
 
     private class CheckmarkDone(
-        private val verticle: StatefulTelegramDialogVerticle<*>,
-        private val terminalDelivery: Delivery
+        private val verticle: StatefulTelegramDialogVerticle<*>
     ) : State(verticle) {
         override suspend fun sideEffect() {
-            sendOrEdit("✅".toRichText(), delivery = terminalDelivery)
+            sendOrEdit("✅".toRichText())
             complete()
         }
     }
 
     private class SilentDone(
-        private val verticle: StatefulTelegramDialogVerticle<*>,
-        @Suppress("unused") private val terminalDelivery: Delivery
+        private val verticle: StatefulTelegramDialogVerticle<*>
     ) : State(verticle) {
         override suspend fun sideEffect() {
             complete()
@@ -725,21 +735,26 @@ abstract class StatefulTelegramDialogVerticle<Config> : TelegramDialogVerticle<C
 
     private data class MsgInfo(val id: Long, val hasButtons: Boolean, val text: String, val markup: ReplyMarkup?)
 
-    /**
-     * Selects which dialog message [sendOrEdit] maintains.
-     *
-     * Regular and ephemeral messages are tracked independently. Ephemeral messages are tracked per receiver,
-     * allowing a dialog to maintain a regular message and private messages for multiple users in parallel.
-     */
-    sealed interface Delivery {
+    private sealed interface Delivery {
         data object Regular : Delivery
+        data class Ephemeral(val receiverUserId: Long, val context: EphemeralContext) : Delivery
+    }
 
-        data class Ephemeral(
-            /** User who can see and interact with the ephemeral message. */
-            val receiverUserId: Long,
-            /** Callback query that prompted a newly sent ephemeral message, if applicable. */
-            val callbackQueryId: String? = null
-        ) : Delivery
+    /**
+     * Eligible incoming action authorizing an ephemeral response.
+     */
+    private sealed interface EphemeralContext {
+        val receiverUserId: Long
+
+        data class CallbackQuery(
+            override val receiverUserId: Long,
+            val callbackQueryId: String
+        ) : EphemeralContext
+
+        data class Message(
+            override val receiverUserId: Long,
+            val ephemeralMessageId: Long
+        ) : EphemeralContext
     }
 
     companion object {
