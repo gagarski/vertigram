@@ -218,7 +218,7 @@ Gradle signing in build scripts reads from project properties (`signingKey`, `si
 
 **No committed `.env` files or credential artifacts** (`.pem`, `.key`) were found.
 
-However, secret externalization alone is not sufficient: §2.2 and §2.3 describe risks in how those secrets are consumed at runtime.
+However, secret externalization alone is not sufficient: §2.2 (input injection) and §2.3 (unpinned actions / supply-chain risk) describe how those secrets are exposed at runtime.
 
 ---
 
@@ -251,19 +251,42 @@ The release step interpolates `release_version` and `next_version` directly into
 
 ### 2.3 [Low] Publish workflow — third-party actions pinned to mutable refs
 
-The publish workflow uses floating version tags rather than commit SHAs:
+The publish workflow uses floating version tags rather than immutable commit SHAs:
 
-| Step | Action | Risk |
-|------|--------|------|
-| Checkout | `actions/checkout@v4` | Tag can be retargeted |
-| JDK setup | `actions/setup-java@v4` | Tag can be retargeted |
-| Gradle | `gradle/actions/setup-gradle@v4` | Tag can be retargeted |
-| Cache | `actions/cache@v4` | Tag can be retargeted |
-| SSH agent | `webfactory/ssh-agent@v0.9.0` | Third-party; holds `DOKKA_SSH_PRIVATE_KEY` |
+```50:90:.github/workflows/publish.yml
+      - name: Checkout
+        uses: actions/checkout@v4
+        ...
+      - name: Set up JDK 25
+        uses: actions/setup-java@v4
+        ...
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        ...
+      - name: Cache local Maven repository
+        uses: actions/cache@v4
+        ...
+      - name: Set up SSH for docs
+        if: ${{ inputs.publish_docs }}
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.DOKKA_SSH_PRIVATE_KEY }}
+```
 
-**Risk:** In a release job with signing and publishing secrets, a compromised or retagged action could exfiltrate credentials. Third-party actions (`webfactory/ssh-agent`) carry higher supply-chain risk than first-party `actions/*` steps.
+| Step | Action | Line | Risk |
+|------|--------|------|------|
+| Checkout | `actions/checkout@v4` | 51 | Major tag can be retargeted |
+| JDK setup | `actions/setup-java@v4` | 56 | Major tag can be retargeted |
+| Gradle | `gradle/actions/setup-gradle@v4` | 62 | Major tag can be retargeted |
+| Cache | `actions/cache@v4` | 68 | Major tag can be retargeted |
+| SSH agent | `webfactory/ssh-agent@v0.9.0` | 88 | **Third-party**; receives `DOKKA_SSH_PRIVATE_KEY` |
 
-**Recommendation:** Pin all actions to full commit SHAs (Dependabot can manage SHA updates). For `webfactory/ssh-agent`, consider replacing with `ssh-agent` setup via a maintained first-party or org-owned action, or use OIDC/deploy keys where possible.
+**Risk:** In a release job with Sonatype, GPG signing, and SSH secrets in scope, a compromised or retagged action could exfiltrate credentials. Third-party actions (`webfactory/ssh-agent`) carry higher supply-chain risk than first-party `actions/*` steps because their source and release process are outside the `actions` org.
+
+**Recommendation:**
+- Pin every `uses:` reference to a full commit SHA, e.g. `actions/checkout@<40-char-sha> # v4.x.x`.
+- Enable [Dependabot version updates for GitHub Actions](https://docs.github.com/en/code-security/dependabot/working-with-dependabot/keeping-your-actions-up-to-date-with-dependabot) to propose SHA bumps.
+- For `webfactory/ssh-agent`, consider replacing with org-owned SSH setup, deploy keys, or OIDC-based publishing where possible.
 
 ---
 
