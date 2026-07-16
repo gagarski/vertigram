@@ -1,0 +1,18 @@
+{
+  "db": {
+    "url": "jdbc:postgresql://postgres:5432/myapp",
+    "username": "postgres",
+    "password": "password"
+  },
+  "flyway": {
+    "locations": []
+  },
+  "jooq": {
+    "driver": "org.postgresql.Driver",
+    "dbName": "org.jooq.meta.postgres.PostgresDatabase",
+    "includes": ".*",
+    "inputSchema": "public",
+    "packageName": "com.example.generated",
+    "directory": "/tmp/jooq"
+  }
+}

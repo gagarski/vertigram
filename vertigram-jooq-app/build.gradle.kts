@@ -1,4 +1,5 @@
 plugins {
+    id("application")
     id("buildlogic.vertigram-module-convention")
     id("buildlogic.maven-publishing-convention")
     id("buildlogic.dokka-convention")
@@ -18,3 +19,7 @@ dependencies {
 }
 
 description = "Application support for Vertigram jOOQ integrations."
+
+application {
+    mainClass.set("ski.gagar.vertigram.jooq.app.AppKt")
+}
