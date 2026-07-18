@@ -8,7 +8,10 @@ object Props {
         props.load(javaClass.classLoader.getResourceAsStream("vertigram-jooq.properties"))
     }
 
-    val version = props.getProperty("version")
+    val runnerDependencies = props.getProperty("runner-dependencies")
+        .split(',')
+        .filter(String::isNotBlank)
+
     val testContainersVersion = props.getProperty("test-containers.version")
     val postgresqlDriverVersion = props.getProperty("postgresql-driver.version")
     val flywayVersion = props.getProperty("flyway.version")

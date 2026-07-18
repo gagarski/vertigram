@@ -19,8 +19,7 @@ val subprojectsExcludedFromBom = setOf(
     "vertigram-codegen",
     "vertigram-annotations",
     "vertigram-dokka-tool",
-    "vertigram-jooq-app",
-    "vertigram-jooq-app-api"
+
 )
 
 dependencies {

@@ -12,8 +12,7 @@ include(":vertigram-jooq")
 include("vertigram-jooq-gradle-plugin")
 include("vertigram-version-catalog")
 include("vertigram-bom")
-include("vertigram-jooq-app-api")
-include("vertigram-jooq-app")
+
 include("vertigram-dokka-tool")
 include("vertigram-docs")
 

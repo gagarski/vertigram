@@ -16,7 +16,7 @@ dependencies {
     api(libs.bundles.reflections)
     api(libs.bundles.slf4j.api)
     api(project(":vertigram-util"))
-    api(project(":vertigram-annotations"))
+    compileOnly(project(":vertigram-annotations"))
     ksp(project(":vertigram-codegen"))
 }
 
