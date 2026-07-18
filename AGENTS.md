@@ -6,14 +6,13 @@ Vertigram is a multi-module Gradle project for building Telegram bots with Vert.
 
 Key modules:
 
-- `vertigram`: main bot framework APIs and verticles.
+- `vertigram`: main bot framework APIs, verticles, and optional Logback integration.
 - `vertigram-core`: shared Vert.x/Jackson/Kotlin core utilities.
 - `vertigram-telegram-client`: Telegram API types, methods, serialization tests, and KSP-generated client code.
 - `vertigram-codegen`: KSP code generators used by `vertigram-telegram-client`.
 - `vertigram-annotations`: annotations consumed by code generation.
 - `vertigram-util`: shared utility code.
-- `vertigram-jooq`, `vertigram-jooq-app`, `vertigram-jooq-app-api`, `vertigram-jooq-gradle-plugin`: jOOQ/database integration and Gradle plugin support.
-- `vertigram-logback`: Logback integration.
+- `vertigram-jooq`, `vertigram-jooq-gradle-plugin`: jOOQ/database integration and Gradle plugin support.
 - `vertigram-docs`, `vertigram-dokka-tool`: documentation tooling.
 - `vertigram-bom`, `vertigram-version-catalog`: dependency management artifacts.
 

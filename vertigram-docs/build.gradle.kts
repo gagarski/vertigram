@@ -12,7 +12,6 @@ dependencies {
     dokka(project(":vertigram-telegram-client"))
     dokka(project(":vertigram-core"))
     dokka(project(":vertigram"))
-    dokka(project(":vertigram-logback"))
     dokka(project(":vertigram-jooq"))
     dokka(project(":vertigram-jooq-gradle-plugin"))
     dokkaHtmlPlugin("org.jetbrains.dokka:versioning-plugin")

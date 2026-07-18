@@ -7,7 +7,7 @@ include(":vertigram-codegen")
 include(":vertigram-telegram-client")
 include(":vertigram-core")
 include(":vertigram")
-include(":vertigram-logback")
+
 include(":vertigram-jooq")
 include("vertigram-jooq-gradle-plugin")
 include("vertigram-version-catalog")

@@ -1030,6 +1030,63 @@ timeout handling by overriding the `timeout` field of the verticle:
         get() = Duration.ofMinutes(3)
 ```
 
+## Optional Logback integration
+
+Vertigram includes an optional Logback appender that publishes log events on its event bus. Logback is not pulled into
+applications transitively; add it explicitly when this integration is needed:
+
+```kotlin
+dependencies {
+    implementation("ski.gagar.vertigram:vertigram:<version>")
+    runtimeOnly("ch.qos.logback:logback-classic:<version>")
+}
+```
+
+When using the published Vertigram version catalog, the second declaration can be written as
+`runtimeOnly(vertigramLibs.logback.classic)`. Use `implementation` instead when application source code directly
+references Logback types or constructs `EventBusAppender` programmatically.
+
+Configure and attach `EventBusAppender` to the appropriate loggers in `logback.xml`:
+
+```xml
+<appender name="vertigram" class="ski.gagar.vertigram.logback.EventBusAppender">
+    <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+        <level>WARN</level>
+    </filter>
+</appender>
+
+<root level="INFO">
+    <appender-ref ref="vertigram"/>
+</root>
+```
+
+With the default `Vertigram.Config.initializers`, `attachVertigram()` discovers the Logback initializer and attaches
+every configured `EventBusAppender` automatically. If an application supplies its own initializer list, include
+`VertigramLogbackInitializer()` or call `attachEventBusLogging()` explicitly after creating Vertigram.
+
+The default logical Vertigram address is `ski.gagar.vertigram.logback`. The raw Vert.x address is namespaced for the
+Vertigram instance. The logical address can be changed through the appender's `address` property:
+
+```xml
+<appender name="vertigram" class="ski.gagar.vertigram.logback.EventBusAppender">
+    <address>com.example.logs</address>
+</appender>
+```
+
+Consumers receive `LogEvent` values. Logging inside such a consumer can create a feedback loop; wrap those records with
+`bypassEventBusAppender` or `bypassEventBusAppenderSuspend` so the appender ignores them.
+
+To forward events to a Telegram chat or channel, deploy `TelegramLoggingVerticle` after the standard Telegram ensemble:
+
+```kotlin
+vertigram.deployVerticle(
+    TelegramLoggingVerticle(),
+    TelegramLoggingVerticle.Config(chatId = -100123456)
+)
+```
+
+For a custom appender address, pass the same value as `listenAddress`. If the Telegram ensemble uses a custom base
+address, pass it as `telegramAddress`.
 ## What's Next?
 
 Now you're familiar with using Telegram client from Vertigram and some basic building blocks for your bots.

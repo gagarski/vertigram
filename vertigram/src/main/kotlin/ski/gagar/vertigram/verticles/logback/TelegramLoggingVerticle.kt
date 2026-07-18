@@ -34,7 +34,7 @@ class TelegramLoggingVerticle : VertigramVerticle<TelegramLoggingVerticle.Config
     private var acc: MutableMap<Level, Int>? = null
     private var timer: Job? = null
     override suspend fun start() {
-        tg = ThinTelegram(vertigram)
+        tg = ThinTelegram(vertigram, typedConfig.telegramAddress)
 
         consumer<LogEvent, Unit>(typedConfig.listenAddress) {
             handleLogEvent(it)

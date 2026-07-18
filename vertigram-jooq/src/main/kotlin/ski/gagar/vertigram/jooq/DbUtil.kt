@@ -2,16 +2,18 @@ package ski.gagar.vertigram.jooq
 
 import com.zaxxer.hikari.HikariDataSource
 import io.vertx.core.Vertx
-import io.vertx.core.json.JsonObject
 import io.vertx.core.shareddata.Shareable
-import io.vertx.kotlin.coroutines.CoroutineVerticle
-import org.jooq.Record
-import org.jooq.impl.DSL
+import java.sql.ConnectionBuilder
+import java.sql.ShardingKeyBuilder
 import javax.sql.DataSource
 
 data class ShareableHolder<T>(val data: T) : Shareable
 
-class DataSourceWithUrl(private val ds: DataSource, val jdbcUrl: String) : DataSource by ds
+class DataSourceWithUrl(private val ds: DataSource, val jdbcUrl: String) : DataSource by ds {
+    override fun createConnectionBuilder(): ConnectionBuilder = ds.createConnectionBuilder()
+
+    override fun createShardingKeyBuilder(): ShardingKeyBuilder = ds.createShardingKeyBuilder()
+}
 
 const val DATA_SOURCES_MAP_NAME = "ski.gagar.vertigram.jooq.ds"
 
@@ -49,39 +51,4 @@ internal fun Vertx.deleteSharedDataSource(name: String) {
 
             null
         }
-}
-
-class DbVerticle : CoroutineVerticle() {
-    private val db = Database(dataSourceName = "myApp")
-
-    override suspend fun start() {
-        // ...
-    }
-
-    private suspend fun fetch(id: Int): JsonObject? {
-        val res: Record? = db {
-            selectFrom(DSL.table("user"))
-                .where(DSL.field("id").eq(id))
-                .fetchOne()
-        }
-        return res?.let{ convert(it) }
-    }
-
-    private suspend fun store(name: String, bio: String) {
-        db.withTransaction {
-            val user: Record = insertInto(DSL.table("user"))
-                .set(DSL.field("name"), name)
-                .returning()
-                .fetchOne()!!
-
-            insertInto(DSL.table("profile"))
-                .set(DSL.field("bio"), bio)
-                .set(DSL.field("user_id"), user.get(DSL.field("id")))
-        }
-    }
-
-
-    private fun convert(record: Record): JsonObject? {
-        TODO()
-    }
 }

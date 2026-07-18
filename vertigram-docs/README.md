@@ -14,8 +14,8 @@ Vertigram consists of several modules, each having its own documentation page. Y
  - <a href="./vertigram-core/index.html">`vertigram-core`</a> introduces Vertigram-specific verticles and event bus
     protocols, which are widely used in bot building tools provided by Vertigram
  - <a href="./vertigram/index.html">`vertigram`</a> gives you bot building tools, such as verticles for dispatching 
-    messages to dialogs and managing dialog state. It also introduces a ways to properly share a `Telegram` client
-    across your app and receive updates from Telegram server.
+    messages to dialogs and managing dialog state. It also introduces ways to share a `Telegram` client,
+    receive updates from Telegram, and optionally publish Logback events over the event bus or to Telegram.
 
 Few extra modules stand aside:
  - <a href="./vertigram-jooq/index.html">`vertigram-jooq`</a> provides you an API to share JDBC datasources across your
@@ -23,8 +23,6 @@ Few extra modules stand aside:
  -  <a href="./vertigram-jooq-gradle-plugin/index.html">`vertigram-jooq-gradle-plugin`</a> is a Gradle plugin to execute 
     jOOQ code generation along with Flyway migrations and optionally using Testcontainers to run temporary database,
     used for code generation.
- - <a href="./vertigram-logback/index.html">`vertigram-logback`</a> provides you with some stuff allowing to
-    interoperate with logback for publishing log events over event bus or to Telegram.
 
 ## Telegram API versions
 

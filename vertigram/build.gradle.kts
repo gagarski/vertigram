@@ -16,7 +16,7 @@ dependencies {
     api(project(":vertigram-telegram-client"))
     api(project(":vertigram-core"))
 
-    implementation(libs.bundles.logback)
+    compileOnly(libs.bundles.logback)
 
 }
 

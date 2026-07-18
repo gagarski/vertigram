@@ -8,7 +8,6 @@ import kotlinx.coroutines.withContext
 import org.slf4j.LoggerFactory
 import org.slf4j.MDC
 import ski.gagar.vertigram.Vertigram
-import ski.gagar.vertigram.util.internal.uncheckedCast
 import ski.gagar.vertigram.util.lazy
 import ski.gagar.vertigram.util.logger
 import java.util.concurrent.atomic.AtomicReference
@@ -59,10 +58,11 @@ fun Vertigram.attachEventBusAppender(appender: EventBusAppender) {
  *
  * The appender should be present in logback.xml
  */
-fun Vertigram.attachEventBusLogging() {
-    val cxt = LoggerFactory.getILoggerFactory().uncheckedCast<LoggerContext>()
+internal fun Vertigram.attachEventBusLoggingIfConfigured(): Boolean {
+    val context = LoggerFactory.getILoggerFactory() as? LoggerContext ?: return false
     var attached = false
-    for (logger in cxt.loggerList) {
+
+    for (logger in context.loggerList) {
         for (appender in logger.iteratorForAppenders()) {
             if (appender is EventBusAppender) {
                 appender.attachVertigram(this)
@@ -71,8 +71,12 @@ fun Vertigram.attachEventBusLogging() {
         }
     }
 
-    if (!attached) {
-        logger.lazy.error { "No loggers attached to vertx, check your logback config" }
+    return attached
+}
+
+fun Vertigram.attachEventBusLogging() {
+    if (!attachEventBusLoggingIfConfigured()) {
+        logger.lazy.error { "No EventBusAppender is configured in Logback" }
     }
 }
 
