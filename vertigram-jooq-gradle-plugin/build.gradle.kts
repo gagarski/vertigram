@@ -2,6 +2,7 @@
 plugins {
     id("buildlogic.vertigram-module-convention")
     id("buildlogic.dokka-convention")
+    id("buildlogic.maven-central-convention")
     `kotlin-dsl`
     `maven-publish`
     signing

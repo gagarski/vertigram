@@ -8,7 +8,6 @@ plugins {
     id("org.jetbrains.dokka")
     signing
     alias(libsInternal.plugins.release)
-    alias(libsInternal.plugins.nexus)
 }
 
 dependencies {
@@ -26,15 +25,6 @@ buildscript {
 }
 
 
-nexusPublishing {
-    repositories {
-        sonatype {
-            nexusUrl.set(uri("https://ossrh-staging-api.central.sonatype.com/service/local/"))
-            snapshotRepositoryUrl.set(uri("https://central.sonatype.com/repository/maven-snapshots/"))
-        }
-    }
-}
-
 release {
     with(git) {
         requireBranch.set("master")
@@ -42,33 +32,25 @@ release {
 }
 
 gradle.projectsEvaluated {
-    val publishToSonatypeTasks = subprojects.mapNotNull {
-        it.tasks.findByName("publishToSonatype")
+    val publishToMavenCentralTasks = subprojects.mapNotNull {
+        it.tasks.findByName("publishAllPublicationsToMavenCentralRepository")
     }
 
     tasks {
-        named("closeSonatypeStagingRepository") {
-            mustRunAfter(publishToSonatypeTasks)
-        }
-
-        named("closeAndReleaseSonatypeStagingRepository") {
-            mustRunAfter(publishToSonatypeTasks)
-        }
-
         named("afterReleaseBuild") {
-            dependsOn(publishToSonatypeTasks)
+            dependsOn(publishToMavenCentralTasks)
 
             if (providers.gradleProperty("vertigram.dokka.publish").orNull != "false") {
                 dependsOn(":vertigram-docs:dokkaPush")
             }
 
-            when (val stagingAction = providers.gradleProperty("vertigram.staging.action").orNull ?: "none") {
-                "none" -> {}
-                "close" -> dependsOn("closeSonatypeStagingRepository")
-                "close-and-release" -> dependsOn("closeAndReleaseSonatypeStagingRepository")
+            when (val deploymentAction = providers.gradleProperty("vertigram.central.deployment.action").orNull ?: "upload") {
+                "upload" -> {}
+                "validate" -> {}
+                "publish" -> {}
                 else -> throw GradleException(
-                    "Unsupported vertigram.staging.action=$stagingAction. " +
-                        "Expected one of: none, close, close-and-release."
+                    "Unsupported vertigram.central.deployment.action=$deploymentAction. " +
+                        "Expected one of: upload, validate, publish."
                 )
             }
         }
@@ -76,7 +58,7 @@ gradle.projectsEvaluated {
 
     project(":vertigram-docs").tasks {
         named("dokkaPush") {
-            mustRunAfter(publishToSonatypeTasks)
+            mustRunAfter(publishToMavenCentralTasks)
         }
     }
 }

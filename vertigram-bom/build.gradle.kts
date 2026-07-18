@@ -8,6 +8,7 @@ repositories {
 plugins {
     `java-platform`
     `maven-publish`
+    id("buildlogic.maven-central-convention")
     signing
 }
 

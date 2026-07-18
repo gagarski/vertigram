@@ -10,6 +10,7 @@ args4j = "2.37"
 junit = "6.1.1"
 junit-platform-launcher = "6.1.1"
 gradle-publish-plugin = "2.1.1"
+vanniktech-maven-publish = "0.37.0"
 ksp = "2.3.9"
 kotlinpoet = "2.3.0"
 rsync4j = "3.3.0-4"
@@ -26,6 +27,7 @@ kotlinpoet = { module = "com.squareup:kotlinpoet", version.ref = "kotlinpoet" }
 kotlinpoet-metadata = { module = "com.squareup:kotlinpoet-metadata", version.ref = "kotlinpoet" }
 kotlinpoet-ksp = { module = "com.squareup:kotlinpoet-ksp", version.ref = "kotlinpoet" }
 rsync4j = { module = "com.github.fracpete:rsync4j-all", version.ref="rsync4j" }
+vanniktech-maven-publish-gradle-plugin = { module = "com.vanniktech.maven.publish:com.vanniktech.maven.publish.gradle.plugin", version.ref = "vanniktech-maven-publish" }
 
 [plugins]
 dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }

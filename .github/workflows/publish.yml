@@ -3,15 +3,15 @@ name: Publish
 on:
   workflow_dispatch:
     inputs:
-      staging_repository_action:
-        description: What to do with the Sonatype staging repository after upload
+      central_deployment_action:
+        description: How far to take the Maven Central deployment
         required: true
-        default: none
+        default: upload
         type: choice
         options:
-          - none
-          - close
-          - close-and-release
+          - upload
+          - validate
+          - publish
       publish_docs:
         description: Publish Dokka docs over SSH
         required: true
@@ -39,8 +39,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 90
     env:
-      ORG_GRADLE_PROJECT_sonatypeUsername: ${{ secrets.SONATYPE_USERNAME }}
-      ORG_GRADLE_PROJECT_sonatypePassword: ${{ secrets.SONATYPE_PASSWORD }}
+      ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.SONATYPE_USERNAME }}
+      ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.SONATYPE_PASSWORD }}
       ORG_GRADLE_PROJECT_signingKeyId: ${{ secrets.GPG_SIGNING_KEY_ID }}
       ORG_GRADLE_PROJECT_signingKey: ${{ secrets.GPG_SIGNING_KEY }}
       ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.GPG_SIGNING_PASSWORD }}
@@ -111,6 +111,6 @@ jobs:
           -Prelease.useAutomaticVersion=true
           "-Prelease.releaseVersion=$RELEASE_VERSION"
           "-Prelease.newVersion=$NEXT_VERSION"
-          -Pvertigram.staging.action="${{ inputs.staging_repository_action }}"
+          -Pvertigram.central.deployment.action="${{ inputs.central_deployment_action }}"
           -Pvertigram.dokka.publish="${{ inputs.publish_docs }}"
           -Pvertigram.dokka.repo="$DOKKA_REPO"

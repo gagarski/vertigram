@@ -15,6 +15,7 @@ dependencies {
     implementation(libs.kotlin.gradle.plugin)
     implementation(libsInternal.dokka.gradle.plugin)
     implementation(libsInternal.dokka.base)
+    implementation(libsInternal.vanniktech.maven.publish.gradle.plugin)
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
