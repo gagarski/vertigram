@@ -193,8 +193,23 @@ interface Poll : HasQuestionWithEntities {
         /** Media is a video. */
         val video: Video? = null
     ) {
+        /**
+         * Represents an HTTP link in poll media.
+         *
+         * See Telegram's [Link](https://core.telegram.org/bots/api#link) documentation.
+         */
+        @TelegramCodegen.Type
+        data class Link internal constructor(
+            /** URL of the link. */
+            val url: String
+        ) {
+            companion object
+        }
+
         companion object
     }
+
+
 
     /**
      * Represents an answer of a user or an anonymous voter in a non-anonymous poll.

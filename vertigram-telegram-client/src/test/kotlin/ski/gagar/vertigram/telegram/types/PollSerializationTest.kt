@@ -14,7 +14,7 @@ object PollSerializationTest : BaseSerializationTest() {
                 options = listOf(),
                 totalVoterCount = 1,
                 media = Poll.Media.create(
-                    link = Link.create(url = "https://example.com"),
+                    link = Poll.Media.Link.create(url = "https://example.com"),
                     livePhoto = LivePhoto.create(
                         fileId = "1",
                         fileUniqueId = "1",

@@ -7,36 +7,36 @@ import ski.gagar.vertigram.telegram.types.colors.ArgbColor
 object StoryAreaSerializationTest : BaseSerializationTest() {
     @Test
     fun `story area type should survive serialization`() {
-        assertSerializable<StoryArea.Type>(
-            StoryArea.Type.Location.create(
+        assertSerializable<Story.Area.Type>(
+            Story.Area.Type.Location.create(
                 latitude = 0.0,
                 longitude = 0.0,
-                address = StoryArea.Type.Location.Address.create(
+                address = Story.Area.Type.Location.Address.create(
                     countryCode = "US"
                 )
             )
         )
-        assertSerializable<StoryArea.Type>(
-            StoryArea.Type.SuggestedReaction.create(
+        assertSerializable<Story.Area.Type>(
+            Story.Area.Type.SuggestedReaction.create(
                 reactionType = Reaction.Emoji.create(
                     emoji = ":D"
                 )
             )
         )
-        assertSerializable<StoryArea.Type>(
-            StoryArea.Type.Link.create(
+        assertSerializable<Story.Area.Type>(
+            Story.Area.Type.Link.create(
                 url = "https://www"
             )
         )
-        assertSerializable<StoryArea.Type>(
-            StoryArea.Type.Weather.create(
+        assertSerializable<Story.Area.Type>(
+            Story.Area.Type.Weather.create(
                 temperature = 0.0,
                 emoji = ":D",
                 backgroundColor = ArgbColor(0U, 0U, 0U, 0U)
             )
         )
-        assertSerializable<StoryArea.Type>(
-            StoryArea.Type.UniqueGift.create(
+        assertSerializable<Story.Area.Type>(
+            Story.Area.Type.UniqueGift.create(
                 name = "wolf"
             )
         )

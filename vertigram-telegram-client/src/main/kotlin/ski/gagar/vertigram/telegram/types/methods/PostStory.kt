@@ -5,7 +5,6 @@ import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.telegram.types.InputMedia
 import ski.gagar.vertigram.telegram.types.MessageEntity
 import ski.gagar.vertigram.telegram.types.Story
-import ski.gagar.vertigram.telegram.types.StoryArea
 import ski.gagar.vertigram.telegram.types.richtext.RichText
 import java.time.Duration
 
@@ -31,7 +30,7 @@ data class PostStory internal constructor(
     /** Special entities that appear in the caption; can be specified instead of [parseMode]. */
     val captionEntities: List<MessageEntity>? = null,
     /** Clickable areas to be shown on the story. */
-    val areas: List<StoryArea>? = null,
+    val areas: List<Story.Area>? = null,
     /** Pass `true` to keep the story accessible after it expires. */
     val postToChatPage: Boolean = false,
     /** Pass `true` if the story must be protected from forwarding and screenshotting. */
