@@ -6,13 +6,18 @@ import ski.gagar.vertigram.telegram.types.Sticker
 import java.time.Instant
 
 /**
- * Telegram [setUserEmojiStatus](https://core.telegram.org/bots/api#setuseremojistatus) method.
+ * Changes the emoji status for a given user who previously allowed the bot to manage their emoji status.
  *
- * For up-to-date documentation, please consult the official Telegram docs.
+ * Returns `true` on success.
+ *
+ * See Telegram's [setUserEmojiStatus](https://core.telegram.org/bots/api#setuseremojistatus) documentation.
  */
 @TelegramCodegen.Method
 data class SetUserEmojiStatus internal constructor(
+    /** Unique identifier of the target user. */
     val userId: Long,
+    /** Custom emoji identifier of the emoji status. */
     val emojiStatusCustomEmojiId: String,
+    /** Expiration date of the emoji status. */
     val emojiStatusExpirationDate: Instant? = null
 ) : JsonTelegramCallable<Boolean>()

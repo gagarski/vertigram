@@ -6,17 +6,23 @@ import ski.gagar.vertigram.util.NoPosArgs
 import java.time.Duration
 
 /**
- * Telegram [VideoNote](https://core.telegram.org/bots/api#videonote) type.
+ * Represents a video message.
  *
- * For up-to-date documentation, please consult the official Telegram docs.
+ * See Telegram's [VideoNote](https://core.telegram.org/bots/api#videonote) documentation.
  */
 @TelegramCodegen.Type
 data class VideoNote internal constructor(
+    /** Identifier for downloading or reusing this file. */
     val fileId: String,
+    /** Unique identifier for this file. */
     val fileUniqueId: String,
+    /** Video width and height. */
     val length: Int,
+    /** Duration of the video. */
     val duration: Duration,
+    /** Video thumbnail. */
     val thumbnail: PhotoSize? = null,
+    /** File size in bytes. */
     val fileSize: Long? = null
 ) {
     companion object

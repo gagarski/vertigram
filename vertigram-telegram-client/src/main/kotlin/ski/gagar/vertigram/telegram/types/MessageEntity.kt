@@ -6,13 +6,9 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo
 import java.time.Instant
 
 /**
- * Telegram [MessageEntity](https://core.telegram.org/bots/api#messageentity) type.
+ * Represents one special entity in a text message, such as a hashtag, username, URL, or formatting.
  *
- * Subtypes (which are nested) represent the case for each of [MessageEntity.Type].
- * Most of the subtypes are effectively the same (type+offset+length),
- * which means you can access the fields using the [MessageEntity] interface.
- *
- * For up-to-date documentation, please consult the official Telegram docs.
+ * See Telegram's [MessageEntity](https://core.telegram.org/bots/api#messageentity) documentation.
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", include = JsonTypeInfo.As.EXISTING_PROPERTY)
 @JsonSubTypes(
@@ -38,12 +34,16 @@ import java.time.Instant
     JsonSubTypes.Type(value = MessageEntity.ExpandableBlockQuote::class, name = MessageEntity.Type.EXPANDABLE_BLOCKQUOTE_STR),
 )
 sealed interface MessageEntity {
+    /** Type of the entity. */
     val type: Type
+    /** Offset in UTF-16 code units to the start of the entity. */
     val offset: Int
+    /** Length of the entity in UTF-16 code units. */
     val length: Int
 
     fun copyTo(offset: Int = this.offset, length: Int = this.length): MessageEntity
 
+    /** Case when the entity is a mention such as `@username`. */
     data class Mention internal constructor(
         override val offset: Int,
         override val length: Int
@@ -52,6 +52,7 @@ sealed interface MessageEntity {
         override fun copyTo(offset: Int, length: Int) = copy(offset = offset, length = length)
     }
 
+    /** Case when the entity is a hashtag such as `#hashtag`. */
     data class Hashtag internal constructor(
         override val offset: Int,
         override val length: Int
@@ -60,6 +61,7 @@ sealed interface MessageEntity {
         override fun copyTo(offset: Int, length: Int) = copy(offset = offset, length = length)
     }
 
+    /** Case when the entity is a cashtag such as `$USD`. */
     data class Cashtag internal constructor(
         override val offset: Int,
         override val length: Int
@@ -68,6 +70,7 @@ sealed interface MessageEntity {
         override fun copyTo(offset: Int, length: Int) = copy(offset = offset, length = length)
     }
 
+    /** Case when the entity is a bot command such as `/start@jobs_bot`. */
     data class BotCommand internal constructor(
         override val offset: Int,
         override val length: Int
@@ -76,6 +79,7 @@ sealed interface MessageEntity {
         override fun copyTo(offset: Int, length: Int) = copy(offset = offset, length = length)
     }
 
+    /** Case when the entity is a URL such as `https://telegram.org`. */
     data class Url internal constructor(
         override val offset: Int,
         override val length: Int
@@ -84,6 +88,7 @@ sealed interface MessageEntity {
         override fun copyTo(offset: Int, length: Int) = copy(offset = offset, length = length)
     }
 
+    /** Case when the entity is an email address such as `do-not-reply@telegram.org`. */
     data class Email internal constructor(
         override val offset: Int,
         override val length: Int
@@ -92,6 +97,7 @@ sealed interface MessageEntity {
         override fun copyTo(offset: Int, length: Int) = copy(offset = offset, length = length)
     }
 
+    /** Case when the entity is a phone number such as `+1-212-555-0123`. */
     data class PhoneNumber internal constructor(
         override val offset: Int,
         override val length: Int
@@ -100,6 +106,7 @@ sealed interface MessageEntity {
         override fun copyTo(offset: Int, length: Int) = copy(offset = offset, length = length)
     }
 
+    /** Case when the entity is bold text. */
     data class Bold internal constructor(
         override val offset: Int,
         override val length: Int
@@ -108,6 +115,7 @@ sealed interface MessageEntity {
         override fun copyTo(offset: Int, length: Int) = copy(offset = offset, length = length)
     }
 
+    /** Case when the entity is italic text. */
     data class Italic internal constructor(
         override val offset: Int,
         override val length: Int
@@ -116,6 +124,7 @@ sealed interface MessageEntity {
         override fun copyTo(offset: Int, length: Int) = copy(offset = offset, length = length)
     }
 
+    /** Case when the entity is underlined text. */
     data class Underline internal constructor(
         override val offset: Int,
         override val length: Int
@@ -124,6 +133,7 @@ sealed interface MessageEntity {
         override fun copyTo(offset: Int, length: Int) = copy(offset = offset, length = length)
     }
 
+    /** Case when the entity is strikethrough text. */
     data class Strikethrough internal constructor(
         override val offset: Int,
         override val length: Int
@@ -132,6 +142,7 @@ sealed interface MessageEntity {
         override fun copyTo(offset: Int, length: Int) = copy(offset = offset, length = length)
     }
 
+    /** Case when the entity is spoiler text. */
     data class Spoiler internal constructor(
         override val offset: Int,
         override val length: Int
@@ -140,6 +151,7 @@ sealed interface MessageEntity {
         override fun copyTo(offset: Int, length: Int) = copy(offset = offset, length = length)
     }
 
+    /** Case when the entity is monowidth text. */
     data class Code internal constructor(
         override val offset: Int,
         override val length: Int
@@ -148,52 +160,64 @@ sealed interface MessageEntity {
         override fun copyTo(offset: Int, length: Int) = copy(offset = offset, length = length)
     }
 
+    /** Case when the entity is a monowidth block. */
     data class Pre internal constructor(
         override val offset: Int,
         override val length: Int,
+        /** Programming language of the entity text. */
         val language: String? = null
     ) : MessageEntity {
         override val type: Type = Type.PRE
         override fun copyTo(offset: Int, length: Int) = copy(offset = offset, length = length)
     }
 
+    /** Case when the entity is clickable text linked to [url]. */
     data class TextLink internal constructor(
         override val offset: Int,
         override val length: Int,
+        /** URL opened after the user taps the text. */
         val url: String
     ) : MessageEntity {
         override val type: Type = Type.TEXT_LINK
         override fun copyTo(offset: Int, length: Int) = copy(offset = offset, length = length)
     }
 
+    /** Case when the entity is a mention of a user without a username. */
     data class TextMention internal constructor(
         override val offset: Int,
         override val length: Int,
+        /** Mentioned user. */
         val user: User
     ) : MessageEntity {
         override val type: Type = Type.TEXT_MENTION
         override fun copyTo(offset: Int, length: Int) = copy(offset = offset, length = length)
     }
 
+    /** Case when the entity is a custom emoji. */
     data class CustomEmoji internal constructor(
         override val offset: Int,
         override val length: Int,
+        /** Unique identifier of the custom emoji. */
         val customEmojiId: String
     ) : MessageEntity {
         override val type: Type = Type.CUSTOM_EMOJI
         override fun copyTo(offset: Int, length: Int) = copy(offset = offset, length = length)
     }
 
+    /** Case when the entity is a date or time. */
     data class DateTime internal constructor(
         override val offset: Int,
         override val length: Int,
+        /** Unix time represented by the entity. */
         val unixTime: Instant? = null,
+        /** Format of the date and time. */
         val dateTimeFormat: String? = null
     ) : MessageEntity {
         override val type: Type = Type.DATE_TIME
         override fun copyTo(offset: Int, length: Int) = copy(offset = offset, length = length)
     }
 
+    /** Case when the entity is a block quotation. */
     data class BlockQuote internal constructor(
         override val offset: Int,
         override val length: Int
@@ -202,6 +226,7 @@ sealed interface MessageEntity {
         override fun copyTo(offset: Int, length: Int) = copy(offset = offset, length = length)
     }
 
+    /** Case when the entity is an expandable block quotation. */
     data class ExpandableBlockQuote internal constructor(
         override val offset: Int,
         override val length: Int

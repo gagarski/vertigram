@@ -8,12 +8,13 @@ import ski.gagar.vertigram.telegram.types.util.ChatId
 import ski.gagar.vertigram.util.NoPosArgs
 
 /**
- * Telegram [unpinAllChatMessages](https://core.telegram.org/bots/api#unpinallchatmessages) method.
+ * Use this method to clear the list of pinned messages in a chat. Returns `true` on success.
  *
- * For up-to-date documentation, please consult the official Telegram docs.
+ * See Telegram's [unpinAllChatMessages](https://core.telegram.org/bots/api#unpinallchatmessages) documentation.
  */
 @Throttled
 @TelegramCodegen.Method
 data class UnpinAllChatMessages internal constructor(
+    /** Unique identifier for the target chat or username of the target bot, supergroup, or channel. */
     override val chatId: ChatId
 ) : JsonTelegramCallable<Boolean>(), HasChatId

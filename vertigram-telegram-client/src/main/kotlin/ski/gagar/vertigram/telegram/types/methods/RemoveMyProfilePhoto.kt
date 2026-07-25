@@ -3,9 +3,9 @@ package ski.gagar.vertigram.telegram.types.methods
 import ski.gagar.vertigram.annotations.TelegramCodegen
 
 /**
- * Telegram [removeMyProfilePhoto](https://core.telegram.org/bots/api#removemyprofilephoto) method.
+ * Removes the current profile photo of the bot. Returns `true` on success.
  *
- * For up-to-date documentation, please consult the official Telegram docs.
+ * See Telegram's [removeMyProfilePhoto](https://core.telegram.org/bots/api#removemyprofilephoto) documentation.
  */
 @TelegramCodegen.Method
 data object RemoveMyProfilePhoto : JsonTelegramCallable<Boolean>()

@@ -4,9 +4,9 @@ import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.telegram.types.User
 
 /**
- * Telegram [getMe](https://core.telegram.org/bots/api#getme) method.
+ * A simple method for testing your bot's authentication token.
  *
- * For up-to-date documentation, please consult the official Telegram docs.
+ * See Telegram's [getMe](https://core.telegram.org/bots/api#getme) documentation.
  */
 @TelegramCodegen.Method
 object GetMe : JsonTelegramCallable<User.Me>()

@@ -10,25 +10,36 @@ import ski.gagar.vertigram.telegram.types.richtext.RichText
 import java.time.Duration
 
 /**
- * Telegram [postStory](https://core.telegram.org/bots/api#poststory) method.
+ * Posts a story on behalf of a managed business account.
  *
- * For up-to-date documentation, please consult the official Telegram docs.
+ * Requires the [ski.gagar.vertigram.telegram.types.BusinessConnection.BotRights.canManageStories] business bot right.
+ *
+ * See Telegram's [postStory](https://core.telegram.org/bots/api#poststory) documentation.
  */
 @TelegramCodegen.Method()
 data class PostStory internal constructor(
+    /** Unique identifier of the business connection. */
     val businessConnectionId: String,
+    /** Content of the story. */
     val content: InputMedia.StoryContent,
+    /** Period after which the story is moved to the archive. */
     val activePeriod: ActivePeriod,
+    /** Caption of the story, 0-2048 characters after entities parsing. */
     val caption: String? = null,
+    /** Mode for parsing entities in the story caption. */
     val parseMode: RichText.ParseMode? = null,
+    /** Special entities that appear in the caption; can be specified instead of [parseMode]. */
     val captionEntities: List<MessageEntity>? = null,
+    /** Clickable areas to be shown on the story. */
     val areas: List<StoryArea>? = null,
+    /** Pass `true` to keep the story accessible after it expires. */
     val postToChatPage: Boolean = false,
+    /** Pass `true` if the story must be protected from forwarding and screenshotting. */
     val protectContent: Boolean = false,
 ) : JsonTelegramCallable<Story>() {
 
     /**
-     * A value for [PostStory.activePeriod] field
+     * A value for [PostStory.activePeriod].
      */
     enum class ActivePeriod(val duration: Duration) {
         SIX_HOURS(Duration.ofHours(6)),

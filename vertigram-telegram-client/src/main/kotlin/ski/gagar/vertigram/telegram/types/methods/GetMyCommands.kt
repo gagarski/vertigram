@@ -6,12 +6,14 @@ import ski.gagar.vertigram.telegram.types.BotCommand
 import ski.gagar.vertigram.util.NoPosArgs
 
 /**
- * Telegram [getMyCommands](https://core.telegram.org/bots/api#getmycommands) method.
+ * Use this method to get the current list of the bot's commands for the given scope and user language.
  *
- * For up-to-date documentation, please consult the official Telegram docs.
+ * See Telegram's [getMyCommands](https://core.telegram.org/bots/api#getmycommands) documentation.
  */
 @TelegramCodegen.Method
 data class GetMyCommands internal constructor(
+    /** Scope of users for which the commands are relevant. */
     val scope: BotCommand.Scope? = null,
+    /** Two-letter ISO 639-1 language code or an empty string. */
     val languageCode: String? = null
 ) : JsonTelegramCallable<List<BotCommand>>()

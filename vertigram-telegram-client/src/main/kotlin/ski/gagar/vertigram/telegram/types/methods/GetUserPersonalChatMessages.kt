@@ -4,12 +4,15 @@ import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.telegram.types.Message
 
 /**
- * Telegram [getUserPersonalChatMessages](https://core.telegram.org/bots/api#getuserpersonalchatmessages) method.
+ * Returns the most recent messages from the personal chat of a user.
  *
- * For up-to-date documentation, please consult the official Telegram docs.
+ * See Telegram's
+ * [getUserPersonalChatMessages](https://core.telegram.org/bots/api#getuserpersonalchatmessages) documentation.
  */
 @TelegramCodegen.Method
 data class GetUserPersonalChatMessages internal constructor(
+    /** Unique identifier of the user. */
     val userId: Long,
+    /** Number of messages to retrieve; 1-100. */
     val limit: Int
 ) : JsonTelegramCallable<List<Message>>()

@@ -6,11 +6,14 @@ import ski.gagar.vertigram.telegram.types.ChatAdministratorRights
 import ski.gagar.vertigram.util.NoPosArgs
 
 /**
- * Telegram [getMyDefaultAdministratorRights](https://core.telegram.org/bots/api#getmydefaultadministratorrights) method.
+ * Use this method to get the current default administrator rights of the bot.
  *
- * For up-to-date documentation, please consult the official Telegram docs.
+ * See Telegram's
+ * [getMyDefaultAdministratorRights](https://core.telegram.org/bots/api#getmydefaultadministratorrights)
+ * documentation.
  */
 @TelegramCodegen.Method
 data class GetMyDefaultAdministratorRights internal constructor(
+    /** Pass `true` to get rights for channels; otherwise, rights for groups and supergroups are returned. */
     val forChannels: Boolean = false
 ) : JsonTelegramCallable<ChatAdministratorRights>()

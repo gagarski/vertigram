@@ -5,13 +5,15 @@ import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.util.NoPosArgs
 
 /**
- * Telegram [BusinessLocation](https://core.telegram.org/bots/api#businesslocation) type.
+ * Contains information about the location of a Telegram Business account.
  *
- * For up-to-date documentation, please consult the official Telegram docs.
+ * See Telegram's [BusinessLocation](https://core.telegram.org/bots/api#businesslocation) documentation.
  */
 @TelegramCodegen.Type
 data class BusinessLocation internal constructor(
+    /** Address of the business. */
     val address: String,
+    /** Location of the business. */
     val location: Location? = null,
 ) {
     companion object

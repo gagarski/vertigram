@@ -4,11 +4,13 @@ import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.telegram.types.BotAccessSettings
 
 /**
- * Telegram [getManagedBotAccessSettings](https://core.telegram.org/bots/api#getmanagedbotaccesssettings) method.
+ * Returns the access settings of a managed bot.
  *
- * For up-to-date documentation, please consult the official Telegram docs.
+ * See Telegram's
+ * [getManagedBotAccessSettings](https://core.telegram.org/bots/api#getmanagedbotaccesssettings) documentation.
  */
 @TelegramCodegen.Method
 data class GetManagedBotAccessSettings internal constructor(
+    /** Unique identifier of the target user whose bot access settings will be returned. */
     val userId: Long
 ) : JsonTelegramCallable<BotAccessSettings>()

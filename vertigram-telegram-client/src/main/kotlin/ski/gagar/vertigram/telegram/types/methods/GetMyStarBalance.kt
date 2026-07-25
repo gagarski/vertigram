@@ -4,9 +4,9 @@ import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.telegram.types.StarAmount
 
 /**
- * Telegram [getMyStarBalance](https://core.telegram.org/bots/api#getmystarbalance) method.
+ * Returns the amount of Telegram Stars owned by the bot.
  *
- * For up-to-date documentation, please consult the official Telegram docs.
+ * See Telegram's [getMyStarBalance](https://core.telegram.org/bots/api#getmystarbalance) documentation.
  */
 @TelegramCodegen.Method()
 object GetMyStarBalance : JsonTelegramCallable<StarAmount>()

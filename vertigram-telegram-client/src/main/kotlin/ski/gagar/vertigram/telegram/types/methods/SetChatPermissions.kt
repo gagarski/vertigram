@@ -8,13 +8,16 @@ import ski.gagar.vertigram.telegram.types.ChatPermissions
 import ski.gagar.vertigram.util.NoPosArgs
 
 /**
- * Telegram [setChatPermissions](https://core.telegram.org/bots/api#setchatpermissions) method.
+ * Use this method to set default chat permissions for all members. Returns `true` on success.
  *
- * For up-to-date documentation, please consult the official Telegram docs.
+ * See Telegram's [setChatPermissions](https://core.telegram.org/bots/api#setchatpermissions) documentation.
  */
 @TelegramCodegen.Method
 data class SetChatPermissions internal constructor(
+    /** Unique identifier for the target chat or username of the target bot, supergroup, or channel. */
     override val chatId: ChatId,
+    /** New default chat permissions. */
     val permissions: ChatPermissions,
+    /** Pass `true` to set chat permissions independently. */
     val useIndependentChatPermissions: Boolean = false
 ) : JsonTelegramCallable<Boolean>(), HasChatId

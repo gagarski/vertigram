@@ -6,12 +6,14 @@ import ski.gagar.vertigram.telegram.types.Sticker
 import ski.gagar.vertigram.util.NoPosArgs
 
 /**
- * Telegram [setStickerMaskPosition](https://core.telegram.org/bots/api#setstickermaskposition) method.
+ * Use this method to change the mask position of a mask sticker. Returns `true` on success.
  *
- * For up-to-date documentation, please consult the official Telegram docs.
+ * See Telegram's [setStickerMaskPosition](https://core.telegram.org/bots/api#setstickermaskposition) documentation.
  */
 @TelegramCodegen.Method
 data class SetStickerMaskPosition internal constructor(
+    /** File identifier of the sticker. */
     val sticker: String,
+    /** New mask position of the sticker. */
     val maskPosition: Sticker.MaskPosition? = null
 ) : MultipartTelegramCallable<Boolean>()

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Telegram Doc Updater"
+  short_description: "Update Vertigram Telegram API KDoc"
+  default_prompt: "Use $telegram-doc-updater to update Vertigram Telegram API documentation from the official Bot API docs."

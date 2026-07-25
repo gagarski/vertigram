@@ -6,12 +6,14 @@ import ski.gagar.vertigram.telegram.throttling.Throttled
 import ski.gagar.vertigram.telegram.types.util.ChatId
 
 /**
- * Telegram [deleteChatPhoto](https://core.telegram.org/bots/api#deletechatphoto) method.
+ * Use this method to delete a chat photo. Photos can't be changed for private chats. The bot must be an administrator
+ * in the chat for this to work and must have the appropriate administrator rights. Returns `true` on success.
  *
- * For up-to-date documentation, please consult the official Telegram docs.
+ * See Telegram's [deleteChatPhoto](https://core.telegram.org/bots/api#deletechatphoto) documentation.
  */
 @Throttled
 @TelegramCodegen.Method
 data class DeleteChatPhoto internal constructor(
+    /** Unique identifier for the target chat or username of the target channel. */
     override val chatId: ChatId
 ) : JsonTelegramCallable<Boolean>(), HasChatId

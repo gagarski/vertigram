@@ -4,13 +4,15 @@ import ski.gagar.vertigram.annotations.TelegramCodegen
 import java.time.Instant
 
 /**
- * Telegram [PreparedKeyboardButton](https://core.telegram.org/bots/api#preparedkeyboardbutton) type.
+ * Describes a keyboard button to be used by a user of a Mini App.
  *
- * For up-to-date documentation, please consult the official Telegram docs.
+ * See Telegram's [PreparedKeyboardButton](https://core.telegram.org/bots/api#preparedkeyboardbutton) documentation.
  */
 @TelegramCodegen.Type
 data class PreparedKeyboardButton internal constructor(
+    /** Unique identifier of the keyboard button. */
     val id: String,
+    /** Expiration date of the keyboard button. */
     val expirationDate: Instant
 ) {
     companion object

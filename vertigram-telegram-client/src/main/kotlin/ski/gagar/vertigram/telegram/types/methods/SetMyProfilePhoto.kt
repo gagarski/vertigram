@@ -4,11 +4,12 @@ import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.telegram.types.InputMedia
 
 /**
- * Telegram [setMyProfilePhoto](https://core.telegram.org/bots/api#setmyprofilephoto) method.
+ * Changes the profile photo of the bot. Returns `true` on success.
  *
- * For up-to-date documentation, please consult the official Telegram docs.
+ * See Telegram's [setMyProfilePhoto](https://core.telegram.org/bots/api#setmyprofilephoto) documentation.
  */
 @TelegramCodegen.Method
 data class SetMyProfilePhoto internal constructor(
+    /** New profile photo for the bot. */
     val photo: InputMedia.ProfilePhoto
 ) : MultipartTelegramCallable<Boolean>()

@@ -9,39 +9,41 @@ import ski.gagar.vertigram.util.NoPosArgs
 import java.time.Instant
 
 /**
- * Telegram [ChatBoost](https://core.telegram.org/bots/api#chatboost) type.
+ * This object contains information about a chat boost.
  *
- * The related types (e.g. `ChatBoostSource`) are nested and renamed to more concise name.
- *
- * For up-to-date documentation, please consult the official Telegram docs.
+ * See Telegram's [ChatBoost](https://core.telegram.org/bots/api#chatboost) documentation.
  */
 @TelegramCodegen.Type
 data class ChatBoost internal constructor(
+    /** Unique identifier of the boost. */
     val boostId: String,
+    /** Point in time when the chat was boosted. */
     val addDate: Instant,
+    /**
+     * Point in time when the boost will automatically expire, unless the booster's Telegram Premium subscription is
+     * prolonged.
+     */
     val expirationDate: Instant,
+    /** Source of the added boost. */
     val source: Source
 ) {
     /**
-     * Telegram [ChatBoostAdded](https://core.telegram.org/bots/api#chatboostadded) type.
+     * This object represents a service message about a user boosting a chat.
      *
-     * For up-to-date documentation, please consult the official Telegram docs.
+     * See Telegram's [ChatBoostAdded](https://core.telegram.org/bots/api#chatboostadded) documentation.
      */
     @TelegramCodegen.Type
     data class Added internal constructor(
+        /** Number of boosts added by the user. */
         val boostCount: Int
     ) {
         companion object
     }
 
     /**
-     * Telegram [ChatBoostSource](https://core.telegram.org/bots/api#chatboostsource) type.
+     * This object describes the source of a chat boost.
      *
-     * Subtypes (which are nested) represent the subtypes, described by Telegram docs with more
-     * names given they are nested into [ChatBoost.Source] class. The rule here is the following:
-     * `ChatBoostSourceXxx` Telegram type becomes `ChatBoost.Source.Xxx`.
-     *
-     * For up-to-date documentation, please consult the official Telegram docs.
+     * See Telegram's [ChatBoostSource](https://core.telegram.org/bots/api#chatboostsource) documentation.
      */
     @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "source", include = JsonTypeInfo.As.EXISTING_PROPERTY)
     @JsonSubTypes(
@@ -53,12 +55,15 @@ data class ChatBoost internal constructor(
         val source: Type
         val user: User
         /**
-         * Telegram [ChatBoostSourceGiftCode](https://core.telegram.org/bots/api#chatboostsourcegiftcode) type.
+         * The boost was obtained by the creation of Telegram Premium gift codes to boost a chat. Each such code boosts
+         * the chat 4 times for the duration of the corresponding Telegram Premium subscription.
          *
-         * For up-to-date documentation, please consult the official Telegram docs.
+         * See Telegram's [ChatBoostSourceGiftCode](https://core.telegram.org/bots/api#chatboostsourcegiftcode)
+         * documentation.
          */
         @TelegramCodegen.Type
         data class GiftCode internal constructor(
+            /** User for which the gift code was created. */
             override val user: User
         ) : Source {
             override val source: Type = Type.GIFT_CODE
@@ -66,15 +71,25 @@ data class ChatBoost internal constructor(
         }
 
         /**
-         * Telegram [ChatBoostSourceGiveaway](https://core.telegram.org/bots/api#chatboostsourcegiveaway) type.
+         * The boost was obtained by the creation of a Telegram Premium or a Telegram Star giveaway. This boosts the
+         * chat 4 times for the duration of the corresponding Telegram Premium subscription for Telegram Premium
+         * giveaways and [prizeStarCount] / 500 times for one year for Telegram Star giveaways.
          *
-         * For up-to-date documentation, please consult the official Telegram docs.
+         * See Telegram's [ChatBoostSourceGiveaway](https://core.telegram.org/bots/api#chatboostsourcegiveaway)
+         * documentation.
          */
         @TelegramCodegen.Type
         data class Giveaway internal constructor(
+            /**
+             * Identifier of a message in the chat with the giveaway; the message could have been deleted already. May
+             * be 0 if the message isn't sent yet.
+             */
             val giveAwayMessageId: Long,
+            /** User that won the prize in the giveaway, if any; for Telegram Premium giveaways only. */
             override val user: User,
+            /** The number of Telegram Stars to be split between giveaway winners; for Telegram Star giveaways only. */
             val prizeStarCount: Int? = null,
+            /** `true` if the giveaway was completed, but there was no user to win the prize. */
             @get:JvmName("getIsUnclaimed")
             val isUnclaimed: Boolean = false
         ) : Source {
@@ -83,12 +98,15 @@ data class ChatBoost internal constructor(
         }
 
         /**
-         * Telegram [ChatBoostSourcePremium](https://core.telegram.org/bots/api#chatboostsourcepremium) type.
+         * The boost was obtained by subscribing to Telegram Premium or by gifting a Telegram Premium subscription to
+         * another user.
          *
-         * For up-to-date documentation, please consult the official Telegram docs.
+         * See Telegram's [ChatBoostSourcePremium](https://core.telegram.org/bots/api#chatboostsourcepremium)
+         * documentation.
          */
         @TelegramCodegen.Type
         data class Premium internal constructor(
+            /** User that boosted the chat. */
             override val user: User
         ) : Source {
             override val source: Type = Type.PREMIUM

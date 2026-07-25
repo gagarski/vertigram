@@ -5,12 +5,14 @@ import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.util.NoPosArgs
 
 /**
- * Telegram [setStickerSetTitle](https://core.telegram.org/bots/api#setstickersettitle) method.
+ * Use this method to set the title of a created sticker set. Returns `true` on success.
  *
- * For up-to-date documentation, please consult the official Telegram docs.
+ * See Telegram's [setStickerSetTitle](https://core.telegram.org/bots/api#setstickersettitle) documentation.
  */
 @TelegramCodegen.Method
 data class SetStickerSetTitle internal constructor(
+    /** Sticker set name. */
     val name: String,
+    /** Sticker set title, 1-64 characters. */
     val title: String
 ) : MultipartTelegramCallable<Boolean>()

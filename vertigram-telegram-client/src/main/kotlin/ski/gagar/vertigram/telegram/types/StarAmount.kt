@@ -4,13 +4,15 @@ import ski.gagar.vertigram.annotations.TelegramCodegen
 import java.math.BigDecimal
 
 /**
- * Telegram [StarAmount](https://core.telegram.org/bots/api#staramount) type.
+ * Describes an amount of Telegram Stars.
  *
- * For up-to-date documentation, please consult the official Telegram docs.
+ * See Telegram's [StarAmount](https://core.telegram.org/bots/api#staramount) documentation.
  */
 @TelegramCodegen.Type
 data class StarAmount internal constructor(
+    /** Integer amount of Telegram Stars. */
     val amount: Int,
+    /** Number of 1-billionth shares of a Telegram Star. */
     val nanostarAmount: Int
 ) {
     init {

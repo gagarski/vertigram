@@ -5,12 +5,14 @@ import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.util.NoPosArgs
 
 /**
- * Telegram [setMyShortDescription](https://core.telegram.org/bots/api#setmyshortdescription) method.
+ * Use this method to change the bot's short description. Returns `true` on success.
  *
- * For up-to-date documentation, please consult the official Telegram docs.
+ * See Telegram's [setMyShortDescription](https://core.telegram.org/bots/api#setmyshortdescription) documentation.
  */
 @TelegramCodegen.Method
 data class SetMyShortDescription internal constructor(
+    /** New short description for the bot, 0-120 characters. */
     val shortDescription: String,
+    /** Two-letter ISO 639-1 language code or an empty string. */
     val languageCode: String? = null
 ) : JsonTelegramCallable<Boolean>()

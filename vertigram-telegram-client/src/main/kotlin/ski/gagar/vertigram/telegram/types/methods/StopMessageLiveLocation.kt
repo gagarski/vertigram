@@ -10,12 +10,10 @@ import ski.gagar.vertigram.telegram.types.util.ChatId
 import ski.gagar.vertigram.util.NoPosArgs
 
 /**
- * Telegram [stopMessageLiveLocation](https://core.telegram.org/bots/api#stopmessagelivelocation) method.
+ * Use this method to stop updating a live location message before its live period expires.
  *
- * Subtypes (which are nested) are two mutually-exclusive cases: for inline message and for chat message.
- * Note the different return types in these cases.
- *
- * For up-to-date documentation, please consult the official Telegram docs.
+ * See Telegram's
+ * [stopMessageLiveLocation](https://core.telegram.org/bots/api#stopmessagelivelocation) documentation.
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.DEDUCTION)
 @JsonSubTypes(
@@ -26,27 +24,34 @@ sealed interface StopMessageLiveLocation {
     val businessConnectionId: String?
     val replyMarkup: ReplyMarkup?
     /**
-     * Inline message case
+     * Case when the message is an inline message. Returns `true` on success.
      */
     @TelegramCodegen.Method(
         name = "stopMessageLiveLocation"
     )
     data class InlineMessage internal constructor(
+        /** Unique identifier of the business connection on behalf of which the message was sent. */
         override val businessConnectionId: String? = null,
+        /** Identifier of the inline message. */
         val inlineMessageId: String,
+        /** New inline keyboard for the message. */
         override val replyMarkup: ReplyMarkup? = null
     ) : JsonTelegramCallable<Boolean>(), StopMessageLiveLocation
 
     /**
-     * Chat message case
+     * Case when the message belongs to a chat. Returns the edited message on success.
      */
     @TelegramCodegen.Method(
         name = "stopMessageLiveLocation"
     )
     data class ChatMessage internal constructor(
+        /** Unique identifier of the business connection on behalf of which the message was sent. */
         override val businessConnectionId: String? = null,
+        /** Unique identifier for the target chat or username of the target bot, supergroup, or channel. */
         override val chatId: ChatId,
+        /** Identifier of the message with the live location to stop. */
         val messageId: Long,
+        /** New inline keyboard for the message. */
         override val replyMarkup: ReplyMarkup? = null
     ) : JsonTelegramCallable<Boolean>(), StopMessageLiveLocation, HasChatId
 }

@@ -8,11 +8,13 @@ import ski.gagar.vertigram.telegram.types.util.ChatId
 import ski.gagar.vertigram.util.NoPosArgs
 
 /**
- * Telegram [removeChatVerification](https://core.telegram.org/bots/api#removechatverification) method.
+ * Removes verification from a chat that is currently verified on behalf of the organization represented by the bot.
+ * Returns `true` on success.
  *
- * For up-to-date documentation, please consult the official Telegram docs.
+ * See Telegram's [removeChatVerification](https://core.telegram.org/bots/api#removechatverification) documentation.
  */
 @TelegramCodegen.Method
 data class RemoveChatVerification internal constructor(
+    /** Unique identifier for the target chat or username of the target bot, supergroup, or channel. */
     val chatId: ChatId
 ) : JsonTelegramCallable<Boolean>()

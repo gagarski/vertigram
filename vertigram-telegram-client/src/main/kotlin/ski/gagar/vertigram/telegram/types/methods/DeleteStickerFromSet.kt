@@ -3,12 +3,13 @@ package ski.gagar.vertigram.telegram.types.methods
 import ski.gagar.vertigram.annotations.TelegramCodegen
 
 /**
- * Telegram [deleteStickerFromSet](https://core.telegram.org/bots/api#deletestickerfromset) method.
+ * Use this method to delete a sticker from a set created by the bot. Returns `true` on success.
  *
- * For up-to-date documentation, please consult the official Telegram docs.
+ * See Telegram's [deleteStickerFromSet](https://core.telegram.org/bots/api#deletestickerfromset) documentation.
  */
 @TelegramCodegen.Method
 data class DeleteStickerFromSet internal constructor(
+    /** File identifier of the sticker. */
     val sticker: String
 ) : JsonTelegramCallable<Boolean>()
 

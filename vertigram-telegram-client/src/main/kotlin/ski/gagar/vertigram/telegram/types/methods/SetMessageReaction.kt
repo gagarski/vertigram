@@ -7,15 +7,19 @@ import ski.gagar.vertigram.telegram.types.Reaction
 import ski.gagar.vertigram.util.NoPosArgs
 
 /**
- * Telegram [setMessageReaction](https://core.telegram.org/bots/api#setmessagereaction) method.
+ * Use this method to change the chosen reactions on a message. Returns `true` on success.
  *
- * For up-to-date documentation, please consult the official Telegram docs.
+ * See Telegram's [setMessageReaction](https://core.telegram.org/bots/api#setmessagereaction) documentation.
  */
 @TelegramCodegen.Method
 data class SetMessageReaction internal constructor(
+    /** Unique identifier for the target chat or username of the target bot, supergroup, or channel. */
     val chatId: ChatId,
+    /** Identifier of the target message. */
     val messageId: Long,
+    /** New reactions set on the message by the bot. */
     val reaction: List<Reaction>? = null,
+    /** Pass `true` to set the reaction with a big animation. */
     @get:JvmName("getIsBig")
     val isBig: Boolean = false
 ) : JsonTelegramCallable<Boolean>()

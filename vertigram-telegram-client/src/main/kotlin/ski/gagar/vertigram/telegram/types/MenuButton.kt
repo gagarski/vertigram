@@ -8,13 +8,9 @@ import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.util.NoPosArgs
 
 /**
- * Telegram [MenuButton](https://core.telegram.org/bots/api#menubutton) type.
+ * This object describes the bot's menu button in a private chat.
  *
- * Subtypes (which are nested) represent the subtypes, described by Telegram docs with more
- * names given they are nested into [MenuButton] class. The rule here is the following:
- * `MenuButtonXxx` Telegram type becomes `MenuButton.Xxx`.
- *
- * For up-to-date documentation, please consult the official Telegram docs.
+ * See Telegram's [MenuButton](https://core.telegram.org/bots/api#menubutton) documentation.
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", include = JsonTypeInfo.As.EXISTING_PROPERTY)
 @JsonSubTypes(
@@ -26,31 +22,33 @@ sealed interface MenuButton {
     val type: Type
 
     /**
-     * Telegram [MenuButtonCommands](https://core.telegram.org/bots/api#menubuttoncommands) type.
+     * Represents a menu button which opens the bot's list of commands.
      *
-     * For up-to-date documentation, please consult the official Telegram docs.
+     * See Telegram's [MenuButtonCommands](https://core.telegram.org/bots/api#menubuttoncommands) documentation.
      */
     data object Commands : MenuButton {
         override val type: Type = Type.COMMANDS
     }
 
     /**
-     * Telegram [MenuButtonDefault](https://core.telegram.org/bots/api#menubuttondefault) type.
+     * Describes that no specific value for the menu button was set.
      *
-     * For up-to-date documentation, please consult the official Telegram docs.
+     * See Telegram's [MenuButtonDefault](https://core.telegram.org/bots/api#menubuttondefault) documentation.
      */
     data object Default : MenuButton {
         override val type: Type = Type.DEFAULT
     }
 
     /**
-     * Telegram [MenuButtonWebApp](https://core.telegram.org/bots/api#menubuttonwebapp) type.
+     * Represents a menu button which launches a Web App.
      *
-     * For up-to-date documentation, please consult the official Telegram docs.
+     * See Telegram's [MenuButtonWebApp](https://core.telegram.org/bots/api#menubuttonwebapp) documentation.
      */
     @TelegramCodegen.Type
     data class WebApp internal constructor(
+        /** Text on the button. */
         val text: String,
+        /** Description of the Web App that will be launched when the user presses the button. */
         val webApp: WebAppInfo
     ) : MenuButton {
         override val type: Type = Type.WEB_APP

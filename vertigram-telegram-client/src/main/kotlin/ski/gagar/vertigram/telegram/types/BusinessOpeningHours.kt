@@ -7,31 +7,44 @@ import java.time.DayOfWeek
 import java.time.LocalTime
 
 /**
- * Telegram [BusinessOpeningHours](https://core.telegram.org/bots/api#businessopeninghours) type.
+ * Describes the opening hours of a business.
  *
- * For up-to-date documentation, please consult the official Telegram docs.
+ * See Telegram's [BusinessOpeningHours](https://core.telegram.org/bots/api#businessopeninghours) documentation.
  */
 @TelegramCodegen.Type
 data class BusinessOpeningHours internal constructor(
+    /** Unique name of the time zone for which the opening hours are defined. */
     val timeZoneName: String,
+    /** List of time intervals describing business opening hours. */
     val openingHours: List<Interval>
 ) {
     /**
-     * Telegram [BusinessOpeningHoursInterval](https://core.telegram.org/bots/api#businessopeninghoursinterval) type.
+     * Describes an interval of time during which a business is open.
      *
-     * For up-to-date documentation, please consult the official Telegram docs.
+     * See Telegram's
+     * [BusinessOpeningHoursInterval](https://core.telegram.org/bots/api#businessopeninghoursinterval) documentation.
      */
     @TelegramCodegen.Type
     data class Interval internal constructor(
+        /** Start of the time interval during which the business is open. */
         val openingMinute: OpeningTime,
+        /** End of the time interval during which the business is open. */
         val closingMinute: OpeningTime
     ) {
         companion object
     }
 
+    /**
+     * Kotlin representation of a minute's sequence number in a week.
+     *
+     * See Telegram's
+     * [BusinessOpeningHoursInterval](https://core.telegram.org/bots/api#businessopeninghoursinterval) documentation.
+     */
     @TelegramCodegen.Type
     data class OpeningTime internal constructor(
+        /** Local time of the interval boundary. */
         val time: LocalTime,
+        /** Day of the week of the interval boundary. */
         val dayOfWeek: DayOfWeek
     ) {
         companion object

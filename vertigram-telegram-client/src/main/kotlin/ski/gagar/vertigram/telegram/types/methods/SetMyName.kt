@@ -5,12 +5,14 @@ import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.util.NoPosArgs
 
 /**
- * Telegram [setMyName](https://core.telegram.org/bots/api#setmyname) method.
+ * Use this method to change the bot's name. Returns `true` on success.
  *
- * For up-to-date documentation, please consult the official Telegram docs.
+ * See Telegram's [setMyName](https://core.telegram.org/bots/api#setmyname) documentation.
  */
 @TelegramCodegen.Method
 data class SetMyName internal constructor(
+    /** New bot name, 0-64 characters. */
     val name: String,
+    /** Two-letter ISO 639-1 language code or an empty string. */
     val languageCode: String? = null
 ) : JsonTelegramCallable<Boolean>()

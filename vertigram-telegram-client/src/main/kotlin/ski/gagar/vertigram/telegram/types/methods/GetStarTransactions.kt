@@ -5,12 +5,14 @@ import ski.gagar.vertigram.telegram.types.File
 import ski.gagar.vertigram.telegram.types.StarTransactions
 
 /**
- * Telegram [getStarTransactions](https://core.telegram.org/bots/api#getstartransactions) method.
+ * Returns the bot's Telegram Star transactions in chronological order.
  *
- * For up-to-date documentation, please consult the official Telegram docs.
+ * See Telegram's [getStarTransactions](https://core.telegram.org/bots/api#getstartransactions) documentation.
  */
 @TelegramCodegen.Method
 data class GetStarTransactions internal constructor(
+    /** Number of transactions to skip in the response. */
     val offset: Int? = null,
+    /** Maximum number of transactions to retrieve; 1-100. */
     val limit: Int? = null,
 ) : JsonTelegramCallable<StarTransactions>()

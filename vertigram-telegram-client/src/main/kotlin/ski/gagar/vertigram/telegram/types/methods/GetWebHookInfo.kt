@@ -4,9 +4,11 @@ import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.telegram.types.WebhookInfo
 
 /**
- * Telegram [getWebHookInfo](https://core.telegram.org/bots/api#getwebhookinfo) method.
+ * Use this method to get the current webhook status.
  *
- * For up-to-date documentation, please consult the official Telegram docs.
+ * If the bot is using [ski.gagar.vertigram.telegram.client.Telegram.getUpdates], the returned object has an empty URL.
+ *
+ * See Telegram's [getWebhookInfo](https://core.telegram.org/bots/api#getwebhookinfo) documentation.
  */
 @TelegramCodegen.Method
 object GetWebHookInfo : JsonTelegramCallable<WebhookInfo>()

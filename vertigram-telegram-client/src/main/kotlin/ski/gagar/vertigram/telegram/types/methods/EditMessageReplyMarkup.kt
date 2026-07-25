@@ -10,12 +10,10 @@ import ski.gagar.vertigram.telegram.types.ReplyMarkup
 import ski.gagar.vertigram.telegram.types.util.ChatId
 
 /**
- * Telegram [editMessageReplyMarkup](https://core.telegram.org/bots/api#editmessagereplymarkup) method.
+ * Use this method to edit only the reply markup of messages.
  *
- * Subtypes (which are nested) are two mutually-exclusive cases: for inline message and for chat message.
- * Note the different return types in these cases.
- *
- * For up-to-date documentation, please consult the official Telegram docs.
+ * See Telegram's
+ * [editMessageReplyMarkup](https://core.telegram.org/bots/api#editmessagereplymarkup) documentation.
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.DEDUCTION)
 @JsonSubTypes(
@@ -26,29 +24,36 @@ sealed interface EditMessageReplyMarkup {
     val businessConnectionId: String?
     val replyMarkup: ReplyMarkup.InlineKeyboard?
     /**
-     * Inline message case
+     * Case when the message is an inline message. Returns `true` on success.
      */
     @TelegramCodegen.Method(
         name = "editMessageReplyMarkup"
     )
     @Throttled
     data class InlineMessage internal constructor(
+        /** Unique identifier of the business connection on behalf of which the message was sent. */
         override val businessConnectionId: String? = null,
+        /** Identifier of the inline message. */
         val inlineMessageId: String,
+        /** New inline keyboard for the message. */
         override val replyMarkup: ReplyMarkup.InlineKeyboard? = null
     ) : EditMessageReplyMarkup, JsonTelegramCallable<Boolean>()
 
     /**
-     * Chat message case
+     * Case when the message belongs to a chat. Returns the edited [Message] on success.
      */
     @TelegramCodegen.Method(
         name = "editMessageReplyMarkup"
     )
     @Throttled
     data class ChatMessage internal constructor(
+        /** Unique identifier of the business connection on behalf of which the message was sent. */
         override val businessConnectionId: String? = null,
+        /** Unique identifier for the target chat or username of the target bot, supergroup, or channel. */
         override val chatId: ChatId,
+        /** Identifier of the message to edit. */
         val messageId: Long,
+        /** New inline keyboard for the message. */
         override val replyMarkup: ReplyMarkup.InlineKeyboard? = null
     ) : EditMessageReplyMarkup, HasChatId, JsonTelegramCallable<Message>()
 }

@@ -16,10 +16,15 @@ Only update to the exact Telegram Bot API version the user requested. Do not app
    - Changelog: `https://core.telegram.org/bots/api-changelog`
    - Current docs: `https://core.telegram.org/bots/api`
 3. Read the surrounding local files before implementing: types under `vertigram-telegram-client/src/main/kotlin/ski/gagar/vertigram/telegram/types`, methods under `types/methods`, markup builders under `telegram/markup`, samples under `ski/gagar/vertigram/samples`, and nearby tests.
-4. Implement only the requested version's additions/changes, following existing Kotlin, Jackson, and `@TelegramCodegen.Type` conventions.
-5. Add focused serialization tests for new methods, new types, and every polymorphic subtype introduced.
-6. Update markup builders, samples, and the module README when public behavior or public DSL usage changes.
-7. Verify with the narrowest relevant Gradle task, then prefer `.\gradlew.bat :vertigram-telegram-client:clean :vertigram-telegram-client:test --console=plain` before finishing broad API changes.
+4. Implement only the requested version's additions/changes, following existing Kotlin, Jackson, and
+   `@TelegramCodegen.Type` conventions.
+5. Read and follow [the shared Telegram KDoc guide](../telegram-doc-updater/references/telegram-kdoc.md), then add or
+   update KDoc for every affected Telegram method and type.
+6. Add focused serialization tests for new methods, new types, and every polymorphic subtype introduced.
+7. Update markup builders, samples, and the module README when public behavior or public DSL usage changes.
+8. Verify with the narrowest relevant Gradle task, then prefer
+   `.\gradlew.bat :vertigram-telegram-client:clean :vertigram-telegram-client:test --console=plain` before finishing
+   broad API changes.
 
 ## Detailed Reference
 

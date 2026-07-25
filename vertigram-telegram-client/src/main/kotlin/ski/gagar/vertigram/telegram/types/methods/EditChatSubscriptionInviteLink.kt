@@ -9,13 +9,21 @@ import ski.gagar.vertigram.telegram.types.util.ChatId
 import java.time.Duration
 
 /**
- * Telegram [editChatSubscriptionInviteLink](https://core.telegram.org/bots/api#editchatsubscriptioninvitelink) method.
+ * Use this method to edit a subscription invite link created by the bot.
  *
- * For up-to-date documentation, please consult the official Telegram docs.
+ * The bot must have
+ * [ski.gagar.vertigram.telegram.types.ChatAdministratorRights.canInviteUsers] administrator rights.
+ *
+ * See Telegram's
+ * [editChatSubscriptionInviteLink](https://core.telegram.org/bots/api#editchatsubscriptioninvitelink)
+ * documentation.
  */
 @TelegramCodegen.Method
 data class EditChatSubscriptionInviteLink internal constructor(
+    /** Unique identifier for the target chat or username of the target bot, supergroup, or channel. */
     override val chatId: ChatId,
+    /** Invite link to edit. */
     val inviteLink: String,
+    /** Invite link name, 0-32 characters. */
     val name: String? = null
 ) : JsonTelegramCallable<ChatInviteLink>(), HasChatId

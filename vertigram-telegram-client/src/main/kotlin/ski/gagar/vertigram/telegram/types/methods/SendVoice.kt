@@ -16,29 +16,47 @@ import ski.gagar.vertigram.telegram.types.util.ChatId
 import java.time.Duration
 
 /**
- * Telegram [sendVoice](https://core.telegram.org/bots/api#sendvoice) method.
+ * Use this method to send audio files that can be displayed as playable voice messages.
  *
- * For up-to-date documentation, please consult the official Telegram docs.
+ * See Telegram's [sendVoice](https://core.telegram.org/bots/api#sendvoice) documentation.
  */
 @Throttled
 @TelegramCodegen.Method
 data class SendVoice internal constructor(
+    /** Unique identifier of the business connection on behalf of which the message will be sent. */
     val businessConnectionId: String? = null,
+    /** Unique identifier for the target chat or username of the target bot, supergroup, or channel. */
     override val chatId: ChatId,
+    /** Unique identifier for the target message thread. */
     val messageThreadId: Long? = null,
+    /** Identifier of the direct messages topic to which the message will be sent. */
     val directMessagesTopicId: Long? = null,
+    /** Voice message to send. */
     val voice: Attachment,
+    /** Caption of the media. */
     override val caption: String? = null,
+    /** Mode for parsing entities in the caption or text. */
     override val parseMode: RichText.ParseMode? = null,
+    /** Special entities that appear in the caption; can be specified instead of [parseMode]. */
     override val captionEntities: List<MessageEntity>? = null,
+    /** Duration of the media. */
     val duration: Duration? = null,
+    /** Sends the message silently. */
     val disableNotification: Boolean = false,
+    /** Protects the sent message from forwarding and saving. */
     val protectContent: Boolean = false,
+    /** Pass `true` to allow up to 1000 messages per second for a fee in Telegram Stars. */
     val allowPaidBroadcast: Boolean = false,
+    /** Unique identifier of the message effect added to the message. */
     val messageEffectId: String? = null,
+    /** Parameters of the suggested post to send. */
     val suggestedPostParameters: SuggestedPost.Parameters? = null,
+    /** Unique identifier of the recipient user for an ephemeral message. */
     override val receiverUserId: Long? = null,
+    /** Unique identifier of the callback query that allows sending an ephemeral message. */
     val callbackQueryId: String? = null,
+    /** Parameters of the message being replied to. */
     val replyParameters: ReplyParameters? = null,
+    /** Additional interface options. */
     val replyMarkup: ReplyMarkup? = null
 ) : MultipartTelegramCallable<Message>(), HasChatId, HasReceiverUserId, HasOptionalRichCaption

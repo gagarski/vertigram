@@ -7,12 +7,14 @@ import ski.gagar.vertigram.telegram.types.util.ChatId
 import ski.gagar.vertigram.util.NoPosArgs
 
 /**
- * Telegram [setChatStickerSet](https://core.telegram.org/bots/api#setchatstickerset) method.
+ * Use this method to set a new group sticker set for a supergroup. Returns `true` on success.
  *
- * For up-to-date documentation, please consult the official Telegram docs.
+ * See Telegram's [setChatStickerSet](https://core.telegram.org/bots/api#setchatstickerset) documentation.
  */
 @TelegramCodegen.Method
 data class SetChatStickerSet internal constructor(
+    /** Unique identifier for the target chat or username of the target bot, supergroup, or channel. */
     override val chatId: ChatId,
+    /** Name of the sticker set to set as the group sticker set. */
     val stickerSetName: String
 ) : JsonTelegramCallable<Boolean>(), HasChatId

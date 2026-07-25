@@ -5,14 +5,17 @@ import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.util.NoPosArgs
 
 /**
- * Telegram [GameHighScore](https://core.telegram.org/bots/api#gamehighscore) type.
+ * This object represents one row of the high scores table for a game.
  *
- * For up-to-date documentation, please consult the official Telegram docs.
+ * See Telegram's [GameHighScore](https://core.telegram.org/bots/api#gamehighscore) documentation.
  */
 @TelegramCodegen.Type
 data class GameHighScore internal constructor(
+    /** Position in the high score table for the game. */
     val position: Int,
+    /** User. */
     val user: User,
+    /** Score. */
     val score: Int
 ) {
     companion object

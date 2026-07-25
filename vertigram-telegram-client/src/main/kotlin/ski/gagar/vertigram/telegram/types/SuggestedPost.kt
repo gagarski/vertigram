@@ -11,34 +11,42 @@ import java.time.Instant
  */
 object SuggestedPost {
     /**
-     * Telegram [SuggestedPostPrice](https://core.telegram.org/bots/api#suggestedpostprice) type.
+     * Contains information about the price of a suggested post.
      *
-     * For up-to-date documentation, please consult the official Telegram docs.
+     * See Telegram's [SuggestedPostPrice](https://core.telegram.org/bots/api#suggestedpostprice) documentation.
      */
     @TelegramCodegen.Type
     data class Price internal constructor(
+        /** Currency in which the post will be paid. */
         val currency: String,
+        /** Amount of the currency that will be paid for the post. */
         val amount: Long
     ) {
         companion object
     }
 
     /**
-     * Telegram [SuggestedPostInfo](https://core.telegram.org/bots/api#suggestedpostinfo) type.
+     * Contains information about a suggested post.
      *
-     * For up-to-date documentation, please consult the official Telegram docs.
+     * See Telegram's [SuggestedPostInfo](https://core.telegram.org/bots/api#suggestedpostinfo) documentation.
      */
     @TelegramCodegen.Type
     data class Info internal constructor(
+        /** State of the suggested post. */
         val state: State,
+        /** Price of the suggested post. */
         val price: Price? = null,
+        /** Proposed send date of the suggested post. */
         val sendDate: Instant? = null
     ) {
         enum class State {
+            /** Suggested post is pending approval. */
             @JsonProperty(PENDING_STR)
             PENDING,
+            /** Suggested post was approved. */
             @JsonProperty(APPROVED_STR)
             APPROVED,
+            /** Suggested post was declined. */
             @JsonProperty(DECLINED_STR)
             DECLINED;
 
@@ -53,13 +61,16 @@ object SuggestedPost {
     }
 
     /**
-     * Telegram [SuggestedPostParameters](https://core.telegram.org/bots/api#suggestedpostparameters) type.
+     * Contains parameters of a post suggested by the bot.
      *
-     * For up-to-date documentation, please consult the official Telegram docs.
+     * See Telegram's [SuggestedPostParameters](https://core.telegram.org/bots/api#suggestedpostparameters)
+     * documentation.
      */
     @TelegramCodegen.Type
     data class Parameters internal constructor(
+        /** Proposed price for the post. */
         val price: Price? = null,
+        /** Proposed send date of the post. */
         val sendDate: Instant? = null
     ) {
         companion object

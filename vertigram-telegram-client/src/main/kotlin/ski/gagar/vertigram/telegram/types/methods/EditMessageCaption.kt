@@ -15,12 +15,9 @@ import ski.gagar.vertigram.telegram.types.util.ChatId
 import ski.gagar.vertigram.util.NoPosArgs
 
 /**
- * Telegram [editMessageCaption](https://core.telegram.org/bots/api#editmessagecaption) method.
-
- * Subtypes (which are nested) are two mutually-exclusive cases: for inline message and for chat message.
- * Note the different return types in these cases.
+ * Use this method to edit captions of messages.
  *
- * For up-to-date documentation, please consult the official Telegram docs.
+ * See Telegram's [editMessageCaption](https://core.telegram.org/bots/api#editmessagecaption) documentation.
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.DEDUCTION)
 @JsonSubTypes(
@@ -31,37 +28,52 @@ sealed interface EditMessageCaption : HasOptionalRichCaption {
     val businessConnectionId: String?
     val replyMarkup: ReplyMarkup?
     /**
-     * Inline message case
+     * Case when the message is an inline message. Returns `true` on success.
      */
     @TelegramCodegen.Method(
         name = "editMessageCaption"
     )
     @Throttled
     data class InlineMessage internal constructor(
+        /** Unique identifier of the business connection on behalf of which the message was sent. */
         override val businessConnectionId: String? = null,
+        /** Identifier of the inline message. */
         val inlineMessageId: String,
+        /** New caption, 0-1024 characters after entities parsing. */
         override val caption: String? = null,
+        /** Mode for parsing entities in the new caption. */
         override val parseMode: RichText.ParseMode? = null,
+        /** Special entities that appear in the caption; can be specified instead of [parseMode]. */
         override val captionEntities: List<MessageEntity>? = null,
+        /** Pass `true` to show the caption above the message media. */
         val showCaptionAboveMedia: Boolean = false,
+        /** New inline keyboard for the message. */
         override val replyMarkup: ReplyMarkup? = null
     ) : EditMessageCaption, JsonTelegramCallable<Boolean>()
 
     /**
-     * Chat message case
+     * Case when the message belongs to a chat. Returns the edited [Message] on success.
      */
     @TelegramCodegen.Method(
         name = "editMessageCaption"
     )
     @Throttled
     data class ChatMessage internal constructor(
+        /** Unique identifier of the business connection on behalf of which the message was sent. */
         override val businessConnectionId: String? = null,
+        /** Unique identifier for the target chat or username of the target bot, supergroup, or channel. */
         override val chatId: ChatId,
+        /** Identifier of the message to edit. */
         val messageId: Long,
+        /** New caption, 0-1024 characters after entities parsing. */
         override val caption: String? = null,
+        /** Mode for parsing entities in the new caption. */
         override val parseMode: RichText.ParseMode? = null,
+        /** Special entities that appear in the caption; can be specified instead of [parseMode]. */
         override val captionEntities: List<MessageEntity>? = null,
+        /** Pass `true` to show the caption above the message media. */
         val showCaptionAboveMedia: Boolean = false,
+        /** New inline keyboard for the message. */
         override val replyMarkup: ReplyMarkup? = null
     ) : EditMessageCaption, HasChatId, JsonTelegramCallable<Message>()
 }

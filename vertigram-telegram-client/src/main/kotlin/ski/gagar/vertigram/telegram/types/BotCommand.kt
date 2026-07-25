@@ -9,29 +9,24 @@ import ski.gagar.vertigram.telegram.types.util.ChatId
 import ski.gagar.vertigram.util.NoPosArgs
 
 /**
- * Telegram [BotCommand](https://core.telegram.org/bots/api#botcommand) type.
+ * This object represents a bot command.
  *
- * Subtypes (which are nested) represent the subtypes, described by Telegram docs with more
- * names given they are nested into [BotCommand] class. The rule here is the following:
- * `BotCommandXxx` Telegram type becomes `BotCommand.Xxx`.
- *
- * For up-to-date documentation, please consult the official Telegram docs.
+ * See Telegram's [BotCommand](https://core.telegram.org/bots/api#botcommand) documentation.
  */
 @TelegramCodegen.Type
 data class BotCommand internal constructor(
+    /** Text of the command; 1-32 characters. Can contain only lowercase English letters, digits and underscores. */
     val command: String,
+    /** Description of the command; 1-256 characters. */
     val description: String,
+    /** `true` if the command sends an ephemeral message, which can be seen only by the sender and the bot. */
     @get:JvmName("getIsEphemeral")
     val isEphemeral: Boolean = false
 ) {
     /**
-     * Telegram [BotCommandScope](https://core.telegram.org/bots/api#botcommandscope) type.
+     * This object represents the scope to which bot commands are applied.
      *
-     * Subtypes (which are nested) represent the subtypes, described by Telegram docs with more
-     * names given they are nested into [BotCommand.Scope] class. The rule here is the following:
-     * `BotCommandScopeXxx` Telegram type becomes `BotCommand.Scope.Xxx`
-     *
-     * For up-to-date documentation, please consult the official Telegram docs.
+     * See Telegram's [BotCommandScope](https://core.telegram.org/bots/api#botcommandscope) documentation.
      */
     @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", include = JsonTypeInfo.As.EXISTING_PROPERTY)
     @JsonSubTypes(
@@ -49,39 +44,49 @@ data class BotCommand internal constructor(
         val type: Type
 
         /**
-         * Telegram [BotCommandScopeAllChatAdministrators](https://core.telegram.org/bots/api#botcommandscopeallchatadministrators) type.
+         * Represents the [scope][Scope] of bot commands, covering all group and supergroup chat administrators.
          *
-         * For up-to-date documentation, please consult the official Telegram docs.
+         * See Telegram's
+         * [BotCommandScopeAllChatAdministrators](https://core.telegram.org/bots/api#botcommandscopeallchatadministrators)
+         * documentation.
          */
         data object AllChatAdministrators : Scope {
             override val type: Type = Type.ALL_CHAT_ADMINISTRATORS
         }
 
         /**
-         * Telegram [BotCommandScopeAllGroupChats](https://core.telegram.org/bots/api#botcommandscopeallgroupchats) type.
+         * Represents the [scope][Scope] of bot commands, covering all group and supergroup chats.
          *
-         * For up-to-date documentation, please consult the official Telegram docs.
+         * See Telegram's
+         * [BotCommandScopeAllGroupChats](https://core.telegram.org/bots/api#botcommandscopeallgroupchats)
+         * documentation.
          */
         data object AllGroupChats : Scope {
             override val type: Type = Type.ALL_GROUP_CHATS
         }
 
         /**
-         * Telegram [BotCommandScopeAllPrivateChats](https://core.telegram.org/bots/api#botcommandscopeallprivatechats) type.
+         * Represents the [scope][Scope] of bot commands, covering all private chats.
          *
-         * For up-to-date documentation, please consult the official Telegram docs.
+         * See Telegram's
+         * [BotCommandScopeAllPrivateChats](https://core.telegram.org/bots/api#botcommandscopeallprivatechats)
+         * documentation.
          */
         data object AllPrivateChats : Scope {
             override val type: Type = Type.ALL_PRIVATE_CHATS
         }
 
         /**
-         * Telegram [BotCommandScopeChat](https://core.telegram.org/bots/api#botcommandscopechat) type.
+         * Represents the [scope][Scope] of bot commands, covering a specific chat.
          *
-         * For up-to-date documentation, please consult the official Telegram docs.
+         * See Telegram's [BotCommandScopeChat](https://core.telegram.org/bots/api#botcommandscopechat) documentation.
          */
         @TelegramCodegen.Type
         data class Chat internal constructor(
+            /**
+             * Unique identifier for the target chat or username of the target supergroup. Channel direct messages
+             * chats and channel chats aren't supported.
+             */
             val chatId: ChatId
         ) : Scope {
             override val type: Type = Type.CHAT
@@ -89,12 +94,19 @@ data class BotCommand internal constructor(
         }
 
         /**
-         * Telegram [BotCommandScopeChatAdministrators](https://core.telegram.org/bots/api#botcommandscopechatadministrators) type.
+         * Represents the [scope][Scope] of bot commands, covering all administrators of a specific group or supergroup
+         * chat.
          *
-         * For up-to-date documentation, please consult the official Telegram docs.
+         * See Telegram's
+         * [BotCommandScopeChatAdministrators](https://core.telegram.org/bots/api#botcommandscopechatadministrators)
+         * documentation.
          */
         @TelegramCodegen.Type
         data class ChatAdministrators internal constructor(
+            /**
+             * Unique identifier for the target chat or username of the target supergroup. Channel direct messages
+             * chats and channel chats aren't supported.
+             */
             val chatId: ChatId
         ) : Scope {
             override val type: Type = Type.CHAT_ADMINISTRATORS
@@ -102,13 +114,19 @@ data class BotCommand internal constructor(
         }
 
         /**
-         * Telegram [BotCommandScopeChatMember](https://core.telegram.org/bots/api#botcommandscopechatmember) type.
+         * Represents the [scope][Scope] of bot commands, covering a specific member of a group or supergroup chat.
          *
-         * For up-to-date documentation, please consult the official Telegram docs.
+         * See Telegram's [BotCommandScopeChatMember](https://core.telegram.org/bots/api#botcommandscopechatmember)
+         * documentation.
          */
         @TelegramCodegen.Type
         data class ChatMember internal constructor(
+            /**
+             * Unique identifier for the target chat or username of the target supergroup. Channel direct messages
+             * chats and channel chats aren't supported.
+             */
             val chatId: ChatId,
+            /** Unique identifier of the target user. */
             val userId: Long
         ) : Scope {
             override val type: Type = Type.CHAT_MEMBER
@@ -116,9 +134,11 @@ data class BotCommand internal constructor(
         }
 
         /**
-         * Telegram [BotCommandScopeDefault](https://core.telegram.org/bots/api#botcommandscopedefault) type.
+         * Represents the default [scope][Scope] of bot commands. Default commands are used if no commands with a
+         * narrower scope are specified for the user.
          *
-         * For up-to-date documentation, please consult the official Telegram docs.
+         * See Telegram's [BotCommandScopeDefault](https://core.telegram.org/bots/api#botcommandscopedefault)
+         * documentation.
          */
         data object Default : Scope {
             override val type: Type = Type.DEFAULT

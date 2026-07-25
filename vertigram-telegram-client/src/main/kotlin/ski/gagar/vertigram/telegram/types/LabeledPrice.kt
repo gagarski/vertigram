@@ -5,13 +5,15 @@ import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.util.NoPosArgs
 
 /**
- * Telegram [LabeledPrice](https://core.telegram.org/bots/api#labeledprice) type.
+ * This object represents a portion of the price for goods or services.
  *
- * For up-to-date documentation, please consult the official Telegram docs.
+ * See Telegram's [LabeledPrice](https://core.telegram.org/bots/api#labeledprice) documentation.
  */
 @TelegramCodegen.Type
 data class LabeledPrice internal constructor(
+    /** Portion label. */
     val label: String,
+    /** Price of the product in the smallest units of the currency. */
     val amount: Int
 ) {
     companion object

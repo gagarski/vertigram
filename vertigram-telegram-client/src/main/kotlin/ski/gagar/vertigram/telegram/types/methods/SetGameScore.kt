@@ -8,12 +8,9 @@ import ski.gagar.vertigram.telegram.throttling.Throttled
 import ski.gagar.vertigram.telegram.types.Message
 
 /**
- * Telegram [setGameScore](https://core.telegram.org/bots/api#setgamescore) method.
+ * Use this method to set the score of the specified user in a game message.
  *
- * Subtypes (which are nested) are two mutually-exclusive cases: for inline message and for chat message.
- * Note the different return types in these cases.
- *
- * For up-to-date documentation, please consult the official Telegram docs.
+ * See Telegram's [setGameScore](https://core.telegram.org/bots/api#setgamescore) documentation.
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.DEDUCTION)
 @JsonSubTypes(
@@ -26,33 +23,44 @@ sealed interface SetGameScore {
     val force: Boolean
     val disableEditMessage: Boolean
     /**
-     * Inline message case
+     * Case when the game message is an inline message. Returns `true` on success.
      */
     @TelegramCodegen.Method(
         name = "setGameScore"
     )
     @Throttled
     data class InlineMessage internal constructor(
+        /** User identifier. */
         override val userId: Long,
+        /** New score; must be non-negative. */
         override val score: Int,
+        /** Pass `true` to allow the score to decrease. */
         override val force: Boolean = false,
+        /** Pass `true` to prevent the game message from being automatically edited. */
         override val disableEditMessage: Boolean = false,
+        /** Identifier of the inline message. */
         val inlineMessageId: String
     ) : SetGameScore, JsonTelegramCallable<Boolean>()
 
     /**
-     * Chat message case
+     * Case when the game message belongs to a chat. Returns the edited message on success.
      */
     @TelegramCodegen.Method(
         name = "setGameScore"
     )
     @Throttled
     data class ChatMessage internal constructor(
+        /** User identifier. */
         override val userId: Long,
+        /** New score; must be non-negative. */
         override val score: Int,
+        /** Pass `true` to allow the score to decrease. */
         override val force: Boolean = false,
+        /** Pass `true` to prevent the game message from being automatically edited. */
         override val disableEditMessage: Boolean = false,
+        /** Unique identifier of the target chat. */
         override val chatId: Long,
+        /** Identifier of the sent message. */
         val messageId: Long
     ) : SetGameScore, HasChatIdLong, JsonTelegramCallable<Message>()
 }

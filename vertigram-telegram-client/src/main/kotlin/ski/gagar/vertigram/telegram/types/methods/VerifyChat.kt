@@ -8,12 +8,14 @@ import ski.gagar.vertigram.telegram.types.util.ChatId
 import ski.gagar.vertigram.util.NoPosArgs
 
 /**
- * Telegram [verifyChat](https://core.telegram.org/bots/api#verifychat) method.
+ * Verifies a chat on behalf of the organization represented by the bot. Returns `true` on success.
  *
- * For up-to-date documentation, please consult the official Telegram docs.
+ * See Telegram's [verifyChat](https://core.telegram.org/bots/api#verifychat) documentation.
  */
 @TelegramCodegen.Method
 data class VerifyChat internal constructor(
+    /** Unique identifier for the target chat or username of the target bot, supergroup, or channel. */
     val chatId: ChatId,
+    /** Custom description for the verification; 0-70 characters. */
     val customDescription: String? = null
 ) : JsonTelegramCallable<Boolean>()

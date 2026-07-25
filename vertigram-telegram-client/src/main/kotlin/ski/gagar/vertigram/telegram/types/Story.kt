@@ -5,13 +5,15 @@ import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.util.NoPosArgs
 
 /**
- * Telegram [Story](https://core.telegram.org/bots/api#story) type.
+ * Represents a story.
  *
- * For up-to-date documentation, please consult the official Telegram docs.
+ * See Telegram's [Story](https://core.telegram.org/bots/api#story) documentation.
  */
 @TelegramCodegen.Type
 data class Story internal constructor(
+    /** Chat that posted the story. */
     val chat: Chat,
+    /** Unique identifier for the story in the chat. */
     val id: Long
 ) {
     companion object

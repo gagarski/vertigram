@@ -7,12 +7,16 @@ import ski.gagar.vertigram.telegram.types.MenuButton
 import ski.gagar.vertigram.util.NoPosArgs
 
 /**
- * Telegram [setChatMenuButton](https://core.telegram.org/bots/api#setchatmenubutton) method.
+ * Use this method to change the bot's menu button in a private chat, or the default menu button.
  *
- * For up-to-date documentation, please consult the official Telegram docs.
+ * Returns `true` on success.
+ *
+ * See Telegram's [setChatMenuButton](https://core.telegram.org/bots/api#setchatmenubutton) documentation.
  */
 @TelegramCodegen.Method
 data class SetChatMenuButton internal constructor(
+    /** Unique identifier for the target private chat. */
     override val chatId: Long? = null,
+    /** New menu button for the private chat or the new default menu button. */
     val menuButton: MenuButton? = null
 ) : JsonTelegramCallable<Boolean>(), HasChatIdLong

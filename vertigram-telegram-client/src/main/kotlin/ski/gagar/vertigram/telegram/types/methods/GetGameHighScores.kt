@@ -9,12 +9,11 @@ import ski.gagar.vertigram.telegram.types.GameHighScore
 import ski.gagar.vertigram.util.NoPosArgs
 
 /**
- * Telegram [getGameHighScores](https://core.telegram.org/bots/api#getgamehighscores) method.
+ * Use this method to get data for high score tables.
  *
- * Subtypes (which are nested) are two mutually-exclusive cases: for inline message and for chat message.
- * Note the different return types in these cases.
+ * Will return the score of the specified user and several of their neighbors in a game.
  *
- * For up-to-date documentation, please consult the official Telegram docs.
+ * See Telegram's [getGameHighScores](https://core.telegram.org/bots/api#getgamehighscores) documentation.
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.DEDUCTION)
 @JsonSubTypes(
@@ -25,25 +24,30 @@ import ski.gagar.vertigram.util.NoPosArgs
 sealed class GetGameHighScores : JsonTelegramCallable<List<GameHighScore>>() {
     abstract val userId: Long
     /**
-     * Inline message case
+     * Case when the game message is an inline message.
      */
     @TelegramCodegen.Method(
         name = "getGameHighScores"
     )
     data class InlineMessage internal constructor(
+        /** Target user identifier. */
         override val userId: Long,
+        /** Identifier of the inline message. */
         val inlineMessageId: String
     ) : GetGameHighScores()
 
     /**
-     * Chat message case
+     * Case when the game message belongs to a chat.
      */
     @TelegramCodegen.Method(
         name = "getGameHighScores"
     )
     data class ChatMessage internal constructor(
+        /** Target user identifier. */
         override val userId: Long,
+        /** Unique identifier of the target chat. */
         override val chatId: Long,
+        /** Identifier of the sent message. */
         val messageId: Long,
     ) : GetGameHighScores(), HasChatIdLong
 }

@@ -7,13 +7,18 @@ import ski.gagar.vertigram.telegram.types.util.ChatId
 import ski.gagar.vertigram.util.NoPosArgs
 
 /**
- * Telegram [unbanChatMember](https://core.telegram.org/bots/api#unbanchatmember) method.
+ * Use this method to unban a previously banned user in a supergroup or channel.
  *
- * For up-to-date documentation, please consult the official Telegram docs.
+ * Returns `true` on success.
+ *
+ * See Telegram's [unbanChatMember](https://core.telegram.org/bots/api#unbanchatmember) documentation.
  */
 @TelegramCodegen.Method
 data class UnbanChatMember internal constructor(
+    /** Unique identifier for the target chat or username of the target bot, supergroup, or channel. */
     override val chatId: ChatId,
+    /** Unique identifier of the target user. */
     val userId: Long,
+    /** Pass `true` to do nothing if the user is not banned. */
     val onlyIfBanned: Boolean = false
 ) : JsonTelegramCallable<Boolean>(), HasChatId

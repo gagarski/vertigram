@@ -8,9 +8,9 @@ import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.util.NoPosArgs
 
 /**
- * Telegram [ReactionType](https://core.telegram.org/bots/api#reactiontype) type.
+ * Describes the type of a reaction.
  *
- * For up-to-date documentation, please consult the official Telegram docs.
+ * See Telegram's [ReactionType](https://core.telegram.org/bots/api#reactiontype) documentation.
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", include = JsonTypeInfo.As.EXISTING_PROPERTY)
 @JsonSubTypes(
@@ -22,12 +22,13 @@ sealed interface Reaction {
     val type: Type
 
     /**
-     * Telegram [ReactionTypeEmoji](https://core.telegram.org/bots/api#reactiontypeemoji) type.
+     * Case when the reaction is based on an emoji.
      *
-     * For up-to-date documentation, please consult the official Telegram docs.
+     * See Telegram's [ReactionTypeEmoji](https://core.telegram.org/bots/api#reactiontypeemoji) documentation.
      */
     @TelegramCodegen.Type
     data class Emoji internal constructor(
+        /** Reaction emoji. */
         val emoji: String
     ) : Reaction {
         override val type: Type = Type.EMOJI
@@ -35,12 +36,14 @@ sealed interface Reaction {
     }
 
     /**
-     * Telegram [ReactionTypeCustomEmoji](https://core.telegram.org/bots/api#reactiontypecustomemoji) type.
+     * Case when the reaction is based on a custom emoji.
      *
-     * For up-to-date documentation, please consult the official Telegram docs.
+     * See Telegram's [ReactionTypeCustomEmoji](https://core.telegram.org/bots/api#reactiontypecustomemoji)
+     * documentation.
      */
     @TelegramCodegen.Type
     data class CustomEmoji internal constructor(
+        /** Unique identifier of the custom emoji. */
         val customEmojiId: String
     ) : Reaction {
         override val type: Type = Type.CUSTOM_EMOJI
@@ -48,9 +51,9 @@ sealed interface Reaction {
     }
 
     /**
-     * Telegram [ReactionTypeEmoji](https://core.telegram.org/bots/api#reactiontypeemoji) type.
+     * Case when the reaction is a paid reaction.
      *
-     * For up-to-date documentation, please consult the official Telegram docs.
+     * See Telegram's [ReactionTypePaid](https://core.telegram.org/bots/api#reactiontypepaid) documentation.
      */
     data object Paid : Reaction {
         override val type: Type = Type.PAID

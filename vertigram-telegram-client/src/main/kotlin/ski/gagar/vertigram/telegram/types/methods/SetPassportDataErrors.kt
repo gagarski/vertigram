@@ -6,12 +6,16 @@ import ski.gagar.vertigram.telegram.types.Passport
 import ski.gagar.vertigram.util.NoPosArgs
 
 /**
- * Telegram [setPassportDataErrors](https://core.telegram.org/bots/api#setpassportdataerrors) method.
+ * Informs a user that some Telegram Passport elements they provided contain errors.
  *
- * For up-to-date documentation, please consult the official Telegram docs.
+ * Returns `true` on success.
+ *
+ * See Telegram's [setPassportDataErrors](https://core.telegram.org/bots/api#setpassportdataerrors) documentation.
  */
 @TelegramCodegen.Method
 data class SetPassportDataErrors internal constructor(
+    /** User identifier. */
     val userId: Long,
+    /** Errors describing the problematic Telegram Passport elements. */
     val errors: List<Passport.ElementError>
 ) : JsonTelegramCallable<Boolean>()

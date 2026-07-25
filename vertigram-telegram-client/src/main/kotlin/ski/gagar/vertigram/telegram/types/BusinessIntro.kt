@@ -5,14 +5,17 @@ import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.util.NoPosArgs
 
 /**
- * Telegram [BusinessIntro](https://core.telegram.org/bots/api#businessintro) type.
+ * Contains information about the start page settings of a Telegram Business account.
  *
- * For up-to-date documentation, please consult the official Telegram docs.
+ * See Telegram's [BusinessIntro](https://core.telegram.org/bots/api#businessintro) documentation.
  */
 @TelegramCodegen.Type
 data class BusinessIntro internal constructor(
+    /** Title text of the business intro. */
     val title: String? = null,
+    /** Message text of the business intro. */
     val message: String? = null,
+    /** Sticker of the business intro. */
     val sticker: Sticker? = null
 ) {
     companion object

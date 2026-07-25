@@ -7,13 +7,20 @@ import ski.gagar.vertigram.telegram.types.util.ChatId
 import ski.gagar.vertigram.util.NoPosArgs
 
 /**
- * Telegram [setChatAdministratorCustomTitle](https://core.telegram.org/bots/api#setchatadministratorcustomtitle) method.
+ * Use this method to set a custom title for an administrator in a supergroup promoted by the bot.
  *
- * For up-to-date documentation, please consult the official Telegram docs.
+ * Returns `true` on success.
+ *
+ * See Telegram's
+ * [setChatAdministratorCustomTitle](https://core.telegram.org/bots/api#setchatadministratorcustomtitle)
+ * documentation.
  */
 @TelegramCodegen.Method
 data class SetChatAdministratorCustomTitle internal constructor(
+    /** Unique identifier for the target chat or username of the target bot, supergroup, or channel. */
     override val chatId: ChatId,
+    /** Unique identifier of the target user. */
     val userId: Long,
+    /** New custom title for the administrator; 0-16 characters, emoji aren't allowed. */
     val customTitle: String
 ) : JsonTelegramCallable<Boolean>(), HasChatId

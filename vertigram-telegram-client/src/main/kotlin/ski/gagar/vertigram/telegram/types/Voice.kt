@@ -6,16 +6,21 @@ import ski.gagar.vertigram.util.NoPosArgs
 import java.time.Duration
 
 /**
- * Telegram [Voice](https://core.telegram.org/bots/api#voice) type.
+ * Represents a voice note.
  *
- * For up-to-date documentation, please consult the official Telegram docs.
+ * See Telegram's [Voice](https://core.telegram.org/bots/api#voice) documentation.
  */
 @TelegramCodegen.Type
 data class Voice internal constructor(
+    /** Identifier for downloading or reusing this file. */
     val fileId: String,
+    /** Unique identifier for this file. */
     val fileUniqueId: String,
+    /** Duration of the audio. */
     val duration: Duration,
+    /** MIME type of the file. */
     val mimeType: String? = null,
+    /** File size in bytes. */
     val fileSize: Long? = null
 ) {
     companion object

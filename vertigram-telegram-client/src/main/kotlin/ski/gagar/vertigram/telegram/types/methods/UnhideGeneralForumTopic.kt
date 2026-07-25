@@ -8,12 +8,14 @@ import ski.gagar.vertigram.telegram.types.util.ChatId
 import ski.gagar.vertigram.util.NoPosArgs
 
 /**
- * Telegram [unhideGeneralForumTopic](https://core.telegram.org/bots/api#unhidegeneralforumtopic) method.
+ * Use this method to unhide the 'General' topic in a forum supergroup chat. Returns `true` on success.
  *
- * For up-to-date documentation, please consult the official Telegram docs.
+ * See Telegram's
+ * [unhideGeneralForumTopic](https://core.telegram.org/bots/api#unhidegeneralforumtopic) documentation.
  */
 @Throttled
 @TelegramCodegen.Method
 data class UnhideGeneralForumTopic internal constructor(
+    /** Unique identifier for the target chat or username of the target bot, supergroup, or channel. */
     override val chatId: ChatId
 ) : JsonTelegramCallable<Boolean>(), HasChatId

@@ -13,13 +13,11 @@ import java.time.Duration
 import java.time.Instant
 
 /**
- * Telegram [Poll](https://core.telegram.org/bots/api#poll) type.
+ * Contains information about a poll.
  *
- * Synthetic subtypes are intrudoced for [Poll.Regular] and [Poll.Quiz] poll, since they can have a different set of fields.
+ * [Regular] and [Quiz] represent the two poll types and their different field sets.
  *
- * Also classes directly related to polls are nested
- *
- * For up-to-date documentation, please consult the official Telegram docs.
+ * See Telegram's [Poll](https://core.telegram.org/bots/api#poll) documentation.
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", include = JsonTypeInfo.As.EXISTING_PROPERTY)
 @JsonSubTypes(
@@ -48,29 +46,42 @@ interface Poll : HasQuestionWithEntities {
     val membersOnly: Boolean
     val countryCodes: List<String>?
 
-    /**
-     * Regular case
-     */
-
+    /** Case when the poll is a regular poll. */
     @TelegramCodegen.Type
     data class Regular internal constructor(
+        /** Unique poll identifier. */
         override val id: String,
+        /** Poll question, 1-300 characters. */
         override val question: String,
+        /** Special entities that appear in [question]. */
         override val questionEntities: List<MessageEntity>? = null,
+        /** Poll options. */
         override val options: List<Option>,
+        /** Total number of users that voted in the poll. */
         override val totalVoterCount: Int,
+        /** Whether the poll is closed. */
         @get:JvmName("getIsClosed")
         override val isClosed: Boolean = false,
+        /** Whether the poll is anonymous. */
         @get:JvmName("getIsAnonymous")
         override val isAnonymous: Boolean = false,
+        /** Whether the poll allows multiple answers. */
         val allowsMultipleAnswers: Boolean = false,
+        /** Time the poll will be active after creation. */
         override val openPeriod: Duration? = null,
+        /** Point in time when the poll will be automatically closed. */
         override val closeDate: Instant? = null,
+        /** Whether voters can change their vote. */
         override val allowsRevoting: Boolean = false,
+        /** Poll description. */
         override val description: String? = null,
+        /** Special entities that appear in [description]. */
         override val descriptionEntities: List<MessageEntity>? = null,
+        /** Media added to the poll description. */
         override val media: Media? = null,
+        /** Whether only chat members can vote in the poll. */
         override val membersOnly: Boolean = false,
+        /** Country codes of users allowed to vote in the poll. */
         override val countryCodes: List<String>? = null
     ) : Poll {
         override val type: Type = Type.REGULAR
@@ -78,31 +89,48 @@ interface Poll : HasQuestionWithEntities {
         companion object
     }
 
-    /**
-     * Quiz case
-     */
+    /** Case when the poll is a quiz. */
     @TelegramCodegen.Type
     data class Quiz internal constructor(
+        /** Unique poll identifier. */
         override val id: String,
+        /** Poll question, 1-300 characters. */
         override val question: String,
+        /** Special entities that appear in [question]. */
         override val questionEntities: List<MessageEntity>? = null,
+        /** Poll options. */
         override val options: List<Option>,
+        /** Total number of users that voted in the poll. */
         override val totalVoterCount: Int,
+        /** Whether the poll is closed. */
         @get:JvmName("getIsClosed")
         override val isClosed: Boolean = false,
+        /** Whether the poll is anonymous. */
         @get:JvmName("getIsAnonymous")
         override val isAnonymous: Boolean = false,
+        /** Identifiers of the correct answer options, starting from 0. */
         val correctOptionIds: List<Int>? = null,
+        /** Text shown when a user chooses an incorrect answer or taps the lamp icon. */
         override val explanation: String? = null,
+        /** Special entities that appear in [explanation]. */
         override val explanationEntities: List<MessageEntity>? = null,
+        /** Time the poll will be active after creation. */
         override val openPeriod: Duration? = null,
+        /** Point in time when the poll will be automatically closed. */
         override val closeDate: Instant? = null,
+        /** Whether voters can change their vote. */
         override val allowsRevoting: Boolean = false,
+        /** Poll description. */
         override val description: String? = null,
+        /** Special entities that appear in [description]. */
         override val descriptionEntities: List<MessageEntity>? = null,
+        /** Media added to the poll description. */
         override val media: Media? = null,
+        /** Media added to the quiz explanation. */
         val explanationMedia: Media? = null,
+        /** Whether only chat members can vote in the poll. */
         override val membersOnly: Boolean = false,
+        /** Country codes of users allowed to vote in the poll. */
         override val countryCodes: List<String>? = null
     ) : Poll, HasOptionalExplanationWithEntities {
         override val type: Type = Type.QUIZ
@@ -111,56 +139,79 @@ interface Poll : HasQuestionWithEntities {
     }
 
     /**
-     * Telegram [PollOption](https://core.telegram.org/bots/api#polloption) type.
+     * Contains information about one answer option in a poll.
      *
-     * For up-to-date documentation, please consult the official Telegram docs.
+     * See Telegram's [PollOption](https://core.telegram.org/bots/api#polloption) documentation.
      */
     @TelegramCodegen.Type
     data class Option internal constructor(
+        /** Unique identifier of the option, persistent across option addition and deletion. */
         val persistentId: String,
+        /** Option text, 1-100 characters. */
         override val text: String,
+        /** Special entities that appear in [text]. */
         override val entities: List<MessageEntity>? = null,
+        /** Media added to the poll option. */
         val media: Media? = null,
+        /** Number of users that voted for this option; may be 0 if unknown. */
         val voterCount: Int,
+        /** User that added the option. */
         val addedByUser: User? = null,
+        /** Chat that added the option. */
         val addedByChat: Chat? = null,
+        /** Point in time when the option was added. */
         val additionDate: Instant? = null
     ) : HasTextWithEntities {
         companion object
     }
 
     /**
-     * Telegram [PollMedia](https://core.telegram.org/bots/api#pollmedia) type.
+     * Contains information about media in a poll.
      *
-     * For up-to-date documentation, please consult the official Telegram docs.
+     * See Telegram's [PollMedia](https://core.telegram.org/bots/api#pollmedia) documentation.
      */
     @TelegramCodegen.Type
     data class Media internal constructor(
+        /** Media is an animation. */
         val animation: Animation? = null,
+        /** Media is an audio file. */
         val audio: Audio? = null,
+        /** Media is a document. */
         val document: Document? = null,
+        /** Media is an HTTP link. */
         val link: Link? = null,
+        /** Media is a live photo. */
         val livePhoto: LivePhoto? = null,
+        /** Media is a shared location. */
         val location: Location? = null,
+        /** Media is a photo. */
         val photo: List<PhotoSize>? = null,
+        /** Media is a sticker. */
         val sticker: Sticker? = null,
+        /** Media is a venue. */
         val venue: Venue? = null,
+        /** Media is a video. */
         val video: Video? = null
     ) {
         companion object
     }
 
     /**
-     * Telegram [PollAnswer](https://core.telegram.org/bots/api#pollanswer) type.
+     * Represents an answer of a user or an anonymous voter in a non-anonymous poll.
      *
-     * For up-to-date documentation, please consult the official Telegram docs.
+     * See Telegram's [PollAnswer](https://core.telegram.org/bots/api#pollanswer) documentation.
      */
     @TelegramCodegen.Type
     data class Answer internal constructor(
+        /** Unique poll identifier. */
         val pollId: String,
+        /** Chat that changed the answer to the poll, for anonymous voters. */
         val voterChat: Chat? = null,
+        /** Identifiers of chosen answer options. */
         val optionIds: List<Int>,
+        /** Persistent identifiers of chosen answer options. */
         val optionPersistentIds: List<String>? = null,
+        /** User that changed the answer to the poll. */
         val user: User? = null
     ) {
         companion object

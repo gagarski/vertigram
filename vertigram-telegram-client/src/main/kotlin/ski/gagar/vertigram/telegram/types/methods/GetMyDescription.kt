@@ -6,11 +6,12 @@ import ski.gagar.vertigram.telegram.types.BotDescription
 import ski.gagar.vertigram.util.NoPosArgs
 
 /**
- * Telegram [getMyDescription](https://core.telegram.org/bots/api#getmydescription) method.
+ * Use this method to get the current bot description for the given user language.
  *
- * For up-to-date documentation, please consult the official Telegram docs.
+ * See Telegram's [getMyDescription](https://core.telegram.org/bots/api#getmydescription) documentation.
  */
 @TelegramCodegen.Method
 data class GetMyDescription internal constructor(
+    /** Two-letter ISO 639-1 language code or an empty string. */
     val languageCode: String? = null
 ) : JsonTelegramCallable<BotDescription>()

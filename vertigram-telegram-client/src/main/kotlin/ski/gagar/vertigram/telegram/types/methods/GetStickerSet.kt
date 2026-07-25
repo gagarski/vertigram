@@ -6,11 +6,12 @@ import ski.gagar.vertigram.telegram.types.StickerSet
 import ski.gagar.vertigram.util.NoPosArgs
 
 /**
- * Telegram [getStickerSet](https://core.telegram.org/bots/api#getstickerset) method.
+ * Use this method to get a sticker set.
  *
- * For up-to-date documentation, please consult the official Telegram docs.
+ * See Telegram's [getStickerSet](https://core.telegram.org/bots/api#getstickerset) documentation.
  */
 @TelegramCodegen.Method
 data class GetStickerSet internal constructor(
+    /** Name of the sticker set. */
     val name: String
 ) : JsonTelegramCallable<StickerSet>()

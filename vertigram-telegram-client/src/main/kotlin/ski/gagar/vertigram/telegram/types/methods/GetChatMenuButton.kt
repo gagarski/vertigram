@@ -7,11 +7,12 @@ import ski.gagar.vertigram.telegram.types.MenuButton
 import ski.gagar.vertigram.util.NoPosArgs
 
 /**
- * Telegram [getChatMenuButton](https://core.telegram.org/bots/api#getchatmenubutton) method.
+ * Use this method to get the current value of the bot's menu button in a private chat, or the default menu button.
  *
- * For up-to-date documentation, please consult the official Telegram docs.
+ * See Telegram's [getChatMenuButton](https://core.telegram.org/bots/api#getchatmenubutton) documentation.
  */
 @TelegramCodegen.Method
 data class GetChatMenuButton internal constructor(
+    /** Unique identifier for the target private chat. If omitted, the bot's default menu button is returned. */
     override val chatId: Long? = null
 ) : JsonTelegramCallable<MenuButton>(), HasChatIdLong

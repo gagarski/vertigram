@@ -3,12 +3,15 @@ package ski.gagar.vertigram.telegram.types.methods
 import ski.gagar.vertigram.annotations.TelegramCodegen
 
 /**
- * Telegram [setBusinessAccountUsername](https://core.telegram.org/bots/api#setbusinessaccountusername) method.
+ * Changes the username of a managed business account. Returns `true` on success.
  *
- * For up-to-date documentation, please consult the official Telegram docs.
+ * See Telegram's
+ * [setBusinessAccountUsername](https://core.telegram.org/bots/api#setbusinessaccountusername) documentation.
  */
 @TelegramCodegen.Method()
 data class SetBusinessAccountUsername internal constructor(
+    /** Unique identifier of the business connection. */
     val businessConnectionId: String,
+    /** New username for the business account; 0-32 characters. */
     val username: String? = null
 ) : JsonTelegramCallable<Boolean>()

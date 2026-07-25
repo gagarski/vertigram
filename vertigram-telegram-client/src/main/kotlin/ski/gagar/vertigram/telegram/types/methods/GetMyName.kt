@@ -6,11 +6,12 @@ import ski.gagar.vertigram.telegram.types.BotName
 import ski.gagar.vertigram.util.NoPosArgs
 
 /**
- * Telegram [getMyName](https://core.telegram.org/bots/api#getmyname) method.
+ * Use this method to get the current bot name for the given user language.
  *
- * For up-to-date documentation, please consult the official Telegram docs.
+ * See Telegram's [getMyName](https://core.telegram.org/bots/api#getmyname) documentation.
  */
 @TelegramCodegen.Method
 data class GetMyName internal constructor(
+    /** Two-letter ISO 639-1 language code or an empty string. */
     val languageCode: String? = null
 ) : JsonTelegramCallable<BotName>()

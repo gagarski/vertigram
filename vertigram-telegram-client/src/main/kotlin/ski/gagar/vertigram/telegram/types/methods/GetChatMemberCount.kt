@@ -7,11 +7,12 @@ import ski.gagar.vertigram.telegram.types.util.ChatId
 import ski.gagar.vertigram.util.NoPosArgs
 
 /**
- * Telegram [getChatMemberCount](https://core.telegram.org/bots/api#getchatmembercount) method.
+ * Use this method to get the number of members in a chat.
  *
- * For up-to-date documentation, please consult the official Telegram docs.
+ * See Telegram's [getChatMemberCount](https://core.telegram.org/bots/api#getchatmembercount) documentation.
  */
 @TelegramCodegen.Method
 data class GetChatMemberCount internal constructor(
+    /** Unique identifier for the target chat or username of the target bot, supergroup, or channel. */
     override val chatId: ChatId
 ) : JsonTelegramCallable<Int>(), HasChatId

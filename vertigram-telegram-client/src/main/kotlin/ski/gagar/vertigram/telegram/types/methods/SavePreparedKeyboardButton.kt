@@ -5,12 +5,15 @@ import ski.gagar.vertigram.telegram.types.PreparedKeyboardButton
 import ski.gagar.vertigram.telegram.types.ReplyMarkup
 
 /**
- * Telegram [savePreparedKeyboardButton](https://core.telegram.org/bots/api#savepreparedkeyboardbutton) method.
+ * Stores a keyboard button that can be sent by a user of a Mini App.
  *
- * For up-to-date documentation, please consult the official Telegram docs.
+ * See Telegram's
+ * [savePreparedKeyboardButton](https://core.telegram.org/bots/api#savepreparedkeyboardbutton) documentation.
  */
 @TelegramCodegen.Method
 data class SavePreparedKeyboardButton internal constructor(
+    /** Unique identifier of the target user who can use the prepared button. */
     val userId: Long,
+    /** Keyboard button to prepare. */
     val button: ReplyMarkup.Keyboard.Button
 ) : JsonTelegramCallable<PreparedKeyboardButton>()

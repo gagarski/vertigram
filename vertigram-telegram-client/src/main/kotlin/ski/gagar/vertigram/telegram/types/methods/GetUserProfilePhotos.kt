@@ -6,13 +6,16 @@ import ski.gagar.vertigram.telegram.types.UserProfilePhotos
 import ski.gagar.vertigram.util.NoPosArgs
 
 /**
- * Telegram [getUserProfilePhotos](https://core.telegram.org/bots/api#getuserprofilephotos) method.
+ * Use this method to get a list of profile pictures for a user.
  *
- * For up-to-date documentation, please consult the official Telegram docs.
+ * See Telegram's [getUserProfilePhotos](https://core.telegram.org/bots/api#getuserprofilephotos) documentation.
  */
 @TelegramCodegen.Method
 data class GetUserProfilePhotos internal constructor(
+    /** Unique identifier of the target user. */
     val userId: Long,
+    /** Sequential number of the first photo to be returned. */
     val offset: Long? = null,
+    /** Maximum number of photos to retrieve; 1-100. */
     val limit: Long? = null
 ) : JsonTelegramCallable<List<UserProfilePhotos>>()

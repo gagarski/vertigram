@@ -15,7 +15,7 @@ import java.time.Duration
  * use [ski.gagar.vertigram.telegram.client.Telegram.getUpdates] method, which gives you properly parsed updates and
  * abstracts you out of long-poll logic and timeout
  *
- * For up-to-date documentation for telegram method please consult the official Telegram docs.
+ * See Telegram's [getUpdates](https://core.telegram.org/bots/api#getupdates) documentation.
  */
 @Deprecated("Use Telegram.getUpdates instead")
 @TelegramCodegen.Method(
@@ -26,8 +26,12 @@ import java.time.Duration
 internal data class GetUpdatesRaw(
     @JsonIgnore
     private val noPosArgs: NoPosArgs = NoPosArgs.INSTANCE,
+    /** Identifier of the first update to be returned. */
     val offset: Long? = null,
+    /** Timeout for long polling. */
     val timeout: Duration = Duration.ZERO,
+    /** Maximum number of updates to retrieve; 1-100. */
     val limit: Int? = null,
+    /** Update types the bot wants to receive. */
     val allowedUpdates: List<Update.Type>
 ) : JsonTelegramCallable<List<Map<String, Any?>>>()

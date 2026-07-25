@@ -8,12 +8,17 @@ import ski.gagar.vertigram.telegram.types.util.ChatId
 import ski.gagar.vertigram.util.NoPosArgs
 
 /**
- * Telegram [hideGeneralForumTopic](https://core.telegram.org/bots/api#hidegeneralforumtopic) method.
+ * Use this method to hide the 'General' topic in a forum supergroup chat.
  *
- * For up-to-date documentation, please consult the official Telegram docs.
+ * The bot must be an administrator in the chat for this to work and must have
+ * [ski.gagar.vertigram.telegram.types.ChatAdministratorRights.canManageTopics] administrator rights. The topic will
+ * be automatically closed if it was open. Returns `true` on success.
+ *
+ * See Telegram's [hideGeneralForumTopic](https://core.telegram.org/bots/api#hidegeneralforumtopic) documentation.
  */
 @Throttled
 @TelegramCodegen.Method
 data class HideGeneralForumTopic internal constructor(
+    /** Unique identifier for the target chat or username of the target bot, supergroup, or channel. */
     override val chatId: ChatId
 ) : JsonTelegramCallable<Boolean>(), HasChatId

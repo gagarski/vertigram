@@ -11,22 +11,33 @@ import ski.gagar.vertigram.telegram.types.util.ChatId
 import ski.gagar.vertigram.util.NoPosArgs
 
 /**
- * Telegram [sendGame](https://core.telegram.org/bots/api#sendgame) method.
+ * Use this method to send a game.
  *
- * For up-to-date documentation, please consult the official Telegram docs.
+ * See Telegram's [sendGame](https://core.telegram.org/bots/api#sendgame) documentation.
  */
 @Throttled
 @TelegramCodegen.Method
 data class SendGame internal constructor(
+    /** Unique identifier of the business connection on behalf of which the message will be sent. */
     val businessConnectionId: String? = null,
+    /** Unique identifier for the target chat or username of the target bot, supergroup, or channel. */
     override val chatId: ChatId,
+    /** Unique identifier for the target message thread. */
     val messageThreadId: Long? = null,
+    /** Identifier of the direct messages topic to which the message will be sent. */
     val directMessagesTopicId: Long? = null,
+    /** Short name of the game. */
     val gameShortName: String,
+    /** Sends the message silently. */
     val disableNotification: Boolean = false,
+    /** Protects the sent message from forwarding and saving. */
     val protectContent: Boolean = false,
+    /** Pass `true` to allow up to 1000 messages per second for a fee in Telegram Stars. */
     val allowPaidBroadcast: Boolean = false,
+    /** Unique identifier of the message effect added to the message. */
     val messageEffectId: String? = null,
+    /** Additional interface options. */
     val replyMarkup: ReplyMarkup? = null,
+    /** Parameters of the message being replied to. */
     val replyParameters: ReplyParameters? = null
 ) : JsonTelegramCallable<Message>(), HasChatId

@@ -5,12 +5,15 @@ import ski.gagar.vertigram.telegram.throttling.HasChatId
 import ski.gagar.vertigram.telegram.types.util.ChatId
 
 /**
- * Telegram [approveChatJoinRequest](https://core.telegram.org/bots/api#approvechatjoinrequest) method.
+ * Use this method to approve a chat join request. The bot must be an administrator in the chat for this to work and
+ * must have the `can_invite_users` administrator right. Returns `true` on success.
  *
- * For up-to-date documentation, please consult the official Telegram docs.
+ * See Telegram's [approveChatJoinRequest](https://core.telegram.org/bots/api#approvechatjoinrequest) documentation.
  */
 @TelegramCodegen.Method
 data class ApproveChatJoinRequest internal constructor(
+    /** Unique identifier for the target chat or username of the target channel. */
     override val chatId: ChatId,
+    /** Unique identifier of the target user. */
     val userId: Long
 ) : JsonTelegramCallable<Boolean>(), HasChatId

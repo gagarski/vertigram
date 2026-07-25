@@ -5,15 +5,19 @@ import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.util.NoPosArgs
 
 /**
- * Telegram [OrderInfo](https://core.telegram.org/bots/api#orderinfo) type.
+ * Represents information about an order.
  *
- * For up-to-date documentation, please consult the official Telegram docs.
+ * See Telegram's [OrderInfo](https://core.telegram.org/bots/api#orderinfo) documentation.
  */
 @TelegramCodegen.Type
 data class OrderInfo internal constructor(
+    /** User name. */
     val name: String? = null,
+    /** User's phone number. */
     val phoneNumber: String? = null,
+    /** User email. */
     val email: String? = null,
+    /** User shipping address. */
     val shippingAddress: ShippingAddress? = null
 ) {
     companion object

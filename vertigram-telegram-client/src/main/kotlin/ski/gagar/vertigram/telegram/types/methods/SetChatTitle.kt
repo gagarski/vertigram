@@ -8,13 +8,15 @@ import ski.gagar.vertigram.telegram.types.util.ChatId
 import ski.gagar.vertigram.util.NoPosArgs
 
 /**
- * Telegram [setChatTitle](https://core.telegram.org/bots/api#setchattitle) method.
+ * Use this method to change the title of a chat. Returns `true` on success.
  *
- * For up-to-date documentation, please consult the official Telegram docs.
+ * See Telegram's [setChatTitle](https://core.telegram.org/bots/api#setchattitle) documentation.
  */
 @Throttled
 @TelegramCodegen.Method
 data class SetChatTitle internal constructor(
+    /** Unique identifier for the target chat or username of the target bot, supergroup, or channel. */
     override val chatId: ChatId,
+    /** New chat title, 1-128 characters. */
     val title: String
 ) : JsonTelegramCallable<Boolean>(), HasChatId

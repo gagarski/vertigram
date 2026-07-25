@@ -7,12 +7,14 @@ import ski.gagar.vertigram.telegram.types.Sticker
 import ski.gagar.vertigram.util.NoPosArgs
 
 /**
- * Telegram [verifyUser](https://core.telegram.org/bots/api#verifyuser) method.
+ * Verifies a user on behalf of the organization represented by the bot. Returns `true` on success.
  *
- * For up-to-date documentation, please consult the official Telegram docs.
+ * See Telegram's [verifyUser](https://core.telegram.org/bots/api#verifyuser) documentation.
  */
 @TelegramCodegen.Method
 data class VerifyUser internal constructor(
+    /** Unique identifier of the target user. */
     val userId: Long,
+    /** Custom description for the verification; 0-70 characters. */
     val customDescription: String? = null
 ) : JsonTelegramCallable<Boolean>()

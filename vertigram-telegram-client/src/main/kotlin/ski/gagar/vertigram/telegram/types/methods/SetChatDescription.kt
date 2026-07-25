@@ -8,13 +8,15 @@ import ski.gagar.vertigram.telegram.types.util.ChatId
 import ski.gagar.vertigram.util.NoPosArgs
 
 /**
- * Telegram [setChatDescription](https://core.telegram.org/bots/api#setchatdescription) method.
+ * Use this method to change the description of a group, a supergroup or a channel. Returns `true` on success.
  *
- * For up-to-date documentation, please consult the official Telegram docs.
+ * See Telegram's [setChatDescription](https://core.telegram.org/bots/api#setchatdescription) documentation.
  */
 @Throttled
 @TelegramCodegen.Method
 data class SetChatDescription internal constructor(
+    /** Unique identifier for the target chat or username of the target bot, supergroup, or channel. */
     override val chatId: ChatId,
+    /** New chat description, 0-255 characters. */
     val description: String
 ) : JsonTelegramCallable<Boolean>(), HasChatId

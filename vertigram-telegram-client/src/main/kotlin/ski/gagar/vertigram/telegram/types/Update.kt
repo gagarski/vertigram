@@ -11,16 +11,12 @@ class UpdateList(val list: List<Update<*>>)
 class ParsedUpdateList(val delegate: List<Update.Parsed<*>>)
 
 /**
- * Telegram [Update](https://core.telegram.org/bots/api#update) type.
+ * Represents an incoming update.
  *
- * The original type is split into subtypes given "You __must__ use exactly one of the optional fields."
- * condition, each of the subclasses represent the case of respecting field being set.
+ * Each subtype represents the single update field that is set. Types used only as an update field value are nested
+ * under the corresponding subtype as `Payload`.
  *
- * Some classes which represent only the value of an update field are nested into that [Update] subtype
- * under name `Payload`, though there are exceptions for some fundamental types such as
- * [ski.gagar.vertigram.telegram.types.InlineQuery] or [ski.gagar.vertigram.telegram.types.Message].
- *
- * For up-to-date documentation, please consult the official Telegram docs.
+ * See Telegram's [Update](https://core.telegram.org/bots/api#update) documentation.
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.DEDUCTION)
 @JsonSubTypes(
@@ -54,6 +50,7 @@ class ParsedUpdateList(val delegate: List<Update.Parsed<*>>)
 //    JsonSubTypes.Type(value = Update2.Malformed::class),
 )
 sealed interface Update<T> {
+    /** Unique identifier of the update. */
     val updateId: Long
 
     @get:JsonIgnore
@@ -67,12 +64,12 @@ sealed interface Update<T> {
 
     sealed interface Parsed<T> : Update<T>
 
-    /**
-     * Case when [message] is set
-     */
+    /** Case when the update contains a new incoming message. */
     @TelegramCodegen.Type
     data class Message internal constructor(
+        /** Unique identifier of the update. */
         override val updateId: Long,
+        /** New incoming message. */
         val message: ski.gagar.vertigram.telegram.types.Message
     ) : Parsed<ski.gagar.vertigram.telegram.types.Message> {
         override val payload: ski.gagar.vertigram.telegram.types.Message = message
@@ -81,12 +78,12 @@ sealed interface Update<T> {
         companion object
     }
 
-    /**
-     * Case when [editedMessage] is set
-     */
+    /** Case when the update contains a new version of an edited message. */
     @TelegramCodegen.Type
     data class EditedMessage internal constructor(
+        /** Unique identifier of the update. */
         override val updateId: Long,
+        /** New version of the edited message. */
         val editedMessage: ski.gagar.vertigram.telegram.types.Message
     ) : Parsed<ski.gagar.vertigram.telegram.types.Message> {
         override val payload: ski.gagar.vertigram.telegram.types.Message = editedMessage
@@ -95,12 +92,12 @@ sealed interface Update<T> {
         companion object
     }
 
-    /**
-     * Case when [channelPost] is set
-     */
+    /** Case when the update contains a new incoming channel post. */
     @TelegramCodegen.Type
     data class ChannelPost internal constructor(
+        /** Unique identifier of the update. */
         override val updateId: Long,
+        /** New incoming channel post. */
         val channelPost: ski.gagar.vertigram.telegram.types.Message
     ) : Parsed<ski.gagar.vertigram.telegram.types.Message> {
         override val payload: ski.gagar.vertigram.telegram.types.Message = channelPost
@@ -109,12 +106,12 @@ sealed interface Update<T> {
         companion object
     }
 
-    /**
-     * Case when [editedChannelPost] is set
-     */
+    /** Case when the update contains a new version of an edited channel post. */
     @TelegramCodegen.Type
     data class EditedChannelPost internal constructor(
+        /** Unique identifier of the update. */
         override val updateId: Long,
+        /** New version of the edited channel post. */
         val editedChannelPost: ski.gagar.vertigram.telegram.types.Message
     ) : Parsed<ski.gagar.vertigram.telegram.types.Message> {
         override val payload: ski.gagar.vertigram.telegram.types.Message = editedChannelPost
@@ -123,12 +120,12 @@ sealed interface Update<T> {
         companion object
     }
 
-    /**
-     * Case when [businessConnection] is set
-     */
+    /** Case when the update contains a new or changed business connection. */
     @TelegramCodegen.Type
     data class BusinessConnection internal constructor(
+        /** Unique identifier of the update. */
         override val updateId: Long,
+        /** New or changed business connection. */
         val businessConnection: ski.gagar.vertigram.telegram.types.BusinessConnection
     ) : Parsed<ski.gagar.vertigram.telegram.types.BusinessConnection> {
         override val payload: ski.gagar.vertigram.telegram.types.BusinessConnection = businessConnection
@@ -137,12 +134,12 @@ sealed interface Update<T> {
         companion object
     }
 
-    /**
-     * Case when [businessMessage] is set
-     */
+    /** Case when the update contains a new message from a connected business account. */
     @TelegramCodegen.Type
     data class BusinessMessage internal constructor(
+        /** Unique identifier of the update. */
         override val updateId: Long,
+        /** New message from a connected business account. */
         val businessMessage: ski.gagar.vertigram.telegram.types.Message
     ) : Parsed<ski.gagar.vertigram.telegram.types.Message> {
         override val payload: ski.gagar.vertigram.telegram.types.Message = businessMessage
@@ -151,12 +148,12 @@ sealed interface Update<T> {
         companion object
     }
 
-    /**
-     * Case when [editedBusinessMessage] is set
-     */
+    /** Case when the update contains a new version of a message from a connected business account. */
     @TelegramCodegen.Type
     data class EditedBusinessMessage internal constructor(
+        /** Unique identifier of the update. */
         override val updateId: Long,
+        /** New version of the message from a connected business account. */
         val editedBusinessMessage: ski.gagar.vertigram.telegram.types.Message
     ) : Parsed<ski.gagar.vertigram.telegram.types.Message> {
         override val payload: ski.gagar.vertigram.telegram.types.Message = editedBusinessMessage
@@ -165,26 +162,30 @@ sealed interface Update<T> {
         companion object
     }
 
-    /**
-     * Case when [deletedBusinessMessages] is set
-     */
+    /** Case when the update contains messages deleted from a connected business account. */
     @TelegramCodegen.Type
     data class DeletedBusinessMessages internal constructor(
+        /** Unique identifier of the update. */
         override val updateId: Long,
+        /** Information about the deleted business messages. */
         val deletedBusinessMessages: Payload
     ) : Parsed<DeletedBusinessMessages.Payload> {
         override val payload: Payload = deletedBusinessMessages
         override val date: Instant? = null
 
         /**
-         * Telegram [BusinessMessagesDeleted](https://core.telegram.org/bots/api#businessmessagesdeleted) type.
+         * Describes messages deleted from a connected business account.
          *
-         * For up-to-date documentation, please consult the official Telegram docs.
+         * See Telegram's [BusinessMessagesDeleted](https://core.telegram.org/bots/api#businessmessagesdeleted)
+         * documentation.
          */
         @TelegramCodegen.Type
         data class Payload internal constructor(
+            /** Unique identifier of the business connection. */
             val businessConnectionId: String,
+            /** Chat the messages were deleted from. */
             val chat: Chat,
+            /** Identifiers of the deleted messages. */
             val messageIds: List<Long>
         ) {
             companion object
@@ -193,12 +194,12 @@ sealed interface Update<T> {
         companion object
     }
 
-    /**
-     * Case when [guestMessage] is set
-     */
+    /** Case when the update contains a new message sent by a guest bot. */
     @TelegramCodegen.Type
     data class GuestMessage internal constructor(
+        /** Unique identifier of the update. */
         override val updateId: Long,
+        /** New message sent by a guest bot. */
         val guestMessage: ski.gagar.vertigram.telegram.types.Message
     ) : Parsed<ski.gagar.vertigram.telegram.types.Message> {
         override val payload: ski.gagar.vertigram.telegram.types.Message = guestMessage
@@ -207,30 +208,38 @@ sealed interface Update<T> {
         companion object
     }
 
-    /**
-     * Case when [messageReaction] is set
-     */
+    /** Case when the update contains a reaction change made by a user. */
     @TelegramCodegen.Type
     data class MessageReaction internal constructor(
+        /** Unique identifier of the update. */
         override val updateId: Long,
+        /** Information about the reaction change. */
         val messageReaction: Payload
     ) : Parsed<MessageReaction.Payload> {
         override val payload: Payload = messageReaction
         override val date: Instant = payload.date
 
         /**
-         * Telegram [MessageReactionUpdated](https://core.telegram.org/bots/api#messagereactionupdated) type.
+         * Represents a change of a reaction on a message performed by a user.
          *
-         * For up-to-date documentation, please consult the official Telegram docs.
+         * See Telegram's [MessageReactionUpdated](https://core.telegram.org/bots/api#messagereactionupdated)
+         * documentation.
          */
         @TelegramCodegen.Type
         data class Payload internal constructor(
+            /** Chat containing the message. */
             val chat: Chat,
+            /** Unique identifier of the message inside the chat. */
             val messageId: Long,
+            /** User that changed the reaction. */
             val user: User? = null,
+            /** Chat on behalf of which the reaction was changed. */
             val actorChat: Chat? = null,
+            /** Date of the change. */
             val date: Instant,
+            /** Previous list of reaction types set by the user. */
             val oldReaction: List<Reaction>,
+            /** New list of reaction types set by the user. */
             val newReaction: List<Reaction>
         ) {
             companion object
@@ -238,37 +247,44 @@ sealed interface Update<T> {
         companion object
     }
 
-    /**
-     * Case when [messageReactionCount] is set
-     */
+    /** Case when the update contains changed anonymous reaction counts. */
     @TelegramCodegen.Type
     data class MessageReactionCount internal constructor(
+        /** Unique identifier of the update. */
         override val updateId: Long,
+        /** Information about the changed reaction counts. */
         val messageReactionCount: Payload
     ) : Parsed<MessageReactionCount.Payload> {
         override val payload: Payload = messageReactionCount
         override val date: Instant = payload.date
 
         /**
-         * Telegram [MessageReactionCountUpdated](https://core.telegram.org/bots/api#messagereactioncountupdated) type.
+         * Represents reaction changes on a message with anonymous reactions.
          *
-         * For up-to-date documentation, please consult the official Telegram docs.
+         * See Telegram's
+         * [MessageReactionCountUpdated](https://core.telegram.org/bots/api#messagereactioncountupdated) documentation.
          */
         @TelegramCodegen.Type
         data class Payload internal constructor(
+            /** Chat containing the message. */
             val chat: Chat,
+            /** Unique identifier of the message inside the chat. */
             val messageId: Long,
+            /** Date of the change. */
             val date: Instant,
+            /** List of reactions present on the message. */
             val reactions: List<ReactionCount>
         ) {
             /**
-             * Telegram [ReactionCount](https://core.telegram.org/bots/api#reactioncount) type.
+             * Represents one reaction and its count.
              *
-             * For up-to-date documentation, please consult the official Telegram docs.
+             * See Telegram's [ReactionCount](https://core.telegram.org/bots/api#reactioncount) documentation.
              */
             @TelegramCodegen.Type
             data class ReactionCount internal constructor(
+                /** Type of the reaction. */
                 val type: Reaction,
+                /** Number of times the reaction was added. */
                 val totalCount: Int
             ) {
                 companion object
@@ -279,12 +295,12 @@ sealed interface Update<T> {
         companion object
     }
 
-    /**
-     * Case when [inlineQuery] is set
-     */
+    /** Case when the update contains a new incoming inline query. */
     @TelegramCodegen.Type
     data class InlineQuery internal constructor(
+        /** Unique identifier of the update. */
         override val updateId: Long,
+        /** New incoming inline query. */
         val inlineQuery: ski.gagar.vertigram.telegram.types.InlineQuery
     ) : Parsed<ski.gagar.vertigram.telegram.types.InlineQuery> {
         override val payload: ski.gagar.vertigram.telegram.types.InlineQuery = inlineQuery
@@ -293,28 +309,33 @@ sealed interface Update<T> {
         companion object
     }
 
-    /**
-     * Case when [ChosenInlineResult] is set
-     */
+    /** Case when the update contains an inline-query result chosen by a user. */
     @TelegramCodegen.Type
     data class ChosenInlineResult internal constructor(
+        /** Unique identifier of the update. */
         override val updateId: Long,
+        /** Information about the chosen result. */
         val chosenInlineResult: Payload
     ) : Parsed<ChosenInlineResult.Payload> {
         override val payload: Payload = chosenInlineResult
         override val date: Instant? = null
 
         /**
-         * Telegram [ChosenInlineResult](https://core.telegram.org/bots/api#choseninlineresult) type.
+         * Represents an inline-query result chosen by a user and sent to their chat partner.
          *
-         * For up-to-date documentation, please consult the official Telegram docs.
+         * See Telegram's [ChosenInlineResult](https://core.telegram.org/bots/api#choseninlineresult) documentation.
          */
         @TelegramCodegen.Type
         data class Payload internal constructor(
+            /** Unique identifier of the chosen result. */
             val resultId: String,
+            /** User that chose the result. */
             val from: User,
+            /** Sender location, for bots that require user location. */
             val location: Location? = null,
+            /** Identifier of the sent inline message. */
             val inlineMessageId: String? = null,
+            /** Query used to obtain the result. */
             val query: String
         ) {
             companion object
@@ -323,30 +344,37 @@ sealed interface Update<T> {
         companion object
     }
 
-    /**
-     * Case when [callbackQuery] is set
-     */
+    /** Case when the update contains a new incoming callback query. */
     @TelegramCodegen.Type
     data class CallbackQuery internal constructor(
+        /** Unique identifier of the update. */
         override val updateId: Long,
+        /** New incoming callback query. */
         val callbackQuery: Payload
     ) : Parsed<CallbackQuery.Payload> {
         override val payload: Payload = callbackQuery
         override val date: Instant? = null
 
         /**
-         * Telegram [CallbackQuery](https://core.telegram.org/bots/api#callbackquery) type.
+         * Represents an incoming callback query from a callback button.
          *
-         * For up-to-date documentation, please consult the official Telegram docs.
+         * See Telegram's [CallbackQuery](https://core.telegram.org/bots/api#callbackquery) documentation.
          */
         @TelegramCodegen.Type
         data class Payload internal constructor(
+            /** Unique identifier for this query. */
             val id: String,
+            /** Sender. */
             val from: User,
+            /** Message sent by the bot with the callback button. */
             val message: ski.gagar.vertigram.telegram.types.Message? = null,
+            /** Identifier of the message sent through the bot in inline mode. */
             val inlineMessageId: String? = null,
+            /** Global identifier of the chat containing the callback button. */
             val chatInstance: String,
+            /** Data associated with the callback button. */
             val data: String? = null,
+            /** Short name of the game to be returned. */
             val gameShortName: String? = null
         ) {
             companion object
@@ -355,27 +383,31 @@ sealed interface Update<T> {
         companion object
     }
 
-    /**
-     * Case when [shippingQuery] is set
-     */
+    /** Case when the update contains a new incoming shipping query. */
     @TelegramCodegen.Type
     data class ShippingQuery internal constructor(
+        /** Unique identifier of the update. */
         override val updateId: Long,
+        /** New incoming shipping query. */
         val shippingQuery: Payload
     ) : Parsed<ShippingQuery.Payload> {
         override val payload: Payload = shippingQuery
         override val date: Instant? = null
 
         /**
-         * Telegram [ShippingQuery](https://core.telegram.org/bots/api#shippingquery) type.
+         * Contains information about an incoming shipping query.
          *
-         * For up-to-date documentation, please consult the official Telegram docs.
+         * See Telegram's [ShippingQuery](https://core.telegram.org/bots/api#shippingquery) documentation.
          */
         @TelegramCodegen.Type
         data class Payload internal constructor(
+            /** Unique query identifier. */
             val id: String,
+            /** User that sent the query. */
             val from: User,
+            /** Bot-specified invoice payload. */
             val invoicePayload: String,
+            /** User-specified shipping address. */
             val shippingAddress: ShippingAddress
         ) {
             companion object
@@ -384,30 +416,37 @@ sealed interface Update<T> {
         companion object
     }
 
-    /**
-     * Case when [preCheckoutQuery] is set
-     */
+    /** Case when the update contains a new incoming pre-checkout query with full checkout information. */
     @TelegramCodegen.Type
     data class PreCheckoutQuery internal constructor(
+        /** Unique identifier of the update. */
         override val updateId: Long,
+        /** New incoming pre-checkout query with full checkout information. */
         val preCheckoutQuery: Payload
     ) : Parsed<PreCheckoutQuery.Payload> {
         override val payload: Payload = preCheckoutQuery
         override val date: Instant? = null
 
         /**
-         * Telegram [PaidMediaPurchased](https://core.telegram.org/bots/api#paidmediapurchased) type.
+         * Contains information about an incoming pre-checkout query.
          *
-         * For up-to-date documentation, please consult the official Telegram docs.
+         * See Telegram's [PreCheckoutQuery](https://core.telegram.org/bots/api#precheckoutquery) documentation.
          */
         @TelegramCodegen.Type
         data class Payload internal constructor(
+            /** Unique query identifier. */
             val id: String,
+            /** User who sent the query. */
             val from: User,
+            /** Three-letter ISO 4217 currency code, or `XTR` for payments in Telegram Stars. */
             val currency: String,
+            /** Total price in the smallest units of the currency. */
             val totalAmount: Int,
+            /** Bot-specified invoice payload. */
             val invoicePayload: String,
+            /** Identifier of the shipping option chosen by the user. */
             val shippingOptionId: String? = null,
+            /** Order information provided by the user. */
             val orderInfo: OrderInfo? = null
         ) {
             companion object
@@ -416,26 +455,29 @@ sealed interface Update<T> {
         companion object
     }
 
-    /**
-     * Case when [purchasedPaidMedia] is set
-     */
+    /** Case when a user purchased paid media with a non-empty payload sent by the bot in a non-channel chat. */
     @TelegramCodegen.Type
     data class PurchasedPaidMedia internal constructor(
+        /** Unique identifier of the update. */
         override val updateId: Long,
+        /** Information about the paid media purchase. */
         val purchasedPaidMedia: Payload
     ) : Parsed<PurchasedPaidMedia.Payload> {
         override val payload: Payload = purchasedPaidMedia
         override val date: Instant? = null
 
         /**
-         * Telegram [PreCheckoutQuery](https://core.telegram.org/bots/api#precheckoutquery) type.
+         * Contains information about a paid media purchase.
          *
-         * For up-to-date documentation, please consult the official Telegram docs.
+         * See Telegram's [PaidMediaPurchased](https://core.telegram.org/bots/api#paidmediapurchased) documentation.
          */
         @TelegramCodegen.Type
         data class Payload internal constructor(
+            /** Unique identifier of the update. */
             val id: String,
+            /** User who purchased the media. */
             val from: User,
+            /** Bot-specified paid media payload. */
             val paidMediaPayload: String,
         ) {
             companion object
@@ -445,11 +487,15 @@ sealed interface Update<T> {
     }
 
     /**
-     * Case when [poll] is set
+     * Case when the update contains a new poll state.
+     *
+     * Bots receive only updates about manually stopped polls and polls sent by the bot.
      */
     @TelegramCodegen.Type
     data class Poll internal constructor(
+        /** Unique identifier of the update. */
         override val updateId: Long,
+        /** New poll state. */
         val poll: ski.gagar.vertigram.telegram.types.Poll
     ) : Parsed<ski.gagar.vertigram.telegram.types.Poll> {
         override val payload: ski.gagar.vertigram.telegram.types.Poll = poll
@@ -459,11 +505,15 @@ sealed interface Update<T> {
     }
 
     /**
-     * Case when [pollAnswer] is set
+     * Case when a user changed their answer in a non-anonymous poll.
+     *
+     * Bots receive new votes only in polls sent by the bot.
      */
     @TelegramCodegen.Type
     data class PollAnswer internal constructor(
+        /** Unique identifier of the update. */
         override val updateId: Long,
+        /** Answer changed by the user. */
         val pollAnswer: ski.gagar.vertigram.telegram.types.Poll.Answer
     ) : Parsed<ski.gagar.vertigram.telegram.types.Poll.Answer> {
         override val payload: ski.gagar.vertigram.telegram.types.Poll.Answer = pollAnswer
@@ -472,25 +522,32 @@ sealed interface Update<T> {
         companion object
     }
 
-    /**
-     * Case when [managedBot] is set
-     */
+    /** Case when a managed bot was created, or the token or owner of a managed bot was changed. */
     @TelegramCodegen.Type
     data class ManagedBot internal constructor(
+        /** Unique identifier of the update. */
         override val updateId: Long,
+        /** Information about the managed bot update. */
         val managedBot: Payload
     ) : Parsed<ManagedBot.Payload> {
         override val payload: Payload = managedBot
         override val date: Instant? = null
 
         /**
-         * Telegram [ManagedBotUpdated](https://core.telegram.org/bots/api#managedbotupdated) type.
+         * Contains information about the creation, token update, or owner update of a bot managed by the current bot.
          *
-         * For up-to-date documentation, please consult the official Telegram docs.
+         * See Telegram's [ManagedBotUpdated](https://core.telegram.org/bots/api#managedbotupdated) documentation.
          */
         @TelegramCodegen.Type
         data class Payload internal constructor(
+            /** User that created the bot. */
             val user: User,
+            /**
+             * Information about the bot.
+             *
+             * The bot's token can be fetched using
+             * [getManagedBotToken][ski.gagar.vertigram.telegram.methods.getManagedBotToken].
+             */
             val bot: User
         ) {
             companion object
@@ -499,31 +556,38 @@ sealed interface Update<T> {
         companion object
     }
 
-    /**
-     * Case when the Telegram `subscription` update field is set.
-     */
+    /** Case when a user payment subscription has changed. */
     @TelegramCodegen.Type
     data class Subscription internal constructor(
+        /** Unique identifier of the update. */
         override val updateId: Long,
+        /** Information about the changed user payment subscription. */
         val subscription: Payload
     ) : Parsed<Subscription.Payload> {
         override val payload: Payload = subscription
         override val date: Instant? = null
 
         /**
-         * Telegram [BotSubscriptionUpdated](https://core.telegram.org/bots/api#botsubscriptionupdated) type.
+         * Contains information about changes to a user payment subscription toward the current bot.
          *
-         * For up-to-date documentation, please consult the official Telegram docs.
+         * See Telegram's
+         * [BotSubscriptionUpdated](https://core.telegram.org/bots/api#botsubscriptionupdated) documentation.
          */
         @TelegramCodegen.Type
         data class Payload internal constructor(
+            /** User who subscribed for payments toward the bot. */
             val user: User,
+            /** Bot-specified invoice payload. */
             val invoicePayload: String,
+            /** New state of the subscription. */
             val state: State
         ) {
             enum class State {
+                /** Case when the user canceled the subscription. */
                 @JsonProperty("canceled") CANCELED,
+                /** Case when the user re-enabled a previously canceled subscription. */
                 @JsonProperty("active") ACTIVE,
+                /** Case when payment for the subscription failed. */
                 @JsonProperty("failed") FAILED
             }
             companion object
@@ -533,13 +597,15 @@ sealed interface Update<T> {
     }
 
     /**
-     * Case when [myChatMember] is set
+     * Case when the bot's chat member status was updated in a chat.
      *
-     * Intentionally reuses [ChatMember.Payload]
+     * For private chats, this update is received only when the bot is blocked or unblocked by the user.
      */
     @TelegramCodegen.Type
     data class MyChatMember internal constructor(
+        /** Unique identifier of the update. */
         override val updateId: Long,
+        /** Information about the bot's updated chat member status. */
         val myChatMember: ChatMember.Payload
     ) : Parsed<ChatMember.Payload> {
         override val payload: ChatMember.Payload = myChatMember
@@ -549,30 +615,45 @@ sealed interface Update<T> {
     }
 
     /**
-     * Case when [chatMember] is set
+     * Case when a chat member's status was updated in a chat.
+     *
+     * The bot must be an administrator in the chat and explicitly request `chat_member` updates.
      */
     @TelegramCodegen.Type
     data class ChatMember internal constructor(
+        /** Unique identifier of the update. */
         override val updateId: Long,
+        /** Information about the updated chat member status. */
         val chatMember: Payload
     ) : Parsed<ChatMember.Payload> {
         override val payload: Payload = chatMember
         override val date: Instant = payload.date
 
         /**
-         * Telegram [ChatMemberUpdated](https://core.telegram.org/bots/api#chatmemberupdated) type.
+         * Represents changes in the status of a chat member.
          *
-         * For up-to-date documentation, please consult the official Telegram docs.
+         * See Telegram's [ChatMemberUpdated](https://core.telegram.org/bots/api#chatmemberupdated) documentation.
          */
         @TelegramCodegen.Type
         data class Payload internal constructor(
+            /** Chat the user belongs to. */
             val chat: Chat,
+            /** Performer of the action that resulted in the change. */
             val from: User,
+            /** Date the change was made. */
             val date: Instant,
+            /** Previous information about the chat member. */
             val oldChatMember: ski.gagar.vertigram.telegram.types.ChatMember,
+            /** New information about the chat member. */
             val newChatMember: ski.gagar.vertigram.telegram.types.ChatMember,
+            /** Chat invite link used by the user to join the chat; for joining by invite link events only. */
             val inviteLink: ChatInviteLink? = null,
+            /**
+             * Whether the user joined the chat after sending a direct join request without using an invite link and
+             * being approved by an administrator.
+             */
             val viaJoinRequest: Boolean = false,
+            /** Whether the user joined the chat via a chat folder invite link. */
             val viaChatFolderInviteLink: Boolean = false
         ) {
             companion object
@@ -582,29 +663,51 @@ sealed interface Update<T> {
     }
 
     /**
-     * Case when [chatJoinRequest] is set
+     * Case when a request to join the chat was sent.
+     *
+     * The bot must have the `canInviteUsers` administrator right in the chat to receive these updates.
      */
     @TelegramCodegen.Type
     data class ChatJoinRequest internal constructor(
+        /** Unique identifier of the update. */
         override val updateId: Long,
+        /** Request to join the chat. */
         val chatJoinRequest: Payload
     ) : Parsed<ChatJoinRequest.Payload> {
         override val payload: Payload = chatJoinRequest
         override val date: Instant = payload.date
 
         /**
-         * Telegram [ChatJoinRequest](https://core.telegram.org/bots/api#chatjoinrequest) type.
+         * Represents a join request sent to a chat.
          *
-         * For up-to-date documentation, please consult the official Telegram docs.
+         * See Telegram's [ChatJoinRequest](https://core.telegram.org/bots/api#chatjoinrequest) documentation.
          */
         @TelegramCodegen.Type
         data class Payload internal constructor(
+            /** Chat to which the request was sent. */
             val chat: Chat,
+            /** User who sent the join request. */
             val from: User,
+            /**
+             * Identifier of a private chat with the user who sent the join request.
+             *
+             * The bot can use this identifier for 5 minutes to send messages until the join request is processed.
+             */
             val userChatId: Long,
+            /** Date the request was sent. */
             val date: Instant,
+            /**
+             * Identifier of the join request query; for bots assigned to process join requests only.
+             *
+             * When present, the bot must call
+             * [sendChatJoinRequestWebApp][ski.gagar.vertigram.telegram.methods.sendChatJoinRequestWebApp] or
+             * [answerChatJoinRequestQuery][ski.gagar.vertigram.telegram.methods.answerChatJoinRequestQuery] within
+             * 10 seconds.
+             */
             val queryId: String? = null,
+            /** Bio of the user. */
             val bio: String? = null,
+            /** Chat invite link used by the user to send the join request. */
             val inviteLink: ChatInviteLink? = null
         ) {
             companion object
@@ -614,24 +717,30 @@ sealed interface Update<T> {
     }
 
     /**
-     * Case when [chatBoost] is set
+     * Case when a chat boost was added or changed.
+     *
+     * The bot must be an administrator in the chat to receive these updates.
      */
     @TelegramCodegen.Type
     data class ChatBoost internal constructor(
+        /** Unique identifier of the update. */
         override val updateId: Long,
+        /** Information about the added or changed chat boost. */
         val chatBoost: Payload
     ) : Parsed<ChatBoost.Payload> {
         override val payload: Payload = chatBoost
         override val date: Instant = payload.boost.addDate
 
         /**
-         * Telegram [ChatBoostUpdated](https://core.telegram.org/bots/api#chatboostupdated) type.
+         * Represents a boost added to a chat or changed.
          *
-         * For up-to-date documentation, please consult the official Telegram docs.
+         * See Telegram's [ChatBoostUpdated](https://core.telegram.org/bots/api#chatboostupdated) documentation.
          */
         @TelegramCodegen.Type
         data class Payload internal constructor(
+            /** Chat which was boosted. */
             val chat: Chat,
+            /** Information about the chat boost. */
             val boost: ski.gagar.vertigram.telegram.types.ChatBoost
         ) {
             companion object
@@ -641,26 +750,34 @@ sealed interface Update<T> {
     }
 
     /**
-     * Case when [chatBoostRemoved] is set
+     * Case when a boost was removed from a chat.
+     *
+     * The bot must be an administrator in the chat to receive these updates.
      */
     @TelegramCodegen.Type
     data class RemovedChatBoost internal constructor(
+        /** Unique identifier of the update. */
         override val updateId: Long,
+        /** Information about the removed chat boost. */
         val chatBoostRemoved: Payload
     ) : Parsed<RemovedChatBoost.Payload> {
         override val payload: Payload = chatBoostRemoved
         override val date: Instant = payload.removeDate
 
         /**
-         * Telegram [ChatBoostRemoved](https://core.telegram.org/bots/api#chatboostremoved) type.
+         * Represents a boost removed from a chat.
          *
-         * For up-to-date documentation, please consult the official Telegram docs.
+         * See Telegram's [ChatBoostRemoved](https://core.telegram.org/bots/api#chatboostremoved) documentation.
          */
         @TelegramCodegen.Type
         data class Payload internal constructor(
+            /** Chat which was boosted. */
             val chat: Chat,
+            /** Unique identifier of the boost. */
             val boostId: String,
+            /** Point in time when the boost was removed. */
             val removeDate: Instant,
+            /** Source of the removed boost. */
             val source: ski.gagar.vertigram.telegram.types.ChatBoost.Source
         ) {
             companion object
@@ -669,12 +786,12 @@ sealed interface Update<T> {
         companion object
     }
 
-    /**
-     * Case for malformed update
-     */
+    /** Case when an incoming update could not be parsed into one of the supported update types. */
     @TelegramCodegen.Type
     data class Malformed internal constructor(
+        /** Unique identifier of the update. */
         override val updateId: Long,
+        /** Raw data of the malformed update. */
         val malformedRawData: Map<String, Any?>
     ) : Update<Map<String, Any?>> {
         override val payload: Map<String, Any?> = malformedRawData

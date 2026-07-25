@@ -5,12 +5,14 @@ import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.util.NoPosArgs
 
 /**
- * Telegram [refundStarPayment](https://core.telegram.org/bots/api#refundstarpayment) method.
+ * Refunds a successful payment in Telegram Stars. Returns `true` on success.
  *
- * For up-to-date documentation, please consult the official Telegram docs.
+ * See Telegram's [refundStarPayment](https://core.telegram.org/bots/api#refundstarpayment) documentation.
  */
 @TelegramCodegen.Method
 data class RefundStarPayment internal constructor(
+    /** Identifier of the user whose payment will be refunded. */
     val userId: Long,
+    /** Telegram payment identifier. */
     val telegramPaymentChargeId: String
 ) : JsonTelegramCallable<Boolean>()

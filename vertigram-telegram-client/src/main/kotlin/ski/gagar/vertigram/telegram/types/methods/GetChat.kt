@@ -8,11 +8,12 @@ import ski.gagar.vertigram.telegram.types.util.ChatId
 import ski.gagar.vertigram.util.NoPosArgs
 
 /**
- * Telegram [getChat](https://core.telegram.org/bots/api#getchat) method.
+ * Use this method to get up-to-date information about the chat.
  *
- * For up-to-date documentation, please consult the official Telegram docs.
+ * See Telegram's [getChat](https://core.telegram.org/bots/api#getchat) documentation.
  */
 @TelegramCodegen.Method
 data class GetChat internal constructor(
+    /** Unique identifier for the target chat or username of the target bot, supergroup, or channel. */
     override val chatId: ChatId
 ) : JsonTelegramCallable<Chat.FullInfo>(), HasChatId

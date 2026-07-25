@@ -5,12 +5,13 @@ import ski.gagar.vertigram.telegram.types.REDACTED_SENSITIVE_DATA
 import ski.gagar.vertigram.telegram.types.SensitiveResult
 
 /**
- * Telegram [replaceManagedBotToken](https://core.telegram.org/bots/api#replacemanagedbottoken) method.
+ * Replaces the authentication token of a managed bot. Returns the new token on success.
  *
- * For up-to-date documentation, please consult the official Telegram docs.
+ * See Telegram's [replaceManagedBotToken](https://core.telegram.org/bots/api#replacemanagedbottoken) documentation.
  */
 @TelegramCodegen.Method
 data class ReplaceManagedBotToken internal constructor(
+    /** Unique identifier of the target user whose bot token will be replaced. */
     val userId: Long
 ) : JsonTelegramCallable<String>(), SensitiveResult {
     override fun withoutSensitiveData(result: Any?) = REDACTED_SENSITIVE_DATA

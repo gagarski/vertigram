@@ -8,12 +8,14 @@ import ski.gagar.vertigram.telegram.types.ChatMember
 import ski.gagar.vertigram.util.NoPosArgs
 
 /**
- * Telegram [getChatAdministrators](https://core.telegram.org/bots/api#getchatadministrators) method.
+ * Use this method to get a list of administrators in a chat, which aren't bots by default.
  *
- * For up-to-date documentation, please consult the official Telegram docs.
+ * See Telegram's [getChatAdministrators](https://core.telegram.org/bots/api#getchatadministrators) documentation.
  */
 @TelegramCodegen.Method
 data class GetChatAdministrators internal constructor(
+    /** Unique identifier for the target chat or username of the target bot, supergroup, or channel. */
     override val chatId: ChatId,
+    /** Pass `true` to include bots in the returned list. */
     val returnBots: Boolean = false
 ) : JsonTelegramCallable<List<ChatMember>>(), HasChatId

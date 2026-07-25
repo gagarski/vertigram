@@ -19,14 +19,12 @@ interface BaseInputMedia<T> {
 }
 
 /**
- * Telegram [InputMedia](https://core.telegram.org/bots/api#inputmedia) type.
+ * Represents the content of a media message to be sent.
  *
- * Subtypes (which are nested) represent the subtypes, described by Telegram docs with more
- * names given they are nested into [InputMedia] class. The rule here is the following:
- * `InputMediaXxx` Telegram type becomes `InputMedia.Xxx`. The exception is [InputMedia.Sticker]
- * which is not a subtype of [InputMedia].
+ * Telegram's `InputMediaXxx` types are represented as nested `InputMedia.Xxx` types. [Sticker] represents Telegram's
+ * `InputSticker` and isn't an [InputMedia] subtype.
  *
- * For up-to-date documentation, please consult the official Telegram docs.
+ * See Telegram's [InputMedia](https://core.telegram.org/bots/api#inputmedia) documentation.
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", include = JsonTypeInfo.As.EXISTING_PROPERTY)
 @JsonSubTypes(
@@ -45,21 +43,31 @@ sealed interface InputMedia : BaseInputMedia<InputMedia.Type> {
     override val cover: Attachment?
 
     /**
-     * Telegram [InputMediaAnimation](https://core.telegram.org/bots/api#inputmediaanimation) type.
+     * Case when the media is an animation file: a GIF or H.264/MPEG-4 AVC video without sound.
      *
-     * For up-to-date documentation, please consult the official Telegram docs.
+     * See Telegram's [InputMediaAnimation](https://core.telegram.org/bots/api#inputmediaanimation) documentation.
      */
     @TelegramCodegen.Type
     data class Animation internal constructor(
+        /** Animation file to send. */
         override val media: Attachment,
+        /** JPEG thumbnail of the uploaded file, less than 200 kB and at most 320x320. */
         override val thumbnail: Attachment? = null,
+        /** Caption of the animation, 0-1024 characters after entities parsing. */
         override val caption: String? = null,
+        /** Mode for parsing entities in [caption]. */
         override val parseMode: RichText.ParseMode? = null,
+        /** Special entities that appear in [caption], specified instead of [parseMode]. */
         override val captionEntities: List<MessageEntity>? = null,
+        /** Whether the caption must be shown above the message media. */
         val showCaptionAboveMedia: Boolean = false,
+        /** Animation width. */
         val width: Int? = null,
+        /** Animation height. */
         val height: Int? = null,
+        /** Animation duration. */
         val duration: Duration? = null,
+        /** Whether the animation needs to be covered with a spoiler animation. */
         val hasSpoiler: Boolean = false
     ) : InputMedia, Poll, PollOption, RichMessage, HasOptionalRichCaption {
         override val type: Type = Type.ANIMATION
@@ -69,19 +77,27 @@ sealed interface InputMedia : BaseInputMedia<InputMedia.Type> {
     }
 
     /**
-     * Telegram [InputMediaAudio](https://core.telegram.org/bots/api#inputmediaaudio) type.
+     * Case when the media is an audio file to be treated as music.
      *
-     * For up-to-date documentation, please consult the official Telegram docs.
+     * See Telegram's [InputMediaAudio](https://core.telegram.org/bots/api#inputmediaaudio) documentation.
      */
     @TelegramCodegen.Type
     data class Audio internal constructor(
+        /** Audio file to send. */
         override val media: Attachment,
+        /** JPEG thumbnail of the uploaded file, less than 200 kB and at most 320x320. */
         override val thumbnail: Attachment? = null,
+        /** Caption of the audio, 0-1024 characters after entities parsing. */
         override val caption: String? = null,
+        /** Mode for parsing entities in [caption]. */
         override val parseMode: RichText.ParseMode? = null,
+        /** Special entities that appear in [caption], specified instead of [parseMode]. */
         override val captionEntities: List<MessageEntity>? = null,
+        /** Duration of the audio. */
         val duration: Duration? = null,
+        /** Performer of the audio. */
         val performer: String? = null,
+        /** Title of the audio. */
         val title: String? = null
     ) : InputMedia, Poll, RichMessage, HasOptionalRichCaption {
         override val type: Type = Type.AUDIO
@@ -91,17 +107,26 @@ sealed interface InputMedia : BaseInputMedia<InputMedia.Type> {
     }
 
     /**
-     * Telegram [InputMediaDocument](https://core.telegram.org/bots/api#inputmediadocument) type.
+     * Case when the media is a general file.
      *
-     * For up-to-date documentation, please consult the official Telegram docs.
+     * See Telegram's [InputMediaDocument](https://core.telegram.org/bots/api#inputmediadocument) documentation.
      */
     @TelegramCodegen.Type
     data class Document internal constructor(
+        /** File to send. */
         override val media: Attachment,
+        /** JPEG thumbnail of the uploaded file, less than 200 kB and at most 320x320. */
         override val thumbnail: Attachment? = null,
+        /** Caption of the document, 0-1024 characters after entities parsing. */
         override val caption: String? = null,
+        /** Mode for parsing entities in [caption]. */
         override val parseMode: RichText.ParseMode? = null,
+        /** Special entities that appear in [caption], specified instead of [parseMode]. */
         override val captionEntities: List<MessageEntity>? = null,
+        /**
+         * Whether to disable automatic server-side content type detection for uploaded files. Always enabled when the
+         * document is sent as part of an album.
+         */
         val disableContentTypeDetection: Boolean = false
     ) : InputMedia, Poll, HasOptionalRichCaption {
         override val type: Type = Type.DOCUMENT
@@ -111,17 +136,23 @@ sealed interface InputMedia : BaseInputMedia<InputMedia.Type> {
     }
 
     /**
-     * Telegram [InputMediaPhoto](https://core.telegram.org/bots/api#inputmediaphoto) type.
+     * Case when the media is a photo.
      *
-     * For up-to-date documentation, please consult the official Telegram docs.
+     * See Telegram's [InputMediaPhoto](https://core.telegram.org/bots/api#inputmediaphoto) documentation.
      */
     @TelegramCodegen.Type
     data class Photo internal constructor(
+        /** Photo to send. */
         override val media: Attachment,
+        /** Caption of the photo, 0-1024 characters after entities parsing. */
         override val caption: String? = null,
+        /** Mode for parsing entities in [caption]. */
         override val parseMode: RichText.ParseMode? = null,
+        /** Special entities that appear in [caption], specified instead of [parseMode]. */
         override val captionEntities: List<MessageEntity>? = null,
+        /** Whether the caption must be shown above the message media. */
         val showCaptionAboveMedia: Boolean = false,
+        /** Whether the photo needs to be covered with a spoiler animation. */
         val hasSpoiler: Boolean = false
     ) : InputMedia, Poll, PollOption, RichMessage, HasOptionalRichCaption {
         override val type: Type = Type.PHOTO
@@ -132,24 +163,37 @@ sealed interface InputMedia : BaseInputMedia<InputMedia.Type> {
     }
 
     /**
-     * Telegram [InputMediaVideo](https://core.telegram.org/bots/api#inputmediavideo) type.
+     * Case when the media is a video.
      *
-     * For up-to-date documentation, please consult the official Telegram docs.
+     * See Telegram's [InputMediaVideo](https://core.telegram.org/bots/api#inputmediavideo) documentation.
      */
     @TelegramCodegen.Type
     data class Video internal constructor(
+        /** Video file to send. */
         override val media: Attachment,
+        /** JPEG thumbnail of the uploaded file, less than 200 kB and at most 320x320. */
         override val thumbnail: Attachment? = null,
+        /** Cover for the video in the message. */
         override val cover: Attachment? = null,
+        /** Start timestamp for the video in the message. */
         val startTimestamp: Duration? = null,
+        /** Caption of the video, 0-1024 characters after entities parsing. */
         override val caption: String? = null,
+        /** Mode for parsing entities in [caption]. */
         override val parseMode: RichText.ParseMode? = null,
+        /** Special entities that appear in [caption], specified instead of [parseMode]. */
         override val captionEntities: List<MessageEntity>? = null,
+        /** Whether the caption must be shown above the message media. */
         val showCaptionAboveMedia: Boolean = false,
+        /** Video width. */
         val width: Int? = null,
+        /** Video height. */
         val height: Int? = null,
+        /** Video duration. */
         val duration: Duration? = null,
+        /** Whether the uploaded video is suitable for streaming. */
         val supportsStreaming: Boolean = false,
+        /** Whether the video needs to be covered with a spoiler animation. */
         val hasSpoiler: Boolean = false
     ) : InputMedia, Poll, PollOption, RichMessage, HasOptionalRichCaption {
         override val type: Type = Type.VIDEO
@@ -158,18 +202,27 @@ sealed interface InputMedia : BaseInputMedia<InputMedia.Type> {
     }
 
     /**
-     * Telegram [InputMediaLivePhoto](https://core.telegram.org/bots/api#inputmedialivephoto) type.
+     * Case when the media is a live photo.
      *
-     * For up-to-date documentation, please consult the official Telegram docs.
+     * Sending live photos by URL is currently unsupported.
+     *
+     * See Telegram's [InputMediaLivePhoto](https://core.telegram.org/bots/api#inputmedialivephoto) documentation.
      */
     @TelegramCodegen.Type
     data class LivePhoto internal constructor(
+        /** Video of the live photo to send. */
         override val media: Attachment,
+        /** Static photo to send. */
         val photo: Attachment,
+        /** Caption of the live photo, 0-1024 characters after entities parsing. */
         override val caption: String? = null,
+        /** Mode for parsing entities in [caption]. */
         override val parseMode: RichText.ParseMode? = null,
+        /** Special entities that appear in [caption], specified instead of [parseMode]. */
         override val captionEntities: List<MessageEntity>? = null,
+        /** Whether the caption must be shown above the message media. */
         val showCaptionAboveMedia: Boolean = false,
+        /** Whether the live photo needs to be covered with a spoiler animation. */
         val hasSpoiler: Boolean = false
     ) : InputMedia, Poll, PollOption, HasOptionalRichCaption {
         override val type: Type = Type.LIVE_PHOTO
@@ -179,12 +232,22 @@ sealed interface InputMedia : BaseInputMedia<InputMedia.Type> {
         companion object
     }
 
+    /**
+     * Case when the media is a voice message file.
+     *
+     * See Telegram's [InputMediaVoiceNote](https://core.telegram.org/bots/api#inputmediavoicenote) documentation.
+     */
     @TelegramCodegen.Type
     data class VoiceNote internal constructor(
+        /** Voice message file to send. */
         override val media: Attachment,
+        /** Caption of the voice message, 0-1024 characters after entities parsing. */
         override val caption: String? = null,
+        /** Mode for parsing entities in [caption]. */
         override val parseMode: RichText.ParseMode? = null,
+        /** Special entities that appear in [caption], specified instead of [parseMode]. */
         override val captionEntities: List<MessageEntity>? = null,
+        /** Duration of the voice message. */
         val duration: Duration? = null
     ) : InputMedia, RichMessage, HasOptionalRichCaption {
         override val type: Type = Type.VOICE_NOTE
@@ -195,16 +258,21 @@ sealed interface InputMedia : BaseInputMedia<InputMedia.Type> {
     }
 
     /**
-     * Telegram [InputSticker](https://core.telegram.org/bots/api#inputsticker) type.
+     * Describes a sticker to be added to a sticker set.
      *
-     * For up-to-date documentation, please consult the official Telegram docs.
+     * See Telegram's [InputSticker](https://core.telegram.org/bots/api#inputsticker) documentation.
      */
     @TelegramCodegen.Type
     data class Sticker internal constructor(
+        /** Sticker to add. */
         val sticker: Attachment,
+        /** Format of the added sticker. */
         val format: ski.gagar.vertigram.telegram.types.Sticker.Format,
+        /** One or more emoji associated with the sticker. */
         val emojiList: List<String>,
+        /** Position where the mask should be placed on faces. */
         val maskPosition: ski.gagar.vertigram.telegram.types.Sticker.MaskPosition? = null,
+        /** Search keywords for the sticker, up to 20 keywords with up to 64 total characters. */
         val keywords: List<String>? = null
     ) {
 
@@ -212,13 +280,15 @@ sealed interface InputMedia : BaseInputMedia<InputMedia.Type> {
     }
 
     /**
-     * Telegram [InputMediaSticker](https://core.telegram.org/bots/api#inputmediasticker) type.
+     * Case when poll option media is a sticker.
      *
-     * For up-to-date documentation, please consult the official Telegram docs.
+     * See Telegram's [InputMediaSticker](https://core.telegram.org/bots/api#inputmediasticker) documentation.
      */
     @TelegramCodegen.Type
     data class PollSticker internal constructor(
+        /** Sticker to send. */
         val media: Attachment,
+        /** Emoji associated with the sticker. */
         val emoji: String? = null
     ) : PollOption {
         override val type: Type = Type.STICKER
@@ -227,12 +297,13 @@ sealed interface InputMedia : BaseInputMedia<InputMedia.Type> {
     }
 
     /**
-     * Telegram [InputMediaLink](https://core.telegram.org/bots/api#inputmedialink) type.
+     * Case when poll option media is an HTTP link.
      *
-     * For up-to-date documentation, please consult the official Telegram docs.
+     * See Telegram's [InputMediaLink](https://core.telegram.org/bots/api#inputmedialink) documentation.
      */
     @TelegramCodegen.Type
     data class Link internal constructor(
+        /** HTTP URL of the link. */
         val url: String
     ) : PollOption {
         override val type: Type = Type.LINK
@@ -241,14 +312,17 @@ sealed interface InputMedia : BaseInputMedia<InputMedia.Type> {
     }
 
     /**
-     * Telegram [InputMediaLocation](https://core.telegram.org/bots/api#inputmedialocation) type.
+     * Case when the media is a location.
      *
-     * For up-to-date documentation, please consult the official Telegram docs.
+     * See Telegram's [InputMediaLocation](https://core.telegram.org/bots/api#inputmedialocation) documentation.
      */
     @TelegramCodegen.Type
     data class Location internal constructor(
+        /** Latitude of the location. */
         val latitude: Double,
+        /** Longitude of the location. */
         val longitude: Double,
+        /** Radius of uncertainty for the location in meters; 0-1500. */
         val horizontalAccuracy: Double? = null
     ) : Poll, PollOption {
         override val type: Type = Type.LOCATION
@@ -257,19 +331,27 @@ sealed interface InputMedia : BaseInputMedia<InputMedia.Type> {
     }
 
     /**
-     * Telegram [InputMediaVenue](https://core.telegram.org/bots/api#inputmediavenue) type.
+     * Case when the media is a venue.
      *
-     * For up-to-date documentation, please consult the official Telegram docs.
+     * See Telegram's [InputMediaVenue](https://core.telegram.org/bots/api#inputmediavenue) documentation.
      */
     @TelegramCodegen.Type
     data class Venue internal constructor(
+        /** Latitude of the venue. */
         val latitude: Double,
+        /** Longitude of the venue. */
         val longitude: Double,
+        /** Name of the venue. */
         val title: String,
+        /** Address of the venue. */
         val address: String,
+        /** Foursquare identifier of the venue, if known. */
         val foursquareId: String? = null,
+        /** Foursquare type of the venue, if known. */
         val foursquareType: String? = null,
+        /** Google Places identifier of the venue. */
         val googlePlaceId: String? = null,
+        /** Google Places type of the venue. */
         val googlePlaceType: String? = null
     ) : Poll, PollOption {
         override val type: Type = Type.VENUE
@@ -278,9 +360,9 @@ sealed interface InputMedia : BaseInputMedia<InputMedia.Type> {
     }
 
     /**
-     * Telegram [InputProfilePhoto](https://core.telegram.org/bots/api#inputprofilephoto) type.
+     * Describes a profile photo to set.
      *
-     * For up-to-date documentation, please consult the official Telegram docs.
+     * See Telegram's [InputProfilePhoto](https://core.telegram.org/bots/api#inputprofilephoto) documentation.
      */
     @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", include = JsonTypeInfo.As.EXISTING_PROPERTY)
     @JsonSubTypes(
@@ -292,12 +374,14 @@ sealed interface InputMedia : BaseInputMedia<InputMedia.Type> {
         val attachment: Attachment
 
         /**
-         * Telegram [InputProfilePhotoStatic](https://core.telegram.org/bots/api#inputprofilephotostatic) type.
+         * Case when the profile photo is a static photo in JPEG format.
          *
-         * For up-to-date documentation, please consult the official Telegram docs.
+         * See Telegram's [InputProfilePhotoStatic](https://core.telegram.org/bots/api#inputprofilephotostatic)
+         * documentation.
          */
         @TelegramCodegen.Type
         data class Static internal constructor(
+            /** Static profile photo. It can't be reused and can only be uploaded as a new file. */
             val photo: Attachment
         ) : ProfilePhoto {
             override val type: Type = Type.STATIC
@@ -308,13 +392,16 @@ sealed interface InputMedia : BaseInputMedia<InputMedia.Type> {
         }
 
         /**
-         * Telegram [InputProfilePhotoAnimated](https://core.telegram.org/bots/api#inputprofilephotoanimated) type.
+         * Case when the profile photo is animated in MPEG-4 format.
          *
-         * For up-to-date documentation, please consult the official Telegram docs.
+         * See Telegram's [InputProfilePhotoAnimated](https://core.telegram.org/bots/api#inputprofilephotoanimated)
+         * documentation.
          */
         @TelegramCodegen.Type
         data class Animated internal constructor(
+            /** Animated profile photo. It can't be reused and can only be uploaded as a new file. */
             val animation: Attachment,
+            /** Timestamp of the frame to use as the static profile photo. */
             @Fractional
             val mainFrameTimestamp: Duration? = null,
         ) : ProfilePhoto {
@@ -341,9 +428,9 @@ sealed interface InputMedia : BaseInputMedia<InputMedia.Type> {
     }
 
     /**
-     * Telegram [InputStoryContent](https://core.telegram.org/bots/api#inputstorycontent) type.
+     * Describes the content of a story to post.
      *
-     * For up-to-date documentation, please consult the official Telegram docs.
+     * See Telegram's [InputStoryContent](https://core.telegram.org/bots/api#inputstorycontent) documentation.
      */
     @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", include = JsonTypeInfo.As.EXISTING_PROPERTY)
     @JsonSubTypes(
@@ -355,12 +442,16 @@ sealed interface InputMedia : BaseInputMedia<InputMedia.Type> {
         val attachment: Attachment
 
         /**
-         * Telegram [InputStoryContentPhoto](https://core.telegram.org/bots/api#inputstorycontentphoto) type.
+         * Case when the story content is a photo.
          *
-         * For up-to-date documentation, please consult the official Telegram docs.
+         * See Telegram's [InputStoryContentPhoto](https://core.telegram.org/bots/api#inputstorycontentphoto)
+         * documentation.
          */
         @TelegramCodegen.Type
         data class Photo internal constructor(
+            /**
+             * Photo to post. It must be 1080x1920, must not exceed 10 MB, and can only be uploaded as a new file.
+             */
             val photo: Attachment
         ) : StoryContent {
             override val type: Type = Type.PHOTO
@@ -371,15 +462,23 @@ sealed interface InputMedia : BaseInputMedia<InputMedia.Type> {
         }
 
         /**
-         * Telegram [InputStoryContentPhoto](https://core.telegram.org/bots/api#inputstorycontentphoto) type.
+         * Case when the story content is a video.
          *
-         * For up-to-date documentation, please consult the official Telegram docs.
+         * See Telegram's [InputStoryContentVideo](https://core.telegram.org/bots/api#inputstorycontentvideo)
+         * documentation.
          */
         @TelegramCodegen.Type
         data class Video internal constructor(
+            /**
+             * Video to post. It must be 720x1280, streamable, H.265-encoded MPEG-4 with key frames each second, no
+             * larger than 30 MB, and can only be uploaded as a new file.
+             */
             val video: Attachment,
+            /** Precise duration of the video; 0-60 seconds. */
             val duration: Duration? = null,
+            /** Timestamp of the frame to use as the static cover for the story. */
             val coverFrameTimestamp: Duration? = null,
+            /** Whether the video has no sound. */
             @get:JvmName("getIsAnimation")
             val isAnimation: Boolean = false
         ) : StoryContent {
@@ -407,9 +506,9 @@ sealed interface InputMedia : BaseInputMedia<InputMedia.Type> {
     }
 
     /**
-     * Telegram [InputPaidMedia](https://core.telegram.org/bots/api#inputpaidmedia) type.
+     * Describes paid media to be sent.
      *
-     * For up-to-date documentation, please consult the official Telegram docs.
+     * See Telegram's [InputPaidMedia](https://core.telegram.org/bots/api#inputpaidmedia) documentation.
      */
     @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", include = JsonTypeInfo.As.EXISTING_PROPERTY)
     @JsonSubTypes(
@@ -424,13 +523,18 @@ sealed interface InputMedia : BaseInputMedia<InputMedia.Type> {
         override val cover: Attachment?
 
         /**
-         * Telegram [InputPaidMediaLivePhoto](https://core.telegram.org/bots/api#inputpaidmedialivephoto) type.
+         * Case when the paid media to send is a live photo.
          *
-         * For up-to-date documentation, please consult the official Telegram docs.
+         * Sending live photos by URL is currently unsupported.
+         *
+         * See Telegram's [InputPaidMediaLivePhoto](https://core.telegram.org/bots/api#inputpaidmedialivephoto)
+         * documentation.
          */
         @TelegramCodegen.Type
         data class LivePhoto internal constructor(
+            /** Video of the live photo to send. */
             override val media: Attachment,
+            /** Static photo to send. */
             val photo: Attachment
         ) : Paid {
             override val type: Type = Type.LIVE_PHOTO
@@ -441,17 +545,23 @@ sealed interface InputMedia : BaseInputMedia<InputMedia.Type> {
         }
 
         /**
-         * Telegram [InputPaidMediaPhoto](https://core.telegram.org/bots/api#inputpaidmediaphoto) type.
+         * Case when the paid media to send is a photo.
          *
-         * For up-to-date documentation, please consult the official Telegram docs.
+         * See Telegram's [InputPaidMediaPhoto](https://core.telegram.org/bots/api#inputpaidmediaphoto) documentation.
          */
         @TelegramCodegen.Type
         data class Photo internal constructor(
+            /** Photo to send. */
             override val media: Attachment,
+            /** Caption of the photo, 0-1024 characters after entities parsing. */
             override val caption: String? = null,
+            /** Mode for parsing entities in [caption]. */
             override val parseMode: RichText.ParseMode? = null,
+            /** Special entities that appear in [caption], specified instead of [parseMode]. */
             override val captionEntities: List<MessageEntity>? = null,
+            /** Whether the caption must be shown above the message media. */
             val showCaptionAboveMedia: Boolean = false,
+            /** Whether the photo needs to be covered with a spoiler animation. */
             val hasSpoiler: Boolean = false
         ) : Paid, HasOptionalRichCaption {
             override val type: Type = Type.PHOTO
@@ -462,24 +572,37 @@ sealed interface InputMedia : BaseInputMedia<InputMedia.Type> {
         }
 
         /**
-         * Telegram [InputPaidMediaVideo](https://core.telegram.org/bots/api#inputpaidmediavideo) type.
+         * Case when the paid media to send is a video.
          *
-         * For up-to-date documentation, please consult the official Telegram docs.
+         * See Telegram's [InputPaidMediaVideo](https://core.telegram.org/bots/api#inputpaidmediavideo) documentation.
          */
         @TelegramCodegen.Type
         data class Video internal constructor(
+            /** Video file to send. */
             override val media: Attachment,
+            /** JPEG thumbnail of the uploaded file, less than 200 kB and at most 320x320. */
             override val thumbnail: Attachment? = null,
+            /** Cover for the video in the message. */
             override val cover: Attachment? = null,
+            /** Start timestamp for the video in the message. */
             val startTimestamp: Duration? = null,
+            /** Caption of the video, 0-1024 characters after entities parsing. */
             override val caption: String? = null,
+            /** Mode for parsing entities in [caption]. */
             override val parseMode: RichText.ParseMode? = null,
+            /** Special entities that appear in [caption], specified instead of [parseMode]. */
             override val captionEntities: List<MessageEntity>? = null,
+            /** Whether the caption must be shown above the message media. */
             val showCaptionAboveMedia: Boolean = false,
+            /** Video width. */
             val width: Int? = null,
+            /** Video height. */
             val height: Int? = null,
+            /** Video duration. */
             val duration: Duration? = null,
+            /** Whether the uploaded video is suitable for streaming. */
             val supportsStreaming: Boolean = false,
+            /** Whether the video needs to be covered with a spoiler animation. */
             val hasSpoiler: Boolean = false
 
         ) : Paid, HasOptionalRichCaption{
@@ -508,7 +631,9 @@ sealed interface InputMedia : BaseInputMedia<InputMedia.Type> {
     }
 
     /**
-     * Telegram [InputPollMedia](https://core.telegram.org/bots/api#inputpollmedia) type.
+     * Represents the content of a poll description or quiz explanation to be sent.
+     *
+     * See Telegram's [InputPollMedia](https://core.telegram.org/bots/api#inputpollmedia) documentation.
      */
     @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", include = JsonTypeInfo.As.EXISTING_PROPERTY)
     @JsonSubTypes(
@@ -526,7 +651,9 @@ sealed interface InputMedia : BaseInputMedia<InputMedia.Type> {
     }
 
     /**
-     * Telegram [InputPollOptionMedia](https://core.telegram.org/bots/api#inputpolloptionmedia) type.
+     * Represents the content of a poll option to be sent.
+     *
+     * See Telegram's [InputPollOptionMedia](https://core.telegram.org/bots/api#inputpolloptionmedia) documentation.
      */
     @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", include = JsonTypeInfo.As.EXISTING_PROPERTY)
     @JsonSubTypes(
@@ -543,11 +670,7 @@ sealed interface InputMedia : BaseInputMedia<InputMedia.Type> {
         val type: Type
     }
 
-    /**
-     * Telegram media types accepted by [InputRichMessageMedia].
-     *
-     * For up-to-date documentation, please consult the official Telegram docs.
-     */
+    /** Media types accepted by [InputRichMessageMedia]. */
     @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", include = JsonTypeInfo.As.EXISTING_PROPERTY)
     @JsonSubTypes(
         JsonSubTypes.Type(value = Animation::class, name = Type.ANIMATION_STR),

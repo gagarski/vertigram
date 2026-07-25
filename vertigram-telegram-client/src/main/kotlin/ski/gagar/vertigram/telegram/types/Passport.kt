@@ -13,12 +13,12 @@ import java.time.Instant
  */
 object Passport {
     /**
-     * Telegram [EncryptedPassportElement](https://core.telegram.org/bots/api#encryptedpassportelement) type.
+     * Describes a Telegram Passport element shared with the bot.
      *
-     * Subtypes are introduced to represent document types for [type], given each of them has its own set
-     * of mandatory an optional fields described [here](https://core.telegram.org/passport#fields).
+     * Each subtype represents one element type and its applicable fields.
      *
-     * For up-to-date documentation, please consult the official Telegram docs.
+     * See Telegram's
+     * [EncryptedPassportElement](https://core.telegram.org/bots/api#encryptedpassportelement) documentation.
      */
     @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", include = JsonTypeInfo.As.EXISTING_PROPERTY)
     @JsonSubTypes(
@@ -39,12 +39,12 @@ object Passport {
     interface EncryptedElement {
         val type: Type
 
-        /**
-         * Personal Details case
-         */
+        /** Case when the element contains encrypted personal details. */
         @TelegramCodegen.Type
         data class PersonalDetails internal constructor(
+            /** Base64-encoded encrypted element data. */
             val data: String,
+            /** Base64-encoded element hash for decryption and authentication. */
             val hash: String
         ) : EncryptedElement {
             override val type: Type = Type.PERSONAL_DETAILS
@@ -52,15 +52,18 @@ object Passport {
             companion object
         }
 
-        /**
-         * Passport case
-         */
+        /** Case when the element contains an encrypted passport. */
         @TelegramCodegen.Type
         data class Passport internal constructor(
+            /** Base64-encoded encrypted element data. */
             val data: String,
+            /** Encrypted file with the front side of the document. */
             val frontSide: File,
+            /** Encrypted file with the selfie of the user holding the document. */
             val selfie: File? = null,
+            /** Encrypted files with translated versions of the document. */
             val translation: List<File>? = null,
+            /** Base64-encoded element hash for decryption and authentication. */
             val hash: String
         ) : EncryptedElement {
             override val type: Type = Type.PASSPORT
@@ -68,16 +71,20 @@ object Passport {
             companion object
         }
 
-        /**
-         * Driver License case
-         */
+        /** Case when the element contains an encrypted driver license. */
         @TelegramCodegen.Type
         data class DriverLicense internal constructor(
+            /** Base64-encoded encrypted element data. */
             val data: String,
+            /** Encrypted file with the front side of the document. */
             val frontSide: File,
+            /** Encrypted file with the reverse side of the document. */
             val reverseSide: File,
+            /** Encrypted file with the selfie of the user holding the document. */
             val selfie: File? = null,
+            /** Encrypted files with translated versions of the document. */
             val translation: List<File>? = null,
+            /** Base64-encoded element hash for decryption and authentication. */
             val hash: String
         ) : EncryptedElement {
             override val type: Type = Type.DRIVER_LICENSE
@@ -85,16 +92,20 @@ object Passport {
             companion object
         }
 
-        /**
-         * Identity Card case
-         */
+        /** Case when the element contains an encrypted identity card. */
         @TelegramCodegen.Type
         data class IdentityCard internal constructor(
+            /** Base64-encoded encrypted element data. */
             val data: String,
+            /** Encrypted file with the front side of the document. */
             val frontSide: File,
+            /** Encrypted file with the reverse side of the document. */
             val reverseSide: File,
+            /** Encrypted file with the selfie of the user holding the document. */
             val selfie: File? = null,
+            /** Encrypted files with translated versions of the document. */
             val translation: List<File>? = null,
+            /** Base64-encoded element hash for decryption and authentication. */
             val hash: String
         ) : EncryptedElement {
             override val type: Type = Type.IDENTITY_CARD
@@ -102,15 +113,18 @@ object Passport {
             companion object
         }
 
-        /**
-         * Internal Passport case
-         */
+        /** Case when the element contains an encrypted internal passport. */
         @TelegramCodegen.Type
         data class InternalPassport internal constructor(
+            /** Base64-encoded encrypted element data. */
             val data: String,
+            /** Encrypted file with the front side of the document. */
             val frontSide: File,
+            /** Encrypted file with the selfie of the user holding the document. */
             val selfie: File? = null,
+            /** Encrypted files with translated versions of the document. */
             val translation: List<File>? = null,
+            /** Base64-encoded element hash for decryption and authentication. */
             val hash: String
         ) : EncryptedElement {
             override val type: Type = Type.INTERNAL_PASSPORT
@@ -118,12 +132,12 @@ object Passport {
             companion object
         }
 
-        /**
-         * Address case
-         */
+        /** Case when the element contains an encrypted address. */
         @TelegramCodegen.Type
         data class Address internal constructor(
+            /** Base64-encoded encrypted element data. */
             val data: String,
+            /** Base64-encoded element hash for decryption and authentication. */
             val hash: String
         ) : EncryptedElement {
             override val type: Type = Type.ADDRESS
@@ -131,12 +145,12 @@ object Passport {
             companion object
         }
 
-        /**
-         * Utility Bill case
-         */
+        /** Case when the element contains encrypted utility bills. */
         @TelegramCodegen.Type
         data class UtilityBill internal constructor(
+            /** Encrypted files with the document. */
             val files: List<File>,
+            /** Base64-encoded element hash for decryption and authentication. */
             val hash: String
         ) : EncryptedElement {
             override val type: Type = Type.UTILITY_BILL
@@ -144,12 +158,12 @@ object Passport {
             companion object
         }
 
-        /**
-         * Bank Statement case
-         */
+        /** Case when the element contains encrypted bank statements. */
         @TelegramCodegen.Type
         data class BankStatement internal constructor(
+            /** Encrypted files with the document. */
             val files: List<File>,
+            /** Base64-encoded element hash for decryption and authentication. */
             val hash: String
         ) : EncryptedElement {
             override val type: Type = Type.BANK_STATEMENT
@@ -157,12 +171,12 @@ object Passport {
             companion object
         }
 
-        /**
-         * Rental Agreement case
-         */
+        /** Case when the element contains encrypted rental agreements. */
         @TelegramCodegen.Type
         data class RentalAgreement internal constructor(
+            /** Encrypted files with the document. */
             val files: List<File>,
+            /** Base64-encoded element hash for decryption and authentication. */
             val hash: String
         ) : EncryptedElement {
             override val type: Type = Type.RENTAL_AGREEMENT
@@ -170,12 +184,12 @@ object Passport {
             companion object
         }
 
-        /**
-         * Passport Registration case
-         */
+        /** Case when the element contains encrypted passport registration pages. */
         @TelegramCodegen.Type
         data class PassportRegistration internal constructor(
+            /** Encrypted files with the document. */
             val files: List<File>,
+            /** Base64-encoded element hash for decryption and authentication. */
             val hash: String
         ) : EncryptedElement {
             override val type: Type = Type.PASSPORT_REGISTRATION
@@ -183,12 +197,12 @@ object Passport {
             companion object
         }
 
-        /**
-         * Temporary Registration case
-         */
+        /** Case when the element contains encrypted temporary registration pages. */
         @TelegramCodegen.Type
         data class TemporaryRegistration internal constructor(
+            /** Encrypted files with the document. */
             val files: List<File>,
+            /** Base64-encoded element hash for decryption and authentication. */
             val hash: String
         ) : EncryptedElement {
             override val type: Type = Type.TEMPORARY_REGISTRATION
@@ -196,12 +210,12 @@ object Passport {
             companion object
         }
 
-        /**
-         * Phone Number case
-         */
+        /** Case when the element contains an unencrypted phone number. */
         @TelegramCodegen.Type
         data class PhoneNumber internal constructor(
+            /** User's verified phone number. */
             val phoneNumber: String,
+            /** Base64-encoded element hash for authentication. */
             val hash: String
         ) : EncryptedElement {
             override val type: Type = Type.PHONE_NUMBER
@@ -209,12 +223,12 @@ object Passport {
             companion object
         }
 
-        /**
-         * Phone Number case
-         */
+        /** Case when the element contains an unencrypted email address. */
         @TelegramCodegen.Type
         data class Email internal constructor(
+            /** User's verified email address. */
             val email: String,
+            /** Base64-encoded element hash for authentication. */
             val hash: String
         ) : EncryptedElement {
             override val type: Type = Type.EMAIL
@@ -272,55 +286,60 @@ object Passport {
     }
 
     /**
-     * Telegram [EncryptedCredentials](https://core.telegram.org/bots/api#encryptedcredentials) type.
+     * Describes encrypted credentials required to decrypt Telegram Passport data.
      *
-     * For up-to-date documentation, please consult the official Telegram docs.
+     * See Telegram's [EncryptedCredentials](https://core.telegram.org/bots/api#encryptedcredentials) documentation.
      */
     @TelegramCodegen.Type
     data class EncryptedCredentials internal constructor(
+        /** Base64-encoded encrypted credentials. */
         val data: String,
+        /** Base64-encoded data hash for authentication. */
         val hash: String,
+        /** Base64-encoded encrypted secret required to decrypt the data. */
         val secret: String
     ) {
         companion object
     }
 
     /**
-     * Telegram [PassportData](https://core.telegram.org/bots/api#passportdata) type.
+     * Describes Telegram Passport data shared with the bot.
      *
-     * For up-to-date documentation, please consult the official Telegram docs.
+     * See Telegram's [PassportData](https://core.telegram.org/bots/api#passportdata) documentation.
      */
     @TelegramCodegen.Type
     data class Data internal constructor(
+        /** Encrypted information about documents and other Telegram Passport elements. */
         val data: List<EncryptedElement>,
+        /** Encrypted credentials required to decrypt [data]. */
         val credentials: EncryptedCredentials
     ) {
         companion object
     }
 
     /**
-     * Telegram [PassportFile](https://core.telegram.org/bots/api#passportfile) type.
+     * Represents a file uploaded to Telegram Passport.
      *
-     * For up-to-date documentation, please consult the official Telegram docs.
+     * See Telegram's [PassportFile](https://core.telegram.org/bots/api#passportfile) documentation.
      */
     @TelegramCodegen.Type
     data class File internal constructor(
+        /** Identifier for downloading this file. */
         val fileId: String,
+        /** Unique identifier for this file. */
         val fileUniqueId: String,
+        /** File size in bytes. */
         val fileSize: Long,
+        /** Date the file was uploaded. */
         val fileDate: Instant
     ) {
         companion object
     }
 
     /**
-     * Telegram [PassportElementError](https://core.telegram.org/bots/api#passportelementerror) type.
+     * Represents an error in a Telegram Passport element submitted by the user.
      *
-     * Subtypes (which are nested) represent the subtypes, described by Telegram docs with more
-     * names given they are nested into [Passport.ElementError] class. The rule here is the following:
-     * `PassportElementErrorXxx` Telegram type becomes `PassportElementErrorXxx`.
-     *
-     * For up-to-date documentation, please consult the official Telegram docs.
+     * See Telegram's [PassportElementError](https://core.telegram.org/bots/api#passportelementerror) documentation.
      */
     @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "source", include = JsonTypeInfo.As.EXISTING_PROPERTY)
     @JsonSubTypes(
@@ -338,15 +357,21 @@ object Passport {
         val source: Source
 
         /**
-         * Telegram [PassportElementErrorDataField](https://core.telegram.org/bots/api#passportelementerrordatafield) type.
+         * Case when the error concerns a data field.
          *
-         * For up-to-date documentation, please consult the official Telegram docs.
+         * See Telegram's
+         * [PassportElementErrorDataField](https://core.telegram.org/bots/api#passportelementerrordatafield)
+         * documentation.
          */
         @TelegramCodegen.Type
         data class DataField internal constructor(
+            /** Type of the Telegram Passport element that has the issue. */
             val type: EncryptedElement.Type,
+            /** Name of the data field that has the issue. */
             val fieldName: String,
+            /** Base64-encoded hash of the data. */
             val dataHash: String,
+            /** Error message. */
             val message: String
         ) : ElementError {
             override val source: Source = Source.DATA_FIELD
@@ -355,14 +380,19 @@ object Passport {
         }
 
         /**
-         * Telegram [PassportElementErrorFrontSide](https://core.telegram.org/bots/api#passportelementerrorfrontside) type.
+         * Case when the error concerns the front side of a document.
          *
-         * For up-to-date documentation, please consult the official Telegram docs.
+         * See Telegram's
+         * [PassportElementErrorFrontSide](https://core.telegram.org/bots/api#passportelementerrorfrontside)
+         * documentation.
          */
         @TelegramCodegen.Type
         data class FrontSide internal constructor(
+            /** Type of the Telegram Passport element that has the issue. */
             val type: EncryptedElement.Type,
+            /** Base64-encoded hash of the file with the front side. */
             val fileHash: String,
+            /** Error message. */
             val message: String
         ) : ElementError {
             override val source: Source = Source.FRONT_SIDE
@@ -371,14 +401,19 @@ object Passport {
         }
 
         /**
-         * Telegram [PassportElementErrorReverseSide](https://core.telegram.org/bots/api#passportelementerrorreverseside) type.
+         * Case when the error concerns the reverse side of a document.
          *
-         * For up-to-date documentation, please consult the official Telegram docs.
+         * See Telegram's
+         * [PassportElementErrorReverseSide](https://core.telegram.org/bots/api#passportelementerrorreverseside)
+         * documentation.
          */
         @TelegramCodegen.Type
         data class ReverseSide internal constructor(
+            /** Type of the Telegram Passport element that has the issue. */
             val type: EncryptedElement.Type,
+            /** Base64-encoded hash of the file with the reverse side. */
             val fileHash: String,
+            /** Error message. */
             val message: String
         ) : ElementError {
             override val source: Source = Source.REVERSE_SIDE
@@ -387,14 +422,18 @@ object Passport {
         }
 
         /**
-         * Telegram [PassportElementErrorSelfie](https://core.telegram.org/bots/api#passportelementerrorselfie) type.
+         * Case when the error concerns a selfie with a document.
          *
-         * For up-to-date documentation, please consult the official Telegram docs.
+         * See Telegram's [PassportElementErrorSelfie](https://core.telegram.org/bots/api#passportelementerrorselfie)
+         * documentation.
          */
         @TelegramCodegen.Type
         data class Selfie internal constructor(
+            /** Type of the Telegram Passport element that has the issue. */
             val type: EncryptedElement.Type,
+            /** Base64-encoded hash of the file with the selfie. */
             val fileHash: String,
+            /** Error message. */
             val message: String
         ) : ElementError {
             override val source: Source = Source.SELFIE
@@ -403,14 +442,18 @@ object Passport {
         }
 
         /**
-         * Telegram [PassportElementErrorFile](https://core.telegram.org/bots/api#passportelementerrorfile) type.
+         * Case when the error concerns one document file.
          *
-         * For up-to-date documentation, please consult the official Telegram docs.
+         * See Telegram's [PassportElementErrorFile](https://core.telegram.org/bots/api#passportelementerrorfile)
+         * documentation.
          */
         @TelegramCodegen.Type
         data class File internal constructor(
+            /** Type of the Telegram Passport element that has the issue. */
             val type: EncryptedElement.Type,
+            /** Base64-encoded hash of the file. */
             val fileHash: String,
+            /** Error message. */
             val message: String
         ) : ElementError {
             override val source: Source = Source.FILE
@@ -419,14 +462,18 @@ object Passport {
         }
 
         /**
-         * Telegram [PassportElementErrorFiles](https://core.telegram.org/bots/api#passportelementerrorfiles) type.
+         * Case when the error concerns a list of document files.
          *
-         * For up-to-date documentation, please consult the official Telegram docs.
+         * See Telegram's [PassportElementErrorFiles](https://core.telegram.org/bots/api#passportelementerrorfiles)
+         * documentation.
          */
         @TelegramCodegen.Type
         data class Files internal constructor(
+            /** Type of the Telegram Passport element that has the issue. */
             val type: EncryptedElement.Type,
+            /** Base64-encoded hashes of the files. */
             val fileHashes: List<String>,
+            /** Error message. */
             val message: String
         ) : ElementError {
             override val source: Source = Source.FILES
@@ -435,14 +482,19 @@ object Passport {
         }
 
         /**
-         * Telegram [PassportElementErrorTranslationFile](https://core.telegram.org/bots/api#passportelementerrortranslationfile) type.
+         * Case when the error concerns one translated document file.
          *
-         * For up-to-date documentation, please consult the official Telegram docs.
+         * See Telegram's
+         * [PassportElementErrorTranslationFile](https://core.telegram.org/bots/api#passportelementerrortranslationfile)
+         * documentation.
          */
         @TelegramCodegen.Type
         data class TranslationFile internal constructor(
+            /** Type of the Telegram Passport element that has the issue. */
             val type: EncryptedElement.Type,
+            /** Base64-encoded hash of the translation file. */
             val fileHash: String,
+            /** Error message. */
             val message: String
         ) : ElementError {
             override val source: Source = Source.TRANSLATION_FILE
@@ -451,14 +503,19 @@ object Passport {
         }
 
         /**
-         * Telegram [PassportElementErrorTranslationFiles](https://core.telegram.org/bots/api#passportelementerrortranslationfiles) type.
+         * Case when the error concerns a list of translated document files.
          *
-         * For up-to-date documentation, please consult the official Telegram docs.
+         * See Telegram's
+         * [translation files error](https://core.telegram.org/bots/api#passportelementerrortranslationfiles)
+         * documentation.
          */
         @TelegramCodegen.Type
         data class TranslationFiles internal constructor(
+            /** Type of the Telegram Passport element that has the issue. */
             val type: EncryptedElement.Type,
+            /** Base64-encoded hashes of the translation files. */
             val fileHashes: List<String>,
+            /** Error message. */
             val message: String
         ) : ElementError {
             override val source: Source = Source.TRANSLATION_FILES
@@ -467,14 +524,19 @@ object Passport {
         }
 
         /**
-         * Telegram [PassportElementErrorUnspecified](https://core.telegram.org/bots/api#passportelementerrorunspecified) type.
+         * Case when the error concerns an unspecified element.
          *
-         * For up-to-date documentation, please consult the official Telegram docs.
+         * See Telegram's
+         * [PassportElementErrorUnspecified](https://core.telegram.org/bots/api#passportelementerrorunspecified)
+         * documentation.
          */
         @TelegramCodegen.Type
         data class Unspecified internal constructor(
+            /** Type of the Telegram Passport element that has the issue. */
             val type: EncryptedElement.Type,
+            /** Base64-encoded element hash. */
             val elementHash: String,
+            /** Error message. */
             val message: String
         ) : ElementError {
             override val source: Source = Source.UNSPECIFIED

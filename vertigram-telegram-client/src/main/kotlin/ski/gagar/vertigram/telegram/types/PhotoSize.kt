@@ -5,16 +5,21 @@ import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.util.NoPosArgs
 
 /**
- * Telegram [PhotoSize](https://core.telegram.org/bots/api#photosize) type.
+ * Represents one size of a photo or a file/sticker thumbnail.
  *
- * For up-to-date documentation, please consult the official Telegram docs.
+ * See Telegram's [PhotoSize](https://core.telegram.org/bots/api#photosize) documentation.
  */
 @TelegramCodegen.Type
 data class PhotoSize internal constructor(
+    /** Identifier for downloading or reusing this file. */
     val fileId: String,
+    /** Unique identifier for this file. */
     val fileUniqueId: String,
+    /** Photo width. */
     val width: Int,
+    /** Photo height. */
     val height: Int,
+    /** File size in bytes. */
     val fileSize: Long? = null
 ) {
     companion object

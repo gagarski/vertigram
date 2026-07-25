@@ -9,27 +9,34 @@ import ski.gagar.vertigram.telegram.types.richmessage.RichTextValue
 import ski.gagar.vertigram.telegram.types.richmessage.TableCell
 
 /**
- * Telegram [InputRichBlockListItem](https://core.telegram.org/bots/api#inputrichblocklistitem) type.
+ * An item of a list to be sent.
  *
- * For up-to-date documentation, please consult the official Telegram docs.
+ * See Telegram's [InputRichBlockListItem](https://core.telegram.org/bots/api#inputrichblocklistitem) documentation.
  */
 @TelegramCodegen.Type
 data class InputRichBlockListItem internal constructor(
+    /** Content of the item. */
     val blocks: List<InputRichBlock>,
+    /** Whether the item has a checkbox. */
     val hasCheckbox: Boolean = false,
+    /** Whether the item has a checked checkbox. */
     @get:JvmName("getIsChecked")
     val isChecked: Boolean = false,
+    /** For ordered lists, the numeric value of the item label. */
     val value: Int? = null,
+    /**
+     * For ordered lists, the type of the item label: `a` for lowercase letters, `A` for uppercase letters, `i` for
+     * lowercase Roman numerals, `I` for uppercase Roman numerals, or `1` for decimal numbers.
+     */
     val type: String? = null
 ) {
     companion object
 }
 
 /**
- * Telegram [InputRichBlock](https://core.telegram.org/bots/api#inputrichblock) type.
+ * Represents a block in a rich formatted message to be sent.
  *
- * Subtypes represent the supported outgoing rich-message blocks.
- * For up-to-date documentation, please consult the official Telegram docs.
+ * See Telegram's [InputRichBlock](https://core.telegram.org/bots/api#inputrichblock) documentation.
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", include = JsonTypeInfo.As.EXISTING_PROPERTY)
 @JsonSubTypes(
@@ -58,124 +65,224 @@ data class InputRichBlockListItem internal constructor(
 sealed interface InputRichBlock {
     val type: Type
 
-    /** Telegram [InputRichBlockParagraph](https://core.telegram.org/bots/api#inputrichblockparagraph) type. */
+    /**
+     * Case when the block is a text paragraph, corresponding to the HTML tag `<p>`.
+     *
+     * See Telegram's [InputRichBlockParagraph](https://core.telegram.org/bots/api#inputrichblockparagraph)
+     * documentation.
+     */
     @TelegramCodegen.Type
-    data class Paragraph internal constructor(val text: RichTextValue) : InputRichBlock {
+    data class Paragraph internal constructor(
+        /** Text of the block. */
+        val text: RichTextValue
+    ) : InputRichBlock {
         override val type = Type.PARAGRAPH
         companion object
     }
 
-    /** Telegram [InputRichBlockSectionHeading](https://core.telegram.org/bots/api#inputrichblocksectionheading) type. */
+    /**
+     * Case when the block is a section heading, corresponding to the HTML tags `<h1>` through `<h6>`.
+     *
+     * See Telegram's [InputRichBlockSectionHeading](https://core.telegram.org/bots/api#inputrichblocksectionheading)
+     * documentation.
+     */
     @TelegramCodegen.Type
-    data class SectionHeading internal constructor(val text: RichTextValue, val size: Int) : InputRichBlock {
+    data class SectionHeading internal constructor(
+        /** Text of the block. */
+        val text: RichTextValue,
+        /** Relative size of the text font; 1-6, 1 is the largest and 6 is the smallest. */
+        val size: Int
+    ) : InputRichBlock {
         override val type = Type.HEADING
         companion object
     }
 
-    /** Telegram [InputRichBlockPreformatted](https://core.telegram.org/bots/api#inputrichblockpreformatted) type. */
+    /**
+     * Case when the block contains preformatted text, corresponding to the nested HTML tags `<pre>` and `<code>`.
+     *
+     * See Telegram's [InputRichBlockPreformatted](https://core.telegram.org/bots/api#inputrichblockpreformatted)
+     * documentation.
+     */
     @TelegramCodegen.Type
     data class Preformatted internal constructor(
+        /** Text of the block. */
         val text: RichTextValue,
+        /** Programming language of the text. */
         val language: String? = null
     ) : InputRichBlock {
         override val type = Type.PRE
         companion object
     }
 
-    /** Telegram [InputRichBlockFooter](https://core.telegram.org/bots/api#inputrichblockfooter) type. */
+    /**
+     * Case when the block is a footer, corresponding to the HTML tag `<footer>`.
+     *
+     * See Telegram's [InputRichBlockFooter](https://core.telegram.org/bots/api#inputrichblockfooter) documentation.
+     */
     @TelegramCodegen.Type
-    data class Footer internal constructor(val text: RichTextValue) : InputRichBlock {
+    data class Footer internal constructor(
+        /** Text of the block. */
+        val text: RichTextValue
+    ) : InputRichBlock {
         override val type = Type.FOOTER
         companion object
     }
 
-    /** Telegram [InputRichBlockDivider](https://core.telegram.org/bots/api#inputrichblockdivider) type. */
+    /**
+     * Case when the block is a divider, corresponding to the HTML tag `<hr/>`.
+     *
+     * See Telegram's [InputRichBlockDivider](https://core.telegram.org/bots/api#inputrichblockdivider) documentation.
+     */
     data object Divider : InputRichBlock {
         override val type = Type.DIVIDER
     }
 
-    /** Telegram [InputRichBlockMathematicalExpression](https://core.telegram.org/bots/api#inputrichblockmathematicalexpression) type. */
+    /**
+     * Case when the block contains a mathematical expression in LaTeX format, corresponding to the custom HTML tag
+     * `<tg-math-block>`.
+     *
+     * See Telegram's
+     * [InputRichBlockMathematicalExpression](https://core.telegram.org/bots/api#inputrichblockmathematicalexpression)
+     * documentation.
+     */
     @TelegramCodegen.Type
-    data class MathematicalExpression internal constructor(val expression: String) : InputRichBlock {
+    data class MathematicalExpression internal constructor(
+        /** Mathematical expression in LaTeX format. */
+        val expression: String
+    ) : InputRichBlock {
         override val type = Type.MATHEMATICAL_EXPRESSION
         companion object
     }
 
-    /** Telegram [InputRichBlockAnchor](https://core.telegram.org/bots/api#inputrichblockanchor) type. */
+    /**
+     * Case when the block contains an anchor, corresponding to the HTML tag `<a>` with the attribute `name`.
+     *
+     * See Telegram's [InputRichBlockAnchor](https://core.telegram.org/bots/api#inputrichblockanchor) documentation.
+     */
     @TelegramCodegen.Type
-    data class Anchor internal constructor(val name: String) : InputRichBlock {
+    data class Anchor internal constructor(
+        /** Name of the anchor. */
+        val name: String
+    ) : InputRichBlock {
         override val type = Type.ANCHOR
         companion object
     }
 
-    /** Telegram [InputRichBlockList](https://core.telegram.org/bots/api#inputrichblocklist) type. */
+    /**
+     * Case when the block is a list, corresponding to the HTML tag `<ul>` or `<ol>` with nested `<li>` tags.
+     *
+     * See Telegram's [InputRichBlockList](https://core.telegram.org/bots/api#inputrichblocklist) documentation.
+     */
     @TelegramCodegen.Type
     data class List internal constructor(
+        /** Items of the list. */
         val items: kotlin.collections.List<InputRichBlockListItem>
     ) : InputRichBlock {
         override val type = Type.LIST
         companion object
     }
 
-    /** Telegram [InputRichBlockBlockQuotation](https://core.telegram.org/bots/api#inputrichblockblockquotation) type. */
+    /**
+     * Case when the block is a block quotation, corresponding to the HTML tag `<blockquote>`.
+     *
+     * See Telegram's
+     * [InputRichBlockBlockQuotation](https://core.telegram.org/bots/api#inputrichblockblockquotation) documentation.
+     */
     @TelegramCodegen.Type
     data class BlockQuotation internal constructor(
+        /** Content of the block. */
         val blocks: kotlin.collections.List<InputRichBlock>,
+        /** Credit of the block. */
         val credit: RichTextValue? = null
     ) : InputRichBlock {
         override val type = Type.BLOCKQUOTE
         companion object
     }
 
-    /** Telegram [InputRichBlockPullQuotation](https://core.telegram.org/bots/api#inputrichblockpullquotation) type. */
+    /**
+     * Case when the block is a quotation with centered text, loosely corresponding to the HTML tag `<aside>`.
+     *
+     * See Telegram's
+     * [InputRichBlockPullQuotation](https://core.telegram.org/bots/api#inputrichblockpullquotation) documentation.
+     */
     @TelegramCodegen.Type
     data class PullQuotation internal constructor(
+        /** Text of the block. */
         val text: RichTextValue,
+        /** Credit of the block. */
         val credit: RichTextValue? = null
     ) : InputRichBlock {
         override val type = Type.PULLQUOTE
         companion object
     }
 
-    /** Telegram [InputRichBlockCollage](https://core.telegram.org/bots/api#inputrichblockcollage) type. */
+    /**
+     * Case when the block is a collage, corresponding to the custom HTML tag `<tg-collage>`.
+     *
+     * See Telegram's [InputRichBlockCollage](https://core.telegram.org/bots/api#inputrichblockcollage) documentation.
+     */
     @TelegramCodegen.Type
     data class Collage internal constructor(
+        /** Elements of the collage. */
         val blocks: kotlin.collections.List<InputRichBlock>,
+        /** Caption of the block. */
         val caption: Caption? = null
     ) : InputRichBlock {
         override val type = Type.COLLAGE
         companion object
     }
 
-    /** Telegram [InputRichBlockSlideshow](https://core.telegram.org/bots/api#inputrichblockslideshow) type. */
+    /**
+     * Case when the block is a slideshow, corresponding to the custom HTML tag `<tg-slideshow>`.
+     *
+     * See Telegram's
+     * [InputRichBlockSlideshow](https://core.telegram.org/bots/api#inputrichblockslideshow) documentation.
+     */
     @TelegramCodegen.Type
     data class Slideshow internal constructor(
+        /** Elements of the slideshow. */
         val blocks: kotlin.collections.List<InputRichBlock>,
+        /** Caption of the block. */
         val caption: Caption? = null
     ) : InputRichBlock {
         override val type = Type.SLIDESHOW
         companion object
     }
 
-    /** Telegram [InputRichBlockTable](https://core.telegram.org/bots/api#inputrichblocktable) type. */
+    /**
+     * Case when the block is a table, corresponding to the HTML tag `<table>`.
+     *
+     * See Telegram's [InputRichBlockTable](https://core.telegram.org/bots/api#inputrichblocktable) documentation.
+     */
     @TelegramCodegen.Type
     data class Table internal constructor(
+        /** Cells of the table. */
         val cells: kotlin.collections.List<kotlin.collections.List<TableCell>>,
+        /** Whether the table has borders. */
         @get:JvmName("getIsBordered")
         val isBordered: Boolean = false,
+        /** Whether the table is striped. */
         @get:JvmName("getIsStriped")
         val isStriped: Boolean = false,
+        /** Caption of the table. */
         val caption: RichTextValue? = null
     ) : InputRichBlock {
         override val type = Type.TABLE
         companion object
     }
 
-    /** Telegram [InputRichBlockDetails](https://core.telegram.org/bots/api#inputrichblockdetails) type. */
+    /**
+     * Case when the block is expandable for details disclosure, corresponding to the HTML tag `<details>`.
+     *
+     * See Telegram's [InputRichBlockDetails](https://core.telegram.org/bots/api#inputrichblockdetails) documentation.
+     */
     @TelegramCodegen.Type
     data class Details internal constructor(
+        /** Always shown summary of the block. */
         val summary: RichTextValue,
+        /** Content of the block. */
         val blocks: kotlin.collections.List<InputRichBlock>,
+        /** Whether the content of the block is visible by default. */
         @get:JvmName("getIsOpen")
         val isOpen: Boolean = false
     ) : InputRichBlock {
@@ -183,72 +290,129 @@ sealed interface InputRichBlock {
         companion object
     }
 
-    /** Telegram [InputRichBlockMap](https://core.telegram.org/bots/api#inputrichblockmap) type. */
+    /**
+     * Case when the block contains a map, corresponding to the custom HTML tag `<tg-map>`.
+     *
+     * The map's width and height must not exceed 10000 in total. The width-to-height ratio must be at most 20.
+     *
+     * See Telegram's [InputRichBlockMap](https://core.telegram.org/bots/api#inputrichblockmap) documentation.
+     */
     @TelegramCodegen.Type
     data class Map internal constructor(
+        /** Location of the center of the map. */
         val location: Location,
+        /** Map zoom level; 0-24. */
         val zoom: Int,
+        /** Map width; 0-10000. */
         val width: Int,
+        /** Map height; 0-10000. */
         val height: Int,
+        /** Caption of the block. */
         val caption: Caption? = null
     ) : InputRichBlock {
         override val type = Type.MAP
         companion object
     }
 
-    /** Telegram [InputRichBlockAnimation](https://core.telegram.org/bots/api#inputrichblockanimation) type. */
+    /**
+     * Case when the block contains an animation, corresponding to the HTML tag `<video>`.
+     *
+     * See Telegram's
+     * [InputRichBlockAnimation](https://core.telegram.org/bots/api#inputrichblockanimation) documentation.
+     */
     @TelegramCodegen.Type
     data class Animation internal constructor(
+        /** Animation to send. Its caption is ignored. */
         val animation: InputMedia.Animation,
+        /** Caption of the block. */
         val caption: Caption? = null
     ) : InputRichBlock {
         override val type = Type.ANIMATION
         companion object
     }
 
-    /** Telegram [InputRichBlockAudio](https://core.telegram.org/bots/api#inputrichblockaudio) type. */
+    /**
+     * Case when the block contains a music file, corresponding to the HTML tag `<audio>`.
+     *
+     * See Telegram's [InputRichBlockAudio](https://core.telegram.org/bots/api#inputrichblockaudio) documentation.
+     */
     @TelegramCodegen.Type
     data class Audio internal constructor(
+        /** Audio to send. Its caption is ignored. */
         val audio: InputMedia.Audio,
+        /** Caption of the block. */
         val caption: Caption? = null
     ) : InputRichBlock {
         override val type = Type.AUDIO
         companion object
     }
 
-    /** Telegram [InputRichBlockPhoto](https://core.telegram.org/bots/api#inputrichblockphoto) type. */
+    /**
+     * Case when the block contains a photo, corresponding to the HTML tag `<img>`.
+     *
+     * See Telegram's [InputRichBlockPhoto](https://core.telegram.org/bots/api#inputrichblockphoto) documentation.
+     */
     @TelegramCodegen.Type
     data class Photo internal constructor(
+        /** Photo to send. Its caption is ignored. */
         val photo: InputMedia.Photo,
+        /** Caption of the block. */
         val caption: Caption? = null
     ) : InputRichBlock {
         override val type = Type.PHOTO
         companion object
     }
 
-    /** Telegram [InputRichBlockVideo](https://core.telegram.org/bots/api#inputrichblockvideo) type. */
+    /**
+     * Case when the block contains a video, corresponding to the HTML tag `<video>`.
+     *
+     * See Telegram's [InputRichBlockVideo](https://core.telegram.org/bots/api#inputrichblockvideo) documentation.
+     */
     @TelegramCodegen.Type
     data class Video internal constructor(
+        /** Video to send. Its caption is ignored. */
         val video: InputMedia.Video,
+        /** Caption of the block. */
         val caption: Caption? = null
     ) : InputRichBlock {
         override val type = Type.VIDEO
         companion object
     }
 
-    /** Telegram [InputRichBlockVoiceNote](https://core.telegram.org/bots/api#inputrichblockvoicenote) type. */
+    /**
+     * Case when the block contains a voice note, corresponding to the HTML tag `<audio>`.
+     *
+     * See Telegram's
+     * [InputRichBlockVoiceNote](https://core.telegram.org/bots/api#inputrichblockvoicenote) documentation.
+     */
     @TelegramCodegen.Type
     data class VoiceNote internal constructor(
+        /** Voice note to send. Its caption is ignored. */
         val voiceNote: InputMedia.VoiceNote,
+        /** Caption of the block. */
         val caption: Caption? = null
     ) : InputRichBlock {
         override val type = Type.VOICE_NOTE
         companion object
     }
 
-    /** Telegram [InputRichBlockThinking](https://core.telegram.org/bots/api#inputrichblockthinking) type. */
+    /**
+     * Case when the block contains a “Thinking…” placeholder, corresponding to the custom HTML tag `<tg-thinking>`.
+     *
+     * This block may be used only in
+     * [sendRichMessageDraft][ski.gagar.vertigram.telegram.methods.sendRichMessageDraft] and can't be received in
+     * messages. See [recommended custom emoji](https://t.me/addemoji/AIActions) for examples.
+     *
+     * See Telegram's [InputRichBlockThinking](https://core.telegram.org/bots/api#inputrichblockthinking)
+     * documentation.
+     */
     @TelegramCodegen.Type
-    data class Thinking internal constructor(val text: RichTextValue) : InputRichBlock {
+    data class Thinking internal constructor(
+        /**
+         * Text of the block. See [recommended custom emoji](https://t.me/addemoji/AIActions) for examples.
+         */
+        val text: RichTextValue
+    ) : InputRichBlock {
         override val type = Type.THINKING
         companion object
     }

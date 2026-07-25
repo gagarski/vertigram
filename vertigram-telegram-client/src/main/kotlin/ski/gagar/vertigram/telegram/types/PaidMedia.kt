@@ -6,9 +6,9 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo
 import ski.gagar.vertigram.annotations.TelegramCodegen
 
 /**
- * Telegram [PaidMedia](https://core.telegram.org/bots/api#paidmedia) type.
+ * Describes paid media.
  *
- * For up-to-date documentation, please consult the official Telegram docs.
+ * See Telegram's [PaidMedia](https://core.telegram.org/bots/api#paidmedia) documentation.
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", include = JsonTypeInfo.As.EXISTING_PROPERTY)
 @JsonSubTypes(
@@ -21,14 +21,17 @@ sealed interface PaidMedia {
     val type: Type
 
     /**
-     * Telegram [PaidMediaPreview](https://core.telegram.org/bots/api#paidmediapreview) type.
+     * Case when the paid media isn't available before payment.
      *
-     * For up-to-date documentation, please consult the official Telegram docs.
+     * See Telegram's [PaidMediaPreview](https://core.telegram.org/bots/api#paidmediapreview) documentation.
      */
     @TelegramCodegen.Type
     data class Preview internal constructor(
+        /** Media width. */
         val width: Int? = null,
+        /** Media height. */
         val height: Int? = null,
+        /** Media duration in seconds. */
         val duration: Int? = null,
     ) : PaidMedia {
         override val type: Type = Type.PREVIEW
@@ -37,12 +40,13 @@ sealed interface PaidMedia {
     }
 
     /**
-     * Telegram [PaidMediaLivePhoto](https://core.telegram.org/bots/api#paidmedialivephoto) type.
+     * Case when the paid media is a live photo.
      *
-     * For up-to-date documentation, please consult the official Telegram docs.
+     * See Telegram's [PaidMediaLivePhoto](https://core.telegram.org/bots/api#paidmedialivephoto) documentation.
      */
     @TelegramCodegen.Type
     data class LivePhoto internal constructor(
+        /** Live photo. */
         val livePhoto: ski.gagar.vertigram.telegram.types.LivePhoto
     ) : PaidMedia {
         override val type: Type = Type.LIVE_PHOTO
@@ -51,12 +55,13 @@ sealed interface PaidMedia {
     }
 
     /**
-     * Telegram [PaidMediaPhoto](https://core.telegram.org/bots/api#paidmediaphoto) type.
+     * Case when the paid media is a photo.
      *
-     * For up-to-date documentation, please consult the official Telegram docs.
+     * See Telegram's [PaidMediaPhoto](https://core.telegram.org/bots/api#paidmediaphoto) documentation.
      */
     @TelegramCodegen.Type
     data class Photo internal constructor(
+        /** Available sizes of the photo. */
         val photo: List<PhotoSize>
     ) : PaidMedia {
         override val type: Type = Type.PHOTO
@@ -65,12 +70,13 @@ sealed interface PaidMedia {
     }
 
     /**
-     * Telegram [PaidMediaVideo](https://core.telegram.org/bots/api#paidmediavideo) type.
+     * Case when the paid media is a video.
      *
-     * For up-to-date documentation, please consult the official Telegram docs.
+     * See Telegram's [PaidMediaVideo](https://core.telegram.org/bots/api#paidmediavideo) documentation.
      */
     @TelegramCodegen.Type
     data class Video internal constructor(
+        /** Video. */
         val video: ski.gagar.vertigram.telegram.types.Video
     ) : PaidMedia {
         override val type: Type = Type.VIDEO

@@ -7,13 +7,15 @@ import ski.gagar.vertigram.telegram.types.attachments.Attachment
 import ski.gagar.vertigram.telegram.types.util.ChatId
 
 /**
- * Telegram [setChatPhoto](https://core.telegram.org/bots/api#setchatphoto) method.
+ * Use this method to set a new profile photo for the chat. Returns `true` on success.
  *
- * For up-to-date documentation, please consult the official Telegram docs.
+ * See Telegram's [setChatPhoto](https://core.telegram.org/bots/api#setchatphoto) documentation.
  */
 @Throttled
 @TelegramCodegen.Method
 data class SetChatPhoto internal constructor(
+    /** Unique identifier for the target chat or username of the target bot, supergroup, or channel. */
     override val chatId: ChatId,
+    /** New chat photo. */
     val photo: Attachment
 ) : MultipartTelegramCallable<Boolean>(), HasChatId

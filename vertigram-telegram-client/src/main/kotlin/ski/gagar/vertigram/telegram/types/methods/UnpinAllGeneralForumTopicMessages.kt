@@ -8,12 +8,15 @@ import ski.gagar.vertigram.telegram.types.util.ChatId
 import ski.gagar.vertigram.util.NoPosArgs
 
 /**
- * Telegram [unpinAllGeneralForumTopicMessages](https://core.telegram.org/bots/api#unpinallgeneralforumtopicmessages) method.
+ * Use this method to clear the list of pinned messages in a General forum topic. Returns `true` on success.
  *
- * For up-to-date documentation, please consult the official Telegram docs.
+ * See Telegram's
+ * [unpinAllGeneralForumTopicMessages](https://core.telegram.org/bots/api#unpinallgeneralforumtopicmessages)
+ * documentation.
  */
 @Throttled
 @TelegramCodegen.Method
 data class UnpinAllGeneralForumTopicMessages internal constructor(
+    /** Unique identifier for the target chat or username of the target bot, supergroup, or channel. */
     override val chatId: ChatId,
 ) : JsonTelegramCallable<Boolean>(), HasChatId

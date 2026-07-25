@@ -3,12 +3,13 @@ package ski.gagar.vertigram.telegram.types
 import ski.gagar.vertigram.annotations.TelegramCodegen
 
 /**
- * Telegram [BotName](https://core.telegram.org/bots/api#botname) type.
+ * This object represents the bot's name.
  *
- * For up-to-date documentation, please consult the official Telegram docs.
+ * See Telegram's [BotName](https://core.telegram.org/bots/api#botname) documentation.
  */
 @TelegramCodegen.Type
 data class BotName internal constructor(
+    /** The bot's name. */
     val name: String
 ) {
     companion object

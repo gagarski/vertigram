@@ -6,12 +6,16 @@ import ski.gagar.vertigram.telegram.types.Message
 import ski.gagar.vertigram.util.NoPosArgs
 
 /**
- * Telegram [setCustomEmojiStickerSetThumbnail](https://core.telegram.org/bots/api#setcustomemojistickersetthumbnail) method.
+ * Use this method to set the thumbnail of a custom emoji sticker set. Returns `true` on success.
  *
- * For up-to-date documentation, please consult the official Telegram docs.
+ * See Telegram's
+ * [setCustomEmojiStickerSetThumbnail](https://core.telegram.org/bots/api#setcustomemojistickersetthumbnail)
+ * documentation.
  */
 @TelegramCodegen.Method
 data class SetCustomEmojiStickerSetThumbnail internal constructor(
+    /** Sticker set name. */
     val name: String,
+    /** Custom emoji identifier of a sticker from the sticker set to use as the thumbnail. */
     val customEmojiId: String? = null
 ) : MultipartTelegramCallable<Message>()

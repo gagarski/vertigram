@@ -23,7 +23,9 @@
 ## Methods And Request Bodies
 
 - Add new Bot API methods under `types/methods`.
-- Include the correct chat id type (`ChatId` vs `Long`) by checking similar methods and docs.
+- Include the correct chat id type (`ChatId` vs `Long`) by checking similar methods and docs. Document every
+  `ChatId`-typed parameter using the canonical wording in
+  [the shared Telegram KDoc guide](../../telegram-doc-updater/references/telegram-kdoc.md).
 - Add optional fields to existing methods where the changelog adds parameters.
 - For mutually exclusive request bodies, prefer explicit subclasses plus Jackson polymorphism over runtime validation of nullable fields.
 

@@ -5,12 +5,13 @@ import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.util.NoPosArgs
 
 /**
- * Telegram [WebAppInfo](https://core.telegram.org/bots/api#webappinfo) type.
+ * Describes a Web App.
  *
- * For up-to-date documentation, please consult the official Telegram docs.
+ * See Telegram's [WebAppInfo](https://core.telegram.org/bots/api#webappinfo) documentation.
  */
 @TelegramCodegen.Type
 data class WebAppInfo internal constructor(
+    /** HTTPS URL of the Web App. */
     val url: String
 ) {
     companion object

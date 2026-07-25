@@ -3,12 +3,13 @@ package ski.gagar.vertigram.telegram.types
 import ski.gagar.vertigram.annotations.TelegramCodegen
 
 /**
- * Telegram [StarTransactions](https://core.telegram.org/bots/api#startransactions) type.
+ * Contains a list of Telegram Star transactions.
  *
- * For up-to-date documentation, please consult the official Telegram docs.
+ * See Telegram's [StarTransactions](https://core.telegram.org/bots/api#startransactions) documentation.
  */
 @TelegramCodegen.Type
 data class StarTransactions internal constructor(
+    /** List of transactions. */
     val transactions: List<StarTransaction>
 ) {
     companion object

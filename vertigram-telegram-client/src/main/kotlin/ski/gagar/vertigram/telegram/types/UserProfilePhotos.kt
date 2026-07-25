@@ -5,13 +5,15 @@ import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.util.NoPosArgs
 
 /**
- * Telegram [UserProfilePhotos](https://core.telegram.org/bots/api#userprofilephotos) type.
+ * Contains a list of user profile photos.
  *
- * For up-to-date documentation, please consult the official Telegram docs.
+ * See Telegram's [UserProfilePhotos](https://core.telegram.org/bots/api#userprofilephotos) documentation.
  */
 @TelegramCodegen.Type
 data class UserProfilePhotos internal constructor(
+    /** Total number of profile pictures for the target user. */
     val totalCount: Int,
+    /** Requested profile pictures, each represented by the available photo sizes. */
     val photos: List<List<PhotoSize>>
 ) {
     companion object

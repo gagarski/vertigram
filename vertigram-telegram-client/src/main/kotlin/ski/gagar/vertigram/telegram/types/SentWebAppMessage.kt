@@ -5,12 +5,13 @@ import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.util.NoPosArgs
 
 /**
- * Telegram [SentWebAppMessage](https://core.telegram.org/bots/api#sentwebappmessage) type.
+ * Describes an inline message sent by a Web App on behalf of a user.
  *
- * For up-to-date documentation, please consult the official Telegram docs.
+ * See Telegram's [SentWebAppMessage](https://core.telegram.org/bots/api#sentwebappmessage) documentation.
  */
 @TelegramCodegen.Type
 data class SentWebAppMessage internal constructor(
+    /** Identifier of the sent inline message, available when the message has an inline keyboard. */
     val inlineMessageId: String
 ) {
     companion object

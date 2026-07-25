@@ -3,14 +3,17 @@ package ski.gagar.vertigram.telegram.types
 import ski.gagar.vertigram.annotations.TelegramCodegen
 
 /**
- * Telegram [ShippingOption](https://core.telegram.org/bots/api#shippingoption) type.
+ * Represents one shipping option.
  *
- * For up-to-date documentation, please consult the official Telegram docs.
+ * See Telegram's [ShippingOption](https://core.telegram.org/bots/api#shippingoption) documentation.
  */
 @TelegramCodegen.Type
 data class ShippingOption internal constructor(
+    /** Shipping option identifier. */
     val id: String,
+    /** Option title. */
     val title: String,
+    /** List of price portions. */
     val prices: List<LabeledPrice>
 ) {
     companion object
