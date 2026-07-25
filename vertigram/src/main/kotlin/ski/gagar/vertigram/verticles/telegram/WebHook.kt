@@ -1,6 +1,5 @@
 package ski.gagar.vertigram.verticles.telegram
 
-import com.fasterxml.jackson.core.type.TypeReference
 import io.netty.handler.codec.http.HttpResponseStatus
 import io.vertx.core.http.HttpServer
 import io.vertx.ext.web.Router
@@ -15,7 +14,6 @@ import ski.gagar.vertigram.telegram.methods.deleteWebhook
 import ski.gagar.vertigram.telegram.methods.setWebhook
 import ski.gagar.vertigram.telegram.types.Update
 import ski.gagar.vertigram.util.jackson.mapTo
-import ski.gagar.vertigram.util.jackson.typeReference
 import ski.gagar.vertigram.util.json.TELEGRAM_JSON_MAPPER
 import ski.gagar.vertigram.util.lazy
 import ski.gagar.vertigram.util.logger
@@ -30,7 +28,6 @@ import java.util.*
  * It **publishes** [Update] object received from webhook to [Config.updatePublishingAddress].
  */
 class WebHook : UpdateReceiver<WebHook.Config>() {
-    override val configTypeReference: TypeReference<Config> = typeReference()
     private val secret: String by lazy {
         typedConfig.webHook.secretToken ?: UUID.randomUUID().toString().also {
             logger.lazy.warn {

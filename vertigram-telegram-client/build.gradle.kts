@@ -13,7 +13,6 @@ dependencies {
     api(libs.bundles.vertx.web.client)
     api(libs.bundles.kotlin.std)
     api(libs.bundles.kotlinx.html)
-    api(libs.bundles.reflections)
     api(libs.bundles.slf4j.api)
     api(project(":vertigram-util"))
     compileOnly(project(":vertigram-annotations"))

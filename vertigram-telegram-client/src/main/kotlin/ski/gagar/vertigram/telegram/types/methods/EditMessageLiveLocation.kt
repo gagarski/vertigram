@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 import ski.gagar.vertigram.annotations.TelegramCodegen
-import ski.gagar.vertigram.telegram.annotations.TelegramMethod
 import ski.gagar.vertigram.telegram.throttling.HasChatId
 import ski.gagar.vertigram.telegram.throttling.Throttled
 import ski.gagar.vertigram.telegram.types.Message
@@ -43,9 +42,6 @@ sealed interface EditMessageLiveLocation {
     /**
      * Inline message case
      */
-    @TelegramMethod(
-        methodName = "editMessageLiveLocation"
-    )
     @TelegramCodegen.Method(
         name = "editMessageLiveLocation",
     )
@@ -65,9 +61,6 @@ sealed interface EditMessageLiveLocation {
     /**
      * Chat message case
      */
-    @TelegramMethod(
-        methodName = "editMessageLiveLocation"
-    )
     @TelegramCodegen.Method(
         name = "editMessageLiveLocation",
     )

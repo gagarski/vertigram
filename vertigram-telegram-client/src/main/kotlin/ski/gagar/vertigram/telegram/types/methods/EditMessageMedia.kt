@@ -3,7 +3,6 @@ package ski.gagar.vertigram.telegram.types.methods
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 import ski.gagar.vertigram.annotations.TelegramCodegen
-import ski.gagar.vertigram.telegram.annotations.TelegramMethod
 import ski.gagar.vertigram.telegram.throttling.HasChatId
 import ski.gagar.vertigram.telegram.throttling.Throttled
 import ski.gagar.vertigram.telegram.types.InputMedia
@@ -31,9 +30,6 @@ sealed interface EditMessageMedia {
     /**
      * Inline message case
      */
-    @TelegramMethod(
-        methodName = "editMessageMedia"
-    )
     @TelegramCodegen.Method(
         name = "editMessageMedia"
     )
@@ -48,9 +44,6 @@ sealed interface EditMessageMedia {
     /**
      * Chat message case
      */
-    @TelegramMethod(
-        methodName = "editMessageMedia"
-    )
     @TelegramCodegen.Method(
         name = "editMessageMedia"
     )

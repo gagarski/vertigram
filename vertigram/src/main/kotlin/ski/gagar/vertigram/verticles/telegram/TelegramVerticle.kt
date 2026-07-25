@@ -1,17 +1,14 @@
 package ski.gagar.vertigram.verticles.telegram
 
-import com.fasterxml.jackson.core.type.TypeReference
-import ski.gagar.vertigram.util.jackson.typeReference
 import ski.gagar.vertigram.telegram.client.DirectTelegram
 import ski.gagar.vertigram.telegram.client.Telegram
-import ski.gagar.vertigram.telegram.types.methods.JsonTelegramCallable
-import ski.gagar.vertigram.telegram.types.methods.MultipartTelegramCallable
 import ski.gagar.vertigram.telegram.types.methods.TelegramCallable
 import ski.gagar.vertigram.telegram.throttling.ThrottlingOptions
 import ski.gagar.vertigram.telegram.throttling.ThrottlingTelegram
 import ski.gagar.vertigram.telegram.types.Update
 import ski.gagar.vertigram.telegram.types.UpdateList
 import ski.gagar.vertigram.util.VertigramTypeHints
+import ski.gagar.vertigram.util.TelegramCallableTransport
 import ski.gagar.vertigram.util.getOrAssert
 import ski.gagar.vertigram.verticles.common.VertigramVerticle
 import ski.gagar.vertigram.verticles.telegram.TelegramVerticle.DownloadFile
@@ -23,24 +20,25 @@ import ski.gagar.vertigram.verticles.telegram.address.TelegramAddress
  *
  * The best way to talk to it is using [ski.gagar.vertigram.telegram.client.ThinTelegram] client.
  *
- * Otherwise, the general primciple of the verticle messagin protocol is the following:
- *  - The event bus consumers use [ski.gagar.vertigram.Vertigram] protocol on top of Vert.x event bus
- *  - The *base part* address of the consumer is either defined in
- *    [ski.gagar.vertigram.telegram.annotations.TelegramMethod.verticleConsumerName] or (by default) a class name
- *    from [ski.gagar.vertigram.telegram.methods],
- *    each part of which is uncapitalized: (e.g. `EditMessageCaption.InlineMessage` becomes
- *    `editMessageCaption.inlineMessage`)
- * - The *vertigram address* of the consumer is *base part* described above concatenated with postfix
- *   (.json or .multipart) based on content type used by the method when doing HTTP interaction with Telegram.
- *  - Each consumer consumes Vertigram requests with the payload of corresponding method (from
- *    [ski.gagar.vertigram.telegram.methods])
- *  - Each consumer returns Vertigram response with the payload of corresponding method return type
+ * The messaging protocol is:
+ *  - Consumers use the [ski.gagar.vertigram.Vertigram] protocol on top of the Vert.x event bus.
+ *  - A Telegram method consumer has the address
+ *    `<baseAddress>.<methodAddress>.<transport>`.
+ *  - [Config.baseAddress] defaults to [TelegramAddress.TELEGRAM_VERTICLE_BASE].
+ *  - `methodAddress` is either the explicit `TelegramCodegen.Method.verticleConsumerName` or, by default, the
+ *    callable's simple class name. Each nesting segment starts with a lowercase letter and nested classes are separated
+ *    by dots: `EditMessageCaption.InlineMessage` becomes `editMessageCaption.inlineMessage`.
+ *  - `transport` is `json` or `multipart`, matching the callable's HTTP transport. For example,
+ *    `AddStickerToSet` uses
+ *    `ski.gagar.vertigram.telegram.verticle.addStickerToSet.multipart` with the default base address.
+ *  - Each consumer accepts a Vertigram request whose payload is the corresponding
+ *    [ski.gagar.vertigram.telegram.types.methods.TelegramCallable].
+ *  - Each consumer returns a Vertigram response whose payload is the corresponding method return type.
  *  - `getUpdates` is a special case: it consumes [GetUpdates] payload and returns a list of updates as a payload
  *    in the response.
  *  - `downloadFile` is a special case: it consumes [DownloadFile] payload and returns an empty-payload response.
  */
 class TelegramVerticle : VertigramVerticle<TelegramVerticle.Config>() {
-    override val configTypeReference: TypeReference<Config> = typeReference()
     private lateinit var tg: Telegram
 
     override suspend fun start() {
@@ -60,28 +58,15 @@ class TelegramVerticle : VertigramVerticle<TelegramVerticle.Config>() {
             typedConfig.updatesAddress(), function = ::handleGetUpdates
         )
 
-        for ((tgvAddress, requestType) in VertigramTypeHints.Json.requestTypeByTgvAddress) {
-            if (tgvAddress in VertigramTypeHints.doNotGenerateInTgVerticleAddresses)
+        for ((tgvAddress, descriptor) in VertigramTypeHints.descriptorByTgvAddress) {
+            if (!descriptor.generateVerticleConsumer)
                 continue
             consumer(
-                typedConfig.callAddress(tgvAddress,
-                    RequestType.Json
+                typedConfig.callAddress(
+                    tgvAddress,
+                    RequestType.byTransport(descriptor.transport)
                 ),
-                requestJavaType = requestType
-            ) { msg: TelegramCallable<*> ->
-                @Suppress("DEPRECATION")
-                tg.call(msg)
-            }
-        }
-
-        for ((tgvAddress, requestType) in VertigramTypeHints.Multipart.requestTypeByTgvAddress) {
-            if (tgvAddress in VertigramTypeHints.doNotGenerateInTgVerticleAddresses)
-                continue
-            consumer(
-                typedConfig.callAddress(tgvAddress,
-                    RequestType.Multipart
-                ),
-                requestJavaType = requestType
+                requestJavaType = descriptor.requestType
             ) { msg: TelegramCallable<*> ->
                 @Suppress("DEPRECATION")
                 tg.call(msg)
@@ -113,18 +98,19 @@ class TelegramVerticle : VertigramVerticle<TelegramVerticle.Config>() {
         Multipart("multipart");
 
         companion object {
-            fun <T : TelegramCallable<*>> byClass(clazz: Class<T>) =
-                when {
-                    JsonTelegramCallable::class.java.isAssignableFrom(clazz) -> Json
-                    MultipartTelegramCallable::class.java.isAssignableFrom(clazz) -> Multipart
-                    else -> throw AssertionError("oops")
+            fun byTransport(transport: TelegramCallableTransport) =
+                when (transport) {
+                    TelegramCallableTransport.JSON -> Json
+                    TelegramCallableTransport.MULTIPART -> Multipart
                 }
 
+            fun <T : TelegramCallable<*>> byClass(clazz: Class<T>) =
+                byTransport(
+                    VertigramTypeHints.descriptorByCallable.getOrAssert(clazz).transport
+                )
+
             fun byCallable(tgc: TelegramCallable<*>) =
-                when (tgc) {
-                    is JsonTelegramCallable<*> -> Json
-                    is MultipartTelegramCallable<*> -> Multipart
-                }
+                byClass(tgc.javaClass)
         }
     }
 
@@ -137,7 +123,7 @@ class TelegramVerticle : VertigramVerticle<TelegramVerticle.Config>() {
          */
         val token: String,
         /**
-         * Base address to listen
+         * Base address prepended to every consumer address.
          */
         val baseAddress: String = TelegramAddress.TELEGRAM_VERTICLE_BASE,
         /**
@@ -209,30 +195,32 @@ class TelegramVerticle : VertigramVerticle<TelegramVerticle.Config>() {
             fun updatesAddress(baseAddress: String = TelegramAddress.TELEGRAM_VERTICLE_BASE) =
                 callAddress(GET_UPDATES, baseAddress, RequestType.Json)
 
-            fun <T : TelegramCallable<*>> callAddress(clazz: Class<T>, baseAddress: String = TelegramAddress.TELEGRAM_VERTICLE_BASE) =
-                callAddress(
-                    VertigramTypeHints.tgvAddressByClass.getOrAssert(
-                        clazz
-                    ),
+            fun <T : TelegramCallable<*>> callAddress(
+                clazz: Class<T>,
+                baseAddress: String = TelegramAddress.TELEGRAM_VERTICLE_BASE
+            ): String {
+                val descriptor = VertigramTypeHints.descriptorByCallable.getOrAssert(clazz)
+                return callAddress(
+                    descriptor.tgvAddress,
                     baseAddress,
-                    RequestType.byClass(
-                        clazz
-                    )
+                    RequestType.byTransport(descriptor.transport)
                 )
+            }
 
             /**
              * Consumer address for [obj]
              */
-            fun <T: TelegramCallable<*>> callAddress(obj: T, baseAddress: String = TelegramAddress.TELEGRAM_VERTICLE_BASE) =
-                callAddress(
-                    VertigramTypeHints.tgvAddressByClass.getOrAssert(
-                        obj.javaClass
-                    ),
+            fun <T: TelegramCallable<*>> callAddress(
+                obj: T,
+                baseAddress: String = TelegramAddress.TELEGRAM_VERTICLE_BASE
+            ): String {
+                val descriptor = VertigramTypeHints.descriptorByCallable.getOrAssert(obj.javaClass)
+                return callAddress(
+                    descriptor.tgvAddress,
                     baseAddress,
-                    RequestType.byCallable(
-                        obj
-                    )
+                    RequestType.byTransport(descriptor.transport)
                 )
+            }
 
             /**
              * Address to fetch long poll timeout (used by [ski.gagar.vertigram.telegram.client.ThinTelegram])

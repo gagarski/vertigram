@@ -16,7 +16,6 @@ answerring a `/hello` command.
 ```kotlin
 // (1) Define logic in a verticle
 class HelloVerticle : VertigramVerticle<HelloVerticle.Config>() {
-    override val configTypeReference: TypeReference<Config> = typeReference()
     // (2) Lazily create a telegram client
     private val tg by lazy {
         ThinTelegram(vertigram)
@@ -67,8 +66,8 @@ fun main() {
 Let's go through this code, step by step:
 1. The logic for our command is defined inside a
 [VertigramVerticle](ski.gagar.vertigram.verticles.common.VertigramVerticle) subclass. 
-If you've read <a href="../vertigram-core/index.html">`vertigram-core`</a> docs, you already see that the config for 
-this verticle is a nested `Config` class and `configTypeReference` is overloaded using `typeReference` shortcut.
+If you've read <a href="../vertigram-core/index.html">`vertigram-core`</a> docs, you already see that the config for
+this verticle is a nested `Config` class. Its runtime type is inferred automatically from the superclass declaration.
 2. Create Telegram client to interact with Telegram. Note `lazy` initiaslization, it is needed because `vertigram` field
 is not available during construction. Note that `ThinTelegram` implementation is used, all that matters for now is that
 it implements `Telegram` interface, and you can call all Telegram methods using it. We'll discuss `ThinTelegram` details
@@ -105,8 +104,6 @@ with Telegram verticles. In fact for handling commands there is a shortcut, `Sim
 `HelloVerticle` can look like this:
 ```kotlin
 class HelloVerticle : SimpleCommandVerticle<HelloVerticle.Config>() {
-    override val configTypeReference: TypeReference<Config> = typeReference()
-
     private val tg by lazy {
         ThinTelegram(vertigram)
     }
@@ -131,6 +128,40 @@ class HelloVerticle : SimpleCommandVerticle<HelloVerticle.Config>() {
 }
 ```
 Ignore `baseAddress` config field for now, we're going to cover it in next section.
+
+### TelegramVerticle messaging protocol
+
+[`ThinTelegram`](ski.gagar.vertigram.telegram.client.ThinTelegram) normally hides the event-bus protocol, but callers
+can also communicate with [`TelegramVerticle`](ski.gagar.vertigram.verticles.telegram.TelegramVerticle) directly.
+A Telegram method consumer uses this Vertigram address:
+
+```text
+<telegramAddress>.<methodAddress>.<transport>
+```
+
+- `telegramAddress` is the configured Telegram verticle base address. Its default value is
+  `ski.gagar.vertigram.telegram.verticle`.
+- `methodAddress` defaults to the callable's simple class name with its first letter lowercased. Nested class segments
+  are lowercased independently and joined with dots. It can be overridden by
+  `TelegramCodegen.Method.verticleConsumerName`.
+- `transport` is `json` or `multipart`, according to the callable's HTTP transport.
+
+For example, `AddStickerToSet` uses:
+
+```text
+ski.gagar.vertigram.telegram.verticle.addStickerToSet.multipart
+```
+
+The nested callable `EditMessageCaption.InlineMessage` uses:
+
+```text
+ski.gagar.vertigram.telegram.verticle.editMessageCaption.inlineMessage.json
+```
+
+The request payload is the corresponding `TelegramCallable`, and the response payload is that callable's return type.
+Use `TelegramVerticle.Config.callAddress(...)` to obtain an address programmatically instead of reconstructing it.
+`getUpdates` is available at `<telegramAddress>.getUpdates.json`; configuration and file-download operations use the
+dedicated helpers on `TelegramVerticle.Config`.
 
 ### Customizing Vertigram ensemble
 
@@ -209,7 +240,6 @@ clicking inline keyboard buttons.
 ```kotlin
 // (1) Declaring the dialog logic
 class CounterVerticle : SimpleTelegramDialogVerticle<CounterVerticle.Config>() {
-    override val configTypeReference: TypeReference<Config> = typeReference()
     private var count = 0
     private var lastMessageId: Long? = null
 
@@ -294,8 +324,6 @@ class CounterVerticle : SimpleTelegramDialogVerticle<CounterVerticle.Config>() {
 
 // (10) Dispatched for managing multiple dialogs simultaneously
 class CounterDispatchVerticle : DispatchVerticle.ByChatAndUser<CounterDispatchVerticle.Config, CounterVerticle.Config>() {
-    override val configTypeReference: TypeReference<Config> = typeReference()
-
     // (11) Init logic for a new dialog
     override fun initChild(dialogKey: DialogKey, msg: Message): Deployment<CounterVerticle.Config>? {
         if (!msg.isCommandForBot(CounterVerticle.CMD, typedConfig.me))
@@ -703,8 +731,6 @@ class RegisterVerticle : StatefulTelegramDialogVerticle<RegisterVerticle.Config>
     override val timeout: Duration?
         get() = Duration.ofMinutes(3)
 
-    override val configTypeReference: TypeReference<Config> = typeReference()
-
     data class Config(
         val chatId: Long,
         val me: User.Me
@@ -717,8 +743,6 @@ class RegisterVerticle : StatefulTelegramDialogVerticle<RegisterVerticle.Config>
 
 // (13) Dispatch verticle, pretty much similar to the one we've seen before
 class RegisterDispatchVerticle : DispatchVerticle.ByChatAndUser<RegisterDispatchVerticle.Config, RegisterVerticle.Config>() {
-    override val configTypeReference: TypeReference<Config> = typeReference()
-
     override fun initChild(dialogKey: DialogKey, msg: Message): Deployment<RegisterVerticle.Config>? {
         if (!msg.isCommandForBot(RegisterVerticle.CMD, typedConfig.me))
             return null

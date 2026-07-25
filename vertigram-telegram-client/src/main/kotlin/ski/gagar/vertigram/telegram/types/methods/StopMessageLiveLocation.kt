@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 import ski.gagar.vertigram.annotations.TelegramCodegen
-import ski.gagar.vertigram.telegram.annotations.TelegramMethod
 import ski.gagar.vertigram.telegram.throttling.HasChatId
 import ski.gagar.vertigram.telegram.types.ReplyMarkup
 import ski.gagar.vertigram.telegram.types.util.ChatId
@@ -29,9 +28,6 @@ sealed interface StopMessageLiveLocation {
     /**
      * Inline message case
      */
-    @TelegramMethod(
-        methodName = "stopMessageLiveLocation"
-    )
     @TelegramCodegen.Method(
         name = "stopMessageLiveLocation"
     )
@@ -44,9 +40,6 @@ sealed interface StopMessageLiveLocation {
     /**
      * Chat message case
      */
-    @TelegramMethod(
-        methodName = "stopMessageLiveLocation"
-    )
     @TelegramCodegen.Method(
         name = "stopMessageLiveLocation"
     )

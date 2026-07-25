@@ -3,7 +3,6 @@ package ski.gagar.vertigram.telegram.types.methods
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 import ski.gagar.vertigram.annotations.TelegramCodegen
-import ski.gagar.vertigram.telegram.annotations.TelegramMethod
 import ski.gagar.vertigram.telegram.throttling.HasChatIdLong
 import ski.gagar.vertigram.telegram.throttling.Throttled
 import ski.gagar.vertigram.telegram.types.Message
@@ -29,9 +28,6 @@ sealed interface SetGameScore {
     /**
      * Inline message case
      */
-    @TelegramMethod(
-        methodName = "setGameScore"
-    )
     @TelegramCodegen.Method(
         name = "setGameScore"
     )
@@ -47,9 +43,6 @@ sealed interface SetGameScore {
     /**
      * Chat message case
      */
-    @TelegramMethod(
-        methodName = "setGameScore"
-    )
     @TelegramCodegen.Method(
         name = "setGameScore"
     )

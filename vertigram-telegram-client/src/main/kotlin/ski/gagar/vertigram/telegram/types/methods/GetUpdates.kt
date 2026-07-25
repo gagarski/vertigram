@@ -1,7 +1,7 @@
 package ski.gagar.vertigram.telegram.types.methods
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import ski.gagar.vertigram.telegram.annotations.TelegramMethod
+import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.telegram.types.Update
 import ski.gagar.vertigram.util.NoPosArgs
 import java.time.Duration
@@ -18,8 +18,9 @@ import java.time.Duration
  * For up-to-date documentation for telegram method please consult the official Telegram docs.
  */
 @Deprecated("Use Telegram.getUpdates instead")
-@TelegramMethod(
-    methodName = "getUpdates",
+@TelegramCodegen.Method(
+    telegramName = "getUpdates",
+    generateClientMethod = false,
     generateVerticleConsumer = false
 )
 internal data class GetUpdatesRaw(

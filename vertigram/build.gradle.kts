@@ -10,7 +10,6 @@ dependencies {
     api(libs.bundles.vertx.web)
     api(libs.bundles.vertx.web.client)
     api(libs.bundles.commons.lang3)
-    api(libs.bundles.reflections)
     api(libs.bundles.slf4j.api)
 
     api(project(":vertigram-telegram-client"))

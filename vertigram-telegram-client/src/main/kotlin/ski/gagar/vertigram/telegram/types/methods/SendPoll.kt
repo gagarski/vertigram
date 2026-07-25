@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 import com.fasterxml.jackson.databind.annotation.JsonTypeResolver
 import ski.gagar.vertigram.annotations.TelegramCodegen
-import ski.gagar.vertigram.telegram.annotations.TelegramMethod
 import ski.gagar.vertigram.telegram.throttling.HasChatId
 import ski.gagar.vertigram.telegram.throttling.Throttled
 import ski.gagar.vertigram.telegram.types.*
@@ -71,9 +70,6 @@ sealed class SendPoll : JsonTelegramCallable<Message>(), HasChatId, HasRichQuest
     /**
      * Cases for regular poll
      */
-    @TelegramMethod(
-        methodName = "sendPoll"
-    )
     @TelegramCodegen.Method
     @Throttled
     sealed class Regular : SendPoll() {
@@ -123,9 +119,6 @@ sealed class SendPoll : JsonTelegramCallable<Message>(), HasChatId, HasRichQuest
         /**
          * Case with [closeDate] field
          */
-        @TelegramMethod(
-            methodName = "sendPoll"
-        )
         @TelegramCodegen.Method(
             name = "sendPoll"
         )
@@ -169,9 +162,6 @@ sealed class SendPoll : JsonTelegramCallable<Message>(), HasChatId, HasRichQuest
         /**
          * Case with no openPeriod and closeDate field
          */
-        @TelegramMethod(
-            methodName = "sendPoll"
-        )
         @TelegramCodegen.Method(
             name = "sendPoll"
         )
@@ -221,9 +211,6 @@ sealed class SendPoll : JsonTelegramCallable<Message>(), HasChatId, HasRichQuest
         /**
          * Case with [openPeriod] field
          */
-        @TelegramMethod(
-            methodName = "sendPoll"
-        )
         @TelegramCodegen.Method(
             name = "sendQuiz",
             telegramName = "sendPoll"
@@ -273,9 +260,6 @@ sealed class SendPoll : JsonTelegramCallable<Message>(), HasChatId, HasRichQuest
         /**
          * Case with [closeDate] field
          */
-        @TelegramMethod(
-            methodName = "sendPoll"
-        )
         @TelegramCodegen.Method(
             name = "sendQuiz",
             telegramName = "sendPoll"
@@ -325,9 +309,6 @@ sealed class SendPoll : JsonTelegramCallable<Message>(), HasChatId, HasRichQuest
         /**
          * Case with no openPeriod and closeDate field
          */
-        @TelegramMethod(
-            methodName = "sendPoll"
-        )
         @TelegramCodegen.Method(
             name = "sendQuiz",
             telegramName = "sendPoll"

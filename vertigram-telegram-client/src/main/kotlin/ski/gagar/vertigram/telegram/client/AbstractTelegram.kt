@@ -24,6 +24,9 @@ abstract class AbstractTelegram : Telegram {
     @Deprecated("Call Telegram.methodName() instead")
     override suspend fun <T> call(callable: TelegramCallable<T>): T {
         @Suppress("DEPRECATION")
-        return call(VertigramTypeHints.responseTypeByClass.getOrAssert(callable.javaClass), callable)
+        return call(
+            VertigramTypeHints.descriptorByCallable.getOrAssert(callable.javaClass).responseType,
+            callable
+        )
     }
 }

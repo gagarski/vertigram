@@ -3,7 +3,6 @@ package ski.gagar.vertigram.telegram.types.methods
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 import ski.gagar.vertigram.annotations.TelegramCodegen
-import ski.gagar.vertigram.telegram.annotations.TelegramMethod
 import ski.gagar.vertigram.telegram.throttling.HasChatId
 import ski.gagar.vertigram.telegram.types.ChatInviteLink
 import ski.gagar.vertigram.telegram.types.util.ChatId
@@ -30,9 +29,6 @@ sealed class EditChatInviteLink : JsonTelegramCallable<ChatInviteLink>(), HasCha
     /**
      * Case when [memberLimit] is specified, implies that `createsJoinRequest` is not set
      */
-    @TelegramMethod(
-        methodName = "editChatInviteLink"
-    )
     @TelegramCodegen.Method(
         name = "editChatInviteLink"
     )
@@ -50,9 +46,6 @@ sealed class EditChatInviteLink : JsonTelegramCallable<ChatInviteLink>(), HasCha
     /**
      * Case when member limit is missing, [createsJoinRequest] is specified explicitly
      */
-    @TelegramMethod(
-        methodName = "editChatInviteLink"
-    )
     @TelegramCodegen.Method(
         name = "editChatInviteLink"
     )

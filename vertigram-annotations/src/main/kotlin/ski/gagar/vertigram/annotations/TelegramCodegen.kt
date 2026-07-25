@@ -38,7 +38,23 @@ annotation class TelegramCodegen() {
         /**
          * Wrap rich text parameters
          */
-        val wrapRichText: Boolean = true
+        val wrapRichText: Boolean = true,
+        /**
+         * Generate an extension method on `Telegram` for this class.
+         */
+        val generateClientMethod: Boolean = true,
+        /**
+         * Generate a consumer for this method in `TelegramVerticle`.
+         */
+        val generateVerticleConsumer: Boolean = true,
+        /**
+         * Callable-specific consumer address override.
+         *
+         * By default, the simple class name is used with the first letter lowercased. For nested classes, each simple
+         * name is lowercased independently and joined with dots: `Outer.Inner` becomes `outer.inner`.
+         * `TelegramVerticle` prepends its configured base address and appends the transport postfix.
+         */
+        val verticleConsumerName: String = ""
     )
 
     /**

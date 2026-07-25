@@ -281,12 +281,17 @@ internal class TelegramImpl(
     }
 
     private suspend fun <T> callJson(type: JavaType, jc: JsonTelegramCallable<T>, longPoll: Boolean = false): T =
-        call(type, VertigramTypeHints.methodNameByClass.getOrAssert(jc.javaClass), jc, longPoll = longPoll)
+        call(
+            type,
+            VertigramTypeHints.descriptorByCallable.getOrAssert(jc.javaClass).telegramMethodName,
+            jc,
+            longPoll = longPoll
+        )
 
     private suspend fun <T> callMultipart(type: JavaType, mpc: MultipartTelegramCallable<T>): T =
         callMultipart(
             type,
-            VertigramTypeHints.methodNameByClass.getOrAssert(mpc.javaClass),
+            VertigramTypeHints.descriptorByCallable.getOrAssert(mpc.javaClass).telegramMethodName,
             mpc
         )
 

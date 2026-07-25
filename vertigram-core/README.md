@@ -94,22 +94,17 @@ exceptions:
 
 Let's build a small example, demonstrating simple event bus based interaction with the verticle:
 ```kotlin
-import com.fasterxml.jackson.core.type.TypeReference
 import io.vertx.core.Vertx
-import ski.gagar.vertigram.util.jackson.typeReference
 import ski.gagar.vertigram.verticles.common.VertigramVerticle
 
 // (1) Config is a type parameter
 class GreeterVerticle : VertigramVerticle<GreeterVerticle.Config>() {
-    // (2) A small hack to make type reified
-    override val configTypeReference: TypeReference<Config> = typeReference()
-
-    // (3) Define consumer logic, note the absence of serialization/deserialization and `await`s here
+    // (2) Define consumer logic, note the absence of serialization/deserialization and `await`s here
     private fun handleMessage(req: Request) =
         Response("${typedConfig.greeting} ${req.name}")
 
     override suspend fun start() {
-        // (4) Attach the consumer
+        // (3) Attach the consumer
         consumer<Request, Response>("greet") {
             handleMessage(it)
         }
@@ -124,10 +119,10 @@ class GreeterVerticle : VertigramVerticle<GreeterVerticle.Config>() {
 fun main() {
     Vertx.vertx().runBlocking {
         attachVertigram().apply {
-            // (5) Deploy the verticle; deployVerticle won't let you mistype the config. Also notice the absence of an `await` call.
+            // (4) Deploy the verticle; deployVerticle won't let you mistype the config. Also notice the absence of an `await` call.
             deployVerticle(GreeterVerticle(), GreeterVerticle.Config("Bonjour"))
 
-            // (6) Interact with the verticle, some type hints are needed for the response type
+            // (5) Interact with the verticle, some type hints are needed for the response type
             val resp: GreeterVerticle.Response = eventBus.request("greet", GreeterVerticle.Request("Bill"))
             println(resp)
         }

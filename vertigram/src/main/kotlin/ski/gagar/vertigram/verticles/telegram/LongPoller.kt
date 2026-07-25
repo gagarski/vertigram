@@ -1,6 +1,5 @@
 package ski.gagar.vertigram.verticles.telegram
 
-import com.fasterxml.jackson.core.type.TypeReference
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import ski.gagar.vertigram.retrying
@@ -8,7 +7,6 @@ import ski.gagar.vertigram.telegram.client.Telegram
 import ski.gagar.vertigram.telegram.client.ThinTelegram
 import ski.gagar.vertigram.telegram.methods.deleteWebhook
 import ski.gagar.vertigram.telegram.types.Update
-import ski.gagar.vertigram.util.jackson.typeReference
 import ski.gagar.vertigram.util.lazy
 import ski.gagar.vertigram.util.logger
 import ski.gagar.vertigram.verticles.telegram.LongPoller.Config
@@ -21,7 +19,6 @@ import java.time.Instant
  * It **publishes** [Update] object received from long polling to [Config.updatePublishingAddress].
  */
 class LongPoller : UpdateReceiver<LongPoller.Config>() {
-    override val configTypeReference: TypeReference<Config> = typeReference()
     private val tg: Telegram by lazy {
         ThinTelegram(vertigram, typedConfig.telegramAddress)
     }

@@ -1,7 +1,5 @@
 package ski.gagar.vertigram.verticles.telegram
 
-import com.fasterxml.jackson.core.type.TypeReference
-import ski.gagar.vertigram.util.jackson.typeReference
 import ski.gagar.vertigram.telegram.types.Update
 import ski.gagar.vertigram.verticles.common.VertigramVerticle
 import ski.gagar.vertigram.verticles.telegram.UpdateDispatcher.Config
@@ -14,7 +12,6 @@ import ski.gagar.vertigram.verticles.telegram.address.TelegramAddress
  * present in the update.
  */
 class UpdateDispatcher : VertigramVerticle<UpdateDispatcher.Config>() {
-    override val configTypeReference: TypeReference<Config> = typeReference()
 
     override suspend fun start() {
         consumer<Update<*>, Unit>(typedConfig.listen) { dispatch(it) }

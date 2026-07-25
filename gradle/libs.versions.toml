@@ -14,7 +14,6 @@ kotlinx-coroutines = "1.11.0"
 kotlinx-html = "0.12.0"
 jooq = "3.21.6"
 postgresql = "42.7.12"
-reflections = "0.10.2"
 slf4j-api = "2.0.18"
 testcontainers = "1.21.4"
 
@@ -48,7 +47,6 @@ jooq = { module = "org.jooq:jooq", version.ref = "jooq" }
 jooq-codegen = { module = "org.jooq:jooq-codegen", version.ref = "jooq" }
 jooq-meta = { module = "org.jooq:jooq-meta", version.ref = "jooq" }
 postgresql = { module = "org.postgresql:postgresql", version.ref = "postgresql" }
-reflections = { module = "org.reflections:reflections", version.ref = "reflections" }
 slf4j-api = { module = "org.slf4j:slf4j-api", version.ref = "slf4j-api" }
 testcontainers = { module = "org.testcontainers:jdbc", version.ref = "testcontainers" }
 kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
@@ -68,6 +66,5 @@ kotlinx-html = ["kotlinx-html", "kotlinx-html-jvm"]
 jooq = ["jooq", "jooq-meta"]
 jooq-codegen = ["jooq-codegen"]
 postgresql = ["postgresql"]
-reflections = ["reflections"]
 slf4j-api = ["slf4j-api"]
 testcontainers = ["testcontainers"]

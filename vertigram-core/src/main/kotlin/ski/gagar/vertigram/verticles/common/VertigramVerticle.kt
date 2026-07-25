@@ -1,6 +1,5 @@
 package ski.gagar.vertigram.verticles.common
 
-import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.JavaType
 import io.vertx.core.Context
 import io.vertx.core.Vertx
@@ -37,15 +36,12 @@ abstract class VertigramVerticle<Config> : CoroutineVerticle() {
     lateinit var vertigram: Vertigram
         private set
 
-    /**
-     * Should be overridden to store [TypeReference] to config
-     *
-     * In most cases it's enough to just call [typeReference]
-     *
-     * @see typeReference
-     * @sample ski.gagar.vertigram.samples.typeReferenceExample
-     */
-    protected abstract val configTypeReference: TypeReference<Config>
+    private val configJavaType: JavaType by lazy {
+        vertigram.objectMapper.typeFactory
+            .constructType(javaClass)
+            .findSuperType(VertigramVerticle::class.java)
+            .containedTypeOrUnknown(0)
+    }
 
     private lateinit var context: Context
 
@@ -80,7 +76,7 @@ abstract class VertigramVerticle<Config> : CoroutineVerticle() {
         this.context = context
         vertigram = vertx.getVertigram(config.getString("vertigramName"))
         val wrapper = config.mapTo<ConfigWrapper<Config>>(
-            vertigram.objectMapper.typeFactory.constructParametricType(ConfigWrapper::class.java, vertigram.objectMapper.constructType(configTypeReference.type)), vertigram.objectMapper
+            vertigram.objectMapper.typeFactory.constructParametricType(ConfigWrapper::class.java, configJavaType), vertigram.objectMapper
         )
         configHolder = ConfigHolder(wrapper.config)
     }

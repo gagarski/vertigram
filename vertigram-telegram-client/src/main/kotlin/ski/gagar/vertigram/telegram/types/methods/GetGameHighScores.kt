@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 import ski.gagar.vertigram.annotations.TelegramCodegen
-import ski.gagar.vertigram.telegram.annotations.TelegramMethod
 import ski.gagar.vertigram.telegram.throttling.HasChatIdLong
 import ski.gagar.vertigram.telegram.types.GameHighScore
 import ski.gagar.vertigram.util.NoPosArgs
@@ -28,9 +27,6 @@ sealed class GetGameHighScores : JsonTelegramCallable<List<GameHighScore>>() {
     /**
      * Inline message case
      */
-    @TelegramMethod(
-        methodName = "getGameHighScores"
-    )
     @TelegramCodegen.Method(
         name = "getGameHighScores"
     )
@@ -42,9 +38,6 @@ sealed class GetGameHighScores : JsonTelegramCallable<List<GameHighScore>>() {
     /**
      * Chat message case
      */
-    @TelegramMethod(
-        methodName = "getGameHighScores"
-    )
     @TelegramCodegen.Method(
         name = "getGameHighScores"
     )

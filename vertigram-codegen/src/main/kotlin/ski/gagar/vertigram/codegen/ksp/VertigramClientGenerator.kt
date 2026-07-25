@@ -1,33 +1,63 @@
 package ski.gagar.vertigram.codegen.ksp
 
 import com.google.devtools.ksp.KspExperimental
+import com.google.devtools.ksp.getAllSuperTypes
 import com.google.devtools.ksp.getAnnotationsByType
-import com.google.devtools.ksp.processing.*
-import com.google.devtools.ksp.symbol.*
+import com.google.devtools.ksp.processing.CodeGenerator
+import com.google.devtools.ksp.processing.Dependencies
+import com.google.devtools.ksp.processing.KSPLogger
+import com.google.devtools.ksp.processing.Resolver
+import com.google.devtools.ksp.processing.SymbolProcessor
+import com.google.devtools.ksp.symbol.ClassKind
+import com.google.devtools.ksp.symbol.KSAnnotated
+import com.google.devtools.ksp.symbol.KSClassDeclaration
+import com.google.devtools.ksp.symbol.KSPropertyDeclaration
+import com.google.devtools.ksp.symbol.KSType
+import com.google.devtools.ksp.symbol.KSTypeParameter
+import com.google.devtools.ksp.symbol.KSValueParameter
+import com.google.devtools.ksp.symbol.Modifier
 import com.google.devtools.ksp.validate
-import com.squareup.kotlinpoet.*
+import com.squareup.kotlinpoet.AnnotationSpec
+import com.squareup.kotlinpoet.BOOLEAN
+import com.squareup.kotlinpoet.ClassName
+import com.squareup.kotlinpoet.CodeBlock
+import com.squareup.kotlinpoet.DOUBLE
+import com.squareup.kotlinpoet.FileSpec
+import com.squareup.kotlinpoet.FunSpec
+import com.squareup.kotlinpoet.KModifier
+import com.squareup.kotlinpoet.MAP
+import com.squareup.kotlinpoet.MemberName
+import com.squareup.kotlinpoet.ParameterSpec
+import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
+import com.squareup.kotlinpoet.PropertySpec
+import com.squareup.kotlinpoet.STAR
+import com.squareup.kotlinpoet.STRING
+import com.squareup.kotlinpoet.TypeName
+import com.squareup.kotlinpoet.TypeSpec
 import com.squareup.kotlinpoet.ksp.toClassName
 import com.squareup.kotlinpoet.ksp.toTypeName
 import com.squareup.kotlinpoet.ksp.writeTo
 import ski.gagar.vertigram.annotations.TelegramCodegen
-import java.util.*
 
 class VertigramClientGenerator(
     private val codeGenerator: CodeGenerator,
     private val logger: KSPLogger,
 ) : SymbolProcessor {
     override fun process(resolver: Resolver): List<KSAnnotated> {
+        val methodDeclarations = resolver.getClassDeclarations(METHOD_ANNOTATION)
+        val typeDeclarations = resolver.getClassDeclarations(TYPE_ANNOTATION)
+        validateDeclarations(methodDeclarations.asSequence() + typeDeclarations.asSequence())
+
+        val methods = methodDeclarations.toMethodInfos()
+        val types = typeDeclarations.toTypeInfos()
         val builders = mutableMapOf<FileSpecBuilderKey, FileSpec.Builder>()
-        val methods = resolver.getMethodsToGenerate()
         for (clazz in methods.values) {
-            clazz.processMethod(builders, methods)
+            clazz.processMethod(builders)
         }
-
-        val types = resolver.getTypesToGenerate()
-
+        generateVertigramTypeHints(methods.values)
 
         for (clazz in types.values) {
-            clazz.processType(builders, types)
+            clazz.processType(builders)
         }
 
         for (bld in builders.values) {
@@ -37,11 +67,171 @@ class VertigramClientGenerator(
         return emptyList()
     }
 
+    private fun validateDeclarations(declarations: Sequence<KSClassDeclaration>) {
+        val invalidDeclarations = declarations
+            .filterNot(KSClassDeclaration::validate)
+            .toList()
+        if (invalidDeclarations.isEmpty()) return
+
+        invalidDeclarations.forEach {
+            logger.error(
+                "Telegram code generation does not support declarations with unresolved types",
+                it
+            )
+        }
+        throw IllegalStateException(
+            "Telegram code generation failed: ${invalidDeclarations.size} declaration(s) have unresolved types"
+        )
+    }
+
+    private fun generateVertigramTypeHints(methods: Collection<TypeInfoMethod>) {
+        if (methods.isEmpty()) return
+
+        val callables = methods
+            .asSequence()
+            .filter { it.callableType != null }
+            .sortedBy { it.className.canonicalName }
+            .toList()
+        validateUniqueTgvAddresses(callables)
+
+        val classStar = ClassName("java.lang", "Class").parameterizedBy(STAR)
+        val descriptorClass = ClassName(TYPE_HINTS_PACKAGE, CALLABLE_DESCRIPTOR)
+        val transportClass = ClassName(TYPE_HINTS_PACKAGE, CALLABLE_TRANSPORT)
+
+        val typeHints = TypeSpec.objectBuilder(TYPE_HINTS_OBJECT)
+            .addAnnotation(
+                AnnotationSpec.builder(Suppress::class)
+                    .addMember("%S", "DEPRECATION")
+                    .build()
+            )
+            .addKdoc("Type hints used by Vertigram to dispatch and deserialize Telegram methods.\n")
+            .addProperty(
+                PropertySpec.builder(
+                    "descriptorByCallable",
+                    MAP.parameterizedBy(classStar, descriptorClass)
+                )
+                    .addKdoc("Concrete Telegram callable classes associated with their descriptors.\n")
+                    .initializer(
+                        CodeBlock.builder()
+                            .add("mapOf<%T, %T>(\n", classStar, descriptorClass)
+                            .indent()
+                            .apply {
+                                callables.forEach {
+                                    add(
+                                        "%T::class.java to %L,\n",
+                                        it.className,
+                                        it.descriptorCodeBlock(descriptorClass, transportClass)
+                                    )
+                                }
+                            }
+                            .unindent()
+                            .add(")")
+                            .build()
+                    )
+                    .build()
+            )
+            .addProperty(
+                PropertySpec.builder(
+                    "descriptorByTgvAddress",
+                    MAP.parameterizedBy(STRING, descriptorClass)
+                )
+                    .addKdoc("Descriptors indexed by callable-specific address segment, derived at runtime.\n")
+                    .initializer("descriptorByCallable.values.associateBy(%T::tgvAddress)", descriptorClass)
+                    .build()
+            )
+
+        FileSpec.builder(TYPE_HINTS_PACKAGE, GENERATED_TYPE_HINTS)
+            .addType(typeHints.build())
+            .build()
+            .writeTo(
+                codeGenerator,
+                Dependencies(
+                    aggregating = true,
+                    *methods.mapNotNull { it.classDecl.containingFile }.distinct().toTypedArray()
+                )
+            )
+    }
+
+    private fun validateUniqueTgvAddresses(callables: Collection<TypeInfoMethod>) {
+        val collisions = callables
+            .groupBy { it.tgvAddress }
+            .filterValues { it.size > 1 }
+        if (collisions.isEmpty()) return
+
+        collisions.forEach { (address, methods) ->
+            val classes = methods.joinToString { it.className.canonicalName }
+            methods.forEach {
+                logger.error("Duplicate Vertigram address '$address' used by $classes", it.classDecl)
+            }
+        }
+        throw IllegalStateException(
+            "Telegram code generation failed: ${collisions.size} duplicate Vertigram address(es)"
+        )
+    }
+
+    private fun TypeInfoMethod.descriptorCodeBlock(
+        descriptorClass: ClassName,
+        transportClass: ClassName
+    ): CodeBlock {
+        val callableType = requireNotNull(callableType)
+        return CodeBlock.builder()
+            .add("%T(\n", descriptorClass)
+            .indent()
+            .add("callableClass = %T::class.java,\n", className)
+            .add("telegramMethodName = %S,\n", getNames(classDecl, annotation).telegramName)
+            .add("tgvAddress = %S,\n", tgvAddress)
+            .add("generateVerticleConsumer = %L,\n", annotation.generateVerticleConsumer)
+            .add(
+                "requestType = TELEGRAM_TYPE_FACTORY.constructType(%T::class.java),\n",
+                className
+            )
+            .add("responseType = %L,\n", callableType.returnType.javaTypeCodeBlock())
+            .add("transport = %T.%L,\n", transportClass, callableType.transport.name)
+            .unindent()
+            .add(")")
+            .build()
+    }
+
+    private fun TypeName.javaTypeCodeBlock(): CodeBlock =
+        if (this is ClassName) {
+            CodeBlock.of(
+                "TELEGRAM_TYPE_FACTORY.constructType(%T::class.%M)",
+                this,
+                JAVA_OBJECT_TYPE
+            )
+        } else {
+            val typeReference = ClassName(
+                "com.fasterxml.jackson.core.type",
+                "TypeReference"
+            ).parameterizedBy(this)
+            CodeBlock.of(
+                "TELEGRAM_TYPE_FACTORY.constructType(object : %T() {}.type)",
+                typeReference
+            )
+        }
+
+    private val TypeInfoMethod.tgvAddress: String
+        get() = annotation.verticleConsumerName.ifEmpty {
+            className.simpleNames
+                .joinToString(".") { it.replaceFirstChar(Char::lowercaseChar) }
+        }
+
     private fun TypeInfoMethod.processMethod(
-        fileSpecBuilders: MutableMap<FileSpecBuilderKey, FileSpec.Builder>,
-        typeInfos: Map<ClassName, TypeInfoMethod>
+        fileSpecBuilders: MutableMap<FileSpecBuilderKey, FileSpec.Builder>
     ) {
         val (className, classDecl, annotation) = this
+        if (!annotation.generateClientMethod) return
+        val resolvedCallableType = callableType
+        if (resolvedCallableType == null) {
+            when (classDecl.classKind) {
+                ClassKind.INTERFACE -> return
+                ClassKind.CLASS -> {
+                    if (Modifier.ABSTRACT in classDecl.modifiers || Modifier.SEALED in classDecl.modifiers) return
+                }
+                else -> {}
+            }
+            throw IllegalStateException("$className has a kind ${classDecl.classKind} which is not supported")
+        }
 
         val methodsFile = fileSpecBuilders.computeIfAbsent(
             FileSpecBuilderKey(
@@ -54,24 +244,21 @@ class VertigramClientGenerator(
 
         when (classDecl.classKind) {
             ClassKind.OBJECT -> {
-                val method = kotlinMethodForObject(classDecl, className, annotation, typeInfos)
-                method?.let { methodsFile.addFunction(it) }
+                methodsFile.addFunction(
+                    kotlinMethodForObject(classDecl, className, annotation, resolvedCallableType.returnType)
+                )
             }
-            ClassKind.INTERFACE -> {}
             ClassKind.CLASS -> {
-                if (classDecl.modifiers.contains(Modifier.ABSTRACT) || classDecl.modifiers.contains(Modifier.SEALED))
-                    return
-                val method = kotlinMethodForClass(classDecl, className, annotation, typeInfos)
+                val method = kotlinMethodForClass(classDecl, className, annotation, resolvedCallableType.returnType)
                 methodsFile.addFunction(method)
             }
-            else -> throw IllegalStateException("$className has a kind ${classDecl.classKind} which is not supported")
+            else -> error("Concrete callable $className has an unsupported kind ${classDecl.classKind}")
 
         }
     }
 
     private fun TypeInfoType.processType(
-        fileSpecBuilders: MutableMap<FileSpecBuilderKey, FileSpec.Builder>,
-        typeInfos: Map<ClassName, TypeInfoType>
+        fileSpecBuilders: MutableMap<FileSpecBuilderKey, FileSpec.Builder>
     ) {
         val (className, classDecl, annotation) = this
 
@@ -109,7 +296,7 @@ class VertigramClientGenerator(
     }
 
     private fun implicitTgMethodName(classDecl: KSClassDeclaration) =
-        classDecl.simpleName.getShortName().replaceFirstChar { it.lowercase(Locale.getDefault()) }
+        classDecl.simpleName.getShortName().replaceFirstChar(Char::lowercaseChar)
 
     private fun constructorParamToMethodParam(param: KSValueParameter,
                                               defaults: KSClassDeclaration?, className: ClassName) =
@@ -282,10 +469,8 @@ class VertigramClientGenerator(
         classDecl: KSClassDeclaration,
         className: ClassName,
         anno: TelegramCodegen.Method,
-        typeInfo: Map<ClassName, TypeInfoMethod>
+        returnType: TypeName
     ): FunSpec {
-        val returnType = methodReturnType(classDecl, typeInfo)
-
         val names = getNames(classDecl, anno)
 
         return FunSpec.builder(names.methodName)
@@ -303,11 +488,12 @@ class VertigramClientGenerator(
             .build()
     }
 
-    private fun kotlinMethodForObject(classDecl: KSClassDeclaration,
-                                      className: ClassName,
-                                      anno: TelegramCodegen.Method,
-                                      typeInfos: Map<ClassName, TypeInfoMethod>): FunSpec? {
-        val returnType = methodReturnType(classDecl, typeInfos)
+    private fun kotlinMethodForObject(
+        classDecl: KSClassDeclaration,
+        className: ClassName,
+        anno: TelegramCodegen.Method,
+        returnType: TypeName
+    ): FunSpec {
         val names = getNames(classDecl, anno)
 
         return FunSpec.builder(names.methodName)
@@ -320,48 +506,34 @@ class VertigramClientGenerator(
             .build()
     }
 
-    private val KSClassDeclaration.superClass
-        get() = superTypes
-            .map { it.resolve() }
-            .filter {
-                val decl = it.declaration
-                decl is KSClassDeclaration && decl.classKind == ClassKind.CLASS }
-            .first()
-
     private val KSType.rawClassName: ClassName
         get() = (declaration as KSClassDeclaration).toClassName()
 
-    private fun methodReturnType(clazz: KSClassDeclaration, typeInfo: Map<ClassName, TypeInfoMethod>): TypeName {
-        var superclass = clazz.superClass
-        var prevSuperclass: KSType? = null
-        var superclassDecl =
-            typeInfo[superclass.rawClassName]?.classDecl ?: throw IllegalArgumentException("Wrong superclass $superclass (no annotation)")
-
-        while (true) {
-            if (superclass.arguments.isNotEmpty() && superclass.rawClassName.canonicalName !in SUPERTYPES) {
-                throw IllegalStateException("Intermediate parametrized classes are not supported $superclass")
-            }
-
-            if (superclass.rawClassName.canonicalName in SUPERTYPES) {
-                break
-            }
-
-            if (superclass.rawClassName in ROOT_CLASSES || superclass == prevSuperclass) {
-                throw IllegalStateException("Wrong superclass")
-            }
-
-            prevSuperclass = superclass
-            superclass = superclassDecl.superClass
-
-            superclassDecl =
-                typeInfo[superclass.rawClassName]?.classDecl ?: throw IllegalArgumentException("Wrong superclass")
+    private fun resolveCallableType(clazz: KSClassDeclaration): CallableType {
+        val callableSupertype = clazz.getAllSuperTypes()
+            .filter { it.declaration.qualifiedName?.asString() in SUPERTYPES }
+            .singleOrNull()
+            ?: throw IllegalArgumentException("$clazz should have exactly one Telegram callable supertype")
+        val returnTypeArgument = callableSupertype.arguments.singleOrNull()
+            ?: throw IllegalArgumentException("$clazz is not a proper tg method")
+        val resolvedReturnType = returnTypeArgument.type?.resolve()
+            ?: throw IllegalArgumentException("$clazz has no concrete Telegram callable return type")
+        if (resolvedReturnType.containsTypeParameter()) {
+            throw IllegalStateException(
+                "Generic type substitution through intermediate Telegram callable classes is not supported: $clazz"
+            )
         }
-
-        if (superclass.arguments.isEmpty()  || superclass.rawClassName.canonicalName !in SUPERTYPES)
-            throw IllegalArgumentException("$clazz is not a proper tg method")
-
-        return superclass.arguments.firstOrNull()?.toTypeName() ?: throw IllegalArgumentException("$clazz is not a proper tg method")
+        val transport = when (callableSupertype.declaration.qualifiedName?.asString()) {
+            JSON_CALLABLE -> CallableTransport.JSON
+            MULTIPART_CALLABLE -> CallableTransport.MULTIPART
+            else -> error("Unsupported Telegram callable type $callableSupertype")
+        }
+        return CallableType(returnTypeArgument.toTypeName(), transport)
     }
+
+    private fun KSType.containsTypeParameter(): Boolean =
+        declaration is KSTypeParameter ||
+                arguments.any { it.type?.resolve()?.containsTypeParameter() == true }
 
     private fun FunSpec.Builder.addAutoGeneratedKdoc(className: ClassName) = apply {
         addKdoc("Auto-generated function, please see [%T] docs.", className)
@@ -401,61 +573,94 @@ class VertigramClientGenerator(
             .build()
     }
 
-    @OptIn(KspExperimental::class)
-    private fun Resolver.getMethodsToGenerate(): Map<ClassName, TypeInfoMethod> {
-        val types = this.getSymbolsWithAnnotation("ski.gagar.vertigram.annotations.TelegramCodegen.Method")
+    private fun Resolver.getClassDeclarations(annotationName: String): List<KSClassDeclaration> =
+        getSymbolsWithAnnotation(annotationName)
             .filterIsInstance(KSClassDeclaration::class.java)
-            .filter { it.validate() }
+            .toList()
+
+    private val KSClassDeclaration.isConcreteCallable: Boolean
+        get() = when (classKind) {
+            ClassKind.OBJECT -> true
+            ClassKind.CLASS ->
+                Modifier.ABSTRACT !in modifiers &&
+                        Modifier.SEALED !in modifiers
+            else -> false
+        }
+
+    @OptIn(KspExperimental::class)
+    private fun Iterable<KSClassDeclaration>.toMethodInfos(): Map<ClassName, TypeInfoMethod> =
+        asSequence()
             .map { it to it.getAnnotationsByType(TelegramCodegen.Method::class).first() }
-            .toList()
-        return types.asSequence().map { (classDecl, anno) ->
-            val className = classDecl.toClassName()
-            className to TypeInfoMethod(className, classDecl, anno)
-        }.toMap()
-    }
+            .associate { (classDecl, annotation) ->
+                val className = classDecl.toClassName()
+                className to TypeInfoMethod(
+                    className,
+                    classDecl,
+                    annotation,
+                    classDecl.takeIf { it.isConcreteCallable }?.let(::resolveCallableType)
+                )
+            }
 
     @OptIn(KspExperimental::class)
-    private fun Resolver.getTypesToGenerate(): Map<ClassName, TypeInfoType> {
-        val types = this.getSymbolsWithAnnotation("ski.gagar.vertigram.annotations.TelegramCodegen.Type")
-            .filterIsInstance(KSClassDeclaration::class.java)
-            .filter { it.validate() }
+    private fun Iterable<KSClassDeclaration>.toTypeInfos(): Map<ClassName, TypeInfoType> =
+        asSequence()
             .map { it to it.getAnnotationsByType(TelegramCodegen.Type::class).first() }
-            .toList()
-        return types.asSequence().map { (classDecl, anno) ->
-            val className = classDecl.toClassName()
-            className to TypeInfoType(className, classDecl, anno)
-        }.toMap()
+            .associate { (classDecl, annotation) ->
+                val className = classDecl.toClassName()
+                className to TypeInfoType(className, classDecl, annotation)
+            }
+
+    private data class TypeInfoMethod(
+        val className: ClassName,
+        val classDecl: KSClassDeclaration,
+        val annotation: TelegramCodegen.Method,
+        val callableType: CallableType?
+    )
+
+    private data class TypeInfoType(
+        val className: ClassName,
+        val classDecl: KSClassDeclaration,
+        val annotation: TelegramCodegen.Type
+    )
+
+    private data class CallableType(
+        val returnType: TypeName,
+        val transport: CallableTransport
+    )
+
+    private enum class CallableTransport {
+        JSON,
+        MULTIPART
     }
 
-    data class TypeInfoMethod(val className: ClassName, val classDecl: KSClassDeclaration, val annotation: TelegramCodegen.Method)
-    data class TypeInfoType(val className: ClassName, val classDecl: KSClassDeclaration, val annotation: TelegramCodegen.Type)
-    data class FileSpecBuilderKey(val packageName: String, val fileName: String)
+    private data class FileSpecBuilderKey(val packageName: String, val fileName: String)
 
-    data class FunctionCall(
+    private data class FunctionCall(
         val formatString: String,
         val parameters: List<Any>
     )
 
-    data class WrapConfig(
+    private data class WrapConfig(
         val wrapper: ClassName,
         val wrapperParam: String,
         val wrapperParamMapping: Map<String, String>
     )
 
-    data class Names(val methodName: String, val telegramName: String)
+    private data class Names(val methodName: String, val telegramName: String)
 
     companion object {
+        private const val METHOD_ANNOTATION =
+            "ski.gagar.vertigram.annotations.TelegramCodegen.Method"
+        private const val TYPE_ANNOTATION =
+            "ski.gagar.vertigram.annotations.TelegramCodegen.Type"
         private const val TG_METHODS = "TelegramMethods"
         private const val TG_CREATORS = "TelegramCreators"
         private const val TG_CONSTRUCTORS = "TelegramConstructors"
-        private val SUPERTYPES = setOf(
-            "ski.gagar.vertigram.telegram.types.methods.JsonTelegramCallable",
+        private const val JSON_CALLABLE =
+            "ski.gagar.vertigram.telegram.types.methods.JsonTelegramCallable"
+        private const val MULTIPART_CALLABLE =
             "ski.gagar.vertigram.telegram.types.methods.MultipartTelegramCallable"
-        )
-        private val ROOT_CLASSES = setOf(
-            ClassName("java.lang", "Object"),
-            ClassName("kotlin", "Any"),
-        )
+        private val SUPERTYPES = setOf(JSON_CALLABLE, MULTIPART_CALLABLE)
         private val WRAP_CONFIGS = listOf(
             WrapConfig(
                 wrapper = ClassName("ski.gagar.vertigram.telegram.types.richtext", "RichText"),
@@ -523,8 +728,14 @@ class VertigramClientGenerator(
         )
 
         private val NO_POS_ARGS_TYPE = ClassName("ski.gagar.vertigram.util", "NoPosArgs")
+        private val JAVA_OBJECT_TYPE = MemberName("kotlin.jvm", "javaObjectType")
         private const val NO_POS_ARGS = "noPosArgs"
         private const val METHODS_PACKAGE = "ski.gagar.vertigram.telegram.methods"
+        private const val TYPE_HINTS_PACKAGE = "ski.gagar.vertigram.util"
+        private const val GENERATED_TYPE_HINTS = "GeneratedVertigramTypeHints"
+        private const val TYPE_HINTS_OBJECT = "VertigramTypeHints"
+        private const val CALLABLE_DESCRIPTOR = "TelegramCallableDescriptor"
+        private const val CALLABLE_TRANSPORT = "TelegramCallableTransport"
         private const val CREATE = "create"
         private const val INVOKE = "invoke"
     }
