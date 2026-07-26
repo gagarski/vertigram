@@ -42,6 +42,17 @@ fun defaultVertigramMapper(): ObjectMapper =
         .registerModule(KotlinModule.Builder().build())
         .registerModule(JavaTimeModule())
 
+/**
+ * Wait until this consumer is registered and return it.
+ *
+ * This is useful when consumer readiness must be established before startup can be considered complete,
+ * especially when registration needs to propagate across a clustered event bus.
+ */
+suspend fun <T> MessageConsumer<T>.awaitRegistration(): MessageConsumer<T> {
+    completion().coAwait()
+    return this
+}
+
 
 /**
  * Root Vertigram object.
