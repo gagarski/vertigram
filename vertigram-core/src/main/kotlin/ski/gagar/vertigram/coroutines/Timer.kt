@@ -7,6 +7,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.time.Duration
 import kotlin.coroutines.CoroutineContext
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.toKotlinDuration
 
 /**
  * Run [task] after [delay]
@@ -20,7 +22,7 @@ fun CoroutineScope.setTimer(
     context: CoroutineContext = this.coroutineContext,
     task: suspend () -> Unit
 ) = launch {
-    delay(delay.toMillis())
+    delay(delay.toKotlinDuration())
     withContext(context) {
         task()
     }

@@ -28,8 +28,8 @@ sealed interface Reply<T> {
     }
 
     companion object {
-        fun <T> internalError() = Error<T>(VertigramException("Internal error"))
-        fun <T> internalError(msg: String?) = Error<T>(VertigramException(msg ?: "Internal error"))
+        fun <T> internalError() = Error<T>(VertigramInternalException("Internal error"))
+        fun <T> internalError(msg: String?) = Error<T>(VertigramInternalException(msg ?: "Internal error"))
     }
 }
 
@@ -62,11 +62,12 @@ internal fun <Result> Message<JsonObject>.replyWithThrowable(
     }
 
     val stackTrace = t.stackTrace
-    t.stackTrace = arrayOf()
-
-    val jo = response.toJsonObject(vertigram.objectMapper)
-
-    t.stackTrace = stackTrace
+    val jo = try {
+        t.stackTrace = arrayOf()
+        response.toJsonObject(vertigram.objectMapper)
+    } finally {
+        t.stackTrace = stackTrace
+    }
 
     reply(jo, options)
 }

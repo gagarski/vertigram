@@ -1,5 +1,8 @@
 package ski.gagar.vertigram.verticles.common
 
+import io.vertx.core.eventbus.MessageConsumer
+import io.vertx.core.json.JsonObject
+import io.vertx.kotlin.coroutines.coAwait
 import ski.gagar.vertigram.Vertigram
 import ski.gagar.vertigram.util.lazy
 import ski.gagar.vertigram.util.logger
@@ -19,6 +22,7 @@ import ski.gagar.vertigram.verticles.common.messages.DeathReason
  */
 abstract class HierarchyVerticle<Config> : VertigramVerticle<Config>() {
     private val children = mutableSetOf<String>()
+    private lateinit var deathNoticeConsumer: MessageConsumer<JsonObject>
     private var deathReason: DeathReason? = null
 
     /**
@@ -31,7 +35,7 @@ abstract class HierarchyVerticle<Config> : VertigramVerticle<Config>() {
         logger.lazy.debug {
             "$name: adding handleDeathNotice handler on $DEATH_NOTICE_ADDRESS"
         }
-        consumer(DEATH_NOTICE_ADDRESS, function = ::handleDeathNotice)
+        deathNoticeConsumer = consumer(DEATH_NOTICE_ADDRESS, function = ::handleDeathNotice)
         logger.lazy.debug {
             "$name: adding handleParentDeathNotice handler on ${parentDeathNoticeAddress(deploymentID)}"
         }
@@ -40,6 +44,10 @@ abstract class HierarchyVerticle<Config> : VertigramVerticle<Config>() {
 
 
     override suspend fun stop() {
+        // Do not publish the verticle's own death notice back to a consumer which
+        // deployment cleanup is about to unregister.
+        deathNoticeConsumer.unregister().coAwait()
+
         val notice = DeathNotice(deploymentID, deathReason ?: DeathReason.FAILED)
         logger.lazy.debug {
             "$name: publishing $notice to $DEATH_NOTICE_ADDRESS"
