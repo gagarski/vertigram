@@ -4,6 +4,8 @@ import io.vertx.core.Handler
 import io.vertx.core.streams.ReadStream
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
 /**
  * [ReadStream] which yields data from concatenated `streams`
@@ -14,7 +16,7 @@ import kotlinx.coroutines.launch
 class ConcatStream<T> internal constructor(
     private val scope: CoroutineScope,
     streams: Sequence<ReadStreamWrapper<T, ReadStream<T>>>
-) : ReadStream<T> {
+) : CloseableReadStream<T> {
     private enum class State {
         INITIAL,
         STARTED,
@@ -32,12 +34,13 @@ class ConcatStream<T> internal constructor(
     private var state = State.INITIAL
     private var current: ReadStreamWrapper<T, ReadStream<T>>? = null
     private var demand: Long = Long.MAX_VALUE
+    private val lifecycleMutex = Mutex()
 
-    private inline fun doCatching(block: () -> Unit) {
+    private inline fun notifyExceptionSafely(block: () -> Unit) {
         try {
             block()
-        } catch (t: Throwable) {
-            exceptionHandler?.handle(t)
+        } catch (_: Throwable) {
+            // An exception handler cannot report its own failure.
         }
     }
 
@@ -46,12 +49,12 @@ class ConcatStream<T> internal constructor(
         else next()
     }
 
-    private fun fireEnd() {
-        doCatching {
+    private fun notifyEnd() {
+        try {
             endHandler?.handle(null)
+        } catch (t: Throwable) {
+            notifyException(t)
         }
-        demand = 0
-        state = State.DONE
     }
 
     internal suspend fun prefetchFirst() {
@@ -61,21 +64,49 @@ class ConcatStream<T> internal constructor(
         state = State.STARTED
     }
 
-    private suspend fun switchStreams() {
-        current?.close()
-        val nextW = nextOrNull()
+    private suspend fun switchStreams(completed: ReadStreamWrapper<T, ReadStream<T>>) {
+        var ended = false
+        var failure: Throwable? = null
 
-        nextW?.open()
-        current = nextW
-        attachHandlers()
+        lifecycleMutex.withLock {
+            if (state == State.DONE || current !== completed) return
+
+            current = null
+            try {
+                completed.close()
+                if (state == State.DONE) return
+
+                val next = nextOrNull()
+                if (next == null) {
+                    demand = 0
+                    state = State.DONE
+                    ended = true
+                    return@withLock
+                }
+
+                current = next
+                next.open()
+                attachHandlers(next)
+            } catch (t: Throwable) {
+                state = State.DONE
+                demand = 0
+                val current = current
+                this.current = null
+                try {
+                    current?.close()
+                } catch (closeFailure: Throwable) {
+                    t.addSuppressed(closeFailure)
+                }
+                failure = t
+            }
+        }
+
+        failure?.let(::notifyException)
+        if (ended) notifyEnd()
     }
 
-    private fun attachHandlers() {
-        val currentStream = current?.get()
-        if (currentStream == null) {
-            fireEnd()
-            return
-        }
+    private fun attachHandlers(wrapper: ReadStreamWrapper<T, ReadStream<T>>) {
+        val currentStream = wrapper.get()
 
         if (paused) {
             currentStream.pause()
@@ -85,14 +116,57 @@ class ConcatStream<T> internal constructor(
             currentStream.fetch(demand)
         }
 
-        currentStream.exceptionHandler(exceptionHandler)
+        currentStream.exceptionHandler { throwable ->
+            currentStream.pause()
+            scope.launch {
+                fail(wrapper, throwable)
+            }
+        }
 
         currentStream.endHandler {
             scope.launch {
-                switchStreams()
+                switchStreams(wrapper)
             }
         }
         currentStream.handler(demandTrackingHandler(handler))
+    }
+
+    private suspend fun fail(source: ReadStreamWrapper<T, ReadStream<T>>, throwable: Throwable) {
+        var failure: Throwable? = null
+
+        lifecycleMutex.withLock {
+            if (state == State.DONE || current !== source) return
+
+            state = State.DONE
+            demand = 0
+            current = null
+            try {
+                source.close()
+            } catch (closeFailure: Throwable) {
+                throwable.addSuppressed(closeFailure)
+            }
+            failure = throwable
+        }
+
+        failure?.let(::notifyException)
+    }
+
+    private fun notifyException(throwable: Throwable) {
+        notifyExceptionSafely {
+            exceptionHandler?.handle(throwable)
+        }
+    }
+
+    override suspend fun close() {
+        lifecycleMutex.withLock {
+            if (state == State.DONE) return
+
+            state = State.DONE
+            demand = 0
+            val current = current
+            this.current = null
+            current?.close()
+        }
     }
 
     override fun pause(): ReadStream<T> = apply {
@@ -127,7 +201,11 @@ class ConcatStream<T> internal constructor(
         when (state) {
             State.STARTED -> {
                 state = State.WORKING
-                attachHandlers()
+                current?.let(::attachHandlers) ?: run {
+                    state = State.DONE
+                    demand = 0
+                    notifyEnd()
+                }
             }
             State.WORKING -> {
                 current?.get()?.handler(demandTrackingHandler(handler))
@@ -143,9 +221,6 @@ class ConcatStream<T> internal constructor(
 
     override fun exceptionHandler(exceptionHandler: Handler<Throwable>?): ReadStream<T> = apply {
         this.exceptionHandler = exceptionHandler
-        if (state == State.WORKING) {
-            current?.get()?.exceptionHandler(exceptionHandler)
-        }
     }
 
     override fun endHandler(endHandler: Handler<Void?>?): ReadStream<T> = apply {

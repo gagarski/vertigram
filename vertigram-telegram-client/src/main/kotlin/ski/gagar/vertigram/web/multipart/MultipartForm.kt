@@ -8,9 +8,12 @@ import io.vertx.ext.web.client.HttpRequest
 import io.vertx.ext.web.client.HttpResponse
 import io.vertx.kotlin.coroutines.coAwait
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.withContext
 import org.apache.commons.lang3.RandomStringUtils
 import ski.gagar.vertigram.util.io.ConcatStream
+import ski.gagar.vertigram.util.io.CloseableReadStream
 import ski.gagar.vertigram.util.io.ReadStreamWrapper
 
 class MultipartForm(val parts: List<Part>) {
@@ -37,11 +40,11 @@ class MultipartForm(val parts: List<Part>) {
         return length
     }
 
-    private suspend fun stream(scope: CoroutineScope): ReadStream<Buffer> =
+    private suspend fun stream(scope: CoroutineScope): CloseableReadStream<Buffer> =
         scope.ConcatStream(mutableListOf<ReadStreamWrapperBuffer>().apply {
             for (item in parts) {
                 add(ReadStreamWrapper.ofNonCloseable(boundaryLine.asSingletonStream()))
-                add(ReadStreamWrapper.ofNonCloseable(item.stream(scope)))
+                add(ReadStreamWrapper.ofCloseable(item.stream(scope)))
             }
             add(ReadStreamWrapper.ofNonCloseable(boundaryLineLast.asSingletonStream()))
         })
@@ -58,7 +61,14 @@ class MultipartForm(val parts: List<Part>) {
             }
 
         }
-        return@coroutineScope req.sendStream(stream(this@coroutineScope)).coAwait()
+        val stream = stream(this@coroutineScope)
+        try {
+            req.sendStream(stream).coAwait()
+        } finally {
+            withContext(NonCancellable) {
+                stream.close()
+            }
+        }
     }
 
 

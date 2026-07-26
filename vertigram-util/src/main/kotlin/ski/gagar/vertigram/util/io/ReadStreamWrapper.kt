@@ -13,24 +13,28 @@ class ReadStreamWrapper<T, out S : ReadStream<T>>(
     private val provider: suspend () -> S,
     private val closer: suspend (stream: S) -> Unit = { }
 ) {
-    private lateinit var stream: S
+    private var stream: S? = null
+    private var closed = false
 
     suspend fun open(): S {
-        stream = provider()
-        return stream
+        check(stream == null && !closed) {
+            "Stream wrapper can only be opened once"
+        }
+        return provider().also {
+            stream = it
+        }
     }
 
     fun get(): S {
-        require(this::stream.isInitialized) {
+        return requireNotNull(stream) {
             "Stream should be opened"
         }
-        return stream
     }
 
     suspend fun close() {
-        require(this::stream.isInitialized) {
-            "Stream should be opened"
-        }
+        if (closed) return
+        val stream = stream ?: return
+        closed = true
         closer(stream)
     }
 

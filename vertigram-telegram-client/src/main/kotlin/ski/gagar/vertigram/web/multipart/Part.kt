@@ -5,6 +5,7 @@ import io.vertx.core.buffer.Buffer
 import io.vertx.core.streams.ReadStream
 import kotlinx.coroutines.CoroutineScope
 import ski.gagar.vertigram.util.io.ConcatStream
+import ski.gagar.vertigram.util.io.CloseableReadStream
 import ski.gagar.vertigram.util.io.ReadStreamWrapper
 
 typealias ReadStreamWrapperBuffer = ReadStreamWrapper<Buffer, ReadStream<Buffer>>
@@ -38,7 +39,7 @@ abstract class Part {
 
     private fun trailingLength() = NL.length.toLong()
 
-    suspend fun stream(scope: CoroutineScope): ReadStream<Buffer> =
+    suspend fun stream(scope: CoroutineScope): CloseableReadStream<Buffer> =
         scope.ConcatStream(
             ReadStreamWrapper.ofNonCloseable(headersBuffer.asSingletonStream()),
             getAndAcquireDataStream(),
