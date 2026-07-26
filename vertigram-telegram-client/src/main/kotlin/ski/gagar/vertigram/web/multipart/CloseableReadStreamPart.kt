@@ -11,7 +11,6 @@ class CloseableReadStreamPart(
     filename: String,
     private val streamProvider: suspend () -> CloseableReadStream<Buffer>,
     contentType: String = HttpHeaderValues.APPLICATION_OCTET_STREAM.toString(),
-    private val dataLength: Long? = null,
     private val owned: Boolean = true
 ) : Part() {
     override val contentDisposition = formDataContentDisposition(name, filename)
@@ -19,8 +18,6 @@ class CloseableReadStreamPart(
     override val headers = linkedMapOf(
         HttpHeaderNames.CONTENT_TYPE.toString() to contentType
     )
-    override suspend fun dataLength(): Long? = dataLength
-
     override suspend fun dataStreamWrapper(): ReadStreamWrapperBuffer =
         if (owned)
             ReadStreamWrapper.ofCloseable(streamProvider)

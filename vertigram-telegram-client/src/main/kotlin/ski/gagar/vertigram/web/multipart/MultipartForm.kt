@@ -24,22 +24,6 @@ class MultipartForm(val parts: List<Part>) {
 
     constructor(vararg items: Part) : this(items.toList())
 
-    private suspend fun contentLength(): Long? {
-        if (parts.any { it.length() == null }) {
-            return null
-        }
-
-        var length = 0L
-        for (item in parts) {
-            val len = item.length() ?: return null
-
-            length += boundaryLine.length
-            length += len
-        }
-        length += boundaryLineLast.length
-        return length
-    }
-
     private suspend fun stream(scope: CoroutineScope): CloseableReadStream<Buffer> =
         scope.ConcatStream(mutableListOf<ReadStreamWrapperBuffer>().apply {
             for (item in parts) {
@@ -56,10 +40,6 @@ class MultipartForm(val parts: List<Part>) {
                 "${HttpHeaderNames.CONTENT_TYPE}",
                 "${HttpHeaderValues.MULTIPART_FORM_DATA}; boundary=$boundary"
             )
-            contentLength()?.let {
-                putHeader("${HttpHeaderNames.CONTENT_LENGTH}", "$it")
-            }
-
         }
         val stream = stream(this@coroutineScope)
         try {

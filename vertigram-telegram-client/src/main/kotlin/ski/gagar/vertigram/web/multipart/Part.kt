@@ -25,8 +25,6 @@ abstract class Part {
         buf.appendString(NL)
     }
 
-    private fun headersLength() = headersBuffer.length().toLong()
-
     protected abstract suspend fun dataStreamWrapper(): ReadStreamWrapperBuffer
 
     private suspend fun getAndAcquireDataStream(): ReadStreamWrapperBuffer {
@@ -35,19 +33,12 @@ abstract class Part {
         return streamWrapper
     }
 
-    protected open suspend fun dataLength(): Long? = null
-
-    private fun trailingLength() = NL.length.toLong()
-
     suspend fun stream(scope: CoroutineScope): CloseableReadStream<Buffer> =
         scope.ConcatStream(
             ReadStreamWrapper.ofNonCloseable(headersBuffer.asSingletonStream()),
             getAndAcquireDataStream(),
             ReadStreamWrapper.ofNonCloseable(NL.asSingletonStream()),
         )
-    suspend fun length() = dataLength()?.let {
-        headersLength() + it + trailingLength()
-    }
 
     companion object
 }

@@ -8,8 +8,6 @@ class FieldPart(name: String, value: Any) : Part() {
 
     private val buf = value.toString().asBuffer()
 
-    override suspend fun dataLength(): Long = buf.length().toLong()
-
     override suspend fun dataStreamWrapper(): ReadStreamWrapperBuffer =
         ReadStreamWrapper.ofNonCloseable(SingletonStream(buf))
 }

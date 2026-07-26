@@ -11,7 +11,6 @@ class ReadStreamPart(
     filename: String,
     private val streamProvider: suspend () -> ReadStream<Buffer>,
     contentType: String = HttpHeaderValues.APPLICATION_OCTET_STREAM.toString(),
-    private val dataLength: Long? = null,
     private val closer: (suspend (stream: ReadStream<Buffer>) -> Unit) = {}
 ) : Part() {
     override val contentDisposition = formDataContentDisposition(name, filename)
@@ -20,8 +19,6 @@ class ReadStreamPart(
     override val headers = linkedMapOf(
         HttpHeaderNames.CONTENT_TYPE.toString() to contentType
     )
-
-    override suspend fun dataLength(): Long? = dataLength
 
     override suspend fun dataStreamWrapper(): ReadStreamWrapperBuffer =
         ReadStreamWrapper.of(streamProvider, closer)
