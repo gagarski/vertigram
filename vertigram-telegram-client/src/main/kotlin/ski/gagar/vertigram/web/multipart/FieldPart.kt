@@ -4,7 +4,7 @@ import ski.gagar.vertigram.util.io.ReadStreamWrapper
 import ski.gagar.vertigram.util.io.SingletonStream
 
 class FieldPart(name: String, value: Any) : Part() {
-    override val contentDisposition = """form-data; name="$name""""
+    override val contentDisposition = formDataContentDisposition(name)
 
     private val buf = value.toString().asBuffer()
 

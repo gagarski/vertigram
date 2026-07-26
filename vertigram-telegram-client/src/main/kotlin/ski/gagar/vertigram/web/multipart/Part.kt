@@ -51,3 +51,25 @@ abstract class Part {
 
     companion object
 }
+
+internal fun formDataContentDisposition(name: String, filename: String? = null): String = buildString {
+    append("form-data; name=")
+    appendQuotedContentDispositionValue("name", name)
+    if (filename != null) {
+        append("; filename=")
+        appendQuotedContentDispositionValue("filename", filename)
+    }
+}
+
+private fun StringBuilder.appendQuotedContentDispositionValue(parameter: String, value: String) {
+    require(value.none(Char::isISOControl)) {
+        "Multipart Content-Disposition $parameter contains a control character"
+    }
+
+    append('"')
+    value.forEach { char ->
+        if (char == '"' || char == '\\') append('\\')
+        append(char)
+    }
+    append('"')
+}

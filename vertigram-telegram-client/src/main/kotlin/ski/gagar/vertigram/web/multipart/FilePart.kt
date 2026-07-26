@@ -12,8 +12,7 @@ class FilePart(name: String,
                contentType: String = HttpHeaderValues.APPLICATION_OCTET_STREAM.toString(),
                private val owned: Boolean = true
 ) : Part() {
-    override val contentDisposition =
-        """form-data; name=$name; filename=$filename"""
+    override val contentDisposition = formDataContentDisposition(name, filename)
 
     override val headers = linkedMapOf(
         HttpHeaderNames.CONTENT_TYPE.toString() to contentType

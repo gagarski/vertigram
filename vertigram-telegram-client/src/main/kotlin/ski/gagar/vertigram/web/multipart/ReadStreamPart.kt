@@ -14,8 +14,7 @@ class ReadStreamPart(
     private val dataLength: Long? = null,
     private val closer: (suspend (stream: ReadStream<Buffer>) -> Unit) = {}
 ) : Part() {
-    override val contentDisposition =
-        """form-data; name=$name; filename=$filename"""
+    override val contentDisposition = formDataContentDisposition(name, filename)
 
 
     override val headers = linkedMapOf(
