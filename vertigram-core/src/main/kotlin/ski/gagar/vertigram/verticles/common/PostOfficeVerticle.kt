@@ -35,9 +35,9 @@ import java.util.*
  *  - [PostOfficeVerticle] stops publishing messages to the subscriber as they arrive
  *  - Nothing is removed from the mailboxes
  *
- *  [PostOfficeVerticle] tracks forward receipts, meaning if the subscriber unsibscribes and then subscribes
+ *  [PostOfficeVerticle] tracks forwarding attempts, meaning if the subscriber unsubscribes and then subscribes
  *  again using the same address (only addresses are used to identify subscribers), [PostOfficeVerticle]
- *  will track which of the stored messages the subscriber has already received and won't resend them.
+ *  will track which stored messages were already forwarded to it and won't forward them again.
  *
  *  @param Config Configuration type
  *  @param Message Message type
@@ -97,7 +97,7 @@ abstract class PostOfficeVerticle<
 
     private val mailboxes: MutableMap<Discriminator, MutableList<Envelope>> = mutableMapOf()
     private val subscriptions: MutableMap<Discriminator, MutableSet<SubscriptionInfo>> = mutableMapOf()
-    private val receipts: MutableMap<String, MutableSet<Receipt>> = mutableMapOf()
+    private val forwardedTo: MutableMap<String, MutableSet<String>> = mutableMapOf()
 
     /**
      * Get [Discriminator] for [Message], should be overridden by subclasses.
@@ -123,6 +123,8 @@ abstract class PostOfficeVerticle<
 
 
     override suspend fun start() {
+        super.start()
+
         vertx.setPeriodic(cleanupPeriod.toMillis()) {
             launch {
                 cleanUp()
@@ -202,31 +204,33 @@ abstract class PostOfficeVerticle<
         (subscriptions[discriminator] ?: mutableSetOf()).remove(req)
     }
 
-    private fun cleanUp() {
-        logger.lazy.debug {
-            "Started clean up in post office $name"
-        }
-        val retentionDate = Instant.now() - storagePeriod
-        val boxIter = mailboxes.iterator()
-
-        while (boxIter.hasNext()) {
-            val (_, box) = boxIter.next()
-            val envIter = box.iterator()
-
-            while (envIter.hasNext()) {
-                val env = envIter.next()
-
-                if (env.arrivalDate < retentionDate) {
-                    logger.lazy.debug {
-                        "Post office $name has $env thrown off due to its expiration"
-                    }
-                    envIter.remove()
-                    receipts.remove(env.id)
-                }
+    private suspend fun cleanUp() {
+        stateMutex.withLock {
+            logger.lazy.debug {
+                "Started clean up in post office $name"
             }
+            val retentionDate = Instant.now() - storagePeriod
+            val boxIter = mailboxes.iterator()
 
-            if (box.isEmpty()) {
-                boxIter.remove()
+            while (boxIter.hasNext()) {
+                val (_, box) = boxIter.next()
+                val envIter = box.iterator()
+
+                while (envIter.hasNext()) {
+                    val env = envIter.next()
+
+                    if (env.arrivalDate < retentionDate) {
+                        logger.lazy.debug {
+                            "Post office $name has $env thrown off due to its expiration"
+                        }
+                        envIter.remove()
+                        forwardedTo.remove(env.id)
+                    }
+                }
+
+                if (box.isEmpty()) {
+                    boxIter.remove()
+                }
             }
         }
     }
@@ -244,9 +248,9 @@ abstract class PostOfficeVerticle<
     }
 
     private suspend fun passEnvelopeToSubscriber(envelope: Envelope, subscription: SubscriptionInfo) {
-        if (envelope.receipt(subscription.address) in (receipts[envelope.id] ?: setOf())) {
+        if (subscription.address in (forwardedTo[envelope.id] ?: setOf())) {
             logger.lazy.debug {
-                "Post office $name is skipping passing $envelope to $subscription because it has already received it before"
+                "Post office $name is skipping passing $envelope to $subscription because it has already been forwarded"
             }
             return
         }
@@ -261,7 +265,8 @@ abstract class PostOfficeVerticle<
             "Passing $envelope to $subscription"
         }
         vertigram.eventBus.publish(subscription.address, envelope.message)
-        receipts.getOrPut(envelope.id) { mutableSetOf() }.add(envelope.receipt(subscription.address))
+        // Event-bus publish has no delivery acknowledgement, so this records a forwarding attempt.
+        forwardedTo.getOrPut(envelope.id) { mutableSetOf() }.add(subscription.address)
     }
 
     /**
@@ -277,11 +282,8 @@ abstract class PostOfficeVerticle<
         val discriminator: D
     }
 
-    private data class Receipt(val id: String, val address: String)
     private inner class Envelope(val message: Message, val arrivalDate: Instant = Instant.now(),
-                                 val id: String  = UUID.randomUUID().toString()) {
-        fun receipt(address: String) = Receipt(id, address)
-
+                                  val id: String  = UUID.randomUUID().toString()) {
         override fun toString(): String {
             return "Envelope(message=$message, arrivalDate=$arrivalDate, id='$id')"
         }
