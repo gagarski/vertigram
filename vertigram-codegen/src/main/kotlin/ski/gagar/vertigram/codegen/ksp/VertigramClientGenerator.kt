@@ -25,13 +25,23 @@ class VertigramClientGenerator(
         val methods = methodDeclarations.toMethodInfos()
         val types = typeDeclarations.toTypeInfos()
         val fileSpecBuilders = mutableMapOf<FileSpecBuilderKey, FileSpec.Builder>()
+        val sourceFiles = (methodDeclarations.asSequence() + typeDeclarations.asSequence())
+            .mapNotNull { it.containingFile }
+            .distinct()
+            .toList()
 
         methods.values.forEach { it.addClientMethodTo(fileSpecBuilders) }
         types.values.forEach { it.addCreatorFunctionsTo(fileSpecBuilders) }
         typeHintsGenerator.generate(methods.values)
 
         fileSpecBuilders.values.forEach {
-            it.build().writeTo(codeGenerator, Dependencies(aggregating = true))
+            it.build().writeTo(
+                codeGenerator,
+                Dependencies(
+                    aggregating = true,
+                    *sourceFiles.toTypedArray()
+                )
+            )
         }
 
         return emptyList()

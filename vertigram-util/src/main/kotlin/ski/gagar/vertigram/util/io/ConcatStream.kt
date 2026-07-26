@@ -108,13 +108,10 @@ class ConcatStream<T> internal constructor(
     private fun attachHandlers(wrapper: ReadStreamWrapper<T, ReadStream<T>>) {
         val currentStream = wrapper.get()
 
-        if (paused) {
-            currentStream.pause()
-        }
-
-        if (demand != Long.MAX_VALUE && demand != 0L) {
-            currentStream.fetch(demand)
-        }
+        // Establish a known state before attaching the data handler. Apart from
+        // preserving backpressure, this prevents a synchronously-emitting source
+        // from delivering data before all handlers are installed.
+        currentStream.pause()
 
         currentStream.exceptionHandler { throwable ->
             currentStream.pause()
@@ -129,6 +126,12 @@ class ConcatStream<T> internal constructor(
             }
         }
         currentStream.handler(demandTrackingHandler(handler))
+
+        if (!paused) {
+            currentStream.resume()
+        } else if (demand != 0L) {
+            currentStream.fetch(demand)
+        }
     }
 
     private suspend fun fail(source: ReadStreamWrapper<T, ReadStream<T>>, throwable: Throwable) {
@@ -182,15 +185,20 @@ class ConcatStream<T> internal constructor(
     }
 
     private fun incDemand(value: Long) {
-        demand += value
-        if (demand < 0) {
-            demand = Long.MAX_VALUE
+        if (demand == Long.MAX_VALUE || value == 0L) return
+        demand = if (value > Long.MAX_VALUE - demand) {
+            Long.MAX_VALUE
+        } else {
+            demand + value
         }
     }
 
     override fun fetch(amount: Long): ReadStream<T> = apply {
+        require(amount >= 0) {
+            "Fetch amount must not be negative"
+        }
         incDemand(amount)
-        current?.get()?.fetch(demand)
+        current?.get()?.fetch(amount)
     }
 
     override fun handler(handler: Handler<T>?): ReadStream<T> = apply {

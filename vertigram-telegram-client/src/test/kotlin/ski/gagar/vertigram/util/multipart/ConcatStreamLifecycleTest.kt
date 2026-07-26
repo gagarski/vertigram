@@ -7,6 +7,7 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertSame
+import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
 
 object ConcatStreamLifecycleTest {
@@ -100,6 +101,80 @@ object ConcatStreamLifecycleTest {
         assertEquals(1, closeCount)
     }
 
+    @Test
+    fun `successive fetches should forward only incremental demand`() = runBlocking {
+        val source = DemandReadStream((1..7).toList())
+        val stream = this.ConcatStream(
+            listOf(ReadStreamWrapper.ofNonCloseable(source))
+        )
+        val received = mutableListOf<Int>()
+        val fiveReceived = CompletableDeferred<Unit>()
+
+        stream.pause()
+        stream.handler {
+            received += it
+            if (received.size == 5) fiveReceived.complete(Unit)
+        }
+
+        stream.fetch(2)
+        stream.fetch(3)
+
+        withTimeout(5_000) { fiveReceived.await() }
+        assertEquals(listOf(2L, 3L), source.fetchAmounts)
+        assertEquals(listOf(1, 2, 3, 4, 5), received)
+    }
+
+    @Test
+    fun `remaining demand should carry over to the next source`() = runBlocking {
+        val first = DemandReadStream(listOf(1))
+        val second = DemandReadStream(listOf(2, 3, 4))
+        val stream = this.ConcatStream(
+            listOf(
+                ReadStreamWrapper.ofNonCloseable(first),
+                ReadStreamWrapper.ofNonCloseable(second)
+            )
+        )
+        val received = mutableListOf<Int>()
+        val threeReceived = CompletableDeferred<Unit>()
+
+        stream.pause()
+        stream.handler {
+            received += it
+            if (received.size == 3) threeReceived.complete(Unit)
+        }
+        stream.fetch(3)
+
+        withTimeout(5_000) { threeReceived.await() }
+        assertEquals(listOf(3L), first.fetchAmounts)
+        assertEquals(listOf(2L), second.fetchAmounts)
+        assertEquals(listOf(1, 2, 3), received)
+    }
+
+    @Test
+    fun `flowing concat stream should resume a cold source`() = runBlocking {
+        val source = DemandReadStream(listOf(1), initiallyPaused = true)
+        val stream = this.ConcatStream(
+            listOf(ReadStreamWrapper.ofNonCloseable(source))
+        )
+        val received = CompletableDeferred<Int>()
+
+        stream.handler { received.complete(it) }
+
+        assertEquals(1, withTimeout(5_000) { received.await() })
+        assertEquals(1, source.resumeCount)
+    }
+
+    @Test
+    fun `negative fetch should be rejected`() = runBlocking {
+        val stream = this.ConcatStream(
+            listOf(ReadStreamWrapper.ofNonCloseable(ManualReadStream<Int>()))
+        )
+
+        assertThrows(IllegalArgumentException::class.java) {
+            stream.fetch(-1)
+        }
+    }
+
     private class ManualReadStream<T> : ReadStream<T> {
         private var exceptionHandler: Handler<Throwable>? = null
         private var endHandler: Handler<Void?>? = null
@@ -126,6 +201,68 @@ object ConcatStreamLifecycleTest {
 
         fun end() {
             requireNotNull(endHandler).handle(null)
+        }
+    }
+
+    private class DemandReadStream<T>(
+        values: List<T>,
+        initiallyPaused: Boolean = false
+    ) : ReadStream<T> {
+        private val values = ArrayDeque(values)
+        private var handler: Handler<T>? = null
+        private var endHandler: Handler<Void?>? = null
+        private var demand = if (initiallyPaused) 0L else Long.MAX_VALUE
+        private var ended = false
+
+        val fetchAmounts = mutableListOf<Long>()
+        var resumeCount = 0
+            private set
+
+        override fun exceptionHandler(handler: Handler<Throwable>?): ReadStream<T> = this
+
+        override fun handler(handler: Handler<T>?): ReadStream<T> = apply {
+            this.handler = handler
+            drain()
+        }
+
+        override fun pause(): ReadStream<T> = apply {
+            demand = 0
+        }
+
+        override fun resume(): ReadStream<T> = apply {
+            resumeCount++
+            demand = Long.MAX_VALUE
+            drain()
+        }
+
+        override fun fetch(amount: Long): ReadStream<T> = apply {
+            require(amount >= 0)
+            fetchAmounts += amount
+            if (demand != Long.MAX_VALUE) {
+                demand = if (amount > Long.MAX_VALUE - demand) {
+                    Long.MAX_VALUE
+                } else {
+                    demand + amount
+                }
+            }
+            drain()
+        }
+
+        override fun endHandler(handler: Handler<Void?>?): ReadStream<T> = apply {
+            endHandler = handler
+            drain()
+        }
+
+        private fun drain() {
+            val handler = handler ?: return
+            while (values.isNotEmpty() && demand != 0L) {
+                if (demand != Long.MAX_VALUE) demand--
+                handler.handle(values.removeFirst())
+            }
+            if (!ended && values.isEmpty()) {
+                ended = true
+                endHandler?.handle(null)
+            }
         }
     }
 }
