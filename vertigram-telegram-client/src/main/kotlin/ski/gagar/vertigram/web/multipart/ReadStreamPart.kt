@@ -6,6 +6,13 @@ import io.vertx.core.buffer.Buffer
 import io.vertx.core.streams.ReadStream
 import ski.gagar.vertigram.util.io.ReadStreamWrapper
 
+/**
+ * A multipart file backed by a lazily supplied Vert.x [ReadStream].
+ *
+ * [streamProvider] is invoked when transmission reaches this part. [closer] is then invoked exactly once when the
+ * acquired stream is released after successful transmission, failure, or cancellation. By default it does nothing,
+ * leaving resource ownership with the caller. [contentType] defaults to `application/octet-stream`.
+ */
 class ReadStreamPart(
     name: String,
     filename: String,

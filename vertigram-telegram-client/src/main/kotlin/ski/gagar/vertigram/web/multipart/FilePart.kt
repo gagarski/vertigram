@@ -5,6 +5,13 @@ import io.netty.handler.codec.http.HttpHeaderValues
 import io.vertx.core.file.AsyncFile
 import ski.gagar.vertigram.util.io.ReadStreamWrapper
 
+/**
+ * A multipart file backed by a lazily supplied Vert.x [AsyncFile].
+ *
+ * [fileProvider] is invoked when transmission reaches this part. When [owned] is `true`, the file is closed after
+ * successful transmission, failure, or cancellation; when it is `false`, the provider's caller retains ownership
+ * and must close it. [contentType] defaults to `application/octet-stream`.
+ */
 class FilePart(name: String,
                filename: String,
                val fileProvider: suspend () -> AsyncFile,

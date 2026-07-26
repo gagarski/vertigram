@@ -35,9 +35,16 @@ object RichMessageMultipartTest {
 
             requests.forEach { request ->
                 val form = mapper.toMultipart(request)
-                assertEquals(3, form.parts.size)
-                assertTrue(form.parts.any { it.contentDisposition.contains("name=\"chat_id\"") })
-                assertTrue(form.parts.any { it.contentDisposition.contains("name=\"rich_message\"") })
+                assertEquals(6, form.parts.size)
+                listOf(
+                    "chat_id",
+                    "rich_message",
+                    "disable_notification",
+                    "protect_content",
+                    "allow_paid_broadcast"
+                ).forEach { name ->
+                    assertTrue(form.parts.any { it.contentDisposition.contains("name=\"$name\"") })
+                }
                 assertTrue(form.parts.any { it.contentDisposition.contains("name=\"deferred_attachment_") })
             }
         } finally {

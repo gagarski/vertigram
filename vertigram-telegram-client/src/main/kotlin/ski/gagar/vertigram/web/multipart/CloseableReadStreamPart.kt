@@ -6,6 +6,13 @@ import io.vertx.core.buffer.Buffer
 import ski.gagar.vertigram.util.io.CloseableReadStream
 import ski.gagar.vertigram.util.io.ReadStreamWrapper
 
+/**
+ * A multipart file backed by a lazily supplied [CloseableReadStream].
+ *
+ * [streamProvider] is invoked when transmission reaches this part. When [owned] is `true`, the stream is closed after
+ * successful transmission, failure, or cancellation; when it is `false`, the provider's caller retains ownership.
+ * [contentType] defaults to `application/octet-stream`.
+ */
 class CloseableReadStreamPart(
     name: String,
     filename: String,

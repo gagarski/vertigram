@@ -8,48 +8,61 @@ import ski.gagar.vertigram.web.multipart.Part
 import java.io.File
 
 /**
- * A class representing Telegram attachment.
+ * A Telegram attachment and the public extension point for custom upload sources.
  *
- * It represents either `InputFile` type from Telegram API or a value of [ski.gagar.vertigram.telegram.types.InputMedia.media].
+ * An attachment participates in multipart serialization in two phases:
  *
- * Telegram uses `multipart/form-data` for sending attachments and Vertigram uses this content type for all methods
- * that can have files attached (even if they actually do not have).
-
+ *  1. [getReference] produces the string written into the JSON portion of the request. A directly uploaded file
+ *     normally uses an `attach://<field>` reference; an existing Telegram file ID or an HTTP URL uses the value
+ *     itself.
+ *  2. [getReferredPart] optionally produces the multipart [Part] whose field name matches that reference.
  *
- * Vertigram uses all three methods to send the files, depending on the called Telegram method. It provides you two
- * implementations:
- *  - [StringAttachment] which allows you to attach URL or file id as a media
- *  - [FileAttachment] which allows you to attach a file from file system as a media
+ * The [Attachment] itself is a polymorphic, JSON-serializable value. A custom implementation should therefore keep
+ * serializable information needed to locate its data, such as a path or database object ID, rather than an open file,
+ * a live stream, or a provider lambda. The [Part] returned later is transient and is not JSON-serialized.
  *
- * If that's enough for you, just use these implementations where Vertigram expects an [Attachment] field, you don't
- * need to worry about anything else. You can also use convenience methods: [Attachment.Companion.fileId],
- * [Attachment.Companion.url] and [Attachment.Companion.file] to construct the instances of these classes.
+ * Vertigram provides [StringAttachment] for Telegram file IDs and URLs and [FileAttachment] for local files.
+ * Use [AbstractFileAttachment] as the usual base for a custom file backed by a database, object store, event bus, or
+ * another runtime source. Returning [Part] is intentionally a low-level SPI: implementations may control the
+ * filename, content type, headers, stream creation, and resource ownership. Prefer the built-in multipart part
+ * implementations unless custom framing is actually required.
  *
- * If you want to send some kind of "virtual" file (e.g. read from database or from event bus), you might want to
- * implement this interface, please see docs for the methods and [FileAttachment] implementation for reference.
- * In most cases, you want [AbstractFileAttachment] as a skeleton. You may also need to extend [Part] or use
- * [ski.gagar.vertigram.web.multipart.CloseableReadStreamPart].
+ * Implementations and their serialized state must be available to the process that ultimately sends the request.
+ * In particular, a local path is only useful when that process can access the same filesystem.
  *
- * Please refer to the following parts of Telegram Bot API docs:
- *  - [InputMedia](https://core.telegram.org/bots/api#inputmedia)
- *  - [InputFile](https://core.telegram.org/bots/api#inputfile)
- *  - [InputSticker](https://core.telegram.org/bots/api#inputsticker)
+ * See Telegram's [InputMedia](https://core.telegram.org/bots/api#inputmedia),
+ * [InputFile](https://core.telegram.org/bots/api#inputfile), and
+ * [InputSticker](https://core.telegram.org/bots/api#inputsticker) documentation.
  *
- *  @see Part
+ * @see AbstractFileAttachment
+ * @see Part
  */
 @JsonTypeInfo(use=Id.CLASS, include=As.PROPERTY, property="@class")
 interface Attachment {
     /**
-     * Return a string attachment representation of `this`.
+     * Returns the value written into the JSON portion of the multipart request.
      *
-     * For URL or file id it's `this` itself, for file attachments, it's usually `attach://xxx` URL
+     * [referredField] is the generated multipart field name reserved for this occurrence of the attachment. Uploading
+     * implementations should normally return `attach://<referredField>`; references to an existing Telegram file or
+     * URL should return that reference unchanged.
      */
     fun getReference(referredField: String): StringAttachment
 
     /**
-     * If the attachment is being sent using method (3), then return a [Part] with the attachment itself.
+     * Creates the multipart body part for this occurrence of the attachment, or returns `null` when no upload is
+     * required.
      *
-     * For URL or file id attachments, `null` is returned.
+     * This method is called only while constructing a multipart request, after [getReference]. [field] is the same
+     * generated name passed to [getReference], and must be used as the returned part's form field name.
+     *
+     * [vertx] identifies the runtime that will send the request and can be used to access its filesystem or
+     * application-specific shared services. Acquire external resources lazily from the returned [Part], not while
+     * this method is running. Return a fresh part for each invocation; multipart parts and their streams should be
+     * treated as single-transmission objects.
+     *
+     * The part's acquired stream is released after successful transmission, failure, or cancellation according to
+     * that part's ownership contract. [StringAttachment] returns `null` because Telegram resolves its file ID or URL
+     * without an upload.
      */
     fun getReferredPart(field: String, vertx: Vertx): Part?
 
@@ -57,7 +70,11 @@ interface Attachment {
 }
 
 /**
- * A skeleton to implement custom [Attachment] support.
+ * Base class for an [Attachment] that uploads a multipart part.
+ *
+ * It supplies the matching `attach://<field>` reference and delegates creation of the transient upload part to
+ * [doAttach]. Subclasses should retain only serializable source descriptors and resolve live resources lazily using
+ * the provided [Vertx] instance.
  */
 abstract class AbstractFileAttachment : Attachment {
     override fun getReference(referredField: String): StringAttachment = StringAttachment("attach://$referredField")
@@ -65,7 +82,10 @@ abstract class AbstractFileAttachment : Attachment {
 
 
     /**
-     * Implement this method to return the "meaningful" [Part] (i.e. file contents)
+     * Creates a fresh multipart part containing this attachment's data.
+     *
+     * Use [field] as the part's form field name. The returned part owns and closes only the resources specified by
+     * its concrete ownership contract.
      */
     protected abstract fun doAttach(field: String, vertx: Vertx): Part
 }

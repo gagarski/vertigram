@@ -11,8 +11,22 @@ import ski.gagar.vertigram.util.io.ReadStreamWrapper
 typealias ReadStreamWrapperBuffer = ReadStreamWrapper<Buffer, ReadStream<Buffer>>
 
 
+/**
+ * A single low-level `multipart/form-data` part.
+ *
+ * This is also the public transport SPI used by custom Telegram attachments. [contentDisposition] is the complete
+ * `Content-Disposition` header value and [headers] contains any additional part headers. Custom implementations are
+ * responsible for producing valid, injection-safe header values; the built-in part classes perform the required
+ * quoting and validation.
+ *
+ * Data is acquired lazily through [dataStreamWrapper] when transmission begins. The wrapper defines whether and how
+ * its underlying stream is closed. A part should be treated as a single-transmission object.
+ */
 abstract class Part {
+    /** Complete value of this part's `Content-Disposition` header. */
     abstract val contentDisposition: String
+
+    /** Additional multipart headers, excluding `Content-Disposition`. */
     open val headers = linkedMapOf<String, String>()
     private var streamWrapper: ReadStreamWrapperBuffer? = null
 
@@ -25,6 +39,11 @@ abstract class Part {
         buf.appendString(NL)
     }
 
+    /**
+     * Opens this part's data stream and defines its cleanup behavior.
+     *
+     * Implementations should defer resource acquisition until this method is called.
+     */
     protected abstract suspend fun dataStreamWrapper(): ReadStreamWrapperBuffer
 
     private suspend fun getAndAcquireDataStream(): ReadStreamWrapperBuffer {
