@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import ski.gagar.vertigram.awaitRegistration
 import ski.gagar.vertigram.util.jackson.typeReference
 import ski.gagar.vertigram.util.lazy
 import ski.gagar.vertigram.util.logger
@@ -135,19 +136,19 @@ abstract class PostOfficeVerticle<
             requestJavaType = vertigram.objectMapper.constructType(messageTypeRef.type),
             address = incomingAddress,
             function = this::handleMessage
-        )
+        ).awaitRegistration()
 
         consumerNonReified(
             requestJavaType = vertigram.objectMapper.constructType(subInfoTypeRef.type),
             address = subscribeAddress,
             function = this::handleSubscribe
-        )
+        ).awaitRegistration()
 
         consumerNonReified(
             requestJavaType = vertigram.objectMapper.constructType(subInfoTypeRef.type),
             address = unsubscribeAddress,
             function = this::handleUnsubscribe
-        )
+        ).awaitRegistration()
     }
 
     private suspend fun handleMessage(msg: Message) = messageHandler {
@@ -187,7 +188,10 @@ abstract class PostOfficeVerticle<
             }
 
 
-            subscriptions.getOrPut(discriminator) { mutableSetOf() }.add(subscriptionRequest)
+            subscriptions.getOrPut(discriminator) { mutableSetOf() }.apply {
+                removeAll { it.address == subscriptionRequest.address }
+                add(subscriptionRequest)
+            }
 
             passAllEnvelopesToSubscriber(discriminator, subscriptionRequest)
         }
@@ -201,7 +205,7 @@ abstract class PostOfficeVerticle<
     }
 
     private fun unsubscribeSingle(req: PostOfficeVerticle.SubscriptionInfo<Discriminator>, discriminator: Discriminator) {
-        (subscriptions[discriminator] ?: mutableSetOf()).remove(req)
+        subscriptions[discriminator]?.removeAll { it.address == req.address }
     }
 
     private suspend fun cleanUp() {

@@ -369,7 +369,7 @@ verticle, it willr eceive only updates for a specific dialog. That means you don
 3. Let's define a *response function* which will send the reaction to the current state update
 4. First, we remove the buttons from old message, so there are not too many buttons. (Remember the step 3?)
 5. If we're reached 10, our job is done, we can terminate `CounterVerticle` by calling `die()` (for more info on the lifecycle,
-please consult [HierarchyVerticle](ski.gagar.vertigram.verticles.common.AbstractHierarchyVerticle). Don't forget
+please consult [HierarchyVerticle](ski.gagar.vertigram.verticles.common.HierarchyVerticle). Don't forget
 to tell the user that we're done
 6. Otherwise, updating the user with new counter value
 7. Now we override `handleMessage` function to implement bot's reaction to the message from user:

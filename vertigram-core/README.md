@@ -60,6 +60,15 @@ Like in core Vert.x, the basic worker of your app will be a Verticle. Basic vert
  - Type-safe configuration in conjunction with [deployVerticle](ski.gagar.vertigram.Vertigram.deployVerticle) function
  - Overridable name for the verticle which can be used for logging
 
+[HierarchyVerticle](ski.gagar.vertigram.verticles.common.HierarchyVerticle) adds reason-aware, self-initiated
+termination (`complete`, `fail`, `cancel`, and `timeout`) and lets a parent react to child termination through
+`onChildDeath`. It passes a private callback address to each child through deployment metadata, so a child's
+[DeathNotice](ski.gagar.vertigram.verticles.common.messages.DeathNotice) is delivered only to its parent.
+
+Parent-to-child lifecycle management is left to Vert.x: a child deployed from its parent's context is automatically
+undeployed when its parent is undeployed. `HierarchyVerticle` does not send parent-death notifications. Cleanup that
+must run for both self-initiated and external undeployment belongs in the verticle's `stop` method.
+
 ## Clustering and interoperation
 
 As you may have noticed, Vertigram uses the same basic concepts as Vert.x, providing them with some convenient 
@@ -134,9 +143,10 @@ fun main() {
 
 So far you know the `vertigram-core` basics. Besides the concepts described above, it provides generic verticles for common use
 in [ski.gagar.vertigram.verticles.common] package. Currently the following verticles are provided:
- - [HierarchyVerticle](ski.gagar.vertigram.verticles.common.AbstractHierarchyVerticle), providing you with
-   a concept of hierarchy in verticles (i.e. spawning child verticles and notifying parents and child about termination of each other)
- - [PostOfficeVerticle](ski.gagar.vertigram.verticles.common.AbstractPostOfficeVerticle) which provides you 
+ - [HierarchyVerticle](ski.gagar.vertigram.verticles.common.HierarchyVerticle), providing reason-aware verticle
+   termination, child deployment, and parent notification through `onChildDeath`; Vert.x itself handles cascading
+   child undeployment when a parent stops
+ - [PostOfficeVerticle](ski.gagar.vertigram.verticles.common.PostOfficeVerticle) which provides you
    a concept of mailboxes for replaying messages to consumers that subscribed after the messages were
    published
 

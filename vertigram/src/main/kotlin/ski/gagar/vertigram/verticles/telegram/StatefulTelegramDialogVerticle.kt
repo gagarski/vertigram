@@ -468,9 +468,12 @@ abstract class StatefulTelegramDialogVerticle<Config> : TelegramDialogVerticle<C
         timeoutTimerHandle?.cancel()
     }
 
-    override fun beforeDeath(reason: DeathReason) {
-        unscheduleTimeout()
-        super.beforeDeath(reason)
+    override suspend fun stop() {
+        try {
+            unscheduleTimeout()
+        } finally {
+            super.stop()
+        }
     }
 
     /**

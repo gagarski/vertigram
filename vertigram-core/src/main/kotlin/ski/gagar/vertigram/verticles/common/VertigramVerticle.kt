@@ -18,6 +18,10 @@ import ski.gagar.vertigram.util.lazy
 import ski.gagar.vertigram.util.logger
 import kotlin.coroutines.CoroutineContext
 
+internal object InternalDeploymentMetadata {
+    const val FIELD = "_vertigramInternal"
+    const val PARENT_CHILD_DEATH_NOTICE_ADDRESS = "parentChildDeathNoticeAddress"
+}
 
 /**
  * [Vertigram] verticle.
@@ -75,7 +79,10 @@ abstract class VertigramVerticle<Config> : CoroutineVerticle() {
         super.init(vertx, context)
         this.context = context
         vertigram = vertx.getVertigram(config.getString("vertigramName"))
-        val wrapper = config.mapTo<ConfigWrapper<Config>>(
+        val wrappedConfig = config.copy().apply {
+            remove(InternalDeploymentMetadata.FIELD)
+        }
+        val wrapper = wrappedConfig.mapTo<ConfigWrapper<Config>>(
             vertigram.objectMapper.typeFactory.constructParametricType(ConfigWrapper::class.java, configJavaType), vertigram.objectMapper
         )
         configHolder = ConfigHolder(wrapper.config)

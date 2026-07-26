@@ -26,6 +26,7 @@ import ski.gagar.vertigram.util.exceptions.VertigramInternalException
 import ski.gagar.vertigram.util.jackson.mapTo
 import ski.gagar.vertigram.util.jackson.toJsonObject
 import ski.gagar.vertigram.util.jackson.typeReference
+import ski.gagar.vertigram.verticles.common.InternalDeploymentMetadata
 import ski.gagar.vertigram.verticles.common.VertigramVerticle
 import java.util.*
 
@@ -437,8 +438,27 @@ class Vertigram(
         config: Config
     ): io.vertx.core.DeploymentOptions() {
         init {
+            val wrappedConfig = requireNotNull(
+                VertigramVerticle.ConfigWrapper(
+                    vertigramName = vertigram.name,
+                    config = config
+                ).toJsonObject(vertigram.objectMapper)
+            ) {
+                "Vertigram deployment config cannot be serialized to JSON"
+            }
+
             @Suppress("DEPRECATION")
-            setConfig(VertigramVerticle.ConfigWrapper(vertigram.name, config).toJsonObject(vertigram.objectMapper))
+            setConfig(wrappedConfig)
+        }
+
+        private fun putInternalMetadata(metadata: Map<String, String>) {
+            if (metadata.isEmpty()) return
+
+            @Suppress("DEPRECATION")
+            super.getConfig().put(
+                InternalDeploymentMetadata.FIELD,
+                JsonObject(metadata)
+            )
         }
 
         @Deprecated(message = "Use constructor argument instead")
@@ -449,6 +469,17 @@ class Vertigram(
         @Deprecated(message = "Use constructor argument instead")
         override fun setConfig(config: JsonObject?): io.vertx.core.DeploymentOptions {
             return super.setConfig(config)
+        }
+
+        companion object {
+            @JvmSynthetic
+            internal fun <Config> withInternalMetadata(
+                vertigram: Vertigram,
+                config: Config,
+                metadata: Map<String, String>
+            ) = DeploymentOptions(vertigram, config).apply {
+                putInternalMetadata(metadata)
+            }
         }
     }
 
