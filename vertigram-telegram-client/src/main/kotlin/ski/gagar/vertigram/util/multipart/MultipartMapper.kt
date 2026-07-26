@@ -35,7 +35,7 @@ internal class MultipartMapper(jsonMapper: ObjectMapper, private val vertx: Vert
         for ((k, v) in map) {
             when (v) {
                 null -> continue
-                is Boolean -> if (v) add(FieldPart(k, v))
+                is Boolean -> add(FieldPart(k, v))
                 is Map<*, *>, is List<*> -> add(FieldPart(k, mapper.writeValueAsString(v)))
                 else -> add(FieldPart(k, v))
             }
