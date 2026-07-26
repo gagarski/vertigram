@@ -5,8 +5,8 @@ import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.telegram.types.colors.RgbColor
-import ski.gagar.vertigram.telegram.types.richtext.HasOptionalCaptionWithEntities
-import ski.gagar.vertigram.telegram.types.richtext.HasOptionalTextWithEntities
+import ski.gagar.vertigram.telegram.types.formattedtext.HasOptionalCaptionWithEntities
+import ski.gagar.vertigram.telegram.types.formattedtext.HasOptionalTextWithEntities
 import ski.gagar.vertigram.telegram.types.richmessage.RichMessage
 import java.time.Duration
 import java.time.Instant

@@ -16,7 +16,7 @@ features:
  - Better structured type names. For example, `InlineQueryResultArticle` becomes `InlineQuery.Result.Article`.
   In most cases you will be able to figure out the types while writing the code with your IDE, however, the type 
   "renaming" policy is described in KDoc for each class.
- - Type-safe parameters for methods and types containing rich text-like data (`text` + `parse_mode` + `text_entities`).
+ - Type-safe parameters for methods and types containing formatted text-like data (`text` + `parse_mode` + `text_entities`).
  - Type-safe builders for message text markup, rich messages, and reply markup.
 
 ## Basic Usage
@@ -48,7 +48,7 @@ There is a big chance that you want your bot to send some Telegram messages, let
 ```kotlin
 tg.sendMessage(
     chatId = "@someusername".toChatId(),
-    richText = "Hello World".toRichText(),
+    text = "Hello World".toFormattedText(),
     disableNotifications = true
 )
 ```
@@ -58,9 +58,10 @@ Here we see three parameters:
   the type of `chat_id` field is defined as `Integer or String`. `toChatId()` is a converter to type 
   [ski.gagar.vertigram.telegram.types.util.ChatId] which can store both and is properly serialized so Telegram Bot API
   server can understand it.
- - `richText` parameter replaces three original Telegram API parameters: `text`, `parse_mode` and `entities`. Having 
+ - The `text` parameter accepts `FormattedText` and replaces three original Telegram API parameters: `text`, `parse_mode`
+  and `entities`. Having
   one parameter instead of three prevents you from sending Markdown text with `parse_mode` set to `HTML`. In this example
-  we're just passing plain text and converting it with `.toRichText()` to make the type match the signature. We'll come
+  we're just passing plain text and converting it with `.toFormattedText()` to make the type match the signature. We'll come
   to sending formatted text later.
  - `disableNotifications` is a Telegram `disable_notifications` parameter.
 
@@ -89,7 +90,7 @@ import ski.gagar.vertigram.telegram.types.invoke
 
 tg.sendMessage(
     chatId = "@someusername".toChatId(),
-    richText = "Hello World".toRichText(),
+    text = "Hello World".toFormattedText(),
     disableNotifications = true,
     // More verbose way, but code-completion-friendly
     replyParameters = ReplyParameters.create(
@@ -100,7 +101,7 @@ tg.sendMessage(
 // or
 tg.sendMessage(
   chatId = "@someusername".toChatId(),
-  richText = "Hello World".toRichText(),
+  text = "Hello World".toFormattedText(),
   disableNotifications = true,
   // Kotlin-way (invoke on companion object): looks like constructor, but you may need
   // to manually import ski.gagar.vertigram.telegram.types.invoke
@@ -112,10 +113,10 @@ tg.sendMessage(
 
 ```
 
-## Rich Text and Reply Markup
+## Formatted Text and Reply Markup
 
-We've barely touched [toRichText](ski.gagar.vertigram.telegram.markup.toRichText) method in previous section. 
-This method converts plain string to a `RichText`.
+We've barely touched [toFormattedText](ski.gagar.vertigram.telegram.markup.toFormattedText) method in previous section.
+This method converts plain string to a `FormattedText`.
 
 Telegram supports four formats for text formatting:
  - Markdown
@@ -123,14 +124,14 @@ Telegram supports four formats for text formatting:
  - HTML
  - Text with entities
 
-[RichText](ski.gagar.vertigram.telegram.types.richtext.RichText) subclasses support all of them and basically wrap 
+[FormattedText](ski.gagar.vertigram.telegram.types.formattedtext.FormattedText) subclasses support all of them and basically wrap
 text-related fields like `text`, `parse_mode` and `entities` to a single entity. Besides some weird wrappers for the 
 part of method parameters, Vertigram gives you **type-safe** builders for formatted text:
 
 ```kotlin
 tg.sendMessage(
     chatId = msg.chat.id.toChatId(),
-    richText = textMarkdown {
+    text = textMarkdown {
         +"Hello"
         space()
         b {
@@ -152,14 +153,14 @@ tg.sendMessage(
 )
 ```
 
-You can see the following operations inside rich text markup:
+You can see the following operations inside formatted text markup:
  - Unary `+` yields a text.
  - `b`, `i` and `a` are bold, italic and link wrappers for text, they support nested entities.
  - `space()` and `br()` are just shortcuts for `+"  "` and `+"\n"` respectively.
 
 [textMarkdown](ski.gagar.vertigram.telegram.markup.textMarkdown) is a builder producing 
-[MarkdownV2Text](ski.gagar.vertigram.telegram.types.richtext.MarkdownV2Text) instance, 
-representing a rich-text entity with Markdown V2 format. 
+[MarkdownV2Text](ski.gagar.vertigram.telegram.types.formattedtext.MarkdownV2Text) instance,
+representing a formatted-text entity with Markdown V2 format.
 Note that Markdown V1 is considered deprecated and there is no builder for it. Besides,
 [textMarkdown](ski.gagar.vertigram.telegram.markup.textMarkdown) there are 
 [textHtml](ski.gagar.vertigram.telegram.markup.textHtml) and 
@@ -199,7 +200,7 @@ reply markup:
 ```kotlin
 tg.sendMessage(
     chatId = msg.chat.id.toChatId(),
-    richText = "Look at those buttons".toRichText(),
+    text = "Look at those buttons".toFormattedText(),
     replyMarkup = inlineKeyboard {
         row {
             text(text = "Button 1")
@@ -277,11 +278,11 @@ tg.sendMediaGroup(
     media = listOf(
         InputMedia.Photo(
             media = File("/home/cat_owner/cat.jpg").toAttachment(),
-            richCaption = "A cat from local FS".toRichText()
+            caption = "A cat from local FS".toFormattedText()
         ),
         InputMedia.Photo(
             media = Attachment.url("https://example.com/cat.jpg"),
-            richCaption = "A cat from web".toRichText()
+            caption = "A cat from web".toFormattedText()
         )
     )
 )
@@ -292,7 +293,7 @@ tg.sendMediaGroup(
 While Vertigram tries to generally follow the Telegram REST API, there are a few differences which would allow you to 
 write more concise and Kotlin-style code:
  - Use of Kotlin naming conventions (`camelCase` for method parameters, `UPPERCASE_SNAKE_CASE` for enum items)
- - Type-safe rich-text
+- Type-safe formatted text
  - Own way of typing attachments
  - Some types renamed for more structured naming and split into multiple cases
  - `sendPoll` method is split into `sendPoll` for regular poll and `sendQuiz` to provide safer arguments and better

@@ -2,8 +2,8 @@ package ski.gagar.vertigram.telegram.types
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import ski.gagar.vertigram.annotations.TelegramCodegen
-import ski.gagar.vertigram.telegram.types.richtext.HasOptionalRichQuote
-import ski.gagar.vertigram.telegram.types.richtext.RichText
+import ski.gagar.vertigram.telegram.types.formattedtext.HasOptionalFormattedQuote
+import ski.gagar.vertigram.telegram.types.formattedtext.FormattedText
 import ski.gagar.vertigram.telegram.types.util.ChatId
 import ski.gagar.vertigram.util.NoPosArgs
 
@@ -27,7 +27,7 @@ data class ReplyParameters internal constructor(
     /** Quoted part of the message being replied to. */
     override val quote: String? = null,
     /** Mode for parsing entities in [quote]. */
-    override val quoteParseMode: RichText.ParseMode? = null,
+    override val quoteParseMode: FormattedText.ParseMode? = null,
     /** Special entities that appear in [quote], specified instead of [quoteParseMode]. */
     override val quoteEntities: List<MessageEntity>? = null,
     /** Position of [quote] in the original message in UTF-16 code units. */
@@ -36,6 +36,6 @@ data class ReplyParameters internal constructor(
     val checklistTaskId: Int? = null,
     /** Identifier of the poll option that will be replied to. */
     val pollOptionId: String? = null
-) : HasOptionalRichQuote {
+) : HasOptionalFormattedQuote {
     companion object
 }

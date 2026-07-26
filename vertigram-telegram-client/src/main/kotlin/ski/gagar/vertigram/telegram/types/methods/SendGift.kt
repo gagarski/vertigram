@@ -5,8 +5,8 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo
 import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.telegram.throttling.HasChatId
 import ski.gagar.vertigram.telegram.types.MessageEntity
-import ski.gagar.vertigram.telegram.types.richtext.HasOptionalRichText
-import ski.gagar.vertigram.telegram.types.richtext.RichText
+import ski.gagar.vertigram.telegram.types.formattedtext.HasOptionalFormattedText
+import ski.gagar.vertigram.telegram.types.formattedtext.FormattedText
 import ski.gagar.vertigram.telegram.types.util.ChatId
 
 /**
@@ -21,7 +21,7 @@ import ski.gagar.vertigram.telegram.types.util.ChatId
     JsonSubTypes.Type(value = SendGift.User::class),
     JsonSubTypes.Type(value = SendGift.Chat::class),
 )
-sealed interface SendGift : HasOptionalRichText {
+sealed interface SendGift : HasOptionalFormattedText {
     val giftId: String
     val payForUpgrade: Boolean
 
@@ -39,7 +39,7 @@ sealed interface SendGift : HasOptionalRichText {
         /** Text shown with the gift, 0-128 characters. */
         override val text: String? = null,
         /** Mode for parsing entities in [text]. */
-        override val textParseMode: RichText.ParseMode? = null,
+        override val textParseMode: FormattedText.ParseMode? = null,
         /** Special entities that appear in [text]; can be specified instead of [textParseMode]. */
         override val textEntities: List<MessageEntity>? = null
     ) : SendGift, JsonTelegramCallable<Boolean>()
@@ -59,7 +59,7 @@ sealed interface SendGift : HasOptionalRichText {
         /** Text shown with the gift, 0-128 characters. */
         override val text: String? = null,
         /** Mode for parsing entities in [text]. */
-        override val textParseMode: RichText.ParseMode? = null,
+        override val textParseMode: FormattedText.ParseMode? = null,
         /** Special entities that appear in [text]; can be specified instead of [textParseMode]. */
         override val textEntities: List<MessageEntity>? = null
     ) : SendGift, JsonTelegramCallable<Boolean>(), HasChatId

@@ -1,9 +1,9 @@
 package ski.gagar.vertigram.telegram.markup
 
 import ski.gagar.vertigram.telegram.types.ReplyMarkup
-import ski.gagar.vertigram.telegram.types.richtext.HtmlText
-import ski.gagar.vertigram.telegram.types.richtext.MarkdownV2Text
-import ski.gagar.vertigram.telegram.types.richtext.TextWithEntities
+import ski.gagar.vertigram.telegram.types.formattedtext.HtmlText
+import ski.gagar.vertigram.telegram.types.formattedtext.MarkdownV2Text
+import ski.gagar.vertigram.telegram.types.formattedtext.TextWithEntities
 import ski.gagar.vertigram.util.NoPosArgs
 
 /**
@@ -61,26 +61,26 @@ fun forceReply(inputFieldPlaceholder: String? = null,
     )
 
 /**
- * A builder to convert plain text to [ski.gagar.vertigram.telegram.types.richtext.RichText].
+ * A builder to convert plain text to [ski.gagar.vertigram.telegram.types.formattedtext.FormattedText].
  *
  * The text is treated as if it has no special mark up.
  */
-fun String.toRichText() = TextWithEntities(this)
+fun String.toFormattedText() = TextWithEntities(this)
 
 /**
  * Build [MarkdownV2Text] from [init].
  */
-fun textMarkdown(init: RichTextRoot.() -> Unit) =
-    MarkdownV2Text(RichTextRoot().apply(init).toMarkdownString())
+fun textMarkdown(init: FormattedTextRoot.() -> Unit) =
+    MarkdownV2Text(FormattedTextRoot().apply(init).toMarkdownString())
 
 /**
  * Build [HtmlText] from [init].
  */
-fun textHtml(init: RichTextRoot.() -> Unit) =
-    HtmlText(RichTextRoot().apply(init).toHtmlString())
+fun textHtml(init: FormattedTextRoot.() -> Unit) =
+    HtmlText(FormattedTextRoot().apply(init).toHtmlString())
 
 /**
  * Build [TextWithEntities] from [init].
  */
-fun textWithEntities(init: RichTextRoot.() -> Unit) =
-    RichTextRoot().apply(init).toTextWithEntities()
+fun textWithEntities(init: FormattedTextRoot.() -> Unit) =
+    FormattedTextRoot().apply(init).toTextWithEntities()

@@ -1,7 +1,7 @@
 package ski.gagar.vertigram.telegram.types
 
 import ski.gagar.vertigram.annotations.TelegramCodegen
-import ski.gagar.vertigram.telegram.types.richtext.RichText
+import ski.gagar.vertigram.telegram.types.formattedtext.FormattedText
 
 /**
  * Describes a checklist to create.
@@ -13,7 +13,7 @@ data class InputChecklist internal constructor(
     /** Title of the checklist; 1-255 characters after entities parsing. */
     val title: String,
     /** Mode for parsing entities in the checklist title. See Telegram's formatting options for details. */
-    val parseMode: RichText.ParseMode? = null,
+    val parseMode: FormattedText.ParseMode? = null,
     /**
      * List of special entities that appear in the checklist title, which can be specified instead of a parsing mode.
      * Currently, only bold, italic, underline, strikethrough, spoiler, custom emoji, and date-time entities are allowed.
@@ -38,7 +38,7 @@ data class InputChecklist internal constructor(
         /** Text of the task; 1-100 characters after entities parsing. */
         val text: String,
         /** Mode for parsing entities in the task text. See Telegram's formatting options for details. */
-        val parseMode: RichText.ParseMode? = null,
+        val parseMode: FormattedText.ParseMode? = null,
         /**
          * List of special entities that appear in the task text, which can be specified instead of a parsing mode.
          * Currently, only bold, italic, underline, strikethrough, spoiler, custom emoji, and date-time entities are

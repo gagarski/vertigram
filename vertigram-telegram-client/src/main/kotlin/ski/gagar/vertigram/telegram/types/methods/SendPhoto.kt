@@ -10,8 +10,8 @@ import ski.gagar.vertigram.telegram.types.ReplyMarkup
 import ski.gagar.vertigram.telegram.types.ReplyParameters
 import ski.gagar.vertigram.telegram.types.SuggestedPost
 import ski.gagar.vertigram.telegram.types.attachments.Attachment
-import ski.gagar.vertigram.telegram.types.richtext.HasOptionalRichCaption
-import ski.gagar.vertigram.telegram.types.richtext.RichText
+import ski.gagar.vertigram.telegram.types.formattedtext.HasOptionalFormattedCaption
+import ski.gagar.vertigram.telegram.types.formattedtext.FormattedText
 import ski.gagar.vertigram.telegram.types.util.ChatId
 
 /**
@@ -38,7 +38,7 @@ data class SendPhoto internal constructor(
     /** Photo caption, 0-1024 characters after entities parsing. */
     override val caption: String? = null,
     /** Mode for parsing entities in the photo caption. */
-    override val parseMode: RichText.ParseMode? = null,
+    override val parseMode: FormattedText.ParseMode? = null,
     /** Special entities that appear in the caption, which can be specified instead of the parsing mode. */
     override val captionEntities: List<MessageEntity>? = null,
     /** Pass `true` if the caption must be shown above the message media. */
@@ -65,4 +65,4 @@ data class SendPhoto internal constructor(
     val replyParameters: ReplyParameters? = null,
     /** Additional interface options. */
     val replyMarkup: ReplyMarkup? = null
-) : MultipartTelegramCallable<Message>(), HasChatId, HasReceiverUserId, HasOptionalRichCaption
+) : MultipartTelegramCallable<Message>(), HasChatId, HasReceiverUserId, HasOptionalFormattedCaption

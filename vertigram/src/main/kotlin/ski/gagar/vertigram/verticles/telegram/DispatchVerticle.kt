@@ -3,7 +3,7 @@ package ski.gagar.vertigram.verticles.telegram
 import kotlinx.coroutines.launch
 import ski.gagar.vertigram.telegram.client.Telegram
 import ski.gagar.vertigram.telegram.client.ThinTelegram
-import ski.gagar.vertigram.telegram.markup.toRichText
+import ski.gagar.vertigram.telegram.markup.toFormattedText
 import ski.gagar.vertigram.telegram.methods.sendMessage
 import ski.gagar.vertigram.telegram.types.Message
 import ski.gagar.vertigram.telegram.types.Update
@@ -155,7 +155,7 @@ abstract class DispatchVerticle<C : DispatchVerticle.Config, VC> : HierarchyVert
         if (deathNotice.reason == DeathReason.FAILED && null != chatId) {
             launch {
                 tg.sendMessage(
-                    richText = "Something went wrong".toRichText(),
+                    text = "Something went wrong".toFormattedText(),
                     chatId = chatId.toChatId(),
                 )
             }

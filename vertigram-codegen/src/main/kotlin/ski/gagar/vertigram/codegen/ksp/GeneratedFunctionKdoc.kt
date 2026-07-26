@@ -79,7 +79,7 @@ private fun generatedParameterKdocs(
             .mapNotNull(constructorParameterKdocs::get)
             .distinct()
         buildString {
-            append("Rich-text value supplying ")
+                append("Formatted-text value supplying ")
             append(sourceParameterNames.joinToString { "`$it`" })
             append(" to the Telegram request.")
             if (sourceDescriptions.isNotEmpty()) {

@@ -8,7 +8,7 @@ import java.time.OffsetDateTime
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
 
-object RichTextBuilderTest {
+object FormattedTextBuilderTest {
     private val unixTime = Instant.ofEpochSecond(1647531900)
     private val format = dateTimeFormat {
         weekday()

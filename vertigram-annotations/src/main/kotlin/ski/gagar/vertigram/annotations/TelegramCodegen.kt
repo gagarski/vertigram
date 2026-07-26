@@ -36,9 +36,9 @@ annotation class TelegramCodegen() {
          */
         val telegramName: String = "",
         /**
-         * Wrap rich text parameters
+         * Wrap formatted-text parameters
          */
-        val wrapRichText: Boolean = true,
+        val wrapFormattedText: Boolean = true,
         /**
          * Generate an extension method on `Telegram` for this class.
          */
@@ -83,8 +83,8 @@ annotation class TelegramCodegen() {
     @Retention(AnnotationRetention.SOURCE)
     annotation class Type(
         /**
-         * Generate wrapper getter for ...unwrapped params for rich text
+         * Generate wrapper getter for unwrapped formatted-text parameters
          */
-        val wrapRichText: Boolean = true
+        val wrapFormattedText: Boolean = true
     )
 }

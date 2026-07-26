@@ -9,8 +9,8 @@ import ski.gagar.vertigram.telegram.throttling.Throttled
 import ski.gagar.vertigram.telegram.types.Message
 import ski.gagar.vertigram.telegram.types.MessageEntity
 import ski.gagar.vertigram.telegram.types.ReplyMarkup
-import ski.gagar.vertigram.telegram.types.richtext.HasOptionalRichCaption
-import ski.gagar.vertigram.telegram.types.richtext.RichText
+import ski.gagar.vertigram.telegram.types.formattedtext.HasOptionalFormattedCaption
+import ski.gagar.vertigram.telegram.types.formattedtext.FormattedText
 import ski.gagar.vertigram.telegram.types.util.ChatId
 import ski.gagar.vertigram.util.NoPosArgs
 
@@ -24,7 +24,7 @@ import ski.gagar.vertigram.util.NoPosArgs
     JsonSubTypes.Type(EditMessageCaption.InlineMessage::class),
     JsonSubTypes.Type(EditMessageCaption.ChatMessage::class)
 )
-sealed interface EditMessageCaption : HasOptionalRichCaption {
+sealed interface EditMessageCaption : HasOptionalFormattedCaption {
     val businessConnectionId: String?
     val replyMarkup: ReplyMarkup?
     /**
@@ -42,7 +42,7 @@ sealed interface EditMessageCaption : HasOptionalRichCaption {
         /** New caption, 0-1024 characters after entities parsing. */
         override val caption: String? = null,
         /** Mode for parsing entities in the new caption. */
-        override val parseMode: RichText.ParseMode? = null,
+        override val parseMode: FormattedText.ParseMode? = null,
         /** Special entities that appear in the caption; can be specified instead of [parseMode]. */
         override val captionEntities: List<MessageEntity>? = null,
         /** Pass `true` to show the caption above the message media. */
@@ -68,7 +68,7 @@ sealed interface EditMessageCaption : HasOptionalRichCaption {
         /** New caption, 0-1024 characters after entities parsing. */
         override val caption: String? = null,
         /** Mode for parsing entities in the new caption. */
-        override val parseMode: RichText.ParseMode? = null,
+        override val parseMode: FormattedText.ParseMode? = null,
         /** Special entities that appear in the caption; can be specified instead of [parseMode]. */
         override val captionEntities: List<MessageEntity>? = null,
         /** Pass `true` to show the caption above the message media. */

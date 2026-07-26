@@ -10,8 +10,8 @@ import ski.gagar.vertigram.telegram.types.ReplyMarkup
 import ski.gagar.vertigram.telegram.types.ReplyParameters
 import ski.gagar.vertigram.telegram.types.SuggestedPost
 import ski.gagar.vertigram.telegram.types.attachments.Attachment
-import ski.gagar.vertigram.telegram.types.richtext.HasOptionalRichCaption
-import ski.gagar.vertigram.telegram.types.richtext.RichText
+import ski.gagar.vertigram.telegram.types.formattedtext.HasOptionalFormattedCaption
+import ski.gagar.vertigram.telegram.types.formattedtext.FormattedText
 import ski.gagar.vertigram.telegram.types.util.ChatId
 
 /**
@@ -37,7 +37,7 @@ data class SendDocument internal constructor(
     /** Caption of the media. */
     override val caption: String? = null,
     /** Mode for parsing entities in the caption or text. */
-    override val parseMode: RichText.ParseMode? = null,
+    override val parseMode: FormattedText.ParseMode? = null,
     /** Special entities that appear in the caption; can be specified instead of [parseMode]. */
     override val captionEntities: List<MessageEntity>? = null,
     /** Disables automatic server-side content type detection for the uploaded file. */
@@ -60,4 +60,4 @@ data class SendDocument internal constructor(
     val replyParameters: ReplyParameters? = null,
     /** Additional interface options. */
     val replyMarkup: ReplyMarkup? = null
-) : MultipartTelegramCallable<Message>(), HasChatId, HasReceiverUserId, HasOptionalRichCaption
+) : MultipartTelegramCallable<Message>(), HasChatId, HasReceiverUserId, HasOptionalFormattedCaption

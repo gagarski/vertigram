@@ -9,8 +9,8 @@ import ski.gagar.vertigram.telegram.types.Poll
 import ski.gagar.vertigram.telegram.types.ReplyMarkup
 import ski.gagar.vertigram.telegram.types.ReplyParameters
 import ski.gagar.vertigram.telegram.types.SuggestedPost
-import ski.gagar.vertigram.telegram.types.richtext.HasOptionalRichCaption
-import ski.gagar.vertigram.telegram.types.richtext.RichText
+import ski.gagar.vertigram.telegram.types.formattedtext.HasOptionalFormattedCaption
+import ski.gagar.vertigram.telegram.types.formattedtext.FormattedText
 import ski.gagar.vertigram.telegram.types.util.ChatId
 import java.time.Duration
 
@@ -50,7 +50,7 @@ data class CopyMessage internal constructor(
      * Mode for parsing entities in the new caption. See Telegram's
      * [formatting options](https://core.telegram.org/bots/api#formatting-options) for more details.
      */
-    override val parseMode: RichText.ParseMode? = null,
+    override val parseMode: FormattedText.ParseMode? = null,
     /** List of special entities that appear in the new caption, which can be specified instead of [parseMode]. */
     override val captionEntities: List<MessageEntity>? = null,
     /** Pass `true` if the caption must be shown above the message media. Ignored if a new caption isn't specified. */
@@ -81,5 +81,5 @@ data class CopyMessage internal constructor(
      * keyboard or to force a reply from the user.
      */
     val replyMarkup: ReplyMarkup? = null
-) : JsonTelegramCallable<Message.Id>(), HasChatId, HasOptionalRichCaption
+) : JsonTelegramCallable<Message.Id>(), HasChatId, HasOptionalFormattedCaption
 

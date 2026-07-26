@@ -6,8 +6,8 @@ import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.telegram.types.attachments.Attachment
-import ski.gagar.vertigram.telegram.types.richtext.HasOptionalRichCaption
-import ski.gagar.vertigram.telegram.types.richtext.RichText
+import ski.gagar.vertigram.telegram.types.formattedtext.HasOptionalFormattedCaption
+import ski.gagar.vertigram.telegram.types.formattedtext.FormattedText
 import ski.gagar.vertigram.util.json.annotations.Fractional
 import java.time.Duration
 
@@ -56,7 +56,7 @@ sealed interface InputMedia : BaseInputMedia<InputMedia.Type> {
         /** Caption of the animation, 0-1024 characters after entities parsing. */
         override val caption: String? = null,
         /** Mode for parsing entities in [caption]. */
-        override val parseMode: RichText.ParseMode? = null,
+        override val parseMode: FormattedText.ParseMode? = null,
         /** Special entities that appear in [caption], specified instead of [parseMode]. */
         override val captionEntities: List<MessageEntity>? = null,
         /** Whether the caption must be shown above the message media. */
@@ -69,7 +69,7 @@ sealed interface InputMedia : BaseInputMedia<InputMedia.Type> {
         val duration: Duration? = null,
         /** Whether the animation needs to be covered with a spoiler animation. */
         val hasSpoiler: Boolean = false
-    ) : InputMedia, Poll, PollOption, RichMessage, HasOptionalRichCaption {
+    ) : InputMedia, Poll, PollOption, RichMessage, HasOptionalFormattedCaption {
         override val type: Type = Type.ANIMATION
         override val cover: Attachment? = null
 
@@ -90,7 +90,7 @@ sealed interface InputMedia : BaseInputMedia<InputMedia.Type> {
         /** Caption of the audio, 0-1024 characters after entities parsing. */
         override val caption: String? = null,
         /** Mode for parsing entities in [caption]. */
-        override val parseMode: RichText.ParseMode? = null,
+        override val parseMode: FormattedText.ParseMode? = null,
         /** Special entities that appear in [caption], specified instead of [parseMode]. */
         override val captionEntities: List<MessageEntity>? = null,
         /** Duration of the audio. */
@@ -99,7 +99,7 @@ sealed interface InputMedia : BaseInputMedia<InputMedia.Type> {
         val performer: String? = null,
         /** Title of the audio. */
         val title: String? = null
-    ) : InputMedia, Poll, RichMessage, HasOptionalRichCaption {
+    ) : InputMedia, Poll, RichMessage, HasOptionalFormattedCaption {
         override val type: Type = Type.AUDIO
         override val cover: Attachment? = null
 
@@ -120,7 +120,7 @@ sealed interface InputMedia : BaseInputMedia<InputMedia.Type> {
         /** Caption of the document, 0-1024 characters after entities parsing. */
         override val caption: String? = null,
         /** Mode for parsing entities in [caption]. */
-        override val parseMode: RichText.ParseMode? = null,
+        override val parseMode: FormattedText.ParseMode? = null,
         /** Special entities that appear in [caption], specified instead of [parseMode]. */
         override val captionEntities: List<MessageEntity>? = null,
         /**
@@ -128,7 +128,7 @@ sealed interface InputMedia : BaseInputMedia<InputMedia.Type> {
          * document is sent as part of an album.
          */
         val disableContentTypeDetection: Boolean = false
-    ) : InputMedia, Poll, HasOptionalRichCaption {
+    ) : InputMedia, Poll, HasOptionalFormattedCaption {
         override val type: Type = Type.DOCUMENT
         override val cover: Attachment? = null
 
@@ -147,14 +147,14 @@ sealed interface InputMedia : BaseInputMedia<InputMedia.Type> {
         /** Caption of the photo, 0-1024 characters after entities parsing. */
         override val caption: String? = null,
         /** Mode for parsing entities in [caption]. */
-        override val parseMode: RichText.ParseMode? = null,
+        override val parseMode: FormattedText.ParseMode? = null,
         /** Special entities that appear in [caption], specified instead of [parseMode]. */
         override val captionEntities: List<MessageEntity>? = null,
         /** Whether the caption must be shown above the message media. */
         val showCaptionAboveMedia: Boolean = false,
         /** Whether the photo needs to be covered with a spoiler animation. */
         val hasSpoiler: Boolean = false
-    ) : InputMedia, Poll, PollOption, RichMessage, HasOptionalRichCaption {
+    ) : InputMedia, Poll, PollOption, RichMessage, HasOptionalFormattedCaption {
         override val type: Type = Type.PHOTO
         override val thumbnail = null
         override val cover: Attachment? = null
@@ -180,7 +180,7 @@ sealed interface InputMedia : BaseInputMedia<InputMedia.Type> {
         /** Caption of the video, 0-1024 characters after entities parsing. */
         override val caption: String? = null,
         /** Mode for parsing entities in [caption]. */
-        override val parseMode: RichText.ParseMode? = null,
+        override val parseMode: FormattedText.ParseMode? = null,
         /** Special entities that appear in [caption], specified instead of [parseMode]. */
         override val captionEntities: List<MessageEntity>? = null,
         /** Whether the caption must be shown above the message media. */
@@ -195,7 +195,7 @@ sealed interface InputMedia : BaseInputMedia<InputMedia.Type> {
         val supportsStreaming: Boolean = false,
         /** Whether the video needs to be covered with a spoiler animation. */
         val hasSpoiler: Boolean = false
-    ) : InputMedia, Poll, PollOption, RichMessage, HasOptionalRichCaption {
+    ) : InputMedia, Poll, PollOption, RichMessage, HasOptionalFormattedCaption {
         override val type: Type = Type.VIDEO
 
         companion object
@@ -217,14 +217,14 @@ sealed interface InputMedia : BaseInputMedia<InputMedia.Type> {
         /** Caption of the live photo, 0-1024 characters after entities parsing. */
         override val caption: String? = null,
         /** Mode for parsing entities in [caption]. */
-        override val parseMode: RichText.ParseMode? = null,
+        override val parseMode: FormattedText.ParseMode? = null,
         /** Special entities that appear in [caption], specified instead of [parseMode]. */
         override val captionEntities: List<MessageEntity>? = null,
         /** Whether the caption must be shown above the message media. */
         val showCaptionAboveMedia: Boolean = false,
         /** Whether the live photo needs to be covered with a spoiler animation. */
         val hasSpoiler: Boolean = false
-    ) : InputMedia, Poll, PollOption, HasOptionalRichCaption {
+    ) : InputMedia, Poll, PollOption, HasOptionalFormattedCaption {
         override val type: Type = Type.LIVE_PHOTO
         override val thumbnail: Attachment? = null
         override val cover: Attachment? = null
@@ -244,12 +244,12 @@ sealed interface InputMedia : BaseInputMedia<InputMedia.Type> {
         /** Caption of the voice message, 0-1024 characters after entities parsing. */
         override val caption: String? = null,
         /** Mode for parsing entities in [caption]. */
-        override val parseMode: RichText.ParseMode? = null,
+        override val parseMode: FormattedText.ParseMode? = null,
         /** Special entities that appear in [caption], specified instead of [parseMode]. */
         override val captionEntities: List<MessageEntity>? = null,
         /** Duration of the voice message. */
         val duration: Duration? = null
-    ) : InputMedia, RichMessage, HasOptionalRichCaption {
+    ) : InputMedia, RichMessage, HasOptionalFormattedCaption {
         override val type: Type = Type.VOICE_NOTE
         override val thumbnail: Attachment? = null
         override val cover: Attachment? = null
@@ -556,14 +556,14 @@ sealed interface InputMedia : BaseInputMedia<InputMedia.Type> {
             /** Caption of the photo, 0-1024 characters after entities parsing. */
             override val caption: String? = null,
             /** Mode for parsing entities in [caption]. */
-            override val parseMode: RichText.ParseMode? = null,
+            override val parseMode: FormattedText.ParseMode? = null,
             /** Special entities that appear in [caption], specified instead of [parseMode]. */
             override val captionEntities: List<MessageEntity>? = null,
             /** Whether the caption must be shown above the message media. */
             val showCaptionAboveMedia: Boolean = false,
             /** Whether the photo needs to be covered with a spoiler animation. */
             val hasSpoiler: Boolean = false
-        ) : Paid, HasOptionalRichCaption {
+        ) : Paid, HasOptionalFormattedCaption {
             override val type: Type = Type.PHOTO
             override val thumbnail: Attachment? = null
             override val cover: Attachment? = null
@@ -589,7 +589,7 @@ sealed interface InputMedia : BaseInputMedia<InputMedia.Type> {
             /** Caption of the video, 0-1024 characters after entities parsing. */
             override val caption: String? = null,
             /** Mode for parsing entities in [caption]. */
-            override val parseMode: RichText.ParseMode? = null,
+            override val parseMode: FormattedText.ParseMode? = null,
             /** Special entities that appear in [caption], specified instead of [parseMode]. */
             override val captionEntities: List<MessageEntity>? = null,
             /** Whether the caption must be shown above the message media. */
@@ -605,7 +605,7 @@ sealed interface InputMedia : BaseInputMedia<InputMedia.Type> {
             /** Whether the video needs to be covered with a spoiler animation. */
             val hasSpoiler: Boolean = false
 
-        ) : Paid, HasOptionalRichCaption{
+        ) : Paid, HasOptionalFormattedCaption{
             override val type: Type = Type.VIDEO
             companion object
         }

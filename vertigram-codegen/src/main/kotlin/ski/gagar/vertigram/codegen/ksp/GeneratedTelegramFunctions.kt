@@ -97,7 +97,7 @@ private fun clientMethodForClass(
                 classDeclaration,
                 className,
                 wrappedParameters,
-                annotation.wrapRichText
+                annotation.wrapFormattedText
             )
             val call = callPrimaryConstructor(className, wrappedParameters)
             addStatement("return call(${call.formatString})", *call.parameters.toTypedArray())
@@ -159,7 +159,7 @@ private fun creatorFunction(
                 classDeclaration,
                 className,
                 wrappedParameters,
-                annotation.wrapRichText
+                annotation.wrapFormattedText
             )
             val call = callPrimaryConstructor(className, wrappedParameters)
             addStatement("return ${call.formatString}", *call.parameters.toTypedArray())

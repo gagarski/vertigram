@@ -1,58 +1,58 @@
-package ski.gagar.vertigram.telegram.types.richtext
+package ski.gagar.vertigram.telegram.types.formattedtext
 
 import ski.gagar.vertigram.telegram.types.MessageEntity
 
 /**
- * Interface for input types (sent TO Telegram API) that has rich text field
+ * Interface for input types (sent TO Telegram API) that has formatted text field
  */
-interface HasRichText {
+interface HasFormattedText {
     val text: String
-    val parseMode: RichText.ParseMode?
+    val parseMode: FormattedText.ParseMode?
     val entities: List<MessageEntity>?
 }
 
 /**
- * Interface for input types (sent TO Telegram API) that has optional rich quote field
+ * Interface for input types (sent TO Telegram API) that has optional formatted text field
  */
-interface HasOptionalRichText {
+interface HasOptionalFormattedText {
     val text: String?
-    val textParseMode: RichText.ParseMode?
+    val textParseMode: FormattedText.ParseMode?
     val textEntities: List<MessageEntity>?
 }
 
 /**
- * Interface for input types (sent TO Telegram API) that has rich text field
+ * Interface for input types (sent TO Telegram API) that has formatted text field
  */
-interface HasRichQuestion {
+interface HasFormattedQuestion {
     val question: String
-    val questionParseMode: RichText.ParseMode?
+    val questionParseMode: FormattedText.ParseMode?
     val questionEntities: List<MessageEntity>?
 }
 
 /**
- * Interface for input types (sent TO Telegram API) that has optional rich caption field
+ * Interface for input types (sent TO Telegram API) that has optional formatted caption field
  */
-interface HasOptionalRichCaption {
+interface HasOptionalFormattedCaption {
     val caption: String?
-    val parseMode: RichText.ParseMode?
+    val parseMode: FormattedText.ParseMode?
     val captionEntities: List<MessageEntity>?
 }
 
 /**
- * Interface for input types (sent TO Telegram API) that has optional rich explanation field
+ * Interface for input types (sent TO Telegram API) that has optional formatted explanation field
  */
-interface HasOptionalRichExplanation {
+interface HasOptionalFormattedExplanation {
     val explanation: String?
-    val explanationParseMode: RichText.ParseMode?
+    val explanationParseMode: FormattedText.ParseMode?
     val explanationEntities: List<MessageEntity>?
 }
 
 /**
- * Interface for input types (sent TO Telegram API) that has optional rich quote field
+ * Interface for input types (sent TO Telegram API) that has optional formatted quote field
  */
-interface HasOptionalRichQuote {
+interface HasOptionalFormattedQuote {
     val quote: String?
-    val quoteParseMode: RichText.ParseMode?
+    val quoteParseMode: FormattedText.ParseMode?
     val quoteEntities: List<MessageEntity>?
 }
 
@@ -98,39 +98,39 @@ interface HasQuestionWithEntities {
 
 
 /**
- * Get text [RichText] for types that [HasRichText]
+ * Get text [FormattedText] for types that [HasFormattedText]
  */
-val HasRichText.richText: RichText
-    get() = RichText(text = text, parseMode = parseMode, entities = entities)
+val HasFormattedText.formattedText: FormattedText
+    get() = FormattedText(text = text, parseMode = parseMode, entities = entities)
 
 /**
- * Get text [RichText] for types that [HasRichText]
+ * Get text [FormattedText] for types that [HasFormattedText]
  */
-val HasRichQuestion.richQuestion: RichText
-    get() = RichText(text = question, parseMode = questionParseMode, entities = questionEntities)
+val HasFormattedQuestion.formattedQuestion: FormattedText
+    get() = FormattedText(text = question, parseMode = questionParseMode, entities = questionEntities)
 
 /**
- * Get caption as [RichText] for types that [HasOptionalRichCaption]
+ * Get caption as [FormattedText] for types that [HasOptionalFormattedCaption]
  */
-val HasOptionalRichCaption.richCaption: RichText?
+val HasOptionalFormattedCaption.formattedCaption: FormattedText?
     get() = caption?.let {
-        RichText(text = it, parseMode = parseMode, entities = captionEntities)
+        FormattedText(text = it, parseMode = parseMode, entities = captionEntities)
     }
 
 /**
- * Get explanation as [RichText] for types that [HasOptionalRichExplanation]
+ * Get explanation as [FormattedText] for types that [HasOptionalFormattedExplanation]
  */
-val HasOptionalRichExplanation.richExplanation: RichText?
+val HasOptionalFormattedExplanation.formattedExplanation: FormattedText?
     get() = explanation?.let {
-        RichText(text = it, parseMode = explanationParseMode, entities = explanationEntities)
+        FormattedText(text = it, parseMode = explanationParseMode, entities = explanationEntities)
     }
 
 /**
- * Get explanation as [RichText] for types that [HasOptionalRichQuote]
+ * Get explanation as [FormattedText] for types that [HasOptionalFormattedQuote]
  */
-val HasOptionalRichQuote.richQuote: RichText?
+val HasOptionalFormattedQuote.formattedQuote: FormattedText?
     get() = quote?.let {
-        RichText(text = it, parseMode = quoteParseMode, entities = quoteEntities)
+        FormattedText(text = it, parseMode = quoteParseMode, entities = quoteEntities)
     }
 
 /**

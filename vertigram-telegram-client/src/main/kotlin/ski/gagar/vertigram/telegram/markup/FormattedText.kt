@@ -16,23 +16,23 @@ import kotlinx.html.stream.appendHTML
 import kotlinx.html.visit
 import ski.gagar.vertigram.telegram.types.MessageEntity
 import ski.gagar.vertigram.telegram.types.User
-import ski.gagar.vertigram.telegram.types.richtext.TextWithEntities
+import ski.gagar.vertigram.telegram.types.formattedtext.TextWithEntities
 import java.time.OffsetDateTime
 import java.time.Instant
 import java.time.ZonedDateTime
 import java.time.chrono.ChronoZonedDateTime
 
 /**
- * [DslMarker] for rich text markdown.
+ * [DslMarker] for formatted text markdown.
  */
 @DslMarker
-private annotation class RichTextDslMarker
+private annotation class FormattedTextDslMarker
 
 /**
- * Base class for every rich text element
+ * Base class for every formatted text element
  */
-@RichTextDslMarker
-abstract class RichTextElement internal constructor() {
+@FormattedTextDslMarker
+abstract class FormattedTextElement internal constructor() {
     /**
      * Render Markdown for element, string rendering is delegated to [StringBuilder]
      */
@@ -52,7 +52,7 @@ abstract class RichTextElement internal constructor() {
 /**
  * Plain text
  */
-class Text internal constructor(val value: String): RichTextElement() {
+class Text internal constructor(val value: String): FormattedTextElement() {
     override fun StringBuilder.renderMarkdown() {
         append(MarkdownTools.escapeText(value))
     }
@@ -74,18 +74,18 @@ interface BlockElement
  * By default, all child types are protected. Override them as public in subclasses if you
  * want specific child type for specific element type.
  */
-abstract class RichTextElementWithChildren internal constructor() : RichTextElement() {
+abstract class FormattedTextElementWithChildren internal constructor() : FormattedTextElement() {
     /**
      * Children list
      */
-    protected val children: MutableList<RichTextElement> = mutableListOf()
+    protected val children: MutableList<FormattedTextElement> = mutableListOf()
 
     /**
      * Create entity when rendered in [TextWithEntities] mode
      */
     abstract fun createEntity(offset: Int, length: Int): MessageEntity
 
-    protected fun <T : RichTextElement> initTag(tag: T, init: T.() -> Unit = {}): T {
+    protected fun <T : FormattedTextElement> initTag(tag: T, init: T.() -> Unit = {}): T {
         tag.init()
         children.add(tag)
         return tag
@@ -263,7 +263,7 @@ abstract class RichTextElementWithChildren internal constructor() : RichTextElem
 /**
  * Base class for elements which have a prefix and postfix in Markdown
  */
-abstract class WrappedRichTextElementWithChildren internal constructor() : RichTextElementWithChildren() {
+abstract class WrappedFormattedTextElementWithChildren internal constructor() : FormattedTextElementWithChildren() {
     /**
      * Prefix for Markdown
      */
@@ -285,7 +285,7 @@ abstract class WrappedRichTextElementWithChildren internal constructor() : RichT
 /**
  * Bold text
  */
-class Bold internal constructor() : WrappedRichTextElementWithChildren() {
+class Bold internal constructor() : WrappedFormattedTextElementWithChildren() {
     override fun markdownPrefix(builder: StringBuilder) {
         builder.append("*")
     }
@@ -317,7 +317,7 @@ class Italic internal constructor(
     // See notes here: https://core.telegram.org/bots/api#markdownv2-style
     // We could be more smart here and add extra char only when italic is the last part of underline
     private val insideUnderline: Boolean = false
-) : WrappedRichTextElementWithChildren() {
+) : WrappedFormattedTextElementWithChildren() {
     override fun markdownPrefix(builder: StringBuilder) {
         builder.append("_")
     }
@@ -351,7 +351,7 @@ class Italic internal constructor(
 /**
  * Underline text
  */
-class Underline internal constructor() : WrappedRichTextElementWithChildren() {
+class Underline internal constructor() : WrappedFormattedTextElementWithChildren() {
     override fun createEntity(offset: Int, length: Int): MessageEntity =
         MessageEntity.Underline(offset = offset, length = length)
     override fun markdownPrefix(builder: StringBuilder) {
@@ -381,7 +381,7 @@ class Underline internal constructor() : WrappedRichTextElementWithChildren() {
 /**
  * Strikethrough text
  */
-class Strikethrough internal constructor(): WrappedRichTextElementWithChildren() {
+class Strikethrough internal constructor(): WrappedFormattedTextElementWithChildren() {
     override fun createEntity(offset: Int, length: Int): MessageEntity =
         MessageEntity.Strikethrough(offset = offset, length = length)
 
@@ -409,7 +409,7 @@ class Strikethrough internal constructor(): WrappedRichTextElementWithChildren()
 /**
  * Link text
  */
-class Link internal constructor(private val href: String) : RichTextElementWithChildren() {
+class Link internal constructor(private val href: String) : FormattedTextElementWithChildren() {
     override fun createEntity(offset: Int, length: Int): MessageEntity =
         throw IllegalStateException("Do not call me")
 
@@ -445,7 +445,7 @@ class Link internal constructor(private val href: String) : RichTextElementWithC
 /**
  * User mention
  */
-class UserMention internal constructor(private val user: User) : RichTextElementWithChildren() {
+class UserMention internal constructor(private val user: User) : FormattedTextElementWithChildren() {
     override fun createEntity(offset: Int, length: Int): MessageEntity =
         MessageEntity.Mention(offset = offset, length = length)
     private val href = "tg://user?id=${user.id}"
@@ -489,7 +489,7 @@ class UserMention internal constructor(private val user: User) : RichTextElement
 /**
  * Emoji
  */
-class Emoji internal constructor(private val basic: String, private val customId: Long) : RichTextElement() {
+class Emoji internal constructor(private val basic: String, private val customId: Long) : FormattedTextElement() {
     override fun StringBuilder.renderMarkdown() {
         append("[$basic]")
         append("(tg://emoji?id=$customId})")
@@ -618,7 +618,7 @@ class DateTime internal constructor(
     private val text: String,
     private val unixTime: Instant,
     private val dateTimeFormat: DateTimeFormat? = null
-) : RichTextElement() {
+) : FormattedTextElement() {
     private val href = buildString {
         append("tg://time?unix=${unixTime.epochSecond}")
         dateTimeFormat?.let {
@@ -656,7 +656,7 @@ class DateTime internal constructor(
 /**
  * Code (inline)
  */
-class Code internal constructor(private val code: String) : RichTextElement() {
+class Code internal constructor(private val code: String) : FormattedTextElement() {
     override fun StringBuilder.renderMarkdown() {
         append("`${MarkdownTools.escapeCode(code)}`")
     }
@@ -677,7 +677,7 @@ class Code internal constructor(private val code: String) : RichTextElement() {
 /**
  * Pre-formatted text (code block)
  */
-class Pre internal constructor(private val code: String, private val language: String? = null, siblings: List<RichTextElement>) : RichTextElement(), BlockElement {
+class Pre internal constructor(private val code: String, private val language: String? = null, siblings: List<FormattedTextElement>) : FormattedTextElement(), BlockElement {
     private val afterBlock = siblings.lastOrNull() is BlockElement || siblings.lastOrNull() == null
 
     override fun StringBuilder.renderMarkdown() {
@@ -716,7 +716,7 @@ class Pre internal constructor(private val code: String, private val language: S
 /**
  * Spoiler
  */
-class Spoiler internal constructor() : WrappedRichTextElementWithChildren() {
+class Spoiler internal constructor() : WrappedFormattedTextElementWithChildren() {
     override fun createEntity(offset: Int, length: Int): MessageEntity =
         MessageEntity.Spoiler(offset = offset, length = length)
 
@@ -743,7 +743,7 @@ class Spoiler internal constructor() : WrappedRichTextElementWithChildren() {
 /**
  * Block quote
  */
-class BlockQuote internal constructor(val expandable: Boolean = false, siblings: List<RichTextElement>) : RichTextElementWithChildren(), BlockElement {
+class BlockQuote internal constructor(val expandable: Boolean = false, siblings: List<FormattedTextElement>) : FormattedTextElementWithChildren(), BlockElement {
     private val afterBlockQuote = siblings.lastOrNull() is BlockQuote
     private val afterBlock = siblings.lastOrNull() is BlockElement || siblings.lastOrNull() == null
 
@@ -800,9 +800,9 @@ class BlockQuote internal constructor(val expandable: Boolean = false, siblings:
 }
 
 /**
- * A root for rich text.
+ * A root for formatted text.
  */
-class RichTextRoot internal constructor() : RichTextElementWithChildren() {
+class FormattedTextRoot internal constructor() : FormattedTextElementWithChildren() {
     override fun createEntity(offset: Int, length: Int): MessageEntity =
         throw IllegalStateException("Do not call me")
 
@@ -902,7 +902,7 @@ private val User.fullName: String?
     }
 
 /**
- * Low-level builder for [TextWithEntities], used in rich text builders as implementation.
+ * Low-level builder for [TextWithEntities], used in formatted text builders as implementation.
  */
 class TextWithEntitiesBuilder {
     private val textBuilder = StringBuilder()

@@ -1,4 +1,4 @@
-package ski.gagar.vertigram.telegram.types.richtext
+package ski.gagar.vertigram.telegram.types.formattedtext
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
@@ -24,12 +24,12 @@ import ski.gagar.vertigram.telegram.types.MessageEntity
     include = JsonTypeInfo.As.EXISTING_PROPERTY
 )
 @JsonSubTypes(
-    JsonSubTypes.Type(value = MarkdownText::class, name = RichText.ParseMode.MARKDOWN_STR),
-    JsonSubTypes.Type(value = MarkdownV2Text::class, name = RichText.ParseMode.MARKDOWN_V2_STR),
-    JsonSubTypes.Type(value = HtmlText::class, name = RichText.ParseMode.HTML_STR),
-    JsonSubTypes.Type(value = TextWithEntities::class, name = RichText.ParseMode.HTML_STR),
+    JsonSubTypes.Type(value = MarkdownText::class, name = FormattedText.ParseMode.MARKDOWN_STR),
+    JsonSubTypes.Type(value = MarkdownV2Text::class, name = FormattedText.ParseMode.MARKDOWN_V2_STR),
+    JsonSubTypes.Type(value = HtmlText::class, name = FormattedText.ParseMode.HTML_STR),
+    JsonSubTypes.Type(value = TextWithEntities::class, name = FormattedText.ParseMode.HTML_STR),
 )
-sealed interface RichText {
+sealed interface FormattedText {
     val text: String
     @get:JsonIgnore
     val parseMode: ParseMode?
@@ -61,7 +61,7 @@ sealed interface RichText {
     companion object {
         internal operator fun invoke(text: String,
                             parseMode: ParseMode?,
-                            entities: List<MessageEntity>?) : RichText {
+                            entities: List<MessageEntity>?) : FormattedText {
             if (parseMode != null) require(null == entities)
             return when (parseMode) {
                 ParseMode.MARKDOWN -> MarkdownText(text)
@@ -80,8 +80,8 @@ sealed interface RichText {
 @Deprecated("Consider using other mode", replaceWith = ReplaceWith("MarkdownV2Text"))
 data class MarkdownText internal constructor(
     override val text: String
-) : RichText {
-    override val parseMode: RichText.ParseMode = RichText.ParseMode.MARKDOWN
+) : FormattedText {
+    override val parseMode: FormattedText.ParseMode = FormattedText.ParseMode.MARKDOWN
 }
 
 /**
@@ -89,8 +89,8 @@ data class MarkdownText internal constructor(
  */
 data class MarkdownV2Text internal constructor(
     override val text: String
-) : RichText {
-    override val parseMode: RichText.ParseMode = RichText.ParseMode.MARKDOWN_V2
+) : FormattedText {
+    override val parseMode: FormattedText.ParseMode = FormattedText.ParseMode.MARKDOWN_V2
 }
 
 /**
@@ -98,8 +98,8 @@ data class MarkdownV2Text internal constructor(
  */
 data class HtmlText internal constructor(
     override val text: String
-) : RichText {
-    override val parseMode: RichText.ParseMode = RichText.ParseMode.HTML
+) : FormattedText {
+    override val parseMode: FormattedText.ParseMode = FormattedText.ParseMode.HTML
 }
 
 /**
@@ -108,5 +108,5 @@ data class HtmlText internal constructor(
 data class TextWithEntities internal constructor(
     override val text: String,
     override val entities: List<MessageEntity> = listOf(),
-) : RichText
+) : FormattedText
 

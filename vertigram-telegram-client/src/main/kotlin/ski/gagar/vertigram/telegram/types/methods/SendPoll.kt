@@ -8,10 +8,10 @@ import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.telegram.throttling.HasChatId
 import ski.gagar.vertigram.telegram.throttling.Throttled
 import ski.gagar.vertigram.telegram.types.*
-import ski.gagar.vertigram.telegram.types.richtext.HasOptionalRichExplanation
-import ski.gagar.vertigram.telegram.types.richtext.HasRichQuestion
-import ski.gagar.vertigram.telegram.types.richtext.HasRichText
-import ski.gagar.vertigram.telegram.types.richtext.RichText
+import ski.gagar.vertigram.telegram.types.formattedtext.HasOptionalFormattedExplanation
+import ski.gagar.vertigram.telegram.types.formattedtext.HasFormattedQuestion
+import ski.gagar.vertigram.telegram.types.formattedtext.HasFormattedText
+import ski.gagar.vertigram.telegram.types.formattedtext.FormattedText
 import ski.gagar.vertigram.telegram.types.util.ChatId
 import ski.gagar.vertigram.util.jackson.typing.TypeResolverWithDeductionBuilder
 import java.time.Duration
@@ -37,11 +37,11 @@ import java.time.Instant
 )
 @JsonTypeResolver(TypeResolverWithDeductionBuilder::class)
 @TelegramCodegen.Method
-sealed class SendPoll : JsonTelegramCallable<Message>(), HasChatId, HasRichQuestion {
+sealed class SendPoll : JsonTelegramCallable<Message>(), HasChatId, HasFormattedQuestion {
     abstract val businessConnectionId: String?
     abstract val messageThreadId: Long?
     abstract override val question: String
-    abstract override val questionParseMode: RichText.ParseMode?
+    abstract override val questionParseMode: FormattedText.ParseMode?
     abstract override val questionEntities: List<MessageEntity>?
     abstract val options: List<InputOption>
     abstract val isAnonymous: Boolean
@@ -52,7 +52,7 @@ sealed class SendPoll : JsonTelegramCallable<Message>(), HasChatId, HasRichQuest
     abstract val membersOnly: Boolean
     abstract val countryCodes: List<String>?
     abstract val description: String?
-    abstract val descriptionParseMode: RichText.ParseMode?
+    abstract val descriptionParseMode: FormattedText.ParseMode?
     abstract val descriptionEntities: List<MessageEntity>?
     abstract val media: InputMedia.Poll?
     abstract val disableNotification: Boolean
@@ -95,7 +95,7 @@ sealed class SendPoll : JsonTelegramCallable<Message>(), HasChatId, HasRichQuest
                  * [formatting options](https://core.telegram.org/bots/api#formatting-options) for more details.
                  * Currently, only custom emoji entities are allowed.
                  */
-                override val questionParseMode: RichText.ParseMode? = null,
+                override val questionParseMode: FormattedText.ParseMode? = null,
                 /**
                  * List of special entities that appear in the poll question. It can be specified instead of
                  * [questionParseMode].
@@ -138,7 +138,7 @@ sealed class SendPoll : JsonTelegramCallable<Message>(), HasChatId, HasRichQuest
                  * Mode for parsing entities in the poll description. See Telegram's
                  * [formatting options](https://core.telegram.org/bots/api#formatting-options) for more details.
                  */
-                override val descriptionParseMode: RichText.ParseMode? = null,
+                override val descriptionParseMode: FormattedText.ParseMode? = null,
                 /**
                  * List of special entities that appear in the poll description, which can be specified instead of
                  * [descriptionParseMode].
@@ -197,7 +197,7 @@ sealed class SendPoll : JsonTelegramCallable<Message>(), HasChatId, HasRichQuest
                 /** Poll question, 1-300 characters. */
                 override val question: String,
                 /** Mode for parsing entities in the question. Currently, only custom emoji entities are allowed. */
-                override val questionParseMode: RichText.ParseMode? = null,
+                override val questionParseMode: FormattedText.ParseMode? = null,
                 /** List of special entities that appear in the poll question. */
                 override val questionEntities: List<MessageEntity>? = null,
                 /** List of 1-12 answer options. */
@@ -222,7 +222,7 @@ sealed class SendPoll : JsonTelegramCallable<Message>(), HasChatId, HasRichQuest
                 /** Description of the poll to be sent, 0-1024 characters after entities parsing. */
                 override val description: String? = null,
                 /** Mode for parsing entities in the poll description. */
-                override val descriptionParseMode: RichText.ParseMode? = null,
+                override val descriptionParseMode: FormattedText.ParseMode? = null,
                 /** List of special entities that appear in the poll description. */
                 override val descriptionEntities: List<MessageEntity>? = null,
                 /** Media added to the poll description. */
@@ -268,7 +268,7 @@ sealed class SendPoll : JsonTelegramCallable<Message>(), HasChatId, HasRichQuest
                 /** Poll question, 1-300 characters. */
                 override val question: String,
                 /** Mode for parsing entities in the question. Currently, only custom emoji entities are allowed. */
-                override val questionParseMode: RichText.ParseMode? = null,
+                override val questionParseMode: FormattedText.ParseMode? = null,
                 /** List of special entities that appear in the poll question. */
                 override val questionEntities: List<MessageEntity>? = null,
                 /** List of 1-12 answer options. */
@@ -293,7 +293,7 @@ sealed class SendPoll : JsonTelegramCallable<Message>(), HasChatId, HasRichQuest
                 /** Description of the poll to be sent, 0-1024 characters after entities parsing. */
                 override val description: String? = null,
                 /** Mode for parsing entities in the poll description. */
-                override val descriptionParseMode: RichText.ParseMode? = null,
+                override val descriptionParseMode: FormattedText.ParseMode? = null,
                 /** List of special entities that appear in the poll description. */
                 override val descriptionEntities: List<MessageEntity>? = null,
                 /** Media added to the poll description. */
@@ -327,7 +327,7 @@ sealed class SendPoll : JsonTelegramCallable<Message>(), HasChatId, HasRichQuest
      * Cases for quiz
      */
     @TelegramCodegen.Method
-    sealed class Quiz : SendPoll(), HasOptionalRichExplanation {
+    sealed class Quiz : SendPoll(), HasOptionalFormattedExplanation {
         /**
          * Case when [openPeriod] is specified.
          */
@@ -349,7 +349,7 @@ sealed class SendPoll : JsonTelegramCallable<Message>(), HasChatId, HasRichQuest
             /** Poll question, 1-300 characters. */
             override val question: String,
             /** Mode for parsing entities in the question. Currently, only custom emoji entities are allowed. */
-            override val questionParseMode: RichText.ParseMode? = null,
+            override val questionParseMode: FormattedText.ParseMode? = null,
             /** List of special entities that appear in the poll question. */
             override val questionEntities: List<MessageEntity>? = null,
             /** List of 1-12 answer options. */
@@ -374,7 +374,7 @@ sealed class SendPoll : JsonTelegramCallable<Message>(), HasChatId, HasRichQuest
             /** Description of the poll to be sent, 0-1024 characters after entities parsing. */
             override val description: String? = null,
             /** Mode for parsing entities in the poll description. */
-            override val descriptionParseMode: RichText.ParseMode? = null,
+            override val descriptionParseMode: FormattedText.ParseMode? = null,
             /** List of special entities that appear in the poll description. */
             override val descriptionEntities: List<MessageEntity>? = null,
             /** Media added to the poll description. */
@@ -385,7 +385,7 @@ sealed class SendPoll : JsonTelegramCallable<Message>(), HasChatId, HasRichQuest
              */
             override val explanation: String? = null,
             /** Mode for parsing entities in the explanation. */
-            override val explanationParseMode: RichText.ParseMode? = null,
+            override val explanationParseMode: FormattedText.ParseMode? = null,
             /** List of special entities that appear in the poll explanation. */
             override val explanationEntities: List<MessageEntity>? = null,
             /** Media added to the quiz explanation. */
@@ -433,7 +433,7 @@ sealed class SendPoll : JsonTelegramCallable<Message>(), HasChatId, HasRichQuest
             /** Poll question, 1-300 characters. */
             override val question: String,
             /** Mode for parsing entities in the question. Currently, only custom emoji entities are allowed. */
-            override val questionParseMode: RichText.ParseMode? = null,
+            override val questionParseMode: FormattedText.ParseMode? = null,
             /** List of special entities that appear in the poll question. */
             override val questionEntities: List<MessageEntity>? = null,
             /** List of 1-12 answer options. */
@@ -458,7 +458,7 @@ sealed class SendPoll : JsonTelegramCallable<Message>(), HasChatId, HasRichQuest
             /** Description of the poll to be sent, 0-1024 characters after entities parsing. */
             override val description: String? = null,
             /** Mode for parsing entities in the poll description. */
-            override val descriptionParseMode: RichText.ParseMode? = null,
+            override val descriptionParseMode: FormattedText.ParseMode? = null,
             /** List of special entities that appear in the poll description. */
             override val descriptionEntities: List<MessageEntity>? = null,
             /** Media added to the poll description. */
@@ -466,7 +466,7 @@ sealed class SendPoll : JsonTelegramCallable<Message>(), HasChatId, HasRichQuest
             /** Text that is shown when a user chooses an incorrect answer or taps on the lamp icon. */
             override val explanation: String? = null,
             /** Mode for parsing entities in the explanation. */
-            override val explanationParseMode: RichText.ParseMode? = null,
+            override val explanationParseMode: FormattedText.ParseMode? = null,
             /** List of special entities that appear in the poll explanation. */
             override val explanationEntities: List<MessageEntity>? = null,
             /** Media added to the quiz explanation. */
@@ -514,7 +514,7 @@ sealed class SendPoll : JsonTelegramCallable<Message>(), HasChatId, HasRichQuest
             /** Poll question, 1-300 characters. */
             override val question: String,
             /** Mode for parsing entities in the question. Currently, only custom emoji entities are allowed. */
-            override val questionParseMode: RichText.ParseMode? = null,
+            override val questionParseMode: FormattedText.ParseMode? = null,
             /** List of special entities that appear in the poll question. */
             override val questionEntities: List<MessageEntity>? = null,
             /** List of 1-12 answer options. */
@@ -539,7 +539,7 @@ sealed class SendPoll : JsonTelegramCallable<Message>(), HasChatId, HasRichQuest
             /** Description of the poll to be sent, 0-1024 characters after entities parsing. */
             override val description: String? = null,
             /** Mode for parsing entities in the poll description. */
-            override val descriptionParseMode: RichText.ParseMode? = null,
+            override val descriptionParseMode: FormattedText.ParseMode? = null,
             /** List of special entities that appear in the poll description. */
             override val descriptionEntities: List<MessageEntity>? = null,
             /** Media added to the poll description. */
@@ -547,7 +547,7 @@ sealed class SendPoll : JsonTelegramCallable<Message>(), HasChatId, HasRichQuest
             /** Text that is shown when a user chooses an incorrect answer or taps on the lamp icon. */
             override val explanation: String? = null,
             /** Mode for parsing entities in the explanation. */
-            override val explanationParseMode: RichText.ParseMode? = null,
+            override val explanationParseMode: FormattedText.ParseMode? = null,
             /** List of special entities that appear in the poll explanation. */
             override val explanationEntities: List<MessageEntity>? = null,
             /** Media added to the quiz explanation. */
@@ -590,7 +590,7 @@ sealed class SendPoll : JsonTelegramCallable<Message>(), HasChatId, HasRichQuest
          * [formatting options](https://core.telegram.org/bots/api#formatting-options) for more details. Currently, only
          * custom emoji entities are allowed.
          */
-        val textParseMode: RichText.ParseMode? = null,
+        val textParseMode: FormattedText.ParseMode? = null,
         /**
          * List of special entities that appear in the poll option text. It can be specified instead of
          * [textParseMode].
@@ -598,9 +598,9 @@ sealed class SendPoll : JsonTelegramCallable<Message>(), HasChatId, HasRichQuest
         val textEntities: List<MessageEntity>? = null,
         /** Media added to the poll option. */
         val media: InputMedia.PollOption? = null,
-    ) : HasRichText {
+    ) : HasFormattedText {
         @get:JsonIgnore
-        override val parseMode: RichText.ParseMode?
+        override val parseMode: FormattedText.ParseMode?
             get() = textParseMode
 
         @get:JsonIgnore

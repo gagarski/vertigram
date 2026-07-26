@@ -2,7 +2,7 @@ package ski.gagar.vertigram.telegram.types
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import ski.gagar.vertigram.annotations.TelegramCodegen
-import ski.gagar.vertigram.telegram.types.richtext.HasOptionalTextWithEntities
+import ski.gagar.vertigram.telegram.types.formattedtext.HasOptionalTextWithEntities
 
 /**
  * This object represents a game. Use BotFather to create and edit games, their short names will act as unique

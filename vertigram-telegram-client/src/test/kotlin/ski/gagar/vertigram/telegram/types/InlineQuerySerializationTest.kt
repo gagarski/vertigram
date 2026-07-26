@@ -2,7 +2,7 @@ package ski.gagar.vertigram.telegram.types
 
 import org.junit.jupiter.api.Test
 import ski.gagar.vertigram.BaseSerializationTest
-import ski.gagar.vertigram.telegram.markup.toRichText
+import ski.gagar.vertigram.telegram.markup.toFormattedText
 
 object InlineQuerySerializationTest : BaseSerializationTest() {
     @Test
@@ -153,7 +153,7 @@ object InlineQuerySerializationTest : BaseSerializationTest() {
     fun `input message content should survive serialization`() {
         assertSerializable<InlineQuery.InputMessageContent>(
             InlineQuery.InputMessageContent.Text.create(
-                richMessageText = "xxx".toRichText()
+                messageText = "xxx".toFormattedText()
             )
         )
         assertSerializable<InlineQuery.InputMessageContent>(

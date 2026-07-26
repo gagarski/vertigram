@@ -6,8 +6,8 @@ import ski.gagar.vertigram.telegram.throttling.HasReceiverUserId
 import ski.gagar.vertigram.telegram.throttling.Throttled
 import ski.gagar.vertigram.telegram.types.MessageEntity
 import ski.gagar.vertigram.telegram.types.ReplyMarkup
-import ski.gagar.vertigram.telegram.types.richtext.HasOptionalRichCaption
-import ski.gagar.vertigram.telegram.types.richtext.RichText
+import ski.gagar.vertigram.telegram.types.formattedtext.HasOptionalFormattedCaption
+import ski.gagar.vertigram.telegram.types.formattedtext.FormattedText
 import ski.gagar.vertigram.telegram.types.util.ChatId
 
 /**
@@ -28,9 +28,9 @@ data class EditEphemeralMessageCaption internal constructor(
     /** New caption, 0-1024 characters after entities parsing. */
     override val caption: String? = null,
     /** Mode for parsing entities in the new caption. */
-    override val parseMode: RichText.ParseMode? = null,
+    override val parseMode: FormattedText.ParseMode? = null,
     /** Special entities that appear in the caption; can be specified instead of [parseMode]. */
     override val captionEntities: List<MessageEntity>? = null,
     /** Inline keyboard attached to the message. */
     val replyMarkup: ReplyMarkup.InlineKeyboard? = null
-) : JsonTelegramCallable<Boolean>(), HasChatId, HasReceiverUserId, HasOptionalRichCaption
+) : JsonTelegramCallable<Boolean>(), HasChatId, HasReceiverUserId, HasOptionalFormattedCaption

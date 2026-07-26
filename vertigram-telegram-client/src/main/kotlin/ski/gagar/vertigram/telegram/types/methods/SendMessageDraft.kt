@@ -2,7 +2,7 @@ package ski.gagar.vertigram.telegram.types.methods
 
 import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.telegram.types.MessageEntity
-import ski.gagar.vertigram.telegram.types.richtext.RichText
+import ski.gagar.vertigram.telegram.types.formattedtext.FormattedText
 
 /**
  * Use this method to stream a partial message to a user while the message is being generated.
@@ -22,7 +22,7 @@ data class SendMessageDraft internal constructor(
     /** Partial message text to stream. */
     val text: String? = null,
     /** Mode for parsing entities in [text]. */
-    val parseMode: RichText.ParseMode? = null,
+    val parseMode: FormattedText.ParseMode? = null,
     /** Special entities that appear in [text]; can be specified instead of [parseMode]. */
     val entities: List<MessageEntity>? = null
 ) : JsonTelegramCallable<Boolean>()

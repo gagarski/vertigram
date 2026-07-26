@@ -56,7 +56,7 @@ class TelegramLoggingVerticle : VertigramVerticle<TelegramLoggingVerticle.Config
 
             tg.sendMessage(
                 chatId = typedConfig.chatId.toChatId(),
-                richText = textMarkdown {
+                text = textMarkdown {
                     +log.level.emoji
                     +" "
                     b {
@@ -133,7 +133,7 @@ class TelegramLoggingVerticle : VertigramVerticle<TelegramLoggingVerticle.Config
                 if (force || msgSent < MAX_SEQ_MESSAGES - 1) {
                     tg.sendMessage(
                         chatId = typedConfig.chatId.toChatId(),
-                        richText = textMarkdown {
+                        text = textMarkdown {
                             pre(buf.trimEnd('\n').toString())
                         }
                     )
@@ -143,7 +143,7 @@ class TelegramLoggingVerticle : VertigramVerticle<TelegramLoggingVerticle.Config
                 } else {
                     tg.sendMessage(
                         chatId = typedConfig.chatId.toChatId(),
-                        richText = textMarkdown {
+                        text = textMarkdown {
                             pre(TRUNCATED)
                         }
                     )
@@ -181,7 +181,7 @@ class TelegramLoggingVerticle : VertigramVerticle<TelegramLoggingVerticle.Config
 
         tg.sendMessage(
             chatId = typedConfig.chatId.toChatId(),
-            richText = textMarkdown {
+            text = textMarkdown {
                 +"For the last ${typedConfig.accumulationPeriod} the following log events occurred"
                 typedConfig.me?.let {
                     +" in @${it.username}"

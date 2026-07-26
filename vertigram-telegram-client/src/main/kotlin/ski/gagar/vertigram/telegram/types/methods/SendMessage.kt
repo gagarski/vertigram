@@ -9,8 +9,8 @@ import ski.gagar.vertigram.telegram.types.MessageEntity
 import ski.gagar.vertigram.telegram.types.ReplyMarkup
 import ski.gagar.vertigram.telegram.types.ReplyParameters
 import ski.gagar.vertigram.telegram.types.SuggestedPost
-import ski.gagar.vertigram.telegram.types.richtext.HasRichText
-import ski.gagar.vertigram.telegram.types.richtext.RichText
+import ski.gagar.vertigram.telegram.types.formattedtext.HasFormattedText
+import ski.gagar.vertigram.telegram.types.formattedtext.FormattedText
 import ski.gagar.vertigram.telegram.types.util.ChatId
 
 /**
@@ -32,7 +32,7 @@ data class SendMessage internal constructor(
     /** Text of the message. */
     override val text: String,
     /** Mode for parsing entities in the caption or text. */
-    override val parseMode: RichText.ParseMode? = null,
+    override val parseMode: FormattedText.ParseMode? = null,
     /** Special entities that appear in [text]; can be specified instead of [parseMode]. */
     override val entities: List<MessageEntity>? = null,
     /** Link preview generation options for the message. */
@@ -55,4 +55,4 @@ data class SendMessage internal constructor(
     val replyParameters: ReplyParameters? = null,
     /** Additional interface options. */
     val replyMarkup: ReplyMarkup? = null
-) : JsonTelegramCallable<Message>(), HasChatId, HasReceiverUserId, HasRichText
+) : JsonTelegramCallable<Message>(), HasChatId, HasReceiverUserId, HasFormattedText

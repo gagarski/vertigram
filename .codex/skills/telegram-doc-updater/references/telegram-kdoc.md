@@ -57,8 +57,8 @@ Use this guide for both standalone documentation work and documentation included
 ## Generated documentation and wrappers
 
 - Source KDoc must remain meaningful after it is copied to generated client methods, type constructors, and creators.
-- Inspect `VertigramClientGenerator.WRAP_CONFIGS` for wrapper transformations such as `richText`, `richCaption`, and
-  `richQuestion`. Document the public generated parameter and place its documentation according to the generated
+- Inspect `WRAP_CONFIGS` for wrapper transformations such as `text`, `caption`, and
+  `question`. Document the public generated parameter and place its documentation according to the generated
   signature order.
 - When a wrapper combines or replaces source properties, compose its documentation from the applicable source
   documentation without leaking unrelated property text into another `@param` tag.

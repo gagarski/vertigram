@@ -7,8 +7,8 @@ import ski.gagar.vertigram.telegram.throttling.Throttled
 import ski.gagar.vertigram.telegram.types.Message
 import ski.gagar.vertigram.telegram.types.MessageEntity
 import ski.gagar.vertigram.telegram.types.ReplyMarkup
-import ski.gagar.vertigram.telegram.types.richtext.HasRichText
-import ski.gagar.vertigram.telegram.types.richtext.RichText
+import ski.gagar.vertigram.telegram.types.formattedtext.HasFormattedText
+import ski.gagar.vertigram.telegram.types.formattedtext.FormattedText
 import ski.gagar.vertigram.telegram.types.util.ChatId
 
 /**
@@ -29,11 +29,11 @@ data class EditEphemeralMessageText internal constructor(
     /** New text of the message. */
     override val text: String,
     /** Mode for parsing entities in [text]. */
-    override val parseMode: RichText.ParseMode? = null,
+    override val parseMode: FormattedText.ParseMode? = null,
     /** Special entities that appear in [text]; can be specified instead of [parseMode]. */
     override val entities: List<MessageEntity>? = null,
     /** Link preview generation options for the message. */
     val linkPreviewOptions: Message.LinkPreviewOptions? = null,
     /** Inline keyboard attached to the message. */
     val replyMarkup: ReplyMarkup.InlineKeyboard? = null
-) : JsonTelegramCallable<Boolean>(), HasChatId, HasReceiverUserId, HasRichText
+) : JsonTelegramCallable<Boolean>(), HasChatId, HasReceiverUserId, HasFormattedText

@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonValue
 import com.fasterxml.jackson.annotation.JsonProperty
 import ski.gagar.vertigram.annotations.TelegramCodegen
 import ski.gagar.vertigram.telegram.types.MessageEntity
-import ski.gagar.vertigram.telegram.types.richtext.RichText
+import ski.gagar.vertigram.telegram.types.formattedtext.FormattedText
 
 /**
  * Gifts a Telegram Premium subscription to the given user.
@@ -23,7 +23,7 @@ data class GiftPremiumSubscription internal constructor(
     /** Text shown along with the gift, 0-128 characters. */
     val text: String? = null,
     /** Mode for parsing entities in [text]. */
-    val textParseMode: RichText.ParseMode? = null,
+    val textParseMode: FormattedText.ParseMode? = null,
     /** Special entities that appear in [text]; can be specified instead of [textParseMode]. */
     val textEntities: List<MessageEntity>? = null
 ) : JsonTelegramCallable<Boolean>() {

@@ -18,7 +18,7 @@ internal fun FunSpec.Builder.addParametersFromPrimaryConstructor(
     classDeclaration: KSClassDeclaration,
     className: ClassName,
     wrappedParameters: MutableMap<String, WrapConfig>,
-    wrapRichText: Boolean
+    wrapFormattedText: Boolean
 ) {
     val constructor = classDeclaration.primaryConstructor
         ?: throw IllegalStateException(
@@ -55,7 +55,7 @@ internal fun FunSpec.Builder.addParametersFromPrimaryConstructor(
 
     for (parameter in constructor.parameters) {
         val parameterName = parameter.requireName()
-        val wrapConfig = wrappersBySourceParameter[parameterName].takeIf { wrapRichText }
+        val wrapConfig = wrappersBySourceParameter[parameterName].takeIf { wrapFormattedText }
 
         when {
             parameterName in alreadyWrapped -> continue
@@ -170,15 +170,15 @@ internal data class WrapConfig(
 private const val DEFAULTS_OBJECT = "Defaults"
 private const val NO_POS_ARGS = "noPosArgs"
 private val NO_POS_ARGS_TYPE = ClassName("ski.gagar.vertigram.util", "NoPosArgs")
-private val RICH_TEXT_TYPE = ClassName(
-    "ski.gagar.vertigram.telegram.types.richtext",
-    "RichText"
+private val FORMATTED_TEXT_TYPE = ClassName(
+    "ski.gagar.vertigram.telegram.types.formattedtext",
+    "FormattedText"
 )
 
 private val WRAP_CONFIGS = listOf(
     WrapConfig(
-        wrapper = RICH_TEXT_TYPE,
-        wrapperParam = "richTitle",
+        wrapper = FORMATTED_TEXT_TYPE,
+        wrapperParam = "title",
         wrapperParamMapping = mapOf(
             "title" to "text",
             "parseMode" to "parseMode",
@@ -186,8 +186,8 @@ private val WRAP_CONFIGS = listOf(
         )
     ),
     WrapConfig(
-        wrapper = RICH_TEXT_TYPE,
-        wrapperParam = "richQuestion",
+        wrapper = FORMATTED_TEXT_TYPE,
+        wrapperParam = "question",
         wrapperParamMapping = mapOf(
             "question" to "text",
             "questionParseMode" to "parseMode",
@@ -195,8 +195,8 @@ private val WRAP_CONFIGS = listOf(
         )
     ),
     WrapConfig(
-        wrapper = RICH_TEXT_TYPE,
-        wrapperParam = "richDescription",
+        wrapper = FORMATTED_TEXT_TYPE,
+        wrapperParam = "description",
         wrapperParamMapping = mapOf(
             "description" to "text",
             "descriptionParseMode" to "parseMode",
@@ -204,8 +204,8 @@ private val WRAP_CONFIGS = listOf(
         )
     ),
     WrapConfig(
-        wrapper = RICH_TEXT_TYPE,
-        wrapperParam = "richCaption",
+        wrapper = FORMATTED_TEXT_TYPE,
+        wrapperParam = "caption",
         wrapperParamMapping = mapOf(
             "caption" to "text",
             "parseMode" to "parseMode",
@@ -213,8 +213,8 @@ private val WRAP_CONFIGS = listOf(
         )
     ),
     WrapConfig(
-        wrapper = RICH_TEXT_TYPE,
-        wrapperParam = "richText",
+        wrapper = FORMATTED_TEXT_TYPE,
+        wrapperParam = "text",
         wrapperParamMapping = mapOf(
             "text" to "text",
             "parseMode" to "parseMode",
@@ -222,8 +222,8 @@ private val WRAP_CONFIGS = listOf(
         )
     ),
     WrapConfig(
-        wrapper = RICH_TEXT_TYPE,
-        wrapperParam = "richText",
+        wrapper = FORMATTED_TEXT_TYPE,
+        wrapperParam = "text",
         wrapperParamMapping = mapOf(
             "text" to "text",
             "parseMode" to "parseMode",
@@ -231,8 +231,8 @@ private val WRAP_CONFIGS = listOf(
         )
     ),
     WrapConfig(
-        wrapper = RICH_TEXT_TYPE,
-        wrapperParam = "richMessageText",
+        wrapper = FORMATTED_TEXT_TYPE,
+        wrapperParam = "messageText",
         wrapperParamMapping = mapOf(
             "messageText" to "text",
             "parseMode" to "parseMode",
@@ -240,8 +240,8 @@ private val WRAP_CONFIGS = listOf(
         )
     ),
     WrapConfig(
-        wrapper = RICH_TEXT_TYPE,
-        wrapperParam = "richQuote",
+        wrapper = FORMATTED_TEXT_TYPE,
+        wrapperParam = "quote",
         wrapperParamMapping = mapOf(
             "quote" to "text",
             "quoteParseMode" to "parseMode",
@@ -249,8 +249,8 @@ private val WRAP_CONFIGS = listOf(
         )
     ),
     WrapConfig(
-        wrapper = RICH_TEXT_TYPE,
-        wrapperParam = "richExplanation",
+        wrapper = FORMATTED_TEXT_TYPE,
+        wrapperParam = "explanation",
         wrapperParamMapping = mapOf(
             "explanation" to "text",
             "explanationParseMode" to "parseMode",

@@ -26,7 +26,7 @@ class HelloVerticle : VertigramVerticle<HelloVerticle.Config>() {
         if (msg.isCommandForBot("hello", typedConfig.me)) {
             tg.sendMessage(
                 chatId = msg.chat.id.toChatId(),
-                richText = "Hello, ${msg.from?.firstName ?: "Stranger"}".toRichText(),
+                text = "Hello, ${msg.from?.firstName ?: "Stranger"}".toFormattedText(),
                 replyParameters = ReplyParameters.create(
                     messageId = msg.messageId
                 )
@@ -113,7 +113,7 @@ class HelloVerticle : SimpleCommandVerticle<HelloVerticle.Config>() {
     override suspend fun respond(message: Message) {
         tg.sendMessage(
             chatId = message.chat.id.toChatId(),
-            richText = "Hello, ${message.from?.firstName ?: "Stranger"}".toRichText(),
+            text = "Hello, ${message.from?.firstName ?: "Stranger"}".toFormattedText(),
             replyParameters = ReplyParameters.create(
                 messageId = message.messageId
             )
@@ -264,7 +264,7 @@ class CounterVerticle : SimpleTelegramDialogVerticle<CounterVerticle.Config>() {
         if (count == MAX_COUNT) {
             tg.sendMessage(
                 chatId = typedConfig.chatId.toChatId(),
-                richText = "We've counted towards $count and done. Type $CMD if you want to start over!".toRichText()
+                text = "We've counted towards $count and done. Type $CMD if you want to start over!".toFormattedText()
             )
             die(DeathReason.COMPLETED)
             return
@@ -272,7 +272,7 @@ class CounterVerticle : SimpleTelegramDialogVerticle<CounterVerticle.Config>() {
         // (6) Proceeding? Let's report current status to the user
         val msg = tg.sendMessage(
             chatId = typedConfig.chatId.toChatId(),
-            richText = textMarkdown {
+            text = textMarkdown {
 
                 if (count == 0) {
                     +"Hello! Let's count together!"
@@ -465,7 +465,7 @@ private suspend inline fun oneAtATime(block: () -> Unit) {
     if (busy) {
         tg.sendMessage(
             chatId = typedConfig.chatId.toChatId(),
-            richText = "I am busy with your previous command, hold on.".toRichText()
+            text = "I am busy with your previous command, hold on.".toFormattedText()
         )
         return
     }
@@ -516,7 +516,7 @@ fun resetTimer() {
     timer = setTimerNonCancellable(typedConfig.timeout) {
         tg.sendMessage(
             chatId = typedConfig.chatId.toChatId(),
-            richText = "Ok, bye!".toRichText()
+            text = "Ok, bye!".toFormattedText()
         )
         die(DeathReason.TIMEOUT)
     }
@@ -581,7 +581,7 @@ class RegisterVerticle : StatefulTelegramDialogVerticle<RegisterVerticle.Config>
         override suspend fun sideEffect() {
             // (7) sendOrEdit is a helper function to implement "in-place" responses for callback responses
             sendOrEdit(
-                richText = "Type your name".toRichText(),
+                text = "Type your name".toFormattedText(),
                 replyMarkup = inlineKeyboard {
                     row {
                         // (8) Buttons for cancelling and going back
@@ -609,7 +609,7 @@ class RegisterVerticle : StatefulTelegramDialogVerticle<RegisterVerticle.Config>
     ) : State(verticle) {
         override suspend fun sideEffect() {
             sendOrEdit(
-                richText = "Type your age".toRichText(),
+                text = "Type your age".toFormattedText(),
                 replyMarkup = inlineKeyboard {
                     row {
                         backAndCancelButtons(canRollback())
@@ -637,7 +637,7 @@ class RegisterVerticle : StatefulTelegramDialogVerticle<RegisterVerticle.Config>
     ) : State(verticle) {
         override suspend fun sideEffect() {
             sendOrEdit(
-                richText = "Type or select your favourite color:".toRichText(),
+                text = "Type or select your favourite color:".toFormattedText(),
                 replyMarkup = inlineKeyboard {
                     row {
                         callback(
@@ -698,7 +698,7 @@ class RegisterVerticle : StatefulTelegramDialogVerticle<RegisterVerticle.Config>
         override suspend fun sideEffect() {
             persist()
             sendOrEdit(
-                richText = textMarkdown {
+                text = textMarkdown {
                     +"We've recorded your response"
                     br()
                     b {
@@ -834,7 +834,7 @@ for demo purposes):
 
         private suspend fun update() {
             sendOrEdit(
-                richText = "Type your age".toRichText(),
+                text = "Type your age".toFormattedText(),
                 replyMarkup = inlineKeyboard {
                     row {
                         if (age > MIN_AGE) {
@@ -915,7 +915,7 @@ you'd have to deal with history behavior, so your state history does not become 
     ) : State(verticle) {
         override suspend fun sideEffect() {
             sendOrEdit(
-                richText = "Type your age".toRichText(),
+                text = "Type your age".toFormattedText(),
                 replyMarkup = inlineKeyboard {
                     row {
                         if (age > MIN_AGE) {

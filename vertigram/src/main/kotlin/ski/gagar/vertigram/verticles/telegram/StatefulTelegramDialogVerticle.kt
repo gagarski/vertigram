@@ -6,7 +6,7 @@ import kotlinx.coroutines.sync.withLock
 import ski.gagar.vertigram.coroutines.setTimerNonCancellable
 import ski.gagar.vertigram.telegram.client.Telegram
 import ski.gagar.vertigram.telegram.client.ThinTelegram
-import ski.gagar.vertigram.telegram.markup.toRichText
+import ski.gagar.vertigram.telegram.markup.toFormattedText
 import ski.gagar.vertigram.telegram.markup.forceReply
 import ski.gagar.vertigram.telegram.methods.answerCallbackQuery
 import ski.gagar.vertigram.telegram.methods.editEphemeralMessageReplyMarkup
@@ -21,7 +21,7 @@ import ski.gagar.vertigram.telegram.types.ReplyParameters
 import ski.gagar.vertigram.telegram.types.Update
 import ski.gagar.vertigram.telegram.types.User
 import ski.gagar.vertigram.telegram.types.create
-import ski.gagar.vertigram.telegram.types.richtext.RichText
+import ski.gagar.vertigram.telegram.types.formattedtext.FormattedText
 import ski.gagar.vertigram.telegram.types.util.isCommandForBot
 import ski.gagar.vertigram.telegram.types.util.toChatId
 import ski.gagar.vertigram.util.lazy
@@ -349,12 +349,12 @@ abstract class StatefulTelegramDialogVerticle<Config> : TelegramDialogVerticle<C
      * if there were no messages in the chat after it has been sent (i.e. we think that it is the last message in the chat).
      * Otherwise, a new message will be sent.
      *
-     * @param richText Text of the message
+     * @param text Text of the message
      * @param buttons Reply markup of the message
      * @param forceSend Ignore the fact that the message is the last in the chat and do sending instead of editing
      */
     protected suspend fun sendOrEdit(
-        richText: RichText,
+        text: FormattedText,
         buttons: ReplyMarkup? = null,
         forceSend: Boolean = false
     ) {
@@ -368,11 +368,11 @@ abstract class StatefulTelegramDialogVerticle<Config> : TelegramDialogVerticle<C
 
         val knownMessage = msgInfo
         if (knownMessage == null) {
-            val messageId = sendMessage(delivery, richText, replyMarkup)
-            msgInfo = MsgInfo(messageId, replyMarkup != null, richText.toString(), replyMarkup)
-        } else if (richText.toString() != knownMessage.text || replyMarkup != knownMessage.markup) {
-            val messageId = editMessageText(delivery, knownMessage.id, richText, replyMarkup)
-            msgInfo = MsgInfo(messageId, replyMarkup != null, richText.toString(), replyMarkup)
+            val messageId = sendMessage(delivery, text, replyMarkup)
+            msgInfo = MsgInfo(messageId, replyMarkup != null, text.toString(), replyMarkup)
+        } else if (text.toString() != knownMessage.text || replyMarkup != knownMessage.markup) {
+            val messageId = editMessageText(delivery, knownMessage.id, text, replyMarkup)
+            msgInfo = MsgInfo(messageId, replyMarkup != null, text.toString(), replyMarkup)
         }
     }
 
@@ -387,17 +387,17 @@ abstract class StatefulTelegramDialogVerticle<Config> : TelegramDialogVerticle<C
         )
     } ?: Delivery.Regular
 
-    private suspend fun sendMessage(delivery: Delivery, richText: RichText, replyMarkup: ReplyMarkup?): Long =
+    private suspend fun sendMessage(delivery: Delivery, text: FormattedText, replyMarkup: ReplyMarkup?): Long =
         when (delivery) {
             Delivery.Regular -> tg.sendMessage(
                 chatId = chatId.toChatId(),
-                richText = richText,
+                text = text,
                 replyMarkup = replyMarkup
             ).messageId
             is Delivery.Ephemeral -> {
                 val message = tg.sendMessage(
                     chatId = chatId.toChatId(),
-                    richText = richText,
+                    text = text,
                     receiverUserId = delivery.receiverUserId,
                     callbackQueryId = (delivery.context as? EphemeralContext.CallbackQuery)?.callbackQueryId,
                     replyParameters = (delivery.context as? EphemeralContext.Message)?.let {
@@ -414,13 +414,13 @@ abstract class StatefulTelegramDialogVerticle<Config> : TelegramDialogVerticle<C
     private suspend fun editMessageText(
         delivery: Delivery,
         messageId: Long,
-        richText: RichText,
+        text: FormattedText,
         replyMarkup: ReplyMarkup?
     ): Long = when (delivery) {
         Delivery.Regular -> tg.editMessageText(
             chatId = chatId.toChatId(),
             messageId = messageId,
-            richText = richText,
+            text = text,
             replyMarkup = replyMarkup as? ReplyMarkup.InlineKeyboard
         ).messageId
         is Delivery.Ephemeral -> {
@@ -428,7 +428,7 @@ abstract class StatefulTelegramDialogVerticle<Config> : TelegramDialogVerticle<C
                 chatId = chatId.toChatId(),
                 receiverUserId = delivery.receiverUserId,
                 ephemeralMessageId = messageId,
-                richText = richText,
+                text = text,
                 replyMarkup = replyMarkup as? ReplyMarkup.InlineKeyboard
             )
             messageId
@@ -638,11 +638,11 @@ abstract class StatefulTelegramDialogVerticle<Config> : TelegramDialogVerticle<C
          * Call [StatefulTelegramDialogVerticle.sendOrEdit]
          */
         protected open suspend fun sendOrEdit(
-            richText: RichText,
+            text: FormattedText,
             replyMarkup: ReplyMarkup? = null,
             forceSend: Boolean = false
         ) {
-            v.sendOrEdit(richText, replyMarkup, forceSend)
+            v.sendOrEdit(text, replyMarkup, forceSend)
         }
 
         /**
@@ -689,7 +689,7 @@ abstract class StatefulTelegramDialogVerticle<Config> : TelegramDialogVerticle<C
         private val verticle: StatefulTelegramDialogVerticle<*>
     ) : State(verticle) {
         override suspend fun sideEffect() {
-            sendOrEdit("\uD83E\uDD71".toRichText())
+            sendOrEdit("\uD83E\uDD71".toFormattedText())
             verticle.timeout()
         }
     }
@@ -706,7 +706,7 @@ abstract class StatefulTelegramDialogVerticle<Config> : TelegramDialogVerticle<C
         private val verticle: StatefulTelegramDialogVerticle<*>
     ) : State(verticle) {
         override suspend fun sideEffect() {
-            sendOrEdit("❌".toRichText())
+            sendOrEdit("❌".toFormattedText())
             cancel()
         }
     }
@@ -723,7 +723,7 @@ abstract class StatefulTelegramDialogVerticle<Config> : TelegramDialogVerticle<C
         private val verticle: StatefulTelegramDialogVerticle<*>
     ) : State(verticle) {
         override suspend fun sideEffect() {
-            sendOrEdit("✅".toRichText())
+            sendOrEdit("✅".toFormattedText())
             complete()
         }
     }

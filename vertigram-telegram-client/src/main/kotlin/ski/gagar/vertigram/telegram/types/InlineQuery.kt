@@ -6,9 +6,9 @@ import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 import com.fasterxml.jackson.databind.annotation.JsonTypeResolver
 import ski.gagar.vertigram.annotations.TelegramCodegen
-import ski.gagar.vertigram.telegram.types.richtext.HasOptionalRichCaption
-import ski.gagar.vertigram.telegram.types.richtext.HasRichText
-import ski.gagar.vertigram.telegram.types.richtext.RichText
+import ski.gagar.vertigram.telegram.types.formattedtext.HasOptionalFormattedCaption
+import ski.gagar.vertigram.telegram.types.formattedtext.HasFormattedText
+import ski.gagar.vertigram.telegram.types.formattedtext.FormattedText
 import ski.gagar.vertigram.util.NoPosArgs
 import ski.gagar.vertigram.util.jackson.typing.TypeResolverWithDeductionBuilder
 import java.time.Duration
@@ -68,12 +68,12 @@ data class InlineQuery internal constructor(
             /** Text of the message to be sent, 1-4096 characters. */
             val messageText: String,
             /** Mode for parsing entities in the message text. */
-            override val parseMode: RichText.ParseMode? = null,
+            override val parseMode: FormattedText.ParseMode? = null,
             /** Special entities that appear in the message text, specified instead of [parseMode]. */
             override val entities: List<MessageEntity>? = null,
             /** Link preview generation options for the message. */
             val linkPreviewOptions: Message.LinkPreviewOptions? = null
-        ) : InputMessageContent, HasRichText {
+        ) : InputMessageContent, HasFormattedText {
             @JsonIgnore
             override val text = messageText
 
@@ -357,7 +357,7 @@ data class InlineQuery internal constructor(
             /** Caption, 0-1024 characters after entities parsing. */
             override val caption: String? = null,
             /** Mode for parsing entities in [caption]. */
-            override val parseMode: RichText.ParseMode? = null,
+            override val parseMode: FormattedText.ParseMode? = null,
             /** Special entities that appear in [caption], specified instead of [parseMode]. */
             override val captionEntities: List<MessageEntity>? = null,
             /** Performer. */
@@ -368,7 +368,7 @@ data class InlineQuery internal constructor(
             val replyMarkup: ReplyMarkup.InlineKeyboard? = null,
             /** Content of the message to be sent instead of the audio. */
             val inputMessageContent: InputMessageContent? = null
-        ) : Result, HasOptionalRichCaption {
+        ) : Result, HasOptionalFormattedCaption {
             override val type: Type = Type.AUDIO
 
             /**
@@ -390,14 +390,14 @@ data class InlineQuery internal constructor(
                 /** Caption, 0-1024 characters after entities parsing. */
                 override val caption: String? = null,
                 /** Mode for parsing entities in [caption]. */
-                override val parseMode: RichText.ParseMode? = null,
+                override val parseMode: FormattedText.ParseMode? = null,
                 /** Special entities that appear in [caption], specified instead of [parseMode]. */
                 override val captionEntities: List<MessageEntity>? = null,
                 /** Inline keyboard attached to the message. */
                 val replyMarkup: ReplyMarkup.InlineKeyboard? = null,
                 /** Content of the message to be sent instead of the audio. */
                 val inputMessageContent: InputMessageContent? = null
-            ) : Result, HasOptionalRichCaption {
+            ) : Result, HasOptionalFormattedCaption {
                 override val type: Type = Type.AUDIO
 
                 companion object
@@ -462,7 +462,7 @@ data class InlineQuery internal constructor(
             /** Caption of the document, 0-1024 characters after entities parsing. */
             override val caption: String? = null,
             /** Mode for parsing entities in [caption]. */
-            override val parseMode: RichText.ParseMode? = null,
+            override val parseMode: FormattedText.ParseMode? = null,
             /** Special entities that appear in [caption], specified instead of [parseMode]. */
             override val captionEntities: List<MessageEntity>? = null,
             /** Valid URL for the file. */
@@ -481,7 +481,7 @@ data class InlineQuery internal constructor(
             val thumbnailWidth: Int? = null,
             /** Thumbnail height. */
             val thumbnailHeight: Int? = null
-        ) : Result, HasOptionalRichCaption {
+        ) : Result, HasOptionalFormattedCaption {
             override val type: Type = Type.DOCUMENT
 
             /**
@@ -507,14 +507,14 @@ data class InlineQuery internal constructor(
                 /** Caption of the document, 0-1024 characters after entities parsing. */
                 override val caption: String? = null,
                 /** Mode for parsing entities in [caption]. */
-                override val parseMode: RichText.ParseMode? = null,
+                override val parseMode: FormattedText.ParseMode? = null,
                 /** Special entities that appear in [caption], specified instead of [parseMode]. */
                 override val captionEntities: List<MessageEntity>? = null,
                 /** Inline keyboard attached to the message. */
                 val replyMarkup: ReplyMarkup.InlineKeyboard? = null,
                 /** Content of the message to be sent instead of the file. */
                 val inputMessageContent: InputMessageContent? = null
-            ) : Result, HasOptionalRichCaption {
+            ) : Result, HasOptionalFormattedCaption {
                 override val type: Type = Type.DOCUMENT
 
                 companion object
@@ -572,7 +572,7 @@ data class InlineQuery internal constructor(
             /** Caption of the GIF, 0-1024 characters after entities parsing. */
             override val caption: String? = null,
             /** Mode for parsing entities in [caption]. */
-            override val parseMode: RichText.ParseMode? = null,
+            override val parseMode: FormattedText.ParseMode? = null,
             /** Special entities that appear in [caption], specified instead of [parseMode]. */
             override val captionEntities: List<MessageEntity>? = null,
             /** Whether the caption must be shown above the message media. */
@@ -581,7 +581,7 @@ data class InlineQuery internal constructor(
             val replyMarkup: ReplyMarkup.InlineKeyboard? = null,
             /** Content of the message to be sent instead of the GIF animation. */
             val inputMessageContent: InputMessageContent? = null
-        ) : Result, HasOptionalRichCaption {
+        ) : Result, HasOptionalFormattedCaption {
             override val type: Type = Type.GIF
 
             /**
@@ -604,7 +604,7 @@ data class InlineQuery internal constructor(
                 /** Caption of the GIF, 0-1024 characters after entities parsing. */
                 override val caption: String? = null,
                 /** Mode for parsing entities in [caption]. */
-                override val parseMode: RichText.ParseMode? = null,
+                override val parseMode: FormattedText.ParseMode? = null,
                 /** Special entities that appear in [caption], specified instead of [parseMode]. */
                 override val captionEntities: List<MessageEntity>? = null,
                 /** Whether the caption must be shown above the message media. */
@@ -613,7 +613,7 @@ data class InlineQuery internal constructor(
                 val replyMarkup: ReplyMarkup.InlineKeyboard? = null,
                 /** Content of the message to be sent instead of the GIF animation. */
                 val inputMessageContent: InputMessageContent? = null
-            ) : Result, HasOptionalRichCaption {
+            ) : Result, HasOptionalFormattedCaption {
                 override val type: Type = Type.GIF
 
                 companion object
@@ -699,7 +699,7 @@ data class InlineQuery internal constructor(
             /** Caption of the MPEG-4 file, 0-1024 characters after entities parsing. */
             override val caption: String? = null,
             /** Mode for parsing entities in [caption]. */
-            override val parseMode: RichText.ParseMode? = null,
+            override val parseMode: FormattedText.ParseMode? = null,
             /** Special entities that appear in [caption], specified instead of [parseMode]. */
             override val captionEntities: List<MessageEntity>? = null,
             /** Whether the caption must be shown above the message media. */
@@ -708,7 +708,7 @@ data class InlineQuery internal constructor(
             val replyMarkup: ReplyMarkup.InlineKeyboard? = null,
             /** Content of the message to be sent instead of the video animation. */
             val inputMessageContent: InputMessageContent? = null
-        ) : Result, HasOptionalRichCaption {
+        ) : Result, HasOptionalFormattedCaption {
             override val type: Type = Type.MPEG4_GIF
 
             /**
@@ -732,7 +732,7 @@ data class InlineQuery internal constructor(
                 /** Caption of the MPEG-4 file, 0-1024 characters after entities parsing. */
                 override val caption: String? = null,
                 /** Mode for parsing entities in [caption]. */
-                override val parseMode: RichText.ParseMode? = null,
+                override val parseMode: FormattedText.ParseMode? = null,
                 /** Special entities that appear in [caption], specified instead of [parseMode]. */
                 override val captionEntities: List<MessageEntity>? = null,
                 /** Whether the caption must be shown above the message media. */
@@ -741,7 +741,7 @@ data class InlineQuery internal constructor(
                 val replyMarkup: ReplyMarkup.InlineKeyboard? = null,
                 /** Content of the message to be sent instead of the video animation. */
                 val inputMessageContent: InputMessageContent? = null
-            ) : Result, HasOptionalRichCaption {
+            ) : Result, HasOptionalFormattedCaption {
                 override val type: Type = Type.MPEG4_GIF
 
                 companion object
@@ -779,7 +779,7 @@ data class InlineQuery internal constructor(
             /** Caption of the photo, 0-1024 characters after entities parsing. */
             override val caption: String? = null,
             /** Mode for parsing entities in [caption]. */
-            override val parseMode: RichText.ParseMode? = null,
+            override val parseMode: FormattedText.ParseMode? = null,
             /** Special entities that appear in [caption], specified instead of [parseMode]. */
             override val captionEntities: List<MessageEntity>? = null,
             /** Whether the caption must be shown above the message media. */
@@ -789,7 +789,7 @@ data class InlineQuery internal constructor(
             /** Content of the message to be sent instead of the photo. */
             val inputMessageContent: InputMessageContent? = null
 
-        ) : Result, HasOptionalRichCaption {
+        ) : Result, HasOptionalFormattedCaption {
             override val type: Type = Type.PHOTO
 
             /**
@@ -815,7 +815,7 @@ data class InlineQuery internal constructor(
                 /** Caption of the photo, 0-1024 characters after entities parsing. */
                 override val caption: String? = null,
                 /** Mode for parsing entities in [caption]. */
-                override val parseMode: RichText.ParseMode? = null,
+                override val parseMode: FormattedText.ParseMode? = null,
                 /** Special entities that appear in [caption], specified instead of [parseMode]. */
                 override val captionEntities: List<MessageEntity>? = null,
                 /** Whether the caption must be shown above the message media. */
@@ -824,7 +824,7 @@ data class InlineQuery internal constructor(
                 val replyMarkup: ReplyMarkup.InlineKeyboard? = null,
                 /** Content of the message to be sent instead of the photo. */
                 val inputMessageContent: InputMessageContent? = null
-            ) : Result, HasOptionalRichCaption {
+            ) : Result, HasOptionalFormattedCaption {
                 override val type: Type = Type.PHOTO
 
                 companion object
@@ -930,7 +930,7 @@ data class InlineQuery internal constructor(
             /** Caption of the video, 0-1024 characters after entities parsing. */
             override val caption: String? = null,
             /** Mode for parsing entities in [caption]. */
-            override val parseMode: RichText.ParseMode? = null,
+            override val parseMode: FormattedText.ParseMode? = null,
             /** Special entities that appear in [caption], specified instead of [parseMode]. */
             override val captionEntities: List<MessageEntity>? = null,
             /** Whether the caption must be shown above the message media. */
@@ -947,7 +947,7 @@ data class InlineQuery internal constructor(
             val replyMarkup: ReplyMarkup.InlineKeyboard? = null,
             /** Content to send instead of the video; required when [videoUrl] points to an HTML page. */
             val inputMessageContent: InputMessageContent? = null
-        ) : Result, HasOptionalRichCaption {
+        ) : Result, HasOptionalFormattedCaption {
             override val type: Type = Type.VIDEO
 
             /**
@@ -973,7 +973,7 @@ data class InlineQuery internal constructor(
                 /** Caption of the video, 0-1024 characters after entities parsing. */
                 override val caption: String? = null,
                 /** Mode for parsing entities in [caption]. */
-                override val parseMode: RichText.ParseMode? = null,
+                override val parseMode: FormattedText.ParseMode? = null,
                 /** Special entities that appear in [caption], specified instead of [parseMode]. */
                 override val captionEntities: List<MessageEntity>? = null,
                 /** Whether the caption must be shown above the message media. */
@@ -982,7 +982,7 @@ data class InlineQuery internal constructor(
                 val replyMarkup: ReplyMarkup.InlineKeyboard? = null,
                 /** Content of the message to be sent instead of the video. */
                 val inputMessageContent: InputMessageContent? = null
-            ) : Result, HasOptionalRichCaption {
+            ) : Result, HasOptionalFormattedCaption {
                 override val type: Type = Type.VIDEO
 
                 companion object
@@ -1011,7 +1011,7 @@ data class InlineQuery internal constructor(
             /** Caption, 0-1024 characters after entities parsing. */
             override val caption: String? = null,
             /** Mode for parsing entities in [caption]. */
-            override val parseMode: RichText.ParseMode? = null,
+            override val parseMode: FormattedText.ParseMode? = null,
             /** Special entities that appear in [caption], specified instead of [parseMode]. */
             override val captionEntities: List<MessageEntity>? = null,
             /** Recording duration. */
@@ -1020,7 +1020,7 @@ data class InlineQuery internal constructor(
             val replyMarkup: ReplyMarkup.InlineKeyboard? = null,
             /** Content of the message to be sent instead of the voice recording. */
             val inputMessageContent: InputMessageContent? = null
-        ) : Result, HasOptionalRichCaption {
+        ) : Result, HasOptionalFormattedCaption {
             override val type: Type = Type.VOICE
 
             /**
@@ -1044,14 +1044,14 @@ data class InlineQuery internal constructor(
                 /** Caption, 0-1024 characters after entities parsing. */
                 override val caption: String? = null,
                 /** Mode for parsing entities in [caption]. */
-                override val parseMode: RichText.ParseMode? = null,
+                override val parseMode: FormattedText.ParseMode? = null,
                 /** Special entities that appear in [caption], specified instead of [parseMode]. */
                 override val captionEntities: List<MessageEntity>? = null,
                 /** Inline keyboard attached to the message. */
                 val replyMarkup: ReplyMarkup.InlineKeyboard? = null,
                 /** Content of the message to be sent instead of the voice recording. */
                 val inputMessageContent: InputMessageContent? = null
-            ) : Result, HasOptionalRichCaption {
+            ) : Result, HasOptionalFormattedCaption {
                 override val type: Type = Type.VOICE
 
                 companion object
