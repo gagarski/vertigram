@@ -1,5 +1,9 @@
 package ski.gagar.vertigram.verticles.telegram
 
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
+import ski.gagar.vertigram.awaitRegistration
 import ski.gagar.vertigram.telegram.client.DirectTelegram
 import ski.gagar.vertigram.telegram.client.Telegram
 import ski.gagar.vertigram.telegram.types.methods.TelegramCallable
@@ -54,27 +58,37 @@ class TelegramVerticle : VertigramVerticle<TelegramVerticle.Config>() {
             ThrottlingTelegram(vertx, directTg, throttling)
         }
 
-        consumer(
-            typedConfig.updatesAddress(), function = ::handleGetUpdates
-        )
+        val consumers = buildList {
+            add(
+                consumer(
+                    typedConfig.updatesAddress(), function = ::handleGetUpdates
+                )
+            )
 
-        for ((tgvAddress, descriptor) in VertigramTypeHints.descriptorByTgvAddress) {
-            if (!descriptor.generateVerticleConsumer)
-                continue
-            consumer(
-                typedConfig.callAddress(
-                    tgvAddress,
-                    RequestType.byTransport(descriptor.transport)
-                ),
-                requestJavaType = descriptor.requestType
-            ) { msg: TelegramCallable<*> ->
-                @Suppress("DEPRECATION")
-                tg.call(msg)
+            for ((tgvAddress, descriptor) in VertigramTypeHints.descriptorByTgvAddress) {
+                if (!descriptor.generateVerticleConsumer)
+                    continue
+                add(
+                    consumer(
+                        typedConfig.callAddress(
+                            tgvAddress,
+                            RequestType.byTransport(descriptor.transport)
+                        ),
+                        requestJavaType = descriptor.requestType
+                    ) { msg: TelegramCallable<*> ->
+                        @Suppress("DEPRECATION")
+                        tg.call(msg)
+                    }
+                )
             }
+
+            add(consumer(typedConfig.longPollTimeoutAddress(), function = ::handleLongPollTimeout))
+            add(consumer(typedConfig.downloadFileAddress(), function = ::handleDownloadFile))
         }
 
-        consumer(typedConfig.longPollTimeoutAddress(), function = ::handleLongPollTimeout)
-        consumer(typedConfig.downloadFileAddress(), function = ::handleDownloadFile)
+        coroutineScope {
+            consumers.map { async { it.awaitRegistration() } }.awaitAll()
+        }
     }
 
     override suspend fun stop() {

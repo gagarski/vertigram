@@ -19,11 +19,13 @@ import java.time.Duration
  * @param timeoutGap A gap for [DeliveryOptions.timeout] when doing long-poll for [getUpdates].
  *     The [Vertigram.EventBus.request] for [getUpdates] will time out after long poll timeout set by verticle +
  *     `timeoutGap`
+ * @param downloadFileTimeout Timeout for [downloadFile] requests.
  */
 class ThinTelegram(
     private val vertigram: Vertigram,
     private val baseAddress: String = TelegramAddress.TELEGRAM_VERTICLE_BASE,
-    private val timeoutGap: Duration = Duration.ofSeconds(5)
+    private val timeoutGap: Duration = Duration.ofSeconds(5),
+    private val downloadFileTimeout: Duration = Duration.ofMinutes(5)
 ) : AbstractTelegram() {
 
     private lateinit var longPollDeliveryOptions: DeliveryOptions
@@ -62,9 +64,10 @@ class ThinTelegram(
             ) as T
 
     override suspend fun downloadFile(path: String, outputPath: String) {
-        vertigram.eventBus.send(
+        vertigram.eventBus.request<TelegramVerticle.DownloadFile, Unit>(
             TelegramVerticle.Config.downloadFileAddress(baseAddress),
-            TelegramVerticle.DownloadFile(path, outputPath)
+            TelegramVerticle.DownloadFile(path, outputPath),
+            options = DeliveryOptions().setSendTimeout(downloadFileTimeout.toMillis())
         )
     }
 

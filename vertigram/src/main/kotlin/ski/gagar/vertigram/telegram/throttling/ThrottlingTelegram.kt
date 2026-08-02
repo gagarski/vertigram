@@ -218,7 +218,28 @@ class ThrottlingTelegram(
         }
     }
 
+    private fun closeCleanUpTask() {
+        try {
+            vertx.cancelTimer(cleanUpTask)
+        } catch (failure: Throwable) {
+            logger.lazy.warn(throwable = failure) {
+                "Failed to cancel throttling cleanup task"
+            }
+        }
+    }
+
+    private fun closeDelegate() {
+        try {
+            delegate.close()
+        } catch (failure: Throwable) {
+            logger.lazy.warn(throwable = failure) {
+                "Failed to close Telegram client"
+            }
+        }
+    }
+
     override fun close() {
-        vertx.cancelTimer(cleanUpTask)
+        closeCleanUpTask()
+        closeDelegate()
     }
 }
