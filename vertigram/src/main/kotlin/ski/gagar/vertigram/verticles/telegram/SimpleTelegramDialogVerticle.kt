@@ -2,6 +2,7 @@ package ski.gagar.vertigram.verticles.telegram
 
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import ski.gagar.vertigram.awaitRegistration
 import ski.gagar.vertigram.telegram.client.Telegram
 import ski.gagar.vertigram.telegram.client.ThinTelegram
 import ski.gagar.vertigram.telegram.types.Message
@@ -58,10 +59,10 @@ abstract class SimpleTelegramDialogVerticle<Config> : TelegramDialogVerticle<Con
     override suspend fun start() {
         super.start()
         callbackQueryListenAddress?.let {
-            consumer(it, function = ::handleCallbackQuery)
+            consumer(it, function = ::handleCallbackQuery).awaitRegistration()
         }
         messageListenAddress?.let {
-            consumer(it, function = ::handleMessage)
+            consumer(it, function = ::handleMessage).awaitRegistration()
         }
     }
 }

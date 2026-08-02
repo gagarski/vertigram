@@ -3,6 +3,7 @@ package ski.gagar.vertigram.verticles.telegram
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import ski.gagar.vertigram.awaitRegistration
 import ski.gagar.vertigram.coroutines.setTimerNonCancellable
 import ski.gagar.vertigram.telegram.client.Telegram
 import ski.gagar.vertigram.telegram.client.ThinTelegram
@@ -142,10 +143,10 @@ abstract class StatefulTelegramDialogVerticle<Config> : TelegramDialogVerticle<C
         super.start()
         becomeWithLock(initialState, defaultHistoryBehavior)
         callbackQueryListenAddress?.let {
-            consumer(it, function = ::handleCallbackQuery)
+            consumer(it, function = ::handleCallbackQuery).awaitRegistration()
         }
         messageListenAddress?.let {
-            consumer(it, function = ::handleMessage)
+            consumer(it, function = ::handleMessage).awaitRegistration()
         }
         scheduleTimeout()
     }

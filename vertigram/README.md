@@ -324,8 +324,8 @@ class CounterVerticle : SimpleTelegramDialogVerticle<CounterVerticle.Config>() {
 
 // (10) Dispatched for managing multiple dialogs simultaneously
 class CounterDispatchVerticle : DispatchVerticle.ByChatAndUser<CounterDispatchVerticle.Config, CounterVerticle.Config>() {
-    // (11) Init logic for a new dialog
-    override fun initChild(dialogKey: DialogKey, msg: Message): Deployment<CounterVerticle.Config>? {
+    // (11) Suspendable preparation logic for a new dialog
+    override suspend fun prepareChild(dialogKey: DialogKey, msg: Message): Deployment<CounterVerticle.Config>? {
         if (!msg.isCommandForBot(CounterVerticle.CMD, typedConfig.me))
             return null
 
@@ -380,9 +380,10 @@ steps 2-6.
 10. Now let's implement **dispatch verticle** which will manage state for multiple dialogs. We extend
 `DispatchVerticle.ByChatAndUser` to make it dispatch updates by chat id + user id. Generic parameters are 
 config for dispatch verticle itself and config for child verticle.
-11. We're describing how to create a new **dialog verticle**. `initChild` is called
-only if the dialog is not yet started for current **dialog key**. `DispatchVerticle` logic expects you to return
-`Deployment` object if you decide to deploy something based on message content or `null` if the message should be ignored.
+11. We're describing how to create a new **dialog verticle**. `prepareChild` is suspendable and is called
+only if the dialog is not yet started for current **dialog key**. `DispatchVerticle` logic expects you to return a
+`Deployment` candidate if you decide to deploy something based on message content or `null` if the message should be
+ignored. If concurrent messages prepare multiple candidates, only one is deployed.
 12. Finally, deploying the `CounterDispatchVerticle`. Do not forget to enable receiving `CALLBACK_QUERY` updates.
 
 Start the bot and try to play around with it. If you have multiple accounts, you can notice that every one of them
@@ -743,7 +744,7 @@ class RegisterVerticle : StatefulTelegramDialogVerticle<RegisterVerticle.Config>
 
 // (13) Dispatch verticle, pretty much similar to the one we've seen before
 class RegisterDispatchVerticle : DispatchVerticle.ByChatAndUser<RegisterDispatchVerticle.Config, RegisterVerticle.Config>() {
-    override fun initChild(dialogKey: DialogKey, msg: Message): Deployment<RegisterVerticle.Config>? {
+    override suspend fun prepareChild(dialogKey: DialogKey, msg: Message): Deployment<RegisterVerticle.Config>? {
         if (!msg.isCommandForBot(RegisterVerticle.CMD, typedConfig.me))
             return null
 

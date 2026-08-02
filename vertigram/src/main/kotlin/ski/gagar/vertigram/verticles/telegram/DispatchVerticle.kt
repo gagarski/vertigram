@@ -1,6 +1,7 @@
 package ski.gagar.vertigram.verticles.telegram
 
 import kotlinx.coroutines.launch
+import ski.gagar.vertigram.awaitRegistration
 import ski.gagar.vertigram.telegram.client.Telegram
 import ski.gagar.vertigram.telegram.client.ThinTelegram
 import ski.gagar.vertigram.telegram.markup.toFormattedText
@@ -8,11 +9,14 @@ import ski.gagar.vertigram.telegram.methods.sendMessage
 import ski.gagar.vertigram.telegram.types.Message
 import ski.gagar.vertigram.telegram.types.Update
 import ski.gagar.vertigram.telegram.types.util.toChatId
+import ski.gagar.vertigram.util.lazy
+import ski.gagar.vertigram.util.logger
 import ski.gagar.vertigram.verticles.common.HierarchyVerticle
 import ski.gagar.vertigram.verticles.common.messages.DeathNotice
 import ski.gagar.vertigram.verticles.common.messages.DeathReason
 import ski.gagar.vertigram.verticles.telegram.DispatchVerticle.DialogKey
 import ski.gagar.vertigram.verticles.telegram.address.TelegramAddress
+import java.time.Duration
 
 /**
  * A verticle that does message dispatching to child verticles unique for given [DialogKey].
@@ -20,7 +24,7 @@ import ski.gagar.vertigram.verticles.telegram.address.TelegramAddress
  * Can be useful together with [StatefulTelegramDialogVerticle] or [SimpleTelegramDialogVerticle].
  *
  * For each [DialogKey] (e.g. `chatId`+`userId`) this verticle will spawn a child
- * (spawning should be implemented by subclass in [doStart]). If there is already a child with given [DialogKey],
+ * (preparation should be implemented by subclasses in [prepareChild]). If there is already a child with given [DialogKey],
  * it will pass the message or callback query to it.
  *
  * The spawned verticle can maintain its state given the condition that it receives messages only for a single dialog.
@@ -30,15 +34,18 @@ abstract class DispatchVerticle<C : DispatchVerticle.Config, VC> : HierarchyVert
         ThinTelegram(vertigram, typedConfig.verticleAddress)
     }
 
-    /**
-     * [DialogKey] to [DialogDescriptor] map
-     */
-    protected val dialogs = mutableMapOf<DialogKey, DialogDescriptor>()
+    private val dialogs = mutableMapOf<DialogKey, DialogState>()
 
     /**
-     * [io.vertx.kotlin.coroutines.CoroutineVerticle.deploymentID] to [DialogKey] map
+     * [io.vertx.kotlin.coroutines.CoroutineVerticle.deploymentID] to active dialog map
      */
-    protected val dialogsInv = mutableMapOf<String, DialogKey>()
+    private val dialogsInv = mutableMapOf<String, ActiveDialog>()
+    private val pendingDeathNotices = mutableMapOf<String, DeathNotice>()
+
+    /**
+     * Period between cleanup attempts for unmatched child death notices. Must resolve to at least one millisecond.
+     */
+    protected open val pendingDeathNoticeCleanupPeriod: Duration = Duration.ofMinutes(1)
 
     /**
      * Create [DialogKey] from incoming [Message]
@@ -75,36 +82,44 @@ abstract class DispatchVerticle<C : DispatchVerticle.Config, VC> : HierarchyVert
      */
     protected open suspend fun shouldHandleMessage(msg: Message): Boolean = true
 
-    protected abstract fun initChild(dialogKey: DialogKey, msg: Message): Deployment<VC>?
-
-    protected open suspend fun doStart(dialogKey: DialogKey, msg: Message): DialogDescriptor? {
-        val deployment = initChild(dialogKey, msg) ?: return null
-
-        val id = deployChild(deployment.verticle, deployment.config)
-
-        val desc = DialogDescriptor(id, deployment.verticle.messageListenAddress, deployment.verticle.callbackQueryListenAddress)
-        return desc
-    }
+    /**
+     * Decide whether [msg] should start a dialog and prepare its child deployment.
+     *
+     * This function may suspend, and multiple calls for the same [dialogKey] may run concurrently. The returned
+     * verticle is therefore only a deployment candidate: the dispatcher may discard it if another candidate claims
+     * the dialog first. Implementations must not acquire resources that require cleanup before the verticle starts.
+     */
+    protected abstract suspend fun prepareChild(dialogKey: DialogKey, msg: Message): Deployment<VC>?
 
     override suspend fun start() {
         super.start()
+        val cleanupPeriodMillis = pendingDeathNoticeCleanupPeriod.toMillis()
+        require(cleanupPeriodMillis > 0) { "pendingDeathNoticeCleanupPeriod must be at least one millisecond" }
+        vertx.setPeriodic(cleanupPeriodMillis) {
+            clearPendingDeathNoticesIfIdle()
+        }
+
         consumer<Message, Unit>(TelegramAddress.dispatchAddress(Update.Type.MESSAGE, typedConfig.baseAddress)) {
             handleMessage(it)
-        }
+        }.awaitRegistration()
 
         consumer<Update.CallbackQuery.Payload, Unit>(TelegramAddress.dispatchAddress(Update.Type.CALLBACK_QUERY, typedConfig.baseAddress)) {
             handleCallbackQuery(it)
-        }
+        }.awaitRegistration()
     }
 
     private suspend fun handleCallbackQuery(callbackQuery: Update.CallbackQuery.Payload) {
         val key = dialogKey(callbackQuery) ?: return
-        val child = dialogs[key] ?: return
+        if (dialogs[key] == null) return
 
         if (!shouldHandleCallbackQuery(callbackQuery))
             return
 
-        passCallbackQueryToOngoing(callbackQuery, child)
+        when (val dialog = dialogs[key]) {
+            is DialogState.Active -> passCallbackQueryToOngoing(callbackQuery, dialog)
+            is DialogState.Starting -> dialog.pendingUpdates.add(PendingUpdate.CallbackQuery(callbackQuery))
+            null -> Unit
+        }
     }
 
     private suspend fun handleMessage(message: Message) {
@@ -112,25 +127,69 @@ abstract class DispatchVerticle<C : DispatchVerticle.Config, VC> : HierarchyVert
             return
 
         val dialogKey = dialogKey(message) ?: return
-        val ongoing = dialogs[dialogKey] // after suspending
-
-        if (ongoing == null) {
-            startAndInitialize(dialogKey, message)
+        when (val dialog = dialogs[dialogKey]) {
+            is DialogState.Active -> {
+                passMessageToOngoing(message, dialog)
+                return
+            }
+            is DialogState.Starting -> {
+                dialog.pendingUpdates.add(PendingUpdate.Message(message))
+                return
+            }
+            null -> Unit
         }
 
-        dialogs[dialogKey]?.let {
-            passMessageToOngoing(message, it)
+        val deployment = prepareChild(dialogKey, message)
+
+        when (val dialog = dialogs[dialogKey]) {
+            is DialogState.Active -> passMessageToOngoing(message, dialog)
+            is DialogState.Starting -> dialog.pendingUpdates.add(PendingUpdate.Message(message))
+            null -> deployment?.let { startAndInitialize(dialogKey, message, it) }
         }
     }
 
-    private suspend fun startAndInitialize(dialogKey: DialogKey, msg: Message) {
-        val desc = doStart(dialogKey, msg) ?: return
-        dialogs[dialogKey] = desc
-        dialogsInv[desc.id] = dialogKey
+    private suspend fun startAndInitialize(dialogKey: DialogKey, msg: Message, deployment: Deployment<VC>) {
+        val starting = DialogState.Starting(mutableListOf(PendingUpdate.Message(msg)))
+        dialogs[dialogKey] = starting
+
+        try {
+            val id = deployChild(deployment.verticle, deployment.config)
+            check(dialogs[dialogKey] === starting) { "Dialog state changed while its child was being deployed" }
+
+            val earlyDeathNotice = pendingDeathNotices.remove(id)
+            if (earlyDeathNotice != null) {
+                dialogs.remove(dialogKey)
+                clearPendingDeathNoticesIfIdle()
+                handleDialogDeath(dialogKey, earlyDeathNotice)
+                return
+            }
+
+            val active = DialogState.Active(
+                messageAddress = deployment.verticle.messageListenAddress,
+                callbackQueryAddress = deployment.verticle.callbackQueryListenAddress
+            )
+            dialogs[dialogKey] = active
+            dialogsInv[id] = ActiveDialog(dialogKey, active)
+            clearPendingDeathNoticesIfIdle()
+            starting.pendingUpdates.forEach { passToOngoing(it, active) }
+        } catch (t: Throwable) {
+            if (dialogs[dialogKey] === starting) {
+                dialogs.remove(dialogKey)
+            }
+            clearPendingDeathNoticesIfIdle()
+            throw t
+        }
     }
 
-    private fun passMessageToOngoing(message: Message, desc: DialogDescriptor) {
-        desc.messageAddress?.let {
+    private fun passToOngoing(update: PendingUpdate, dialog: DialogState.Active) {
+        when (update) {
+            is PendingUpdate.Message -> passMessageToOngoing(update.payload, dialog)
+            is PendingUpdate.CallbackQuery -> passCallbackQueryToOngoing(update.payload, dialog)
+        }
+    }
+
+    private fun passMessageToOngoing(message: Message, dialog: DialogState.Active) {
+        dialog.messageAddress?.let {
             vertigram.eventBus.send(
                 it,
                 message
@@ -138,8 +197,8 @@ abstract class DispatchVerticle<C : DispatchVerticle.Config, VC> : HierarchyVert
         }
     }
 
-    private fun passCallbackQueryToOngoing(callbackQuery: Update.CallbackQuery.Payload, desc: DialogDescriptor) {
-        desc.callbackQueryAddress?.let {
+    private fun passCallbackQueryToOngoing(callbackQuery: Update.CallbackQuery.Payload, dialog: DialogState.Active) {
+        dialog.callbackQueryAddress?.let {
             vertigram.eventBus.send(
                 it,
                 callbackQuery
@@ -149,7 +208,34 @@ abstract class DispatchVerticle<C : DispatchVerticle.Config, VC> : HierarchyVert
     }
 
     override suspend fun onChildDeath(deathNotice: DeathNotice) {
-        val key = dialogsInv[deathNotice.id] ?: return
+        val activeDialog = dialogsInv.remove(deathNotice.id)
+        if (activeDialog == null) {
+            bufferDeathNotice(deathNotice)
+            return
+        }
+
+        if (dialogs[activeDialog.key] !== activeDialog.state) return
+
+        dialogs.remove(activeDialog.key)
+        handleDialogDeath(activeDialog.key, deathNotice)
+    }
+
+    private fun bufferDeathNotice(deathNotice: DeathNotice) {
+        pendingDeathNotices[deathNotice.id] = deathNotice
+    }
+
+    private fun clearPendingDeathNoticesIfIdle() {
+        if (dialogs.values.any { it is DialogState.Starting }) return
+        if (pendingDeathNotices.isEmpty()) return
+
+        logger.lazy.warn {
+            val notices = pendingDeathNotices.values.joinToString { "${it.id} (${it.reason})" }
+            "Discarding ${pendingDeathNotices.size} martian child death notice(s): $notices"
+        }
+        pendingDeathNotices.clear()
+    }
+
+    private fun handleDialogDeath(key: DialogKey, deathNotice: DeathNotice) {
         val chatId = toChatId(key)
 
         if (deathNotice.reason == DeathReason.FAILED && null != chatId) {
@@ -160,15 +246,19 @@ abstract class DispatchVerticle<C : DispatchVerticle.Config, VC> : HierarchyVert
                 )
             }
         }
-
-        dialogsInv.remove(deathNotice.id)
-        dialogs.remove(key)
     }
 
-    /**
-     * Dialog descriptor returned by [doStart]
-     */
-    protected data class DialogDescriptor(val id: String, val messageAddress: String?, val callbackQueryAddress: String?)
+    private sealed interface DialogState {
+        class Starting(val pendingUpdates: MutableList<PendingUpdate>) : DialogState
+        class Active(val messageAddress: String?, val callbackQueryAddress: String?) : DialogState
+    }
+
+    private sealed interface PendingUpdate {
+        data class Message(val payload: ski.gagar.vertigram.telegram.types.Message) : PendingUpdate
+        data class CallbackQuery(val payload: Update.CallbackQuery.Payload) : PendingUpdate
+    }
+
+    private data class ActiveDialog(val key: DialogKey, val state: DialogState.Active)
 
     /**
      * Base interface for verticle configuration
@@ -200,9 +290,7 @@ abstract class DispatchVerticle<C : DispatchVerticle.Config, VC> : HierarchyVert
             fun chatAndUser(q: Update.CallbackQuery.Payload): DialogKey? = q.message ?.let { msg ->
                 ChatAndUser(chatId = msg.chat.id, userId = q.from.id)
             }
-            fun chat(msg: Message): DialogKey? = msg.from ?.let { from ->
-                Chat(chatId = msg.chat.id)
-            }
+            fun chat(msg: Message): DialogKey? = Chat(chatId = msg.chat.id)
             fun chat(q: Update.CallbackQuery.Payload): DialogKey? = q.message ?.let { msg ->
                 Chat(chatId = msg.chat.id)
             }
