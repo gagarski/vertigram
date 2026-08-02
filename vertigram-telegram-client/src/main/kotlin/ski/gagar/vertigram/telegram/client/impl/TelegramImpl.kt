@@ -19,6 +19,8 @@ import io.vertx.ext.web.client.WebClient
 import io.vertx.ext.web.client.WebClientOptions
 import io.vertx.ext.web.codec.BodyCodec
 import io.vertx.kotlin.coroutines.coAwait
+import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.withContext
 import ski.gagar.vertigram.telegram.exceptions.TelegramCallException
 import ski.gagar.vertigram.telegram.exceptions.TelegramDownloadException
 import ski.gagar.vertigram.telegram.types.Wrapper
@@ -118,7 +120,7 @@ internal class TelegramImpl(
         vertx.fileSystem()
     }
 
-    private val regularClient = WebClient.create(vertx, WEB_CLIENT_OPTIONS,poolOptions(options.pools?.regular))
+    private val regularClient = WebClient.create(vertx, WEB_CLIENT_OPTIONS, poolOptions(options.pools?.regular))
     private val uploadClient = WebClient.create(vertx, WEB_CLIENT_OPTIONS, poolOptions(options.pools?.upload))
     private val longPollClient = WebClient.create(vertx, WEB_CLIENT_OPTIONS, poolOptions(options.pools?.longPoll))
     private val downloadClient = WebClient.create(vertx, WEB_CLIENT_OPTIONS, poolOptions(options.pools?.download))
@@ -178,7 +180,7 @@ internal class TelegramImpl(
                 if (longPoll) {
                     timeout(options.longPollTimeout.toMillis())
                 } else {
-                    timeout(options.longPollTimeout.toMillis())
+                    timeout(options.shortPollTimeout.toMillis())
                 }
             }
 
@@ -255,7 +257,7 @@ internal class TelegramImpl(
 
         if (response.statusCode() != 200 || !wrapper.ok)
             throw TelegramCallException.create(response.statusCode(), wrapper.ok, wrapper.description, obj,
-                response.headers().toMap())
+                response.headers().toMap(), wrapper.parameters)
 
         return wrapper.result!!
     }
@@ -275,7 +277,7 @@ internal class TelegramImpl(
 
         if (response.statusCode() != 200 || !wrapper.ok)
             throw TelegramCallException.create(response.statusCode(), wrapper.ok, wrapper.description, mpc,
-                response.headers().toMap())
+                response.headers().toMap(), wrapper.parameters)
 
         return wrapper.result!!
     }
@@ -311,13 +313,28 @@ internal class TelegramImpl(
         val f = fs.open(outputPath, OpenOptions().apply {
             isTruncateExisting = true
         }).coAwait()
-        val resp = withRedactedTimeout {
-            downloadClient.getAbs("${options.tgBase}/file/bot$token/${path}").`as`(BodyCodec.pipe(f)).send().coAwait()
-        }
-        if (resp.statusCode() != 200) {
-            fs.delete(outputPath).coAwait()
-            // TODO try to get a response from file and parse it
-            throw TelegramDownloadException.create(resp.statusCode(), path)
+        try {
+            val resp = withRedactedTimeout {
+                downloadClient.getAbs("${options.tgBase}/file/bot$token/${path}").`as`(BodyCodec.pipe(f)).send().coAwait()
+            }
+            if (resp.statusCode() != 200) {
+                // TODO try to get a response from file and parse it
+                throw TelegramDownloadException.create(resp.statusCode(), path)
+            }
+        } catch (failure: Throwable) {
+            withContext(NonCancellable) {
+                try {
+                    f.close().coAwait()
+                } catch (closeFailure: Throwable) {
+                    failure.addSuppressed(closeFailure)
+                }
+                try {
+                    fs.delete(outputPath).coAwait()
+                } catch (deleteFailure: Throwable) {
+                    failure.addSuppressed(deleteFailure)
+                }
+            }
+            throw failure
         }
     }
 

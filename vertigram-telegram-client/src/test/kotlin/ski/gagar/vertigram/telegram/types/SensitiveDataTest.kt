@@ -1,8 +1,12 @@
 package ski.gagar.vertigram.telegram.types
 
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNotSame
+import org.junit.jupiter.api.Assertions.assertSame
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
+import ski.gagar.vertigram.telegram.exceptions.TelegramCallException
 import ski.gagar.vertigram.telegram.types.methods.AnswerInlineQuery
 import ski.gagar.vertigram.telegram.types.methods.CreateInvoiceLink
 import ski.gagar.vertigram.telegram.types.methods.GetManagedBotToken
@@ -56,4 +60,30 @@ class SensitiveDataTest {
 
         assertEquals(REDACTED_SENSITIVE_DATA, "managed-bot-token".withoutSensitiveResult(call))
     }
+
+    @Test
+    fun `redacts sensitive request data in call exception message`() {
+        val request = CreateInvoiceLink(
+            title = "title",
+            description = "description",
+            payload = "payload",
+            providerToken = "provider-secret",
+            currency = "USD",
+            prices = listOf(LabeledPrice("price", 100)),
+            isFlexible = false
+        )
+
+        val exception = TelegramCallException.create(
+            status = 400,
+            ok = false,
+            description = "Bad Request",
+            call = request,
+            responseHeaders = emptyMap()
+        )
+
+        assertSame(request, exception.call)
+        assertFalse(exception.message.orEmpty().contains("provider-secret"))
+        assertTrue(exception.message.orEmpty().contains(REDACTED_SENSITIVE_DATA))
+    }
+
 }

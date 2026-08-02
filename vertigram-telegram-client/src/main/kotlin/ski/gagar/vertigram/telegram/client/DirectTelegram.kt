@@ -68,7 +68,7 @@ class DirectTelegram(
                 logger.lazy.error(throwable = e) {
                     "Malformed update $raw"
                 }
-                val id = raw["update_id"] as? Long
+                val id = (raw["update_id"] as? Number)?.toLong()
                     ?: throw IllegalArgumentException("Malformed update $raw, there is no even update_id")
                 Update.Malformed(
                     updateId = id,

@@ -3,6 +3,8 @@ package ski.gagar.vertigram.telegram.exceptions
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 import io.vertx.core.MultiMap
+import ski.gagar.vertigram.telegram.types.ResponseParameters
+import ski.gagar.vertigram.telegram.types.copyWithoutSensitiveData
 import ski.gagar.vertigram.telegram.types.methods.TelegramCallable
 import ski.gagar.vertigram.util.exceptions.VertigramException
 import ski.gagar.vertigram.util.internal.toMultiMap
@@ -16,8 +18,9 @@ abstract class TelegramCallException(
     val description: String?,
     @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@class")
     val call: TelegramCallable<*>,
-    val responseHeaders: Map<String, List<String>>
-) : TelegramException("Telegram call $call returned ${status}: $description") {
+    val responseHeaders: Map<String, List<String>>,
+    val responseParameters: ResponseParameters? = null
+) : TelegramException("Telegram call ${call.copyWithoutSensitiveData()} returned ${status}: $description") {
 
     @get:JsonIgnore
     val responseHeadersMultiMap by lazy {
@@ -31,10 +34,13 @@ abstract class TelegramCallException(
             description: String?,
             @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@class")
             call: TelegramCallable<*>,
-            responseHeaders: Map<String, List<String>>
+            responseHeaders: Map<String, List<String>>,
+            responseParameters: ResponseParameters? = null
         ) = when (status) {
-            in 400..499 -> TelegramCallClientException(status, ok, description, call, responseHeaders)
-            else -> TelegramCallServerException(status, ok, description, call, responseHeaders)
+            in 400..499 ->
+                TelegramCallClientException(status, ok, description, call, responseHeaders, responseParameters)
+            else ->
+                TelegramCallServerException(status, ok, description, call, responseHeaders, responseParameters)
         }
     }
 
@@ -46,8 +52,9 @@ class TelegramCallClientException(
     description: String?,
     @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@class")
     call: TelegramCallable<*>,
-    responseHeaders: Map<String, List<String>>
-) : TelegramCallException(status, ok, description, call, responseHeaders)
+    responseHeaders: Map<String, List<String>>,
+    responseParameters: ResponseParameters? = null
+) : TelegramCallException(status, ok, description, call, responseHeaders, responseParameters)
 
 class TelegramCallServerException(
     status: Int,
@@ -55,8 +62,9 @@ class TelegramCallServerException(
     description: String?,
     @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@class")
     call: TelegramCallable<*>,
-    responseHeaders: Map<String, List<String>>
-) : TelegramCallException(status, ok, description, call, responseHeaders)
+    responseHeaders: Map<String, List<String>>,
+    responseParameters: ResponseParameters? = null
+) : TelegramCallException(status, ok, description, call, responseHeaders, responseParameters)
 
 
 abstract class TelegramDownloadException(val status: Int, val path: String) : TelegramException("Failed to download file: $status") {
