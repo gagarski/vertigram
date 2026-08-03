@@ -2,7 +2,7 @@
 # https://docs.gradle.org/current/userguide/platforms.html#sub::toml-dependencies-format
 
 [versions]
-logback = "1.6.0"
+logback = "1.6.1"
 jackson = "2.22.1"
 jackson-annotations = "2.22"
 hikaricp = "7.1.0"
