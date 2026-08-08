@@ -143,6 +143,26 @@ class HierarchyVerticleTest {
     }
 
     @Test
+    fun `child death handler failure fails the verticle`() = runBlocking {
+        val vertx = Vertx.vertx()
+        val childDeath = CompletableDeferred<DeathNotice>()
+
+        try {
+            val vertigram = vertx.attachVertigram()
+            vertigram.deployVerticle(
+                ParentVerticle(ChildDeathHandlerFailingVerticle(), childDeath)
+            )
+
+            val notice = withTimeout(5.seconds) {
+                childDeath.await()
+            }
+            assertEquals(DeathReason.FAILED, notice.reason)
+        } finally {
+            vertx.close().coAwait()
+        }
+    }
+
+    @Test
     fun `message handler does not execute after death is requested`() = runBlocking {
         val vertx = Vertx.vertx()
         val childDeath = CompletableDeferred<DeathNotice>()
@@ -259,6 +279,17 @@ class HierarchyVerticleTest {
             messageHandler {
                 throw IllegalStateException("Expected message-handler failure")
             }
+        }
+    }
+
+    private class ChildDeathHandlerFailingVerticle : HierarchyVerticle<Unit?>() {
+        override suspend fun start() {
+            super.start()
+            deployChild(CompletingChildVerticle())
+        }
+
+        override suspend fun onChildDeath(deathNotice: DeathNotice) {
+            throw IllegalStateException("Expected child-death handler failure")
         }
     }
 

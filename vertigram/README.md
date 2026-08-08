@@ -535,12 +535,30 @@ to forget about this child and properly free up resources associated with it.
 individual dialog states. In real bots, dialog states may be more complicated (imagine typical step-by-step 
 questionnaire). While it is still possible to manage it manually with `SimpleTelegramDialogVerticle`, Vertigram provides
 an opinionated way to maintain more complex dialog state, named `StatefulTelegramDialogVerticle`. Besides more advanced
-state management it provides some out-of-the-box ways to manage timeouts, cancellation, completion and time traveling. 
+state management it provides history, rollback, and an optional absolute dialog timeout.
+
+Dialog states derive from `AbstractState` and choose one of two delivery models. `State` uses regular delivery and may
+handle regular messages, ephemeral messages, and callbacks. `EphemeralState` handles ephemeral messages and callbacks;
+its `sendOrEdit` uses the hook installed for the current interaction. Neither state constructor accepts a hook. Enter an
+ephemeral state with `become(newState, ephemeralHook)` and a regular state with `become(newState)`. Both calls require the
+dialog lock, which handlers, side effects, and `setTimer` already hold. For another coroutine, wrap the transition
+in `withLock { become(...) }`.
+
+An ephemeral timer receives the hook captured when it was scheduled:
+
+```kotlin
+setTimer(Duration.ofSeconds(5)) { hook ->
+    sendOrEdit("Still waiting".toFormattedText())
+    become(NextEphemeralState(verticle), hook)
+}
+```
 Let's try to implement a bot that collects user age, name and his favourite color:
 
 ```kotlin
 // (1) Some helper for reply markup
-fun InlineKeyboardMarkupRowBuilder.backAndCancelButtons(canGoBack: Boolean) {
+const val BACK = "back"
+
+fun InlineKeyboardMarkupRowBuilder.backButton(canGoBack: Boolean) {
     if (canGoBack) {
         callback(
             text = "↩️ Back",
@@ -548,26 +566,29 @@ fun InlineKeyboardMarkupRowBuilder.backAndCancelButtons(canGoBack: Boolean) {
         )
     }
 
-    callback(
-        text = "\uD83D\uDEAB Cancel",
-        callbackData = CANCEL
-    )
 }
 
 // (2) Single-dialog logic
 class RegisterVerticle : StatefulTelegramDialogVerticle<RegisterVerticle.Config>() {
-    override val handleCancel: Boolean = true
-    override val handleRollback: Boolean = true
-    
     // (3) Defining the states
     sealed class State(private val verticle: RegisterVerticle) : StatefulTelegramDialogVerticle.State(verticle) {
         protected val typedConfig: Config
             get() = verticle.typedConfig
+
+        final override suspend fun shouldHandleCallbackQuery(
+            callbackQuery: Update.CallbackQuery.Payload,
+            ephemeralHook: EphemeralHook
+        ): Boolean {
+            if (callbackQuery.data != BACK) return true
+            tg.answerCallbackQuery(callbackQueryId = callbackQuery.id)
+            if (canRollback(ephemeralHook)) rollback(ephemeralHook)
+            return false
+        }
     }
 
     // (4) Handling initial message
     class Initial(private val verticle: RegisterVerticle) : State(verticle) {
-        override suspend fun handleMessage(message: Message) {
+        override suspend fun doHandleMessage(message: Message) {
             if (!message.isCommandForBot(CMD, typedConfig.me)) {
                 die(DeathReason.FAILED)
                 return
@@ -585,15 +606,15 @@ class RegisterVerticle : StatefulTelegramDialogVerticle<RegisterVerticle.Config>
                 text = "Type your name".toFormattedText(),
                 replyMarkup = inlineKeyboard {
                     row {
-                        // (8) Buttons for cancelling and going back
-                        backAndCancelButtons(canRollback())
+                        // (8) Button for going back
+                        backButton(canRollback())
                     }
                 }
             )
         }
 
         // (9) handling the name
-        override suspend fun handleMessage(message: Message) {
+        override suspend fun doHandleMessage(message: Message) {
             val name = message.text ?: return
             become(
                 AskAge(
@@ -613,13 +634,13 @@ class RegisterVerticle : StatefulTelegramDialogVerticle<RegisterVerticle.Config>
                 text = "Type your age".toFormattedText(),
                 replyMarkup = inlineKeyboard {
                     row {
-                        backAndCancelButtons(canRollback())
+                        backButton(canRollback())
                     }
                 }
             )
         }
 
-        override suspend fun handleMessage(message: Message) {
+        override suspend fun doHandleMessage(message: Message) {
             val age = message.text?.toIntOrNull() ?: return
             become(
                 AskFavouriteColor(
@@ -659,12 +680,12 @@ class RegisterVerticle : StatefulTelegramDialogVerticle<RegisterVerticle.Config>
                         )
                     }
                     row {
-                        backAndCancelButtons(canRollback())
+                        backButton(canRollback())
                     }
                 }
             )
         }
-        override suspend fun handleMessage(message: Message) {
+        override suspend fun doHandleMessage(message: Message) {
             val color = message.text ?: return
             become(
                 Persist(
@@ -676,7 +697,10 @@ class RegisterVerticle : StatefulTelegramDialogVerticle<RegisterVerticle.Config>
             )
         }
 
-        override suspend fun handleCallbackQuery(callbackQuery: Update.CallbackQuery.Payload) {
+        override suspend fun doHandleCallbackQuery(
+            callbackQuery: Update.CallbackQuery.Payload,
+            ephemeralHook: EphemeralHook
+        ) {
             val color = callbackQuery.data ?: return
             become(
                 Persist(
@@ -781,11 +805,10 @@ fun main() {
 ```
 
 Let's walk through it, step by step:
-1. First we define a reply markup helper function that will add back and cancel buttons to our reply markup. We're using
-constants defined in the base class to make it handle this logic automatically.
+1. First we define a reply markup helper function that adds a client-owned back button to our reply markup.
 2. Dialog logic is defined in a class inherited from `StatefulTelegramDialogVerticle`. Again, you can assume
-that all interaction happens in the same dialog (as you defined it in dispatch verticle). Handling cancelling and 
-time-travel is an opt-in feature, so it needs to be enabled explicitly by overriding fields.
+that all interaction happens in the same dialog (as you defined it in dispatch verticle). Shared client state code handles
+the back callback and invokes the framework rollback API.
 3. Defining *states* for a dialog. Each state defines a part of dialog logic and inherited from `StatefulTelegramDialogVerticle.State`.
 4. Handling the initial state which immediately transfers the dialog to the `AskName` state. `become` is a function to
 perform a **state transition**. It accepts a new states an **optional** parameter for history behavior. Here we use
@@ -798,7 +821,7 @@ parameter because it knows the chat id from the way we've overridden `chatId` pr
 behavior: it sometimes decides to edit a previous message (which it tracks itself), specifically when there is no
 messages after it (e.g., when user has clicked an inline keyboard button). You can use it if you're fine with the logic
 it implements, or you can implement your own logic on top of the telegram client.
-8. Note the use of our helper from step 1. We're adding a row for **back** and **cancel** function.
+8. Note the use of our helper from step 1. We're adding a row for the **back** function.
 9. Here we are reading user's name from their response and transitioning to the next step: `AskAge`. Two next steps are
 pretty similar.
 10. Last state is `Persist`. Here we (pretend to) persist the data we've collected, sharing the feedback to the user and
@@ -809,6 +832,18 @@ implement any persistence logic you want here, consider using <a href="../vertig
 module to store the responses in a relational database.
 13. **Dispatch verticle** is pretty much the same as we had before
 4Deployment logic is also the same.
+
+### Rollback
+
+Rollback is invoked explicitly by application handlers. `canRollback(hook)` and `rollback(hook)` operate on the
+immediately previous history entry. A regular target needs no hook; an ephemeral target requires a fresh non-null hook.
+If that requirement is not met, rollback is unavailable and leaves history unchanged.
+
+`canRollbackRegular()` and `rollbackRegular()` search backward for the latest regular `State`, skipping intervening
+ephemeral entries. This variant never requires a hook. Vertigram does not reserve or intercept a back command or callback
+value; applications own their controls and should use the matching check before invoking either rollback operation.
+All rollback operations and availability checks require the dialog lock. Handlers, side effects, and `setTimer` callbacks
+already hold it; calls from other coroutines must be wrapped in `withLock`.
 
 ### Handling Micro-State
 
@@ -856,7 +891,7 @@ for demo purposes):
                         }
                     }
                     row {
-                        backAndCancelButtons(canRollback())
+                        backButton(canRollback())
                     }
 
                 }
@@ -867,12 +902,15 @@ for demo purposes):
             update()
         }
 
-        override suspend fun handleMessage(message: Message) {
+        override suspend fun doHandleMessage(message: Message) {
             val age = message.text?.toIntOrNull() ?: return
             proceed(age)
         }
 
-        override suspend fun handleCallbackQuery(callbackQuery: Update.CallbackQuery.Payload) {
+        override suspend fun doHandleCallbackQuery(
+            callbackQuery: Update.CallbackQuery.Payload,
+            ephemeralHook: EphemeralHook
+        ) {
             when (callbackQuery.data) {
                 MINUS -> {
                     age--
@@ -937,14 +975,14 @@ you'd have to deal with history behavior, so your state history does not become 
                         }
                     }
                     row {
-                        backAndCancelButtons(canRollback())
+                        backButton(canRollback())
                     }
 
                 }
             )
         }
 
-        override suspend fun handleMessage(message: Message) {
+        override suspend fun doHandleMessage(message: Message) {
             val age = message.text?.toIntOrNull() ?: return
             become(
                 AskFavouriteColor(
@@ -955,7 +993,10 @@ you'd have to deal with history behavior, so your state history does not become 
             )
         }
 
-        override suspend fun handleCallbackQuery(callbackQuery: Update.CallbackQuery.Payload) {
+        override suspend fun doHandleCallbackQuery(
+            callbackQuery: Update.CallbackQuery.Payload,
+            ephemeralHook: EphemeralHook
+        ) {
             when (callbackQuery.data) {
                 MINUS -> {
                     become(
@@ -1003,48 +1044,33 @@ you'd have to deal with history behavior, so your state history does not become 
     }
 ```
 
-`sendOrEdit` can also maintain an ephemeral message visible only to a selected user. Delivery mode is independent of
-dialog state. Enter ephemeral mode after receiving an eligible message or callback query, then transition normally:
+`EphemeralState` maintains an ephemeral message visible only to the user identified by its hook. Enter it from a handler
+that has a hook by passing that hook to the ephemeral `become` overload:
 
 ```kotlin
-becomeEphemeral(callbackQuery.from)
-become(ConfigureDialog(verticle))
+become(ConfigureDialog(verticle), ephemeralHook)
 ```
 
-`becomeEphemeral` latches the user; messages and callback queries from other users are ignored until regular mode is
-restored. Plain `become` changes only dialog state and preserves delivery mode. Leave ephemeral mode independently:
+The state installs the hook before its handler or side effect runs, so its implicit `sendOrEdit` targets the current
+ephemeral message. Transition back to regular delivery with the regular overload:
 
 ```kotlin
-becomeNormal()
 become(StartPublicFlow(verticle))
 ```
 
-Vertigram captures the message or callback-query context received immediately before `becomeEphemeral` and refreshes it
-on subsequent accepted updates. In groups and supergroups, every `sendOrEdit` in ephemeral mode uses that context and
-non-ephemeral messages are ignored. An incoming message must expose its own ephemeral message identifier. In other chat
-types, the mode and latched user are still maintained, but `sendOrEdit` uses regular delivery and does not require an
-ephemeral context. When no reply markup is provided for an ephemeral delivery, `ForceReply` is added automatically.
-Explicit reply markup is preserved.
+Accepted ephemeral messages and callbacks refresh the installed hook for the duration of handling. Regular messages in
+groups and supergroups are ignored by an `EphemeralState`; private-chat messages are adapted to ephemeral delivery.
+`State` may also handle ephemeral input, but its `sendOrEdit` remains regular unless the hook is passed explicitly.
+When no reply markup is provided for an ephemeral delivery, `ForceReply` is added automatically.
 
-### Default States
+### Terminal States and Cancellation
 
-We've added some override to the initial implementation which we have not properly discussed:
-```kotlin
-    override val cancelState: StatefulTelegramDialogVerticle.State = crossCancelled()
-```
+Completion and cancellation are application behavior. Define client-owned terminal `State` and `EphemeralState`
+implementations, render any desired response in `sideEffect`, and call `complete()` or `cancel()`. The framework does not
+intercept cancel commands or callbacks; shared client base states are a convenient place to deduplicate that handling.
 
-This defines a default behavior on **cancel**. The behavior is chosen based on the state to which the verticle will
-be transfered when handling default cancel requests. You can use some default states provided to you by base class
-or implement a final state yourself. Do not forget to call `cancel()`, `complete()` or `timeout()` in the side effect.
-The following conventional states are available:
- - `yawnTimeout()` — send a yawn emoji to the user and complete the dialog verticle as timed out
- - `silentTimeout()` — complete the dialog verticle as timed out without sending anything
- - `crossCancelled()` — send a red cross emoji and complete the dialog verticle as cancelled
- - `silentCancelled()` — complete the dialog verticle as cancelled without sending anything
- - `checkmarkDone()` — send a green checkmark emoji to the user and complete the dialog verticle as done
- - `silentDone()` — complete the dialog verticle as done without sending anything
-
-By default silent versions of completed states are used.
+Silent timeout remains a core default for both delivery models. Override `timeoutState` and `ephemeralTimeoutState` to
+provide application-specific timeout behavior and call `timeout()` from those terminal states.
 
 ### Timeouts
 
@@ -1054,6 +1080,8 @@ timeout handling by overriding the `timeout` field of the verticle:
     override val timeout: Duration?
         get() = Duration.ofMinutes(3)
 ```
+
+This is an absolute timeout measured from deployment. User interaction does not reset it.
 
 ## Optional Logback integration
 

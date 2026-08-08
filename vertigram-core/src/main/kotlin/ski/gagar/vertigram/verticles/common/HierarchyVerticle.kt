@@ -180,9 +180,7 @@ abstract class HierarchyVerticle<Config> : VertigramVerticle<Config>() {
         }
     }
 
-    private suspend fun handleChildDeathNotice(deathNotice: DeathNotice) {
-        if (isDead) return
-
+    private suspend fun handleChildDeathNotice(deathNotice: DeathNotice) = messageHandler {
         logger.lazy.debug {
             "$name got $deathNotice from child"
         }

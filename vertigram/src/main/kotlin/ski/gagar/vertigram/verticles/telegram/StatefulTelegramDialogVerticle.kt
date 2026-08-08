@@ -7,9 +7,7 @@ import ski.gagar.vertigram.awaitRegistration
 import ski.gagar.vertigram.coroutines.setTimerNonCancellable
 import ski.gagar.vertigram.telegram.client.Telegram
 import ski.gagar.vertigram.telegram.client.ThinTelegram
-import ski.gagar.vertigram.telegram.markup.toFormattedText
 import ski.gagar.vertigram.telegram.markup.forceReply
-import ski.gagar.vertigram.telegram.methods.answerCallbackQuery
 import ski.gagar.vertigram.telegram.methods.editEphemeralMessageReplyMarkup
 import ski.gagar.vertigram.telegram.methods.editEphemeralMessageText
 import ski.gagar.vertigram.telegram.methods.editMessageReplyMarkup
@@ -23,7 +21,6 @@ import ski.gagar.vertigram.telegram.types.Update
 import ski.gagar.vertigram.telegram.types.User
 import ski.gagar.vertigram.telegram.types.create
 import ski.gagar.vertigram.telegram.types.formattedtext.FormattedText
-import ski.gagar.vertigram.telegram.types.util.isCommandForBot
 import ski.gagar.vertigram.telegram.types.util.toChatId
 import ski.gagar.vertigram.util.lazy
 import ski.gagar.vertigram.util.logger
@@ -48,13 +45,6 @@ import java.time.Duration
  */
 abstract class StatefulTelegramDialogVerticle<Config> : TelegramDialogVerticle<Config>() {
     /**
-     * Bot identity (a response from `getMe` Telegram method).
-     *
-     * Should be overridden by subclasses
-     */
-    protected open val me: User.Me? = null
-
-    /**
      * Base address for [TelegramVerticle] (used with [tg])
      *
      * May be overridden by subclasses
@@ -76,34 +66,26 @@ abstract class StatefulTelegramDialogVerticle<Config> : TelegramDialogVerticle<C
     abstract val initialState: State
 
     /**
-     * Should handle cancel message (/cancel) or cancel query callback
-     */
-    protected open val handleCancel: Boolean = false
-
-    /**
-     * Should handle back message (/back) or back query callback
-     */
-    protected open val handleRollback: Boolean = false
-
-    /**
      * Global timeout of the verticle. No timeout by default. If the timeout is set, the verticle will die
      * after it is expired, meaning that the dialog state will be forgotten.
      */
     protected open val timeout: Duration? = null
 
     /**
-     * State to use as cancelled state if [handleCancel] is true.
+     * State to use when [timeout] expires while a regular [State] is active.
      *
-     * By default, a silent cancelled state is used (without side effects such as sending messages)
+     * By default, a silent timeout state is used.
      */
-    protected open val cancelState: State = silentCancelled()
+    protected open val timeoutState: State
+        get() = SilentTimeout(this)
 
     /**
-     * State to use as cancelled state if [timeout] is set.
+     * State to use when [timeout] expires while an [EphemeralState] is active.
      *
-     * By default, a silent cancelled state is used (without side effects such as sending messages)
+     * By default, a silent timeout state is used.
      */
-    protected open val timeoutState: State = silentTimeout()
+    protected open val ephemeralTimeoutState: EphemeralState
+        get() = EphemeralSilentTimeout(this)
 
     /**
      * State history size
@@ -117,7 +99,7 @@ abstract class StatefulTelegramDialogVerticle<Config> : TelegramDialogVerticle<C
      */
     protected open val defaultHistoryBehavior: HistoryBehavior = HistoryBehavior.PUSH
 
-    private val history: ArrayDeque<State> = ArrayDeque()
+    private val history: ArrayDeque<AbstractState> = ArrayDeque()
     @PublishedApi
     internal val mutex = Mutex()
 
@@ -131,11 +113,8 @@ abstract class StatefulTelegramDialogVerticle<Config> : TelegramDialogVerticle<C
     /**
      * State
      */
-    protected var state: State? = null
+    protected var state: AbstractState? = null
     private var msgInfo: MsgInfo? = null
-    private var ephemeralUser: User? = null
-    private var lastEphemeralContext: EphemeralContext? = null
-    private var currentEphemeralContext: EphemeralContext? = null
     private var observedChatType: Chat.Type? = null
     private var timeoutTimerHandle: Job? = null
 
@@ -178,28 +157,14 @@ abstract class StatefulTelegramDialogVerticle<Config> : TelegramDialogVerticle<C
     private suspend fun handleCallbackQuery(callbackQuery: Update.CallbackQuery.Payload) = messageHandler {
         withLock {
             callbackQuery.message?.chat?.type?.let { observedChatType = it }
-            if (ephemeralUser?.id?.let { it != callbackQuery.from.id } == true) return@messageHandler
-            val context = EphemeralContext.CallbackQuery(callbackQuery.from.id, callbackQuery.id)
-            lastEphemeralContext = context
-            if (ephemeralUser != null) currentEphemeralContext = context
-
-            if (handleCancel && callbackQuery.data == CANCEL) {
-                tg.answerCallbackQuery(
-                    callbackQueryId = callbackQuery.id,
-                )
-                become(cancelState, HistoryBehavior.WIPE)
+            val activeState = requireNotNull(state)
+            if (activeState.ephemeralUserId?.let { it != callbackQuery.from.id } == true) {
                 return@messageHandler
             }
 
-            if (handleRollback && callbackQuery.data == BACK) {
-                tg.answerCallbackQuery(
-                    callbackQueryId = callbackQuery.id,
-                )
-                rollback()
-                return@messageHandler
-            }
+            val ephemeralHook = EphemeralHook.from(callbackQuery)
 
-            state!!.handleCallbackQuery(callbackQuery)
+            activeState.handleCallbackQuery(callbackQuery, ephemeralHook)
         }
 
     }
@@ -209,37 +174,33 @@ abstract class StatefulTelegramDialogVerticle<Config> : TelegramDialogVerticle<C
             val from = message.from
             observedChatType = message.chat.type
             invalidateKnownMessageIfVisible(message)
-            if (ephemeralUser?.id?.let { it != from?.id } == true) return@messageHandler
+            val activeState = requireNotNull(state)
+            if (activeState.ephemeralUserId?.let { it != from?.id } == true) return@messageHandler
+            if (activeState is EphemeralState && chatSupportsEphemeralDelivery() && message.ephemeralMessageId == null) {
+                return@messageHandler
+            }
 
-            val contextEphemeralMessageId = message.ephemeralMessageId
-            if (usesEphemeralDelivery() && contextEphemeralMessageId == null) return@messageHandler
-            lastEphemeralContext = if (contextEphemeralMessageId != null && from != null) {
-                EphemeralContext.Message(from.id, contextEphemeralMessageId)
+            val ephemeralMessageId = message.ephemeralMessageId
+            if (ephemeralMessageId == null) {
+                when (activeState) {
+                    is State -> activeState.handleMessage(message)
+                    is EphemeralState -> activeState.handleEphemeralMessage(message, EphemeralHook.from(message))
+                }
             } else {
-                null
+                activeState.handleEphemeralMessage(message, EphemeralHook.from(message))
             }
-            if (ephemeralUser != null) currentEphemeralContext = lastEphemeralContext
-
-            if (handleCancel && message.isCommandForBot(CANCEL, me)) {
-                become(cancelState, HistoryBehavior.WIPE)
-                return@messageHandler
-            }
-
-            if (handleRollback && message.isCommandForBot(BACK, me)) {
-                rollback()
-                return@messageHandler
-            }
-
-            state!!.handleMessage(message)
         }
     }
 
     override suspend fun onChildDeath(deathNotice: DeathNotice) {
-        state!!.onChildDeath(deathNotice)
+        withLock(discardWhenBusy = false) {
+            if (isDead) return@withLock
+            requireNotNull(state).onChildDeath(deathNotice)
+        }
     }
 
 
-    private fun handleHistory(state: State, historyBehavior: HistoryBehavior) {
+    private fun handleHistory(state: AbstractState, historyBehavior: HistoryBehavior) {
         if (0 == historySize) {
             return
         }
@@ -262,6 +223,18 @@ abstract class StatefulTelegramDialogVerticle<Config> : TelegramDialogVerticle<C
     private suspend fun become(
         toState: State,
         historyBehavior: HistoryBehavior = defaultHistoryBehavior
+    ) = become(toState, ephemeralHook = null, historyBehavior)
+
+    private suspend fun become(
+        toState: EphemeralState,
+        ephemeralHook: EphemeralHook,
+        historyBehavior: HistoryBehavior = defaultHistoryBehavior
+    ) = become(toState, ephemeralHook as EphemeralHook?, historyBehavior)
+
+    private suspend fun become(
+        toState: AbstractState,
+        ephemeralHook: EphemeralHook?,
+        historyBehavior: HistoryBehavior
     ) {
         check(mutex.isLocked) {
             "calling become without obtaining lock is not supported"
@@ -275,74 +248,99 @@ abstract class StatefulTelegramDialogVerticle<Config> : TelegramDialogVerticle<C
             handleHistory(state!!, historyBehavior)
         }
 
-        if (usesEphemeralDelivery()) {
-            currentEphemeralContext = requireNotNull(lastEphemeralContext) {
-                "Ephemeral mode requires a message or callback-query context before becoming another state"
-            }
-        }
-        state = toState
+        activate(toState, ephemeralHook)
 
         while (true) {
-            val next = state!!.boost() ?: break
+            val activeState = requireNotNull(state)
+            val next = when (activeState) {
+                is State -> activeState.boost()
+                is EphemeralState -> activeState.boost()
+            } ?: break
 
-            logger.lazy.debug { "$name is becoming $toState" }
-            state = next
+            logger.lazy.debug { "$name is becoming $next" }
+            activate(
+                next,
+                (activeState as? EphemeralState)?.currentEphemeralHook.takeIf { next is EphemeralState }
+            )
         }
-        logger.lazy.debug { "$name is applying side effect for $toState" }
-        state!!.sideEffect()
+        val activeState = requireNotNull(state)
+        logger.lazy.debug { "$name is applying side effect for $activeState" }
+        activeState.sideEffect()
     }
 
-    private suspend fun becomeWithLock(
-        toState: State,
-        historyBehavior: HistoryBehavior = defaultHistoryBehavior
-    ) {
-        withLock {
-            become(toState, historyBehavior)
-        }
-    }
-
-    private suspend fun becomeEphemeral(user: User) {
-        check(mutex.isLocked) { "calling becomeEphemeral without obtaining lock is not supported" }
-        val context = lastEphemeralContext
-        if (chatSupportsEphemeralDelivery()) {
-            requireNotNull(context) {
-                "Ephemeral mode requires a message or callback-query context"
+    private suspend fun activate(toState: AbstractState, ephemeralHook: EphemeralHook?) {
+        val from = state
+        when (toState) {
+            is State -> require(ephemeralHook == null) {
+                "A regular state cannot be entered with an ephemeral hook"
             }
-            require(context.receiverUserId == user.id) {
-                "Ephemeral context belongs to a different user"
-            }
+            is EphemeralState -> toState.setCurrentEphemeralHook(requireNotNull(ephemeralHook) {
+                "An ephemeral state requires an ephemeral hook"
+            })
         }
 
-        if (ephemeralUser == null) {
-            if (chatSupportsEphemeralDelivery()) resetKnownMessage()
-        } else if (ephemeralUser?.id != user.id) {
-            resetKnownMessage()
-        }
-        ephemeralUser = user
-        currentEphemeralContext = context
+        resetKnownMessageIfDeliveryChanges(from, toState)
+        state = toState
     }
 
-    private suspend fun becomeNormal() {
-        check(mutex.isLocked) { "calling becomeNormal without obtaining lock is not supported" }
-        if (usesEphemeralDelivery()) {
-            resetKnownMessage()
+    private suspend fun resetKnownMessageIfDeliveryChanges(from: AbstractState?, to: AbstractState) {
+        val fromHook = (from as? EphemeralState)?.currentEphemeralHook
+        val toHook = (to as? EphemeralState)?.currentEphemeralHook
+        val changed = when {
+            !chatSupportsEphemeralDelivery() -> false
+            fromHook == null -> toHook != null
+            toHook == null -> true
+            else -> fromHook.user.id != toHook.user.id
         }
-        ephemeralUser = null
-        lastEphemeralContext = null
-        currentEphemeralContext = null
+        if (changed) resetKnownMessage()
     }
 
     private fun setTimerWithLock(duration: Duration, handler: suspend () -> Unit): Job =
         setTimerNonCancellable(duration) {
-            withLock { handler() }
+            messageHandler {
+                withLock(discardWhenBusy = false) {
+                    if (isDead) return@withLock
+                    handler()
+                }
+            }
         }
 
 
-    private fun canRollback() = history.isNotEmpty()
+    private fun checkRollbackLock() {
+        check(mutex.isLocked) {
+            "calling rollback API without obtaining lock is not supported"
+        }
+    }
 
-    private suspend fun rollback() {
-        val state = history.removeLastOrNull() ?: return
-        become(state, HistoryBehavior.SKIP)
+    private fun canRollbackUnlocked(ephemeralHook: EphemeralHook? = null): Boolean =
+        history.lastOrNull()?.let { it is State || ephemeralHook != null } == true
+
+    private fun canRollback(ephemeralHook: EphemeralHook? = null): Boolean {
+        checkRollbackLock()
+        return canRollbackUnlocked(ephemeralHook)
+    }
+
+    private fun canRollbackRegularUnlocked(): Boolean = history.any { it is State }
+
+    private fun canRollbackRegular(): Boolean {
+        checkRollbackLock()
+        return canRollbackRegularUnlocked()
+    }
+
+    private suspend fun rollback(ephemeralHook: EphemeralHook? = null) {
+        checkRollbackLock()
+        if (!canRollbackUnlocked(ephemeralHook)) return
+        when (val target = history.removeLast()) {
+            is State -> become(target, HistoryBehavior.SKIP)
+            is EphemeralState -> become(target, requireNotNull(ephemeralHook), HistoryBehavior.SKIP)
+        }
+    }
+
+    private suspend fun rollbackRegular() {
+        checkRollbackLock()
+        if (!canRollbackRegularUnlocked()) return
+        while (history.last() !is State) history.removeLast()
+        become(history.removeLast() as State, HistoryBehavior.SKIP)
     }
 
     /**
@@ -357,6 +355,8 @@ abstract class StatefulTelegramDialogVerticle<Config> : TelegramDialogVerticle<C
      * receiver, or when the requested reply markup cannot be established by editing. Messages sent directly through
      * [tg] are outside this tracking.
      *
+     * Must be called while holding the dialog lock.
+     *
      * @param text Text of the message
      * @param buttons Reply markup of the message
      * @param forceSend Ignore the fact that the message is the last in the chat and do sending instead of editing
@@ -364,9 +364,13 @@ abstract class StatefulTelegramDialogVerticle<Config> : TelegramDialogVerticle<C
     protected suspend fun sendOrEdit(
         text: FormattedText,
         buttons: ReplyMarkup? = null,
-        forceSend: Boolean = false
+        forceSend: Boolean = false,
+        ephemeralHook: EphemeralHook? = null
     ) {
-        val delivery = currentDelivery()
+        check(mutex.isLocked) {
+            "calling sendOrEdit without obtaining lock is not supported"
+        }
+        val delivery = currentDelivery(ephemeralHook)
         val replyMarkup = buttons ?: if (delivery is Delivery.Ephemeral) forceReply(selective = false) else null
 
         if (forceSend) resetKnownMessage()
@@ -395,14 +399,8 @@ abstract class StatefulTelegramDialogVerticle<Config> : TelegramDialogVerticle<C
 
     private fun chatSupportsEphemeralDelivery() = observedChatType?.group != false
 
-    private fun usesEphemeralDelivery() = ephemeralUser != null && chatSupportsEphemeralDelivery()
-
-    private fun currentDelivery(): Delivery = ephemeralUser?.takeIf { chatSupportsEphemeralDelivery() }?.let { user ->
-        Delivery.Ephemeral(
-            user.id,
-            requireNotNull(currentEphemeralContext) { "Ephemeral mode has no delivery context" }
-        )
-    } ?: Delivery.Regular
+    private fun currentDelivery(ephemeralHook: EphemeralHook?): Delivery =
+        ephemeralHook?.takeIf { chatSupportsEphemeralDelivery() }?.let(Delivery::Ephemeral) ?: Delivery.Regular
 
     private fun Delivery.canEdit(target: KnownMessageTarget): Boolean = when {
         this is Delivery.Regular && target is KnownMessageTarget.Regular -> true
@@ -427,10 +425,12 @@ abstract class StatefulTelegramDialogVerticle<Config> : TelegramDialogVerticle<C
                 val message = tg.sendMessage(
                     chatId = chatId.toChatId(),
                     text = text,
-                    receiverUserId = delivery.receiverUserId,
-                    callbackQueryId = (delivery.context as? EphemeralContext.CallbackQuery)?.callbackQueryId,
-                    replyParameters = (delivery.context as? EphemeralContext.Message)?.let {
-                        ReplyParameters.create(ephemeralMessageId = it.ephemeralMessageId)
+                    receiverUserId = delivery.hook.user.id,
+                    callbackQueryId = (delivery.hook as? EphemeralHook.CallbackQuery)?.callbackQueryId,
+                    replyParameters = (delivery.hook as? EphemeralHook.Message)?.let {
+                        ReplyParameters.create(ephemeralMessageId = requireNotNull(it.ephemeralMessageId) {
+                            "Grouped ephemeral delivery requires an ephemeral message identifier"
+                        })
                     },
                     replyMarkup = replyMarkup
                 )
@@ -438,7 +438,7 @@ abstract class StatefulTelegramDialogVerticle<Config> : TelegramDialogVerticle<C
                     requireNotNull(message.ephemeralMessageId) {
                         "Telegram didn't return an ephemeral message identifier"
                     },
-                    delivery.receiverUserId
+                    delivery.hook.user.id
                 )
             }
         }
@@ -491,8 +491,14 @@ abstract class StatefulTelegramDialogVerticle<Config> : TelegramDialogVerticle<C
     private fun scheduleTimeout() {
         timeout?.let {
             timeoutTimerHandle = setTimerWithLock(it) {
-                become(timeoutState, HistoryBehavior.WIPE)
-                timeout()
+                when (val activeState = requireNotNull(state)) {
+                    is State -> become(timeoutState, HistoryBehavior.WIPE)
+                    is EphemeralState -> become(
+                        ephemeralTimeoutState,
+                        activeState.currentEphemeralHook,
+                        HistoryBehavior.WIPE
+                    )
+                }
             }
         }
     }
@@ -519,12 +525,11 @@ abstract class StatefulTelegramDialogVerticle<Config> : TelegramDialogVerticle<C
      * This class has methods delegating to the most of the [StatefulTelegramDialogVerticle] methods, meaning,
      * you probably should not call verticle methods directly.
      */
-    abstract class State(
-        /**
-         * The verticle
-         */
+    sealed class AbstractState(
+        /** The verticle. */
         @PublishedApi internal val v: StatefulTelegramDialogVerticle<*>
     ) {
+        internal open val ephemeralUserId: Long? = null
         /**
          * Execute [block] with per-dialog lock
          */
@@ -533,21 +538,51 @@ abstract class StatefulTelegramDialogVerticle<Config> : TelegramDialogVerticle<C
         }
 
         /**
-         * Handle callback query. By default, no-op handler.
+         * Route a callback query through [shouldHandleCallbackQuery] to [doHandleCallbackQuery].
          *
-         * Can be overridden by subclasses.
+         * [ephemeralHook] belongs to [callbackQuery] and can be carried into the next state.
          */
-        open suspend fun handleCallbackQuery(callbackQuery: Update.CallbackQuery.Payload) {}
+        internal open suspend fun handleCallbackQuery(
+            callbackQuery: Update.CallbackQuery.Payload,
+            ephemeralHook: EphemeralHook
+        ) {
+            if (shouldHandleCallbackQuery(callbackQuery, ephemeralHook)) {
+                doHandleCallbackQuery(callbackQuery, ephemeralHook)
+            }
+        }
 
         /**
-         * Handle message. By default, no-op handler.
+         * Handle an ephemeral message. By default, no-op handler.
          *
-         * Can be overridden by subclasses.
+         * [ephemeralHook] belongs to [message] and can be carried into the next state.
          */
-        open suspend fun handleMessage(message: Message) {}
+        internal open suspend fun handleEphemeralMessage(message: Message, ephemeralHook: EphemeralHook) {
+            if (shouldHandleEphemeralMessage(message, ephemeralHook)) {
+                doHandleEphemeralMessage(message, ephemeralHook)
+            }
+        }
+
+        protected open suspend fun shouldHandleEphemeralMessage(
+            message: Message,
+            ephemeralHook: EphemeralHook
+        ): Boolean = true
+
+        protected open suspend fun shouldHandleCallbackQuery(
+            callbackQuery: Update.CallbackQuery.Payload,
+            ephemeralHook: EphemeralHook
+        ): Boolean = true
+
+        open suspend fun doHandleEphemeralMessage(message: Message, ephemeralHook: EphemeralHook) {}
+
+        open suspend fun doHandleCallbackQuery(
+            callbackQuery: Update.CallbackQuery.Payload,
+            ephemeralHook: EphemeralHook
+        ) {}
 
         /**
          * Handle child death of [StatefulTelegramDialogVerticle]. By default, die.
+         *
+         * Called while holding the dialog lock, so state transition and messaging APIs can be used safely.
          *
          * Can be overridden by subclasses.
          */
@@ -574,8 +609,6 @@ abstract class StatefulTelegramDialogVerticle<Config> : TelegramDialogVerticle<C
          * to the history. The boosts can be chained, i.e. next state can be skipped as well. The side and history effects
          * are applied only for first non-boosted-through state.
          */
-        open fun boost(): State? = null
-
         /**
          * Call it to turn [v] into [newState]
          */
@@ -594,42 +627,41 @@ abstract class StatefulTelegramDialogVerticle<Config> : TelegramDialogVerticle<C
             v.become(newState, historyBehavior)
         }
 
-        /** Enter ephemeral delivery mode, latching [user] until [becomeNormal] is called. */
-        protected suspend fun becomeEphemeral(user: User) {
-            v.becomeEphemeral(user)
-        }
-
-        /** Leave ephemeral delivery mode. */
-        protected suspend fun becomeNormal() {
-            v.becomeNormal()
-        }
-
         /**
-         * Execute [become] [withLock].
+         * Call it to turn [v] into an ephemeral [newState].
          */
-        protected suspend fun becomeWithLock(
-            toState: State,
+        protected suspend fun become(
+            newState: EphemeralState,
+            ephemeralHook: EphemeralHook,
             historyBehavior: HistoryBehavior = v.defaultHistoryBehavior
         ) {
-            v.becomeWithLock(toState, historyBehavior)
+            v.become(newState, ephemeralHook, historyBehavior)
         }
 
         /**
-         * Execute [handler] after [duration].
+         * Can state be rolled back to the immediately previous history entry?
+         *
+         * A previous [EphemeralState] requires a non-null [ephemeralHook].
+         * Must be called while holding the dialog lock.
          */
-        protected fun setTimerWithLock(duration: Duration, handler: suspend () -> Unit): Job =
-            v.setTimerWithLock(duration, handler)
+        protected fun canRollback(ephemeralHook: EphemeralHook? = null) = v.canRollback(ephemeralHook)
+
+        /** Can state be rolled back to the latest regular state? Requires the dialog lock. */
+        protected fun canRollbackRegular() = v.canRollbackRegular()
 
         /**
-         * Can state be rolled back (use it to decide on rendering back button or when performing the rollback itself)
+         * Roll back to the immediately previous history entry.
+         *
+         * If it is ephemeral and [ephemeralHook] is null, history remains unchanged.
+         * Must be called while holding the dialog lock.
          */
-        protected fun canRollback() = v.canRollback()
+        protected suspend fun rollback(ephemeralHook: EphemeralHook? = null) {
+            v.rollback(ephemeralHook)
+        }
 
-        /**
-         * Perform a rollback
-         */
-        protected suspend fun rollback() {
-            v.rollback()
+        /** Roll back to the latest regular state, skipping ephemeral history entries. Requires the dialog lock. */
+        protected suspend fun rollbackRegular() {
+            v.rollbackRegular()
         }
 
         /**
@@ -667,16 +699,19 @@ abstract class StatefulTelegramDialogVerticle<Config> : TelegramDialogVerticle<C
             v.cancel()
         }
 
+        /** End the dialog as timed out. */
+        protected fun timeout() {
+            v.timeout()
+        }
+
         /**
          * Call [StatefulTelegramDialogVerticle.sendOrEdit]
          */
-        protected open suspend fun sendOrEdit(
+        protected abstract suspend fun sendOrEdit(
             text: FormattedText,
             replyMarkup: ReplyMarkup? = null,
             forceSend: Boolean = false
-        ) {
-            v.sendOrEdit(text, replyMarkup, forceSend)
-        }
+        )
 
         /**
          * Telegram client, same as [StatefulTelegramDialogVerticle.tg]
@@ -684,125 +719,161 @@ abstract class StatefulTelegramDialogVerticle<Config> : TelegramDialogVerticle<C
         protected val tg: Telegram
             get() = v.tg
 
-        /**
-         * Get [YawnTimeout] state (use together with [become] or [becomeWithLock]): [sendOrEdit] a yawning emoji and [die] as timed out.
-         */
-        protected fun yawnTimeout(): State = YawnTimeout(v)
-        /**
-         * Get [SilentTimeout] state (use together with [become] or [becomeWithLock]): do not send anything and [die] with timeout.
-         */
-        protected fun silentTimeout(): State = SilentTimeout(v)
-        /**
-         * Get [CrossCancelled] state (use together with [become] or [becomeWithLock]): [sendOrEdit] a redd cross sign emoji and [die] as cancelled.
-         */
-        protected fun crossCancelled(): State = CrossCancelled(v)
-        /**
-         * Get [SilentCancelled] state (use together with [become] or [becomeWithLock]): do not send anything and [die] as cancelled.
-         */
-        protected fun silentCancelled(): State = SilentCancelled(v)
-        /**
-         * Get [CheckmarkDone] state (use together with [become] or [becomeWithLock]): [sendOrEdit] green checkmark emoji and [die] as completed.
-         */
-        protected fun checkmarkDone(): State = CheckmarkDone(v)
-        /**
-         * Get [SilentDone] state (use together with [become] or [becomeWithLock]): do not send anything and [die] as completed.
-         */
-        protected fun silentDone(): State = SilentDone(v)
-
     }
 
-    protected fun yawnTimeout(): State = YawnTimeout(this)
-    protected fun silentTimeout(): State = SilentTimeout(this)
-    protected fun crossCancelled(): State = CrossCancelled(this)
-    protected fun silentCancelled(): State = SilentCancelled(this)
-    protected fun checkmarkDone(): State = CheckmarkDone(this)
-    protected fun silentDone(): State = SilentDone(this)
+    /** A state using regular Telegram delivery. */
+    abstract class State(v: StatefulTelegramDialogVerticle<*>) : AbstractState(v) {
+        internal suspend fun handleMessage(message: Message) {
+            if (shouldHandleMessage(message)) doHandleMessage(message)
+        }
 
-    private class YawnTimeout(
-        private val verticle: StatefulTelegramDialogVerticle<*>
-    ) : State(verticle) {
-        override suspend fun sideEffect() {
-            sendOrEdit("\uD83E\uDD71".toFormattedText())
-            verticle.timeout()
+        protected open suspend fun shouldHandleMessage(message: Message): Boolean = true
+
+        override suspend fun shouldHandleEphemeralMessage(
+            message: Message,
+            ephemeralHook: EphemeralHook
+        ): Boolean = shouldHandleMessage(message)
+
+        open suspend fun doHandleMessage(message: Message) {}
+
+        /** Return another regular state to skip this state before its side effect. */
+        open fun boost(): State? = null
+
+        /** Execute [handler] after [duration] while holding the dialog lock. */
+        protected fun setTimer(duration: Duration, handler: suspend () -> Unit): Job =
+            v.setTimerWithLock(duration, handler)
+
+        final override suspend fun sendOrEdit(
+            text: FormattedText,
+            replyMarkup: ReplyMarkup?,
+            forceSend: Boolean
+        ) {
+            v.sendOrEdit(text, replyMarkup, forceSend)
+        }
+    }
+
+    /** A state whose [sendOrEdit] calls use the current incoming ephemeral hook. */
+    abstract class EphemeralState(v: StatefulTelegramDialogVerticle<*>) : AbstractState(v) {
+        private var mutableEphemeralHook: EphemeralHook? = null
+
+        internal val currentEphemeralHook: EphemeralHook
+            get() = requireNotNull(mutableEphemeralHook) { "Ephemeral state has not been entered with a hook" }
+
+        /** The hook installed for the current state entry or incoming interaction. */
+        protected val ephemeralHook: EphemeralHook
+            get() = currentEphemeralHook
+
+        internal override val ephemeralUserId: Long?
+            get() = currentEphemeralHook.user.id
+
+        internal fun setCurrentEphemeralHook(ephemeralHook: EphemeralHook) {
+            this.mutableEphemeralHook = ephemeralHook
+        }
+
+        internal suspend fun <T> withCurrentEphemeralHook(
+            ephemeralHook: EphemeralHook,
+            handler: suspend () -> T
+        ): T {
+            val previousHook = mutableEphemeralHook
+            setCurrentEphemeralHook(ephemeralHook)
+            return try {
+                handler()
+            } finally {
+                mutableEphemeralHook = previousHook
+            }
+        }
+
+        internal final override suspend fun handleCallbackQuery(
+            callbackQuery: Update.CallbackQuery.Payload,
+            ephemeralHook: EphemeralHook
+        ) {
+            setCurrentEphemeralHook(ephemeralHook)
+            super.handleCallbackQuery(callbackQuery, ephemeralHook)
+        }
+
+        internal final override suspend fun handleEphemeralMessage(
+            message: Message,
+            ephemeralHook: EphemeralHook
+        ) {
+            setCurrentEphemeralHook(ephemeralHook)
+            super.handleEphemeralMessage(message, ephemeralHook)
+        }
+
+        /** Return another state to skip this state before its side effect. */
+        open fun boost(): AbstractState? = null
+
+        /**
+         * Capture the current hook and execute [handler] later while holding the dialog lock.
+         *
+         * The captured hook is installed only for [handler] execution; the latest hook observed before the timer fired
+         * is restored afterward.
+         */
+        protected fun setTimer(
+            duration: Duration,
+            handler: suspend (EphemeralHook) -> Unit
+        ): Job {
+            val capturedHook = currentEphemeralHook
+            return v.setTimerWithLock(duration) {
+                withCurrentEphemeralHook(capturedHook) {
+                    handler(capturedHook)
+                }
+            }
+        }
+
+        final override suspend fun sendOrEdit(
+            text: FormattedText,
+            replyMarkup: ReplyMarkup?,
+            forceSend: Boolean
+        ) {
+            v.sendOrEdit(text, replyMarkup, forceSend, currentEphemeralHook)
         }
     }
 
     private class SilentTimeout(
         private val verticle: StatefulTelegramDialogVerticle<*>
     ) : State(verticle) {
-        override suspend fun sideEffect() {
-            verticle.timeout()
-        }
+        override suspend fun sideEffect() = verticle.timeout()
     }
 
-    private class CrossCancelled(
+    private class EphemeralSilentTimeout(
         private val verticle: StatefulTelegramDialogVerticle<*>
-    ) : State(verticle) {
-        override suspend fun sideEffect() {
-            sendOrEdit("❌".toFormattedText())
-            cancel()
-        }
-    }
-
-    private class SilentCancelled(
-        private val verticle: StatefulTelegramDialogVerticle<*>
-    ) : State(verticle) {
-        override suspend fun sideEffect() {
-            cancel()
-        }
-    }
-
-    private class CheckmarkDone(
-        private val verticle: StatefulTelegramDialogVerticle<*>
-    ) : State(verticle) {
-        override suspend fun sideEffect() {
-            sendOrEdit("✅".toFormattedText())
-            complete()
-        }
-    }
-
-    private class SilentDone(
-        private val verticle: StatefulTelegramDialogVerticle<*>
-    ) : State(verticle) {
-        override suspend fun sideEffect() {
-            complete()
-        }
+    ) : EphemeralState(verticle) {
+        override suspend fun sideEffect() = verticle.timeout()
     }
 
     private data class MsgInfo(val target: KnownMessageTarget, val text: String, val markup: ReplyMarkup?)
 
     private sealed interface Delivery {
         data object Regular : Delivery
-        data class Ephemeral(val receiverUserId: Long, val context: EphemeralContext) : Delivery
+        data class Ephemeral(val hook: EphemeralHook) : Delivery {
+            val receiverUserId: Long get() = hook.user.id
+        }
     }
 
-    /**
-     * Eligible incoming action authorizing an ephemeral response.
-     */
-    private sealed interface EphemeralContext {
-        val receiverUserId: Long
+    sealed interface EphemeralHook {
+        val user: User
 
         data class CallbackQuery(
-            override val receiverUserId: Long,
+            override val user: User,
             val callbackQueryId: String
-        ) : EphemeralContext
+        ) : EphemeralHook
 
         data class Message(
-            override val receiverUserId: Long,
-            val ephemeralMessageId: Long
-        ) : EphemeralContext
-    }
+            override val user: User,
+            val messageId: Long,
+            val ephemeralMessageId: Long?
+        ) : EphemeralHook
 
-    companion object {
-        /**
-         * Cancel command
-         */
-        const val CANCEL = "cancel"
+        companion object {
+            fun from(callbackQuery: Update.CallbackQuery.Payload): EphemeralHook =
+                CallbackQuery(callbackQuery.from, callbackQuery.id)
 
-        /**
-         * Back command
-         */
-        const val BACK = "back"
+            fun from(message: ski.gagar.vertigram.telegram.types.Message): EphemeralHook = Message(
+                requireNotNull(message.from) { "An ephemeral hook requires a message sender" },
+                message.messageId,
+                message.ephemeralMessageId
+            )
+        }
     }
 
     /**
