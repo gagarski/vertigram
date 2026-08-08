@@ -537,21 +537,18 @@ questionnaire). While it is still possible to manage it manually with `SimpleTel
 an opinionated way to maintain more complex dialog state, named `StatefulTelegramDialogVerticle`. Besides more advanced
 state management it provides history, rollback, and an optional absolute dialog timeout.
 
-Dialog states derive from `AbstractState` and choose one of two delivery models. `State` uses regular delivery and may
-handle regular messages, ephemeral messages, and callbacks. `EphemeralState` handles ephemeral messages and callbacks;
-its `sendOrEdit` uses the hook installed for the current interaction. Neither state constructor accepts a hook. Enter an
-ephemeral state with `become(newState, ephemeralHook)` and a regular state with `become(newState)`. Both calls require the
-dialog lock, which handlers, side effects, and `setTimer` already hold. For another coroutine, wrap the transition
-in `withLock { become(...) }`.
+Each dialog step is represented by a `State`. Its `sideEffect` runs when the state is entered and is normally where the
+bot renders the step with `sendOrEdit`. The state can then handle messages and callback queries and use `become` to move
+to another state. The current state can be recorded in history so the application can later roll back to it.
 
-An ephemeral timer receives the hook captured when it was scheduled:
+Transitions, messaging, history operations, side effects, and state timers require the dialog lock. Framework handlers,
+side effects, and `setTimer` callbacks already hold it. Code running in another coroutine must use
+`withLock { ... }`; lock ownership belongs to the coroutine that acquired it.
 
-```kotlin
-setTimer(Duration.ofSeconds(5)) { hook ->
-    sendOrEdit("Still waiting".toFormattedText())
-    become(NextEphemeralState(verticle), hook)
-}
-```
+`State.boost` can skip a state before activation. A skipped state is neither recorded in history nor given a side
+effect. Since it is not active, `boost` must be pure and must not call activation-dependent operations such as `become`
+or `sendOrEdit`.
+
 Let's try to implement a bot that collects user age, name and his favourite color:
 
 ```kotlin
@@ -588,7 +585,7 @@ class RegisterVerticle : StatefulTelegramDialogVerticle<RegisterVerticle.Config>
 
     // (4) Handling initial message
     class Initial(private val verticle: RegisterVerticle) : State(verticle) {
-        override suspend fun doHandleMessage(message: Message) {
+        override suspend fun handleMessage(message: Message) {
             if (!message.isCommandForBot(CMD, typedConfig.me)) {
                 die(DeathReason.FAILED)
                 return
@@ -614,7 +611,7 @@ class RegisterVerticle : StatefulTelegramDialogVerticle<RegisterVerticle.Config>
         }
 
         // (9) handling the name
-        override suspend fun doHandleMessage(message: Message) {
+        override suspend fun handleMessage(message: Message) {
             val name = message.text ?: return
             become(
                 AskAge(
@@ -640,7 +637,7 @@ class RegisterVerticle : StatefulTelegramDialogVerticle<RegisterVerticle.Config>
             )
         }
 
-        override suspend fun doHandleMessage(message: Message) {
+        override suspend fun handleMessage(message: Message) {
             val age = message.text?.toIntOrNull() ?: return
             become(
                 AskFavouriteColor(
@@ -685,7 +682,7 @@ class RegisterVerticle : StatefulTelegramDialogVerticle<RegisterVerticle.Config>
                 }
             )
         }
-        override suspend fun doHandleMessage(message: Message) {
+        override suspend fun handleMessage(message: Message) {
             val color = message.text ?: return
             become(
                 Persist(
@@ -697,7 +694,7 @@ class RegisterVerticle : StatefulTelegramDialogVerticle<RegisterVerticle.Config>
             )
         }
 
-        override suspend fun doHandleCallbackQuery(
+        override suspend fun handleCallbackQuery(
             callbackQuery: Update.CallbackQuery.Payload,
             ephemeralHook: EphemeralHook
         ) {
@@ -836,7 +833,8 @@ module to store the responses in a relational database.
 ### Rollback
 
 Rollback is invoked explicitly by application handlers. `canRollback(hook)` and `rollback(hook)` operate on the
-immediately previous history entry. A regular target needs no hook; an ephemeral target requires a fresh non-null hook.
+immediately previous history entry. A regular target needs no hook; an ephemeral target requires a non-null hook that
+will be installed when re-entering it. The framework does not attempt to determine whether that hook is fresh.
 If that requirement is not met, rollback is unavailable and leaves history unchanged.
 
 `canRollbackRegular()` and `rollbackRegular()` search backward for the latest regular `State`, skipping intervening
@@ -902,12 +900,12 @@ for demo purposes):
             update()
         }
 
-        override suspend fun doHandleMessage(message: Message) {
+        override suspend fun handleMessage(message: Message) {
             val age = message.text?.toIntOrNull() ?: return
             proceed(age)
         }
 
-        override suspend fun doHandleCallbackQuery(
+        override suspend fun handleCallbackQuery(
             callbackQuery: Update.CallbackQuery.Payload,
             ephemeralHook: EphemeralHook
         ) {
@@ -982,7 +980,7 @@ you'd have to deal with history behavior, so your state history does not become 
             )
         }
 
-        override suspend fun doHandleMessage(message: Message) {
+        override suspend fun handleMessage(message: Message) {
             val age = message.text?.toIntOrNull() ?: return
             become(
                 AskFavouriteColor(
@@ -993,7 +991,7 @@ you'd have to deal with history behavior, so your state history does not become 
             )
         }
 
-        override suspend fun doHandleCallbackQuery(
+        override suspend fun handleCallbackQuery(
             callbackQuery: Update.CallbackQuery.Payload,
             ephemeralHook: EphemeralHook
         ) {
@@ -1044,24 +1042,120 @@ you'd have to deal with history behavior, so your state history does not become 
     }
 ```
 
-`EphemeralState` maintains an ephemeral message visible only to the user identified by its hook. Enter it from a handler
-that has a hook by passing that hook to the ephemeral `become` overload:
+### Ephemeral States and Messages
+
+[Telegram ephemeral messages](https://core.telegram.org/bots/api#ephemeral-messages-and-commands) let a bot communicate
+with one member on the timeline of a group or supergroup without showing the interaction to other members. A user can
+send an ephemeral command to a bot, and the bot can send a response visible only to that user and the bot. Telegram does
+not guarantee delivery, especially while the user is offline, and ephemeral messages may disappear automatically or
+when the app is restarted. Bots advertise user-to-bot entry points by registering `BotCommand`s with
+`isEphemeral = true`.
+
+Telegram normally allows a bot to send an ephemeral response only within 15 seconds of receiving a callback query or
+an ephemeral message. Such a response targets the client application that initiated the interaction. A bot that is a
+chat administrator may instead send an ephemeral message to any non-bot member at any time, although delivery is still
+not guaranteed. Ephemeral delivery is unavailable in private chats and channels.
+
+Vertigram represents the user and the Telegram interaction that permits a response as an `EphemeralHook`. Callback and
+ephemeral-message handlers receive a suitable hook as a parameter. Pass that hook along when the next state or a later
+operation must keep using the same private interaction:
 
 ```kotlin
 become(ConfigureDialog(verticle), ephemeralHook)
 ```
 
-The state installs the hook before its handler or side effect runs, so its implicit `sendOrEdit` targets the current
-ephemeral message. Transition back to regular delivery with the regular overload:
+For an administrator-initiated interaction without an incoming update, create a hook with
+`EphemeralHook.forUser(userId)`. Vertigram deliberately performs no administrator or recipient checks and does not track
+the 15-second validity window; Telegram accepts or rejects the eventual API call. Do not derive an ephemeral hook from a
+regular message, because it does not provide the ephemeral reply context. Use `forUser` for unsolicited administrator
+delivery by passing it to an ephemeral transition:
+
+```kotlin
+become(AdminNotice(verticle), EphemeralHook.forUser(userId))
+```
+
+The two state roots define the delivery model:
+
+- `State.sendOrEdit` always uses regular delivery. A `State` can nevertheless receive an ephemeral message or callback,
+  inspect it, respond regularly, or enter an `EphemeralState` with the supplied hook.
+- `EphemeralState.sendOrEdit` always uses ephemeral delivery for the user in its current hook. It does not expose a
+  regular `sendOrEdit` overload. It ignores regular messages and interactions from other users.
+
+The purpose of an `EphemeralState` is to maintain a continuous private dialog with one user. Free-text input needs an
+ephemeral reply context: merely typing into the group chat produces a regular message that is visible to everyone.
+
+For that reason, when `EphemeralState.sendOrEdit` is called without reply markup, Vertigram adds `ForceReply`
+automatically. Telegram opens the composer as a reply to the bot's ephemeral message, so the user's text is sent as
+another ephemeral message and supplies the hook for the next step. This is the recommended way to ask for free-text
+input in an ephemeral dialog.
+
+Supplying reply markup replaces this default. Inline keyboard buttons are safe for a button-driven flow because they
+produce callback queries instead of chat messages. A prompt with custom markup should not invite arbitrary free text:
+text entered normally is a public regular message without an `ephemeralMessageId`, and the active `EphemeralState`
+ignores it. The user can manually select Reply on the ephemeral message to restore the ephemeral context, but a dialog
+should not rely on users knowing or remembering to do that.
+
+As another safe continuation, a custom-markup flow can ask the user to send an ephemeral command registered through
+[`setMyCommands`](https://core.telegram.org/bots/api#setmycommands) with `isEphemeral = true`.
+
+Returning to regular delivery needs no hook:
 
 ```kotlin
 become(StartPublicFlow(verticle))
 ```
 
-Accepted ephemeral messages and callbacks refresh the installed hook for the duration of handling. Regular messages in
-groups and supergroups are ignored by an `EphemeralState`; private-chat messages are adapted to ephemeral delivery.
-`State` may also handle ephemeral input, but its `sendOrEdit` remains regular unless the hook is passed explicitly.
-When no reply markup is provided for an ephemeral delivery, `ForceReply` is added automatically.
+Entering another `EphemeralState` still requires an explicit hook. The hook supplied to a transition is installed
+before the new state's `sideEffect`, and a subsequent same-user callback or ephemeral message becomes the current hook
+before filtering and handling. `EphemeralState.boost` may route to either state root; the hook is retained only when the
+final state is also ephemeral. Like regular boosting, it must remain a pure routing decision.
+
+The initial state is deliberately a regular `State`: it is activated when the verticle starts, before an incoming
+interaction can supply an ephemeral hook. A dialog that may start from either kind of message can use a no-output
+bootstrap state. It waits for the first message and immediately selects the correct delivery model:
+
+```kotlin
+class Initial(private val verticle: MyDialog) : State(verticle) {
+    override suspend fun sideEffect() = Unit
+
+    override suspend fun handleMessage(message: Message) {
+        become(FirstRegularState(verticle), HistoryBehavior.SKIP)
+    }
+
+    override suspend fun handleEphemeralMessage(
+        message: Message,
+        ephemeralHook: EphemeralHook
+    ) {
+        become(FirstEphemeralState(verticle), ephemeralHook, HistoryBehavior.SKIP)
+    }
+}
+```
+
+The bootstrap state must not send anything in `sideEffect`; the selected state's side effect produces the first visible
+response. `HistoryBehavior.SKIP` prevents rollback from returning to the bootstrap state. If the application does not
+support ephemeral starts, its initial state can simply leave `handleEphemeralMessage` unimplemented.
+
+Incoming updates are routed as follows:
+
+| Active state | Regular message | Ephemeral message | Callback query |
+| --- | --- | --- | --- |
+| `State` | `handleMessage` | `handleEphemeralMessage` | `handleCallbackQuery` |
+| `EphemeralState` | Ignored | `handleEphemeralMessage` | `handleCallbackQuery` |
+
+`shouldHandleMessage` filters regular input for `State`. `shouldHandleEphemeralMessage` and
+`shouldHandleCallbackQuery` filter their respective handlers for either state root.
+
+`sendOrEdit` tracks one known message across both delivery models. Switching between regular and ephemeral delivery, or
+changing the ephemeral receiver, starts a new message. A regular incoming message disrupts either known delivery. An
+ephemeral incoming message disrupts regular delivery and ephemeral delivery to the same user, but not another user's
+ephemeral message. Callback queries do not disrupt the known message because they add no visible chat message. Messages
+sent directly through `tg` are outside this tracking.
+
+An `EphemeralState` timer captures the hook current when it is scheduled. When the timer fires, that hook is passed to
+the handler and temporarily installed so implicit `sendOrEdit` uses it; the hook that was current immediately before the
+timer ran is restored afterward. Capturing a hook does not extend Telegram's 15-second response window. Using
+`sendOrEdit` from a short timer that is expected to fire within that window is reasonable, but delivery remains
+best-effort because scheduling and request latency consume part of the window. Longer timers should avoid ephemeral
+delivery. For delayed administrator-initiated delivery, enter a new ephemeral state with a `forUser` hook.
 
 ### Terminal States and Cancellation
 
@@ -1069,8 +1163,12 @@ Completion and cancellation are application behavior. Define client-owned termin
 implementations, render any desired response in `sideEffect`, and call `complete()` or `cancel()`. The framework does not
 intercept cancel commands or callbacks; shared client base states are a convenient place to deduplicate that handling.
 
-Silent timeout remains a core default for both delivery models. Override `timeoutState` and `ephemeralTimeoutState` to
-provide application-specific timeout behavior and call `timeout()` from those terminal states.
+Silent timeout remains the core default for both delivery models. A dialog timeout is a lifecycle timeout and will
+normally outlive Telegram's ephemeral response window, so the default timeout states terminate the dialog without
+sending or editing a message. Override `timeoutState` and `ephemeralTimeoutState` only for application-specific cleanup
+before calling `timeout()`; custom timeout states should remain silent as well. When an ephemeral state times out, its
+current hook is installed on `ephemeralTimeoutState`, but custom timeout behavior should not rely on that hook for
+Telegram delivery because it may already have expired.
 
 ### Timeouts
 

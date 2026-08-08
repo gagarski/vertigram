@@ -23,6 +23,7 @@ import ski.gagar.vertigram.telegram.types.Message
 import ski.gagar.vertigram.telegram.types.Update
 import ski.gagar.vertigram.telegram.types.User
 import ski.gagar.vertigram.telegram.types.create
+import ski.gagar.vertigram.verticles.telegram.StatefulTelegramDialogVerticle.AbstractState
 import ski.gagar.vertigram.verticles.telegram.StatefulTelegramDialogVerticle.EphemeralHook
 import ski.gagar.vertigram.verticles.telegram.StatefulTelegramDialogVerticle.EphemeralState
 import ski.gagar.vertigram.verticles.telegram.StatefulTelegramDialogVerticle.State
@@ -47,7 +48,7 @@ class StatefulTelegramDialogVerticleTest {
         val hook = EphemeralHook.from(callback)
 
         state.setCurrentEphemeralHook(EphemeralHook.from(message(messageId = 1)))
-        state.handleCallbackQuery(callback, hook)
+        state.processCallbackQuery(callback, hook)
 
         assertEquals(hook, state.seenHook)
         assertEquals(hook, state.exposedCurrentHook)
@@ -128,7 +129,7 @@ class StatefulTelegramDialogVerticleTest {
         val state = FilteringRegularState(TestDialogVerticle())
         val message = message(messageId = 1)
 
-        state.handleEphemeralMessage(message, EphemeralHook.from(message))
+        state.processEphemeralMessage(message, EphemeralHook.from(message))
 
         assertTrue(state.ephemeralMessageHandled)
     }
@@ -138,9 +139,213 @@ class StatefulTelegramDialogVerticleTest {
         val state = RejectingEphemeralRegularState(TestDialogVerticle())
         val message = message(messageId = 1)
 
-        state.handleEphemeralMessage(message, EphemeralHook.from(message))
+        state.processEphemeralMessage(message, EphemeralHook.from(message))
 
         assertFalse(state.ephemeralMessageHandled)
+    }
+
+    @Test
+    fun `private chat rejects ephemeral state transition`() = runBlocking {
+        val verticle = TestDialogVerticle(Chat.Type.PRIVATE)
+        val previous = ExposedRegularState(verticle)
+        val regular = ExposedRegularState(verticle)
+        val ephemeral = RecordingEphemeralState(verticle)
+
+        previous.enter()
+        regular.enter()
+        assertThrows(IllegalStateException::class.java) {
+            runBlocking {
+                regular.transitionToWithLock(ephemeral, EphemeralHook.forUser(1))
+            }
+        }
+
+        assertEquals(regular, verticle.currentState)
+        regular.rollbackWith(null)
+        assertEquals(previous, verticle.currentState)
+    }
+
+    @Test
+    fun `group and supergroup chats allow ephemeral state transition`() = runBlocking {
+        for (type in listOf(Chat.Type.GROUP, Chat.Type.SUPERGROUP)) {
+            val verticle = TestDialogVerticle(type)
+            val regular = ExposedRegularState(verticle)
+            val ephemeral = RecordingEphemeralState(verticle)
+
+            regular.enter()
+            regular.transitionToWithLock(ephemeral, EphemeralHook.forUser(1))
+
+            assertEquals(ephemeral, verticle.currentState)
+        }
+    }
+
+    @Test
+    fun `ephemeral boost forwards transition hook only to final state`() = runBlocking {
+        val verticle = TestDialogVerticle(Chat.Type.GROUP)
+        val regular = ExposedRegularState(verticle)
+        val target = RecordingEphemeralState(verticle)
+        val boosting = BoostingEphemeralState(verticle, target)
+        val hook = EphemeralHook.forUser(7)
+
+        regular.enter()
+        regular.transitionToWithLock(boosting, hook)
+
+        assertEquals(target, verticle.currentState)
+        assertEquals(hook, target.exposedCurrentHook)
+    }
+
+    @Test
+    fun `first observed chat type is latched`() = runBlocking {
+        val verticle = TestDialogVerticle(Chat.Type.CHANNEL)
+        val regular = ExposedRegularState(verticle)
+        regular.enter()
+        verticle.observeChatType(Chat.Type.PRIVATE)
+
+        assertThrows(IllegalStateException::class.java) {
+            runBlocking {
+                regular.transitionToWithLock(RecordingEphemeralState(verticle), EphemeralHook.forUser(1))
+            }
+        }
+        assertEquals(regular, verticle.currentState)
+    }
+
+    @Test
+    fun `unknown chat type is fetched once and latched`() = runBlocking {
+        var lookups = 0
+        val verticle = TestDialogVerticle(initialChatType = null) {
+            lookups++
+            Chat.Type.GROUP
+        }
+        val firstRegular = ExposedRegularState(verticle)
+        val ephemeral = RecordingEphemeralState(verticle)
+        val secondRegular = ExposedRegularState(verticle)
+
+        firstRegular.enter()
+        assertEquals(0, lookups)
+        firstRegular.transitionToWithLock(ephemeral, EphemeralHook.forUser(1))
+        ephemeral.transitionTo(secondRegular)
+        secondRegular.transitionToWithLock(RecordingEphemeralState(verticle), EphemeralHook.forUser(1))
+
+        assertEquals(1, lookups)
+    }
+
+    @Test
+    fun `chat type lookup failure preserves state and history`() = runBlocking {
+        val failure = IllegalStateException("lookup failed")
+        val verticle = TestDialogVerticle(initialChatType = null) { throw failure }
+        val previous = ExposedRegularState(verticle)
+        val current = ExposedRegularState(verticle)
+        previous.enter()
+        current.enter()
+
+        val thrown = assertThrows(IllegalStateException::class.java) {
+            runBlocking {
+                current.transitionToWithLock(RecordingEphemeralState(verticle), EphemeralHook.forUser(1))
+            }
+        }
+
+        assertEquals(failure, thrown)
+        assertEquals(current, verticle.currentState)
+        current.rollbackWith(null)
+        assertEquals(previous, verticle.currentState)
+    }
+
+    @Test
+    fun `chat type lookup resolving private chat rejects ephemeral transition`() = runBlocking {
+        var lookups = 0
+        val verticle = TestDialogVerticle(initialChatType = null) {
+            lookups++
+            Chat.Type.PRIVATE
+        }
+        val regular = ExposedRegularState(verticle)
+        regular.enter()
+
+        assertThrows(IllegalStateException::class.java) {
+            runBlocking {
+                regular.transitionToWithLock(RecordingEphemeralState(verticle), EphemeralHook.forUser(1))
+            }
+        }
+
+        assertEquals(1, lookups)
+        assertEquals(regular, verticle.currentState)
+    }
+
+    @Test
+    fun `channel rejection preserves state and history`() = runBlocking {
+        val verticle = TestDialogVerticle(Chat.Type.CHANNEL)
+        val previous = ExposedRegularState(verticle)
+        val current = ExposedRegularState(verticle)
+        previous.enter()
+        current.enter()
+
+        assertThrows(IllegalStateException::class.java) {
+            runBlocking {
+                current.transitionToWithLock(RecordingEphemeralState(verticle), EphemeralHook.forUser(1))
+            }
+        }
+
+        assertEquals(current, verticle.currentState)
+        current.rollbackWith(null)
+        assertEquals(previous, verticle.currentState)
+    }
+
+    @Test
+    fun `private and channel chats reject explicit ephemeral delivery`() = runBlocking {
+        for (type in listOf(Chat.Type.PRIVATE, Chat.Type.CHANNEL)) {
+            val verticle = TestDialogVerticle(type)
+
+            assertThrows(IllegalStateException::class.java) {
+                runBlocking {
+                    verticle.sendWithHook(EphemeralHook.forUser(1))
+                }
+            }
+        }
+    }
+
+    @Test
+    fun `private regular message reaches only regular handler`() = runBlocking {
+        val verticle = TestDialogVerticle(Chat.Type.PRIVATE)
+        val state = RoutingRegularState(verticle)
+        state.enter()
+
+        verticle.processMessage(message(messageId = 1, chatType = Chat.Type.PRIVATE))
+
+        assertTrue(state.regularMessageHandled)
+        assertFalse(state.ephemeralMessageHandled)
+    }
+
+    @Test
+    fun `regular group message is ignored by ephemeral state`() = runBlocking {
+        val verticle = TestDialogVerticle(Chat.Type.GROUP)
+        val state = RecordingEphemeralState(verticle)
+        state.enter(EphemeralHook.forUser(1))
+
+        verticle.processMessage(message(messageId = 1, chatType = Chat.Type.GROUP))
+
+        assertFalse(state.ephemeralMessageHandled)
+    }
+
+    @Test
+    fun `ephemeral message reaches ephemeral handler of either state root`() = runBlocking {
+        val regularVerticle = TestDialogVerticle(Chat.Type.GROUP)
+        val regular = RoutingRegularState(regularVerticle)
+        regular.enter()
+
+        regularVerticle.processMessage(
+            message(messageId = 1, ephemeralMessageId = 11, chatType = Chat.Type.GROUP)
+        )
+
+        assertFalse(regular.regularMessageHandled)
+        assertTrue(regular.ephemeralMessageHandled)
+
+        val ephemeralVerticle = TestDialogVerticle(Chat.Type.GROUP)
+        val ephemeral = RecordingEphemeralState(ephemeralVerticle)
+        ephemeral.enter(EphemeralHook.forUser(1))
+
+        ephemeralVerticle.processMessage(
+            message(messageId = 2, ephemeralMessageId = 12, chatType = Chat.Type.GROUP)
+        )
+
+        assertTrue(ephemeral.ephemeralMessageHandled)
     }
 
     @Test
@@ -442,12 +647,16 @@ class StatefulTelegramDialogVerticleTest {
         assertTrue(hook is EphemeralHook.Standalone)
     }
 
-    private fun message(messageId: Long, ephemeralMessageId: Long? = null): Message = Message.create(
+    private fun message(
+        messageId: Long,
+        ephemeralMessageId: Long? = null,
+        chatType: Chat.Type = Chat.Type.PRIVATE
+    ): Message = Message.create(
         messageId = messageId,
         ephemeralMessageId = ephemeralMessageId,
         from = User.create(id = 1),
         date = Instant.EPOCH,
-        chat = Chat.create(id = 1, type = Chat.Type.PRIVATE)
+        chat = Chat.create(id = 1, type = chatType)
     )
 
     private suspend fun runFailingTimerDialog(
@@ -465,9 +674,24 @@ class StatefulTelegramDialogVerticleTest {
         }
     }
 
-    private class TestDialogVerticle : StatefulTelegramDialogVerticle<Unit>() {
+    private class TestDialogVerticle(
+        initialChatType: Chat.Type? = Chat.Type.GROUP,
+        private val chatTypeLookup: suspend () -> Chat.Type = {
+            error("Unexpected chat type lookup")
+        }
+    ) : StatefulTelegramDialogVerticle<Unit>() {
+        init {
+            initialChatType?.let(::observeChatType)
+        }
+
         override val chatId: Long = 1
         override val initialState: State = ExposedRegularState(this)
+
+        override suspend fun fetchChatType(): Chat.Type = chatTypeLookup()
+
+        suspend fun sendWithHook(hook: EphemeralHook) = withLock {
+            sendOrEdit("test".toFormattedText(), ephemeralHook = hook)
+        }
 
         val currentState: AbstractState?
             get() = state
@@ -490,6 +714,8 @@ class StatefulTelegramDialogVerticleTest {
         private val childDeathHandled: CompletableDeferred<Unit>? = null
     ) : State(verticle) {
         suspend fun transitionTo(state: State) = become(state)
+        suspend fun transitionToWithLock(state: EphemeralState, hook: EphemeralHook) =
+            withLock { become(state, hook) }
         suspend fun send(text: String) = sendOrEdit(text.toFormattedText())
         suspend fun enter() = withLock { become(this@ExposedRegularState) }
         suspend fun transitionWhileHoldingLock(
@@ -546,18 +772,46 @@ class StatefulTelegramDialogVerticleTest {
         verticle: TestDialogVerticle
     ) : EphemeralState(verticle) {
         var seenHook: EphemeralHook? = null
+        var ephemeralMessageHandled = false
 
         val exposedCurrentHook: EphemeralHook
             get() = ephemeralHook
 
         suspend fun enter(hook: EphemeralHook) = withLock { become(this@RecordingEphemeralState, hook) }
         suspend fun enterAsFirst(hook: EphemeralHook) = enter(hook)
+        suspend fun transitionTo(state: State) = withLock { become(state) }
 
-        override suspend fun doHandleCallbackQuery(
+        override suspend fun handleCallbackQuery(
             callbackQuery: Update.CallbackQuery.Payload,
             ephemeralHook: EphemeralHook
         ) {
             seenHook = this.ephemeralHook
+        }
+
+        override suspend fun handleEphemeralMessage(message: Message, ephemeralHook: EphemeralHook) {
+            ephemeralMessageHandled = true
+        }
+    }
+
+    private class BoostingEphemeralState(
+        verticle: TestDialogVerticle,
+        private val target: EphemeralState
+    ) : EphemeralState(verticle) {
+        override fun boost(): AbstractState = target
+    }
+
+    private class RoutingRegularState(verticle: TestDialogVerticle) : State(verticle) {
+        var regularMessageHandled = false
+        var ephemeralMessageHandled = false
+
+        suspend fun enter() = withLock { become(this@RoutingRegularState) }
+
+        override suspend fun handleMessage(message: Message) {
+            regularMessageHandled = true
+        }
+
+        override suspend fun handleEphemeralMessage(message: Message, ephemeralHook: EphemeralHook) {
+            ephemeralMessageHandled = true
         }
     }
 
@@ -566,7 +820,7 @@ class StatefulTelegramDialogVerticleTest {
 
         override suspend fun shouldHandleMessage(message: Message): Boolean = false
 
-        override suspend fun doHandleEphemeralMessage(message: Message, ephemeralHook: EphemeralHook) {
+        override suspend fun handleEphemeralMessage(message: Message, ephemeralHook: EphemeralHook) {
             ephemeralMessageHandled = true
         }
     }

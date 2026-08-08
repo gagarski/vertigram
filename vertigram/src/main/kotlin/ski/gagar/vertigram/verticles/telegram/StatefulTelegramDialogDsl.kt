@@ -309,7 +309,7 @@ private class RuntimeState<Config>(
         commit(scope.pendingTransition)
     }
 
-    override suspend fun doHandleMessage(message: Message) {
+    override suspend fun handleMessage(message: Message) {
         val scope = actionScope()
         for (handler in behavior.handlers) {
             if (handler(scope, message)) break
