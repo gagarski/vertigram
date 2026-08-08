@@ -302,6 +302,19 @@ class StatefulTelegramDialogVerticleTest {
     }
 
     @Test
+    fun `expired ephemeral delivery is ignored before chat validation`() = runBlocking {
+        val verticle = TestDialogVerticle(Chat.Type.PRIVATE)
+        val hook = EphemeralHook.Message(
+            user = User.create(id = 1),
+            messageId = 1,
+            ephemeralMessageId = 2,
+            expiresAt = Instant.EPOCH
+        )
+
+        verticle.sendWithHook(hook)
+    }
+
+    @Test
     fun `private regular message reaches only regular handler`() = runBlocking {
         val verticle = TestDialogVerticle(Chat.Type.PRIVATE)
         val state = RoutingRegularState(verticle)
@@ -645,6 +658,44 @@ class StatefulTelegramDialogVerticleTest {
 
         assertEquals(3, hook.userId)
         assertTrue(hook is EphemeralHook.Standalone)
+        assertNull(hook.expiresAt)
+        assertFalse(hook.isExpired(Instant.MAX))
+    }
+
+    @Test
+    fun `ephemeral hook expires with one second safety margin`() {
+        val expiresAt = Instant.parse("2026-01-01T00:00:15Z")
+        val hook = EphemeralHook.Message(
+            user = User.create(id = 1),
+            messageId = 1,
+            ephemeralMessageId = 2,
+            expiresAt = expiresAt
+        )
+
+        assertFalse(hook.isExpired(Instant.parse("2026-01-01T00:00:13.999999999Z")))
+        assertTrue(hook.isExpired(Instant.parse("2026-01-01T00:00:14Z")))
+        assertTrue(hook.isExpired(expiresAt))
+    }
+
+    @Test
+    fun `incoming interaction hooks capture fifteen second expiration`() {
+        val callback = Update.CallbackQuery.Payload.create(
+            id = "callback-id",
+            from = User.create(id = 2),
+            chatInstance = "chat-instance"
+        )
+
+        val beforeCallback = Instant.now().plusSeconds(15)
+        val callbackHook = EphemeralHook.from(callback)
+        val afterCallback = Instant.now().plusSeconds(15)
+        val beforeMessage = Instant.now().plusSeconds(15)
+        val messageHook = EphemeralHook.from(message(messageId = 1))
+        val afterMessage = Instant.now().plusSeconds(15)
+
+        assertFalse(requireNotNull(callbackHook.expiresAt).isBefore(beforeCallback))
+        assertFalse(requireNotNull(callbackHook.expiresAt).isAfter(afterCallback))
+        assertFalse(requireNotNull(messageHook.expiresAt).isBefore(beforeMessage))
+        assertFalse(requireNotNull(messageHook.expiresAt).isAfter(afterMessage))
     }
 
     private fun message(

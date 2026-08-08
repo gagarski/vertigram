@@ -1057,8 +1057,9 @@ chat administrator may instead send an ephemeral message to any non-bot member a
 not guaranteed. Ephemeral delivery is unavailable in private chats and channels.
 
 Vertigram represents the user and the Telegram interaction that permits a response as an `EphemeralHook`. Callback and
-ephemeral-message handlers receive a suitable hook as a parameter. Pass that hook along when the next state or a later
-operation must keep using the same private interaction:
+ephemeral-message handlers receive a suitable hook as a parameter. Interaction-derived hooks expire 15 seconds after
+Vertigram creates them. Pass the hook along when the next state or a later operation must keep using the same private
+interaction:
 
 ```kotlin
 become(ConfigureDialog(verticle), ephemeralHook)
@@ -1066,9 +1067,9 @@ become(ConfigureDialog(verticle), ephemeralHook)
 
 For an administrator-initiated interaction without an incoming update, create a hook with
 `EphemeralHook.forUser(userId)`. Vertigram deliberately performs no administrator or recipient checks and does not track
-the 15-second validity window; Telegram accepts or rejects the eventual API call. Do not derive an ephemeral hook from a
-regular message, because it does not provide the ephemeral reply context. Use `forUser` for unsolicited administrator
-delivery by passing it to an ephemeral transition:
+an expiration time for these standalone hooks; Telegram accepts or rejects the eventual API call. Do not derive an
+ephemeral hook from a regular message, because it does not provide the ephemeral reply context. Use `forUser` for
+unsolicited administrator delivery by passing it to an ephemeral transition:
 
 ```kotlin
 become(AdminNotice(verticle), EphemeralHook.forUser(userId))
@@ -1152,10 +1153,12 @@ sent directly through `tg` are outside this tracking.
 
 An `EphemeralState` timer captures the hook current when it is scheduled. When the timer fires, that hook is passed to
 the handler and temporarily installed so implicit `sendOrEdit` uses it; the hook that was current immediately before the
-timer ran is restored afterward. Capturing a hook does not extend Telegram's 15-second response window. Using
-`sendOrEdit` from a short timer that is expected to fire within that window is reasonable, but delivery remains
-best-effort because scheduling and request latency consume part of the window. Longer timers should avoid ephemeral
-delivery. For delayed administrator-initiated delivery, enter a new ephemeral state with a `forUser` hook.
+timer ran is restored afterward. Capturing a hook does not extend Telegram's 15-second response window. To leave room
+for request latency, Vertigram treats an interaction-derived hook as expired during its final second. `sendOrEdit` from
+a timer shorter than this effective 14-second window is reasonable. At or after the boundary, `sendOrEdit` logs a
+warning with a stack trace and returns without sending, editing, or changing its known-message tracking; the rest of the
+timer handler continues normally. For delayed administrator-initiated delivery, enter a new ephemeral state with a
+non-expiring `forUser` hook.
 
 ### Terminal States and Cancellation
 
@@ -1168,7 +1171,8 @@ normally outlive Telegram's ephemeral response window, so the default timeout st
 sending or editing a message. Override `timeoutState` and `ephemeralTimeoutState` only for application-specific cleanup
 before calling `timeout()`; custom timeout states should remain silent as well. When an ephemeral state times out, its
 current hook is installed on `ephemeralTimeoutState`, but custom timeout behavior should not rely on that hook for
-Telegram delivery because it may already have expired.
+Telegram delivery because it will normally have expired. An attempted `sendOrEdit` with that expired hook is a warned
+no-op, so cleanup and the subsequent `timeout()` call can continue.
 
 ### Timeouts
 

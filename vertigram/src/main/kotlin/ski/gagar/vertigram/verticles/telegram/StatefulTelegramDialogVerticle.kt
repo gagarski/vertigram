@@ -32,6 +32,10 @@ import ski.gagar.vertigram.verticles.common.messages.DeathReason
 import ski.gagar.vertigram.verticles.telegram.StatefulTelegramDialogVerticle.State
 import ski.gagar.vertigram.verticles.telegram.address.TelegramAddress
 import java.time.Duration
+import java.time.Instant
+
+private val EPHEMERAL_HOOK_LIFETIME: Duration = Duration.ofSeconds(15)
+private val EPHEMERAL_HOOK_EXPIRATION_SKEW: Duration = Duration.ofSeconds(1)
 
 /**
  * A skeleton that handles dialog.
@@ -393,6 +397,8 @@ abstract class StatefulTelegramDialogVerticle<Config> : TelegramDialogVerticle<C
      * @param text Text of the message
      * @param buttons Reply markup of the message
      * @param forceSend Ignore the fact that the message is the last in the chat and do sending instead of editing
+     * @param ephemeralHook Hook for ephemeral delivery. An expired interaction-derived hook makes this call a warned
+     * no-op; standalone hooks created with [EphemeralHook.forUser] do not expire.
      */
     protected suspend fun sendOrEdit(
         text: FormattedText,
@@ -401,6 +407,15 @@ abstract class StatefulTelegramDialogVerticle<Config> : TelegramDialogVerticle<C
         ephemeralHook: EphemeralHook? = null
     ) {
         checkLockOwned("calling sendOrEdit without obtaining lock is not supported")
+        if (ephemeralHook?.isExpired() == true) {
+            logger.lazy.warn(
+                throwable = IllegalStateException("Unusable ephemeral hook passed to sendOrEdit")
+            ) {
+                "Ignoring sendOrEdit because its ephemeral hook expires at ${ephemeralHook.expiresAt} " +
+                    "and is within the ${EPHEMERAL_HOOK_EXPIRATION_SKEW.seconds}-second safety margin"
+            }
+            return
+        }
         val delivery = currentDelivery(ephemeralHook)
         val replyMarkup = buttons ?: if (delivery is Delivery.Ephemeral) forceReply(selective = false) else null
 
@@ -871,7 +886,8 @@ abstract class StatefulTelegramDialogVerticle<Config> : TelegramDialogVerticle<C
          * Capture the current hook and execute [handler] later while holding the dialog lock.
          *
          * The captured hook is installed only for [handler] execution; the latest hook observed before the timer fired
-         * is restored afterward.
+         * is restored afterward. Capturing a hook does not extend its lifetime. Ephemeral delivery is suppressed, with
+         * a warning, once an interaction-derived hook enters the final second of its 15-second validity window.
          */
         protected fun setTimer(
             duration: Duration,
@@ -920,12 +936,20 @@ abstract class StatefulTelegramDialogVerticle<Config> : TelegramDialogVerticle<C
         val ephemeralHook: EphemeralHook?
     )
 
+    /**
+     * Context that permits ephemeral delivery to [userId].
+     *
+     * Hooks created from incoming interactions expire after 15 seconds. [forUser] creates a non-expiring hook for
+     * administrator-initiated delivery.
+     */
     sealed interface EphemeralHook {
         val userId: Long
+        val expiresAt: Instant?
 
         data class CallbackQuery(
             val user: User,
-            val callbackQueryId: String
+            val callbackQueryId: String,
+            override val expiresAt: Instant = Instant.now().plus(EPHEMERAL_HOOK_LIFETIME)
         ) : EphemeralHook {
             override val userId: Long get() = user.id
         }
@@ -933,12 +957,15 @@ abstract class StatefulTelegramDialogVerticle<Config> : TelegramDialogVerticle<C
         data class Message(
             val user: User,
             val messageId: Long,
-            val ephemeralMessageId: Long?
+            val ephemeralMessageId: Long?,
+            override val expiresAt: Instant = Instant.now().plus(EPHEMERAL_HOOK_LIFETIME)
         ) : EphemeralHook {
             override val userId: Long get() = user.id
         }
 
-        data class Standalone(override val userId: Long) : EphemeralHook
+        data class Standalone(override val userId: Long) : EphemeralHook {
+            override val expiresAt: Instant? = null
+        }
 
         companion object {
             fun forUser(userId: Long): EphemeralHook = Standalone(userId)
@@ -982,6 +1009,9 @@ abstract class StatefulTelegramDialogVerticle<Config> : TelegramDialogVerticle<C
         WIPE
     }
 }
+
+internal fun StatefulTelegramDialogVerticle.EphemeralHook.isExpired(now: Instant = Instant.now()): Boolean =
+    expiresAt?.minus(EPHEMERAL_HOOK_EXPIRATION_SKEW)?.let { !now.isBefore(it) } == true
 
 internal sealed interface KnownMessageTarget {
     val id: Long
