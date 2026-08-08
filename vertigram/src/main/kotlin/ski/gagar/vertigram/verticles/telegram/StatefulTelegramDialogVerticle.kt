@@ -38,47 +38,49 @@ private val EPHEMERAL_HOOK_LIFETIME: Duration = Duration.ofSeconds(15)
 private val EPHEMERAL_HOOK_EXPIRATION_SKEW: Duration = Duration.ofSeconds(1)
 
 /**
- * A skeleton that handles dialog.
+ * A skeleton that handles a dialog.
  *
- * At one moment of time the verticle  has [state] to which the incoming requests (messages and callback queries) are
- * delegated. [State] can execute transitions to other [State]s for the verticle, execute side effects of the
- * transitions or do some internal state management.
+ * After initial activation and while the dialog remains alive, the verticle delegates incoming requests (messages and
+ * callback queries) to its current [state]. A [State] can transition the verticle to another state, define entry side
+ * effects, or perform internal state management.
  *
- * It optionally supports some opinionated ways to manage state history, cancellations and timeouts.
+ * It also provides state history, rollback, and an optional absolute timeout. Completion and cancellation are
+ * application decisions: client states explicitly call [AbstractState.complete] or [AbstractState.cancel].
  *
- * This verticle can be combined with [DispatchVerticle], in that case [StatefulTelegramDialogVerticle]
- * will keep only one dialog state.
+ * When used with [DispatchVerticle], each deployed [StatefulTelegramDialogVerticle] instance represents one dialog key.
  */
 abstract class StatefulTelegramDialogVerticle<Config> : TelegramDialogVerticle<Config>() {
     /**
-     * Base address for [TelegramVerticle] (used with [tg])
+     * The base address for [TelegramVerticle], used by [tg].
      *
-     * May be overridden by subclasses
+     * Subclasses may override this property.
      */
     open val telegramAddressBase = TelegramAddress.TELEGRAM_VERTICLE_BASE
 
     /**
-     * Chat id of the dialog
+     * The chat ID of the dialog.
      *
-     * Should be overridden by subclasses
+     * Subclasses must override this property.
      */
     abstract val chatId: Long
 
     /**
-     * Initial state (when the verticle is deployed)
+     * The initial state activated when the verticle is deployed.
      *
-     * Should be overridden by subclasses
+     * Subclasses must override this property.
      */
     abstract val initialState: State
 
     /**
-     * Global timeout of the verticle. No timeout by default. If the timeout is set, the verticle will die
-     * after it is expired, meaning that the dialog state will be forgotten.
+     * Absolute timeout measured from verticle deployment. User interaction does not reset it, and there is no timeout
+     * by default. When it expires, the verticle enters [timeoutState] or [ephemeralTimeoutState], depending on the active
+     * state root. The default timeout states terminate the dialog silently; a custom timeout state must terminate the
+     * dialog explicitly.
      */
     protected open val timeout: Duration? = null
 
     /**
-     * State to use when [timeout] expires while a regular [State] is active.
+     * The state to use when [timeout] expires while a regular [State] is active.
      *
      * By default, a silent timeout state is used.
      */
@@ -86,7 +88,7 @@ abstract class StatefulTelegramDialogVerticle<Config> : TelegramDialogVerticle<C
         get() = SilentTimeout(this)
 
     /**
-     * State to use when [timeout] expires while an [EphemeralState] is active.
+     * The state to use when [timeout] expires while an [EphemeralState] is active.
      *
      * By default, a silent timeout state is used.
      */
@@ -94,14 +96,15 @@ abstract class StatefulTelegramDialogVerticle<Config> : TelegramDialogVerticle<C
         get() = EphemeralSilentTimeout(this)
 
     /**
-     * State history size
+     * The maximum number of states retained in history.
      */
     protected open val historySize: Int = 100
 
     /**
-     * Default history behavior when [State.become] without explicit behavior is called.
+     * The default history behavior when [State.become] is called without an explicit behavior.
      *
-     * By default, the new state is pushed to the end of the history, meaning that verticle can do a rollback to it.
+     * By default, the current state is pushed to the end of the history before the new state is activated, allowing the
+     * new state to roll back to it.
      */
     protected open val defaultHistoryBehavior: HistoryBehavior = HistoryBehavior.PUSH
 
@@ -110,14 +113,14 @@ abstract class StatefulTelegramDialogVerticle<Config> : TelegramDialogVerticle<C
     internal val mutex = Mutex()
 
     /**
-     * Telegram client
+     * The Telegram client.
      */
     protected val tg: Telegram by lazy {
         ThinTelegram(vertigram, telegramAddressBase)
     }
 
     /**
-     * State
+     * The current state.
      */
     protected var state: AbstractState? = null
     private var msgInfo: MsgInfo? = null
@@ -142,10 +145,13 @@ abstract class StatefulTelegramDialogVerticle<Config> : TelegramDialogVerticle<C
     }
 
     /**
-     * Execute `block` with an exclusive lock
-     * @param discardWhenBusy if true, any pending `block`s will be discarded if the verticle is busy
-     *      otherwise, they'll be enqueued
-     * @param block block of code to execute
+     * Execute [block] while holding the dialog's exclusive lock.
+     *
+     * Lock ownership is tied to the current coroutine `Job`, and the lock is not reentrant. Calling this method again
+     * from the owning coroutine is unsupported.
+     *
+     * @param discardWhenBusy If `true`, discard [block] when another coroutine owns the lock; otherwise, wait for it
+     * @param block Block of code to execute
      */
     protected suspend inline fun withLock(discardWhenBusy: Boolean = true, block: () -> Unit) {
         val owner = requireNotNull(currentCoroutineContext()[Job]) {
@@ -383,22 +389,22 @@ abstract class StatefulTelegramDialogVerticle<Config> : TelegramDialogVerticle<C
     /**
      * Send or edit the message.
      *
-     * By default, the last message sent by [sendOrEdit] will be edited instead of sending a new message while the
-     * interaction remains undisrupted. A public incoming message disrupts both regular and ephemeral delivery. An
-     * ephemeral incoming message disrupts regular delivery and ephemeral delivery to the same user. Callback queries
+     * By default, [sendOrEdit] edits its last message rather than sending a new one while the interaction remains
+     * undisrupted. An incoming public message disrupts both regular and ephemeral delivery. An incoming ephemeral
+     * message disrupts regular delivery and ephemeral delivery to the same user. Callback queries
      * do not disrupt delivery because they add no visible message to the chat.
      *
-     * A new message is also sent when switching between regular and ephemeral delivery, changing the ephemeral
-     * receiver, or when the requested reply markup cannot be established by editing. Messages sent directly through
+     * A new message is also sent when delivery switches between regular and ephemeral, the ephemeral receiver changes,
+     * or the requested reply markup cannot be established by editing. Messages sent directly through
      * [tg] are outside this tracking.
      *
-     * Must be called while holding the dialog lock.
+     * This method must be called while holding the dialog lock.
      *
      * @param text Text of the message
      * @param buttons Reply markup of the message
-     * @param forceSend Ignore the fact that the message is the last in the chat and do sending instead of editing
-     * @param ephemeralHook Hook for ephemeral delivery. An expired interaction-derived hook makes this call a warned
-     * no-op; standalone hooks created with [EphemeralHook.forUser] do not expire.
+     * @param forceSend Send a new message even if the existing message could be edited
+     * @param ephemeralHook Hook for ephemeral delivery. An expired interaction-derived hook causes this call to log a
+     * warning and return without delivery; standalone hooks created with [EphemeralHook.forUser] do not expire.
      */
     protected suspend fun sendOrEdit(
         text: FormattedText,
@@ -579,14 +585,13 @@ abstract class StatefulTelegramDialogVerticle<Config> : TelegramDialogVerticle<C
     }
 
     /**
-     * Extend this class to define a current dialog state.
+     * Extend this class to define a dialog state.
      *
-     * The state can be either immutable (in case of state change, [become] will be called and new state will be produced),
-     * or have some internally-managed "microstate". This "microstate" is not a subject of [history] management of
-     * the verticle. You can choose appropriate approach based on you needs in your case and combine both approaches.
+     * A state can be immutable, with transitions using [become] to create a new state, or it can maintain an internal
+     * "microstate." This microstate is not subject to the verticle's [history] management. Choose the approach
+     * appropriate for the use case, or combine both approaches.
      *
-     * This class has methods delegating to the most of the [StatefulTelegramDialogVerticle] methods, meaning,
-     * you probably should not call verticle methods directly.
+     * This class provides methods that delegate to most of the [StatefulTelegramDialogVerticle] operations.
      */
     sealed class AbstractState(
         /** The verticle. */
@@ -594,7 +599,7 @@ abstract class StatefulTelegramDialogVerticle<Config> : TelegramDialogVerticle<C
     ) {
         internal open val ephemeralUserId: Long? = null
         /**
-         * Execute [block] with per-dialog lock
+         * Execute [block] while holding the per-dialog lock.
          */
         protected suspend inline fun withLock(block: () -> Unit) {
             v.withLock(block = block)
@@ -645,45 +650,34 @@ abstract class StatefulTelegramDialogVerticle<Config> : TelegramDialogVerticle<C
         ) {}
 
         /**
-         * Handle child death of [StatefulTelegramDialogVerticle]. By default, die.
+         * Handle the death of a child verticle. By default, terminate the dialog.
          *
-         * Called while holding the dialog lock, so state transition and messaging APIs can be used safely.
+         * This method is called while holding the dialog lock, so state-transition and messaging APIs can be used safely.
          *
-         * Can be overridden by subclasses.
+         * Subclasses may override this method.
          */
         open suspend fun onChildDeath(deathNotice: DeathNotice) {
             v.die(deathNotice.reason)
         }
 
         /**
-         * A side effect which is executed when entering the state.
+         * A side effect that is executed when entering the state.
          *
-         * This is a place to do [sendOrEdit].
+         * This is the place to call [sendOrEdit].
          *
-         * For example if asking for a name is a part of your dialog logic, here is the place to send
-         * "what is your name?" message.
+         * For example, if asking for a name is part of the dialog logic, this is the place to send a
+         * "What is your name?" message.
          */
         open suspend fun sideEffect() {}
 
-        /**
-         * A place to decide whether you want to skip this state (e.g., if you've already obtained
-         * the information you're going to ask in previous dialog steps).
-         *
-         * If you're going to skip this state, you should return non-null new state from this function.
-         * In case of skipping, no side effect of the state will be executed and the state won't be recorded
-         * to the history. The boosts can be chained, i.e. next state can be skipped as well. The side and history effects
-         * are applied only for first non-boosted-through state.
-         */
-        /**
-         * Call it to turn [v] into [newState]
-         */
+        /** Transition [v] to [newState]. */
         protected suspend fun become(
             /**
-             * New state
+             * The new state.
              */
             newState: State,
             /**
-             * History behavior, defaults to verticle-wide default behavior.
+             * History behavior, which defaults to the verticle-wide default.
              *
              * This is the behavior for the **current** state, not for the new one.
              */
@@ -693,7 +687,7 @@ abstract class StatefulTelegramDialogVerticle<Config> : TelegramDialogVerticle<C
         }
 
         /**
-         * Call it to turn [v] into an ephemeral [newState].
+         * Transition [v] to an ephemeral [newState].
          */
         protected suspend fun become(
             newState: EphemeralState,
@@ -704,39 +698,39 @@ abstract class StatefulTelegramDialogVerticle<Config> : TelegramDialogVerticle<C
         }
 
         /**
-         * Can state be rolled back to the immediately previous history entry?
+         * Can the state be rolled back to the immediately previous history entry?
          *
-         * A previous [EphemeralState] requires a non-null [ephemeralHook].
-         * Must be called while holding the dialog lock.
+         * Rolling back to an [EphemeralState] requires a non-null [ephemeralHook].
+         * This method must be called while holding the dialog lock.
          */
         protected suspend fun canRollback(ephemeralHook: EphemeralHook? = null) = v.canRollback(ephemeralHook)
 
-        /** Can state be rolled back to the latest regular state? Requires the dialog lock. */
+        /** Can the state be rolled back to the latest regular state? This method requires the dialog lock. */
         protected suspend fun canRollbackRegular() = v.canRollbackRegular()
 
         /**
          * Roll back to the immediately previous history entry.
          *
-         * If it is ephemeral and [ephemeralHook] is null, history remains unchanged.
-         * Must be called while holding the dialog lock.
+         * If the previous entry is ephemeral and [ephemeralHook] is null, history remains unchanged.
+         * This method must be called while holding the dialog lock.
          */
         protected suspend fun rollback(ephemeralHook: EphemeralHook? = null) {
             v.rollback(ephemeralHook)
         }
 
-        /** Roll back to the latest regular state, skipping ephemeral history entries. Requires the dialog lock. */
+        /** Roll back to the latest regular state, skipping ephemeral entries. This method requires the dialog lock. */
         protected suspend fun rollbackRegular() {
             v.rollbackRegular()
         }
 
         /**
-         * End the dialog and undeploy verticle.
+         * End the dialog and undeploy the verticle.
          *
          * @see HierarchyVerticle.die
          */
         protected fun die(
             /**
-             * Reason of death which will be known by children and parents.
+             * Reason for death that will be reported to children and parents.
              */
             reason: DeathReason
         ) {
@@ -744,21 +738,21 @@ abstract class StatefulTelegramDialogVerticle<Config> : TelegramDialogVerticle<C
         }
 
         /**
-         * End the dialog as completed
+         * End the dialog as completed.
          */
         protected fun complete() {
             v.complete()
         }
 
         /**
-         * End the dialog as failed
+         * End the dialog as failed.
          */
         protected fun fail() {
             v.fail()
         }
 
         /**
-         * End the dialog as cancelled
+         * End the dialog as cancelled.
          */
         protected fun cancel() {
             v.cancel()
@@ -770,7 +764,7 @@ abstract class StatefulTelegramDialogVerticle<Config> : TelegramDialogVerticle<C
         }
 
         /**
-         * Call [StatefulTelegramDialogVerticle.sendOrEdit]
+         * Call [StatefulTelegramDialogVerticle.sendOrEdit].
          */
         protected abstract suspend fun sendOrEdit(
             text: FormattedText,
@@ -779,7 +773,7 @@ abstract class StatefulTelegramDialogVerticle<Config> : TelegramDialogVerticle<C
         )
 
         /**
-         * Telegram client, same as [StatefulTelegramDialogVerticle.tg]
+         * The Telegram client exposed by [StatefulTelegramDialogVerticle.tg].
          */
         protected val tg: Telegram
             get() = v.tg
@@ -803,14 +797,18 @@ abstract class StatefulTelegramDialogVerticle<Config> : TelegramDialogVerticle<C
         protected open suspend fun handleMessage(message: Message) {}
 
         /**
-         * Return another regular state to skip this state before activation and its side effect.
+         * Return another regular state to skip activation of this state and execution of its side effect.
          *
          * This is a pure routing step. The candidate state is not active and must not invoke activation-dependent
          * operations such as [become] or [sendOrEdit].
          */
         open fun boost(): State? = null
 
-        /** Execute [handler] after [duration] while holding the dialog lock. */
+        /**
+         * Schedule [handler] to run no earlier than [duration] later.
+         *
+         * The handler waits for the dialog lock and runs only if the dialog is still alive.
+         */
         protected fun setTimer(duration: Duration, handler: suspend () -> Unit): Job =
             v.setTimerWithLock(duration, handler)
 
@@ -824,9 +822,9 @@ abstract class StatefulTelegramDialogVerticle<Config> : TelegramDialogVerticle<C
     }
 
     /**
-     * A state whose [sendOrEdit] calls use the current incoming ephemeral hook.
+     * A state whose [sendOrEdit] calls use the currently installed ephemeral hook.
      *
-     * Ephemeral states and delivery are supported only in group and supergroup chats.
+     * Ephemeral states and delivery are supported only in groups and supergroups.
      */
     abstract class EphemeralState(v: StatefulTelegramDialogVerticle<*>) : AbstractState(v) {
         private var mutableEphemeralHook: EphemeralHook? = null
@@ -834,7 +832,7 @@ abstract class StatefulTelegramDialogVerticle<Config> : TelegramDialogVerticle<C
         internal val currentEphemeralHook: EphemeralHook
             get() = requireNotNull(mutableEphemeralHook) { "Ephemeral state has not been entered with a hook" }
 
-        /** The hook installed for the current state entry or incoming interaction. */
+        /** The hook installed for the current state entry or the latest incoming interaction. */
         protected val ephemeralHook: EphemeralHook
             get() = currentEphemeralHook
 
@@ -875,7 +873,7 @@ abstract class StatefulTelegramDialogVerticle<Config> : TelegramDialogVerticle<C
         }
 
         /**
-         * Return another state to skip this state before activation and its side effect.
+         * Return another state to skip activation of this state and execution of its side effect.
          *
          * This is a pure routing step. The candidate state is not active, so [ephemeralHook] is unavailable and
          * activation-dependent operations such as [become] and [sendOrEdit] must not be invoked.
@@ -883,11 +881,12 @@ abstract class StatefulTelegramDialogVerticle<Config> : TelegramDialogVerticle<C
         open fun boost(): AbstractState? = null
 
         /**
-         * Capture the current hook and execute [handler] later while holding the dialog lock.
+         * Capture the current hook and schedule [handler] to run no earlier than [duration] later.
          *
-         * The captured hook is installed only for [handler] execution; the latest hook observed before the timer fired
-         * is restored afterward. Capturing a hook does not extend its lifetime. Ephemeral delivery is suppressed, with
-         * a warning, once an interaction-derived hook enters the final second of its 15-second validity window.
+         * The handler waits for the dialog lock and runs only if the dialog is still alive. The captured hook is
+         * installed only for [handler] execution; the latest hook observed before the timer fired is restored afterward.
+         * Capturing a hook does not extend its lifetime. When an interaction-derived hook enters the final second of its
+         * 15-second validity window, ephemeral delivery is suppressed and a warning is logged.
          */
         protected fun setTimer(
             duration: Duration,
@@ -937,7 +936,7 @@ abstract class StatefulTelegramDialogVerticle<Config> : TelegramDialogVerticle<C
     )
 
     /**
-     * Context that permits ephemeral delivery to [userId].
+     * A context that permits ephemeral delivery to [userId].
      *
      * Hooks created from incoming interactions expire after 15 seconds. [forUser] creates a non-expiring hook for
      * administrator-initiated delivery.
@@ -989,22 +988,22 @@ abstract class StatefulTelegramDialogVerticle<Config> : TelegramDialogVerticle<C
      */
     enum class HistoryBehavior {
         /**
-         * Add the item to the end of the history stack
+         * Add the state being left to the end of the history stack.
          */
         PUSH,
 
         /**
-         * Replace the last history item
+         * Replace the last history item with the state being left.
          */
         REPLACE_LAST,
 
         /**
-         * Ignore the state
+         * Do not record the state being left.
          */
         SKIP,
 
         /**
-         * Clean history
+         * Clear the history without recording the state being left.
          */
         WIPE
     }
