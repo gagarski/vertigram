@@ -1,6 +1,7 @@
 package ski.gagar.vertigram.verticles.common
 
 import com.fasterxml.jackson.databind.JavaType
+import com.fasterxml.jackson.databind.type.TypeFactory
 import io.vertx.core.Context
 import io.vertx.core.Vertx
 import io.vertx.core.eventbus.DeliveryOptions
@@ -41,11 +42,20 @@ abstract class VertigramVerticle<Config> : CoroutineVerticle() {
         private set
 
     private val configJavaType: JavaType by lazy {
-        vertigram.objectMapper.typeFactory
+        resolveConfigJavaType(vertigram.objectMapper.typeFactory)
+    }
+
+    /**
+     * Resolve the deployment configuration type used for deserialization.
+     *
+     * Generic runtime verticle implementations may override this when their concrete [javaClass]
+     * does not retain [Config].
+     */
+    protected open fun resolveConfigJavaType(typeFactory: TypeFactory): JavaType =
+        typeFactory
             .constructType(javaClass)
             .findSuperType(VertigramVerticle::class.java)
             .containedTypeOrUnknown(0)
-    }
 
     private lateinit var context: Context
 
