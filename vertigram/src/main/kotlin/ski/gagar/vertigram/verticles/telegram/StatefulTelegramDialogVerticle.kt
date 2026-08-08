@@ -290,7 +290,7 @@ abstract class StatefulTelegramDialogVerticle<Config> : TelegramDialogVerticle<C
             !chatSupportsEphemeralDelivery() -> false
             fromHook == null -> toHook != null
             toHook == null -> true
-            else -> fromHook.user.id != toHook.user.id
+            else -> fromHook.userId != toHook.userId
         }
         if (changed) resetKnownMessage()
     }
@@ -425,7 +425,7 @@ abstract class StatefulTelegramDialogVerticle<Config> : TelegramDialogVerticle<C
                 val message = tg.sendMessage(
                     chatId = chatId.toChatId(),
                     text = text,
-                    receiverUserId = delivery.hook.user.id,
+                    receiverUserId = delivery.hook.userId,
                     callbackQueryId = (delivery.hook as? EphemeralHook.CallbackQuery)?.callbackQueryId,
                     replyParameters = (delivery.hook as? EphemeralHook.Message)?.let {
                         ReplyParameters.create(ephemeralMessageId = requireNotNull(it.ephemeralMessageId) {
@@ -438,7 +438,7 @@ abstract class StatefulTelegramDialogVerticle<Config> : TelegramDialogVerticle<C
                     requireNotNull(message.ephemeralMessageId) {
                         "Telegram didn't return an ephemeral message identifier"
                     },
-                    delivery.hook.user.id
+                    delivery.hook.userId
                 )
             }
         }
@@ -732,7 +732,7 @@ abstract class StatefulTelegramDialogVerticle<Config> : TelegramDialogVerticle<C
         override suspend fun shouldHandleEphemeralMessage(
             message: Message,
             ephemeralHook: EphemeralHook
-        ): Boolean = shouldHandleMessage(message)
+        ): Boolean = true
 
         open suspend fun doHandleMessage(message: Message) {}
 
@@ -764,7 +764,7 @@ abstract class StatefulTelegramDialogVerticle<Config> : TelegramDialogVerticle<C
             get() = currentEphemeralHook
 
         internal override val ephemeralUserId: Long?
-            get() = currentEphemeralHook.user.id
+            get() = currentEphemeralHook.userId
 
         internal fun setCurrentEphemeralHook(ephemeralHook: EphemeralHook) {
             this.mutableEphemeralHook = ephemeralHook
@@ -846,25 +846,33 @@ abstract class StatefulTelegramDialogVerticle<Config> : TelegramDialogVerticle<C
     private sealed interface Delivery {
         data object Regular : Delivery
         data class Ephemeral(val hook: EphemeralHook) : Delivery {
-            val receiverUserId: Long get() = hook.user.id
+            val receiverUserId: Long get() = hook.userId
         }
     }
 
     sealed interface EphemeralHook {
-        val user: User
+        val userId: Long
 
         data class CallbackQuery(
-            override val user: User,
+            val user: User,
             val callbackQueryId: String
-        ) : EphemeralHook
+        ) : EphemeralHook {
+            override val userId: Long get() = user.id
+        }
 
         data class Message(
-            override val user: User,
+            val user: User,
             val messageId: Long,
             val ephemeralMessageId: Long?
-        ) : EphemeralHook
+        ) : EphemeralHook {
+            override val userId: Long get() = user.id
+        }
+
+        data class Standalone(override val userId: Long) : EphemeralHook
 
         companion object {
+            fun forUser(userId: Long): EphemeralHook = Standalone(userId)
+
             fun from(callbackQuery: Update.CallbackQuery.Payload): EphemeralHook =
                 CallbackQuery(callbackQuery.from, callbackQuery.id)
 

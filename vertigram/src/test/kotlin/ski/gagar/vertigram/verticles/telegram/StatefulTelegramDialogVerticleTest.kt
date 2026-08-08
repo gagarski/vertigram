@@ -105,6 +105,26 @@ class StatefulTelegramDialogVerticleTest {
     }
 
     @Test
+    fun `regular message filter does not reject ephemeral messages by default`() = runBlocking {
+        val state = FilteringRegularState(TestDialogVerticle())
+        val message = message(messageId = 1)
+
+        state.handleEphemeralMessage(message, EphemeralHook.from(message))
+
+        assertTrue(state.ephemeralMessageHandled)
+    }
+
+    @Test
+    fun `regular state can explicitly reject ephemeral messages`() = runBlocking {
+        val state = RejectingEphemeralRegularState(TestDialogVerticle())
+        val message = message(messageId = 1)
+
+        state.handleEphemeralMessage(message, EphemeralHook.from(message))
+
+        assertFalse(state.ephemeralMessageHandled)
+    }
+
+    @Test
     fun `child death handler can transition while holding dialog lock`() = runBlocking {
         val verticle = TestDialogVerticle()
         val target = ExposedRegularState(verticle)
@@ -365,6 +385,7 @@ class StatefulTelegramDialogVerticleTest {
             as EphemeralHook.Message
 
         assertEquals(1, hook.user.id)
+        assertEquals(1, hook.userId)
         assertEquals(11, hook.messageId)
         assertEquals(22, hook.ephemeralMessageId)
     }
@@ -386,7 +407,16 @@ class StatefulTelegramDialogVerticleTest {
         val hook = EphemeralHook.from(callback) as EphemeralHook.CallbackQuery
 
         assertEquals(2, hook.user.id)
+        assertEquals(2, hook.userId)
         assertEquals("callback-id", hook.callbackQueryId)
+    }
+
+    @Test
+    fun `standalone hook preserves target user identifier`() {
+        val hook = EphemeralHook.forUser(3)
+
+        assertEquals(3, hook.userId)
+        assertTrue(hook is EphemeralHook.Standalone)
     }
 
     private fun message(messageId: Long, ephemeralMessageId: Long? = null): Message = Message.create(
@@ -488,6 +518,25 @@ class StatefulTelegramDialogVerticleTest {
         ) {
             seenHook = this.ephemeralHook
         }
+    }
+
+    private open class FilteringRegularState(verticle: TestDialogVerticle) : State(verticle) {
+        var ephemeralMessageHandled = false
+
+        override suspend fun shouldHandleMessage(message: Message): Boolean = false
+
+        override suspend fun doHandleEphemeralMessage(message: Message, ephemeralHook: EphemeralHook) {
+            ephemeralMessageHandled = true
+        }
+    }
+
+    private class RejectingEphemeralRegularState(
+        verticle: TestDialogVerticle
+    ) : FilteringRegularState(verticle) {
+        override suspend fun shouldHandleEphemeralMessage(
+            message: Message,
+            ephemeralHook: EphemeralHook
+        ): Boolean = false
     }
 
     private class TimerParent(
