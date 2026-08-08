@@ -1,6 +1,7 @@
 package ski.gagar.vertigram.verticles.telegram
 
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import ski.gagar.vertigram.awaitRegistration
@@ -142,16 +143,34 @@ abstract class StatefulTelegramDialogVerticle<Config> : TelegramDialogVerticle<C
      * @param block block of code to execute
      */
     protected suspend inline fun withLock(discardWhenBusy: Boolean = true, block: () -> Unit) {
-        if (discardWhenBusy && mutex.isLocked) {
-            logger.lazy.debug {
-                "Discarded, $this is busy"
-            }
-            return
+        val owner = requireNotNull(currentCoroutineContext()[Job]) {
+            "Dialog lock requires a coroutine Job"
         }
 
-        mutex.withLock {
-            block()
+        if (discardWhenBusy) {
+            if (!mutex.tryLock(owner)) {
+                logger.lazy.debug {
+                    "Discarded, $this is busy"
+                }
+                return
+            }
+            try {
+                block()
+            } finally {
+                mutex.unlock(owner)
+            }
+        } else {
+            mutex.withLock(owner) {
+                block()
+            }
         }
+    }
+
+    private suspend fun checkLockOwned(message: String) {
+        val owner = requireNotNull(currentCoroutineContext()[Job]) {
+            "Dialog lock requires a coroutine Job"
+        }
+        check(mutex.holdsLock(owner)) { message }
     }
 
     private suspend fun handleCallbackQuery(callbackQuery: Update.CallbackQuery.Payload) = messageHandler {
@@ -236,9 +255,7 @@ abstract class StatefulTelegramDialogVerticle<Config> : TelegramDialogVerticle<C
         ephemeralHook: EphemeralHook?,
         historyBehavior: HistoryBehavior
     ) {
-        check(mutex.isLocked) {
-            "calling become without obtaining lock is not supported"
-        }
+        checkLockOwned("calling become without obtaining lock is not supported")
         require(state !== toState) {
             "[$state -> $toState] Transition to same (by identity) state is not supported"
         }
@@ -306,23 +323,20 @@ abstract class StatefulTelegramDialogVerticle<Config> : TelegramDialogVerticle<C
         }
 
 
-    private fun checkRollbackLock() {
-        check(mutex.isLocked) {
-            "calling rollback API without obtaining lock is not supported"
-        }
-    }
+    private suspend fun checkRollbackLock() =
+        checkLockOwned("calling rollback API without obtaining lock is not supported")
 
     private fun canRollbackUnlocked(ephemeralHook: EphemeralHook? = null): Boolean =
         history.lastOrNull()?.let { it is State || ephemeralHook != null } == true
 
-    private fun canRollback(ephemeralHook: EphemeralHook? = null): Boolean {
+    private suspend fun canRollback(ephemeralHook: EphemeralHook? = null): Boolean {
         checkRollbackLock()
         return canRollbackUnlocked(ephemeralHook)
     }
 
     private fun canRollbackRegularUnlocked(): Boolean = history.any { it is State }
 
-    private fun canRollbackRegular(): Boolean {
+    private suspend fun canRollbackRegular(): Boolean {
         checkRollbackLock()
         return canRollbackRegularUnlocked()
     }
@@ -367,9 +381,7 @@ abstract class StatefulTelegramDialogVerticle<Config> : TelegramDialogVerticle<C
         forceSend: Boolean = false,
         ephemeralHook: EphemeralHook? = null
     ) {
-        check(mutex.isLocked) {
-            "calling sendOrEdit without obtaining lock is not supported"
-        }
+        checkLockOwned("calling sendOrEdit without obtaining lock is not supported")
         val delivery = currentDelivery(ephemeralHook)
         val replyMarkup = buttons ?: if (delivery is Delivery.Ephemeral) forceReply(selective = false) else null
 
@@ -644,10 +656,10 @@ abstract class StatefulTelegramDialogVerticle<Config> : TelegramDialogVerticle<C
          * A previous [EphemeralState] requires a non-null [ephemeralHook].
          * Must be called while holding the dialog lock.
          */
-        protected fun canRollback(ephemeralHook: EphemeralHook? = null) = v.canRollback(ephemeralHook)
+        protected suspend fun canRollback(ephemeralHook: EphemeralHook? = null) = v.canRollback(ephemeralHook)
 
         /** Can state be rolled back to the latest regular state? Requires the dialog lock. */
-        protected fun canRollbackRegular() = v.canRollbackRegular()
+        protected suspend fun canRollbackRegular() = v.canRollbackRegular()
 
         /**
          * Roll back to the immediately previous history entry.

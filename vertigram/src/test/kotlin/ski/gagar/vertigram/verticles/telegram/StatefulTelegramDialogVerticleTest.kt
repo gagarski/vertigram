@@ -3,7 +3,9 @@ package ski.gagar.vertigram.verticles.telegram
 import io.vertx.core.Vertx
 import io.vertx.kotlin.coroutines.coAwait
 import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
+import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -102,6 +104,23 @@ class StatefulTelegramDialogVerticleTest {
         assertThrows(IllegalStateException::class.java) {
             runBlocking { state.send("test") }
         }
+    }
+
+    @Test
+    fun `child coroutine cannot use lock owned by parent coroutine`() = runBlocking {
+        val verticle = TestDialogVerticle()
+        val previous = ExposedRegularState(verticle)
+        val current = ExposedRegularState(verticle)
+        val target = ExposedRegularState(verticle)
+        previous.enter()
+        current.enter()
+
+        val failures = current.runLockRequiredOperationsFromChild(target)
+
+        assertEquals(4, failures.size)
+        failures.forEach { assertTrue(it is IllegalStateException) }
+        assertEquals(current, verticle.currentState)
+        assertTrue(current.canRollbackWith(null))
     }
 
     @Test
@@ -262,8 +281,12 @@ class StatefulTelegramDialogVerticleTest {
         previous.enter()
         current.enter()
 
-        assertThrows(IllegalStateException::class.java) { current.canRollbackUnlocked(null) }
-        assertThrows(IllegalStateException::class.java) { current.canRollbackRegularUnlocked() }
+        assertThrows(IllegalStateException::class.java) {
+            runBlocking { current.canRollbackUnlocked(null) }
+        }
+        assertThrows(IllegalStateException::class.java) {
+            runBlocking { current.canRollbackRegularUnlocked() }
+        }
         assertThrows(IllegalStateException::class.java) {
             runBlocking { current.rollbackUnlocked(null) }
         }
@@ -490,10 +513,28 @@ class StatefulTelegramDialogVerticleTest {
         }
         suspend fun rollbackWith(hook: EphemeralHook?) = withLock { rollback(hook) }
         suspend fun rollbackRegularly() = withLock { rollbackRegular() }
-        fun canRollbackUnlocked(hook: EphemeralHook?) = canRollback(hook)
-        fun canRollbackRegularUnlocked() = canRollbackRegular()
+        suspend fun canRollbackUnlocked(hook: EphemeralHook?) = canRollback(hook)
+        suspend fun canRollbackRegularUnlocked() = canRollbackRegular()
         suspend fun rollbackUnlocked(hook: EphemeralHook?) = rollback(hook)
         suspend fun rollbackRegularUnlocked() = rollbackRegular()
+
+        suspend fun runLockRequiredOperationsFromChild(target: State): List<Throwable?> {
+            var failures = emptyList<Throwable?>()
+            withLock {
+                suspend fun runFromChild(block: suspend () -> Unit): Throwable? =
+                    CoroutineScope(currentCoroutineContext()).async {
+                        runCatching { block() }.exceptionOrNull()
+                    }.await()
+
+                failures = listOf(
+                    runFromChild { become(target) },
+                    runFromChild { sendOrEdit("test".toFormattedText()) },
+                    runFromChild { canRollback(null) },
+                    runFromChild { rollback(null) }
+                )
+            }
+            return failures
+        }
 
         override suspend fun onChildDeath(deathNotice: DeathNotice) {
             childDeathHandled?.complete(Unit)
