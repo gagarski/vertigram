@@ -103,11 +103,11 @@ data class Chat internal constructor(
         /** The maximum number of reactions that can be set on a message in the chat. */
         val maxReactionCount: Int,
         /** Custom emoji identifier of the emoji chosen by the chat for the reply header and link preview background. */
-        val backgroundCustomEmojiId: Int? = null,
+        val backgroundCustomEmojiId: String? = null,
         /** Identifier of the accent color for the chat's profile background. */
         val profileAccentColorId: Int? = null,
         /** Custom emoji identifier of the emoji chosen by the chat for its profile background. */
-        val profileBackgroundCustomEmojiId: Int? = null,
+        val profileBackgroundCustomEmojiId: String? = null,
         /** Custom emoji identifier of the emoji status of the chat or the other party in a private chat. */
         val emojiStatusCustomEmojiId: String? = null,
         /** Expiration date of the emoji status of the chat or the other party in a private chat, if any. */
